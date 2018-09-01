@@ -42,7 +42,14 @@ using Senparc.NeuChar.Entities;
 
 namespace Senparc.NeuChar.Context
 {
+    [Obsolete("请使用 MessageContextGlobalConfig")]
     public static class WeixinContextGlobal
+    { }
+
+    /// <summary>
+    /// 消息上下文全局设置
+    /// </summary>
+    public static class MessageContextGlobalConfig//TODO:所有设置可以整合到一起
     {
         /// <summary>
         /// 上下文操作使用的同步锁
@@ -58,7 +65,17 @@ namespace Senparc.NeuChar.Context
         /// <summary>
         /// 是否开启上下文记录
         /// </summary>
-        public static bool UseWeixinContext = true;
+        [Obsolete("请使用 UseMessageContext")]
+        public static bool UseWeixinContext
+        {
+            get { return UseMessageContext; }
+            set { UseMessageContext = value; }
+        }
+
+        /// <summary>
+        /// 是否开启上下文记录
+        /// </summary>
+        public static bool UseMessageContext = true;
 
     }
 
@@ -96,7 +113,7 @@ namespace Senparc.NeuChar.Context
     /// 微信消息上下文（全局）
     /// 默认过期时间：90分钟
     /// </summary>
-    public class WeixinContext<TM, TRequest, TResponse> /*: IWeixinContext<TM, TRequest, TResponse>*/
+    public class GlobalMessageContext<TM, TRequest, TResponse> /*: IWeixinContext<TM, TRequest, TResponse>*/
         where TM : class, IMessageContext<TRequest, TResponse>, new() //TODO:TRequest, TResponse直接写明基类类型
         where TRequest : IRequestMessageBase
         where TResponse : IResponseMessageBase
@@ -123,7 +140,7 @@ namespace Senparc.NeuChar.Context
         public int MaxRecordCount { get; set; }
 
 
-        public WeixinContext()
+        public GlobalMessageContext()
         {
             Restore();
         }
@@ -224,7 +241,7 @@ namespace Senparc.NeuChar.Context
         /// <returns></returns>
         public TM GetMessageContext(TRequest requestMessage)
         {
-            lock (WeixinContextGlobal.Lock)
+            lock (MessageContextGlobalConfig.Lock)
             {
                 return GetMessageContext(requestMessage.FromUserName, true);
             }
@@ -236,7 +253,7 @@ namespace Senparc.NeuChar.Context
         /// <returns></returns>
         public TM GetMessageContext(TResponse responseMessage)
         {
-            lock (WeixinContextGlobal.Lock)
+            lock (MessageContextGlobalConfig.Lock)
             {
                 return GetMessageContext(responseMessage.ToUserName, true);
             }
@@ -248,7 +265,7 @@ namespace Senparc.NeuChar.Context
         /// <param name="requestMessage">请求信息</param>
         public void InsertMessage(TRequest requestMessage)
         {
-            lock (WeixinContextGlobal.Lock)
+            lock (MessageContextGlobalConfig.Lock)
             {
                 var userName = requestMessage.FromUserName;
                 var messageContext = GetMessageContext(userName, true);
@@ -276,7 +293,7 @@ namespace Senparc.NeuChar.Context
         /// <param name="responseMessage">响应信息</param>
         public void InsertMessage(TResponse responseMessage)
         {
-            lock (WeixinContextGlobal.Lock)
+            lock (MessageContextGlobalConfig.Lock)
             {
                 var messageContext = GetMessageContext(responseMessage.ToUserName, true);
                 messageContext.ResponseMessages.Add(responseMessage);
@@ -290,7 +307,7 @@ namespace Senparc.NeuChar.Context
         /// <returns></returns>
         public TRequest GetLastRequestMessage(string userName)
         {
-            lock (WeixinContextGlobal.Lock)
+            lock (MessageContextGlobalConfig.Lock)
             {
                 var messageContext = GetMessageContext(userName, true);
                 return messageContext.RequestMessages.LastOrDefault();
@@ -304,7 +321,7 @@ namespace Senparc.NeuChar.Context
         /// <returns></returns>
         public TResponse GetLastResponseMessage(string userName)
         {
-            lock (WeixinContextGlobal.Lock)
+            lock (MessageContextGlobalConfig.Lock)
             {
                 var messageContext = GetMessageContext(userName, true);
                 return messageContext.ResponseMessages.LastOrDefault();

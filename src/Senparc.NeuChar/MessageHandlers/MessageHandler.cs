@@ -75,14 +75,18 @@ namespace Senparc.NeuCharMessageHandlers
         /// <summary>
         /// 全局消息上下文
         /// </summary>
-        public abstract WeixinContext<TC, TRequest, TResponse> WeixinContext { get; }
+        [Obsolete("请使用 GlobalMessageContext")]
+        public GlobalMessageContext<TC, TRequest, TResponse> WeixinContext { get { return GlobalMessageContext; } }
+
+        public abstract GlobalMessageContext<TC, TRequest, TResponse> GlobalMessageContext { get; }
+
 
         /// <summary>
         /// 当前用户消息上下文
         /// </summary>
         public virtual TC CurrentMessageContext
         {
-            get { return WeixinContext.GetMessageContext(RequestMessage); }
+            get { return GlobalMessageContext.GetMessageContext(RequestMessage); }
         }
 
         /// <summary>
@@ -213,7 +217,7 @@ namespace Senparc.NeuCharMessageHandlers
         public void CommonInitialize(XDocument postDataDocument, int maxRecordCount, object postData)
         {
             OmitRepeatedMessage = true;//默认开启去重
-            WeixinContext.MaxRecordCount = maxRecordCount;
+            GlobalMessageContext.MaxRecordCount = maxRecordCount;
             RequestDocument = Init(postDataDocument, postData);
         }
 
