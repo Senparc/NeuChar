@@ -40,7 +40,7 @@ using Senparc.NeuChar.Context;
 using Senparc.NeuChar.Entities;
 using System.Threading.Tasks;
 
-namespace Senparc.NeuCharMessageHandlers
+namespace Senparc.NeuChar.MessageHandlers
 {
     /// <summary>
     /// 微信请求的集中处理方法

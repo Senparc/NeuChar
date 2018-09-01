@@ -35,7 +35,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Senparc.NeuCharMessageHandlers
+namespace Senparc.NeuChar.MessageHandlers
 {
     /// <summary>
     /// MessageHandler事件异步方法的默认调用方法（在没有override的情况下）

@@ -38,7 +38,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 using Senparc.NeuChar.Entities;
 using System.Threading.Tasks;
 
-namespace Senparc.NeuCharMessageHandlers
+namespace Senparc.NeuChar.MessageHandlers
 {
     /// <summary>
     /// IMessageHandler接口

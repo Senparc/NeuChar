@@ -33,7 +33,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 
 using System.Xml.Linq;
 
-namespace Senparc.NeuCharMessageHandlers
+namespace Senparc.NeuChar.MessageHandlers
 {
     /// <summary>
     /// 为IMessageHandler单独提供XDocument类型的属性接口（主要是ResponseDocument）。
