@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net35;net40;net45;netstandard2.0;netcoreapp2.0;netcoreapp2.1</TargetFrameworks>
-    <Version>0.0.2</Version>
+    <Version>0.0.3</Version>
     <AssemblyName>Senparc.NeuChar</AssemblyName>
     <RootNamespace>Senparc.NeuChar</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -26,6 +26,7 @@
     <PackageReleaseNotes>
       v0.0.1 完成和微信公众号平台消息接口对接
       v0.0.2 完成从 Senparc.Weixin 移植 MessageHandler 标准
+      v0.0.3 支持 CO2NET v0.2.10
     </PackageReleaseNotes>
     <RepositoryUrl>https://github.com/JeffreySu/WeiXinMPSDK</RepositoryUrl>
   </PropertyGroup>
@@ -98,7 +99,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Senparc.CO2NET" Version="0.2.9" />
+    <PackageReference Include="Senparc.CO2NET" Version="0.2.10" />
   </ItemGroup>
 
 
