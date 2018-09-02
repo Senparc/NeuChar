@@ -38,7 +38,7 @@ namespace Senparc.NeuChar.Entities
     public interface IRequestMessageBase : IMessageBase
     {
         //删除MsgType因为企业号和公众号的MsgType为两个独立的枚举类型
-        //RequestMsgType MsgType { get; }
+        //RequestMessageType MsgType { get; }
         long MsgId { get; set; }
     }
 
@@ -52,9 +52,9 @@ namespace Senparc.NeuChar.Entities
 
         }
 
-        //public virtual RequestMsgType MsgType
+        //public virtual RequestMessageType MsgType
         //{
-        //    get { return RequestMsgType.Text; }
+        //    get { return RequestMessageType.Text; }
         //}
 
         public long MsgId { get; set; }

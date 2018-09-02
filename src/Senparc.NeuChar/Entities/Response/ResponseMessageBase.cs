@@ -29,6 +29,9 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
     
     修改标识：Senparc - 20150303
     修改描述：整理接口
+
+    修改标识：Senparc - 20190902
+    修改描述：添加 MsgType 接口
 ----------------------------------------------------------------*/
 
 
@@ -38,20 +41,22 @@ namespace Senparc.NeuChar.Entities
     /// 响应回复消息基类接口
     /// </summary>
 	public interface IResponseMessageBase : IMessageBase
-	{
-		//ResponseMsgType MsgType { get; }
-		//string Content { get; set; }
-		//bool FuncFlag { get; set; }
-	}
+    {
+        RequestMsgType MsgType { get; set; }
+        //string Content { get; set; }
+        //bool FuncFlag { get; set; }
+    }
 
-	/// <summary>
-	/// 响应回复消息基类
-	/// </summary>
-	public abstract class ResponseMessageBase : MessageBase, IResponseMessageBase
-	{
-        //public virtual ResponseMsgType MsgType
+    /// <summary>
+    /// 响应回复消息基类
+    /// </summary>
+    public abstract class ResponseMessageBase : MessageBase, IResponseMessageBase
+    {
+        public RequestMsgType MsgType { get; set; }
+
+        //public virtual ResponseMessageType MsgType
         //{
-        //    get { return ResponseMsgType.Text; }
+        //    get { return ResponseMessageType.Text; }
         //}
-	}
+    }
 }
