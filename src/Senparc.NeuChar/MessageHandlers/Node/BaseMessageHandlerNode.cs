@@ -14,7 +14,7 @@ namespace Senparc.NeuChar.MessageHandlers
     /// <summary>
     /// MessageHandler 的神经节点
     /// </summary>
-    public abstract class MessageHandlerNode : BaseNeuralNode
+    public abstract class BaseMessageHandlerNode : BaseNeuralNode
     {
         public override string Version { get; set; }
 
@@ -24,7 +24,7 @@ namespace Senparc.NeuChar.MessageHandlers
         /// </summary>
         new public MessageReply Config { get; set; }
 
-        public MessageHandlerNode()
+        public BaseMessageHandlerNode()
         {
             Config = new MessageReply();
         }
@@ -42,7 +42,7 @@ namespace Senparc.NeuChar.MessageHandlers
             {
                 case RequestMsgType.Text:
                     {
-                        var textRequestMessage = requestMessage as RequestMessageText;
+                        var textRequestMessage = requestMessage as IRequestMessageText;
                         //遍历所有的消息设置
                         foreach (var messagePair in Config.MessagePair.Where(z => z.Request.Type == RequestMsgType.Text))
                         {
@@ -64,7 +64,7 @@ namespace Senparc.NeuChar.MessageHandlers
                     break;
                 case RequestMsgType.Image:
                     {
-                        var imageRequestMessage = requestMessage as RequestMessageImage;
+                        var imageRequestMessage = requestMessage as IRequestMessageImage;
                         //遍历所有的消息设置
 
                         foreach (var messagePair in Config.MessagePair.Where(z => z.Request.Type == RequestMsgType.Image))
@@ -142,9 +142,9 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <param name="requestMessage"></param>
         /// <param name="responseConfig"></param>
         /// <returns></returns>
-        private ResponseMessageText RenderResponseMessageText(IRequestMessageBase requestMessage, Response responseConfig)
+        private IResponseMessageText RenderResponseMessageText(IRequestMessageBase requestMessage, Response responseConfig)
         {
-            var strongResponseMessage = requestMessage.CreateResponseMessage<ResponseMessageText>();
+            var strongResponseMessage = requestMessage.CreateResponseMessage<IResponseMessageText>();
             strongResponseMessage.Content = responseConfig.Content.Replace("{now}", DateTime.Now.ToString());
             return strongResponseMessage;
         }
@@ -157,18 +157,18 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <returns></returns>
         private IResponseMessageBase RenderResponseMessageImage(IRequestMessageBase requestMessage, Response responseConfig)
         {
-            var strongResponseMessage = requestMessage.CreateResponseMessage<ResponseMessageImage>();
+            var strongResponseMessage = requestMessage.CreateResponseMessage<IResponseMessageImage>();
 
             if (responseConfig.Content.Equals("{current_img}", StringComparison.OrdinalIgnoreCase))
             {
-                var strongRequestMessage = requestMessage as RequestMessageImage;
+                var strongRequestMessage = requestMessage as IRequestMessageImage;
                 if (strongRequestMessage != null)
                 {
                     strongResponseMessage.Image.MediaId = strongRequestMessage.MediaId;
                 }
                 else
                 {
-                    var textResponseMessage = requestMessage.CreateResponseMessage<ResponseMessageText>();
+                    var textResponseMessage = requestMessage.CreateResponseMessage<IResponseMessageText>();
                     textResponseMessage.Content = "消息中未获取到图片信息";
                     return textResponseMessage;
                 }

@@ -95,6 +95,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Entities\WeChat\OfficialAccount\" />
+    <Folder Include="Entities\WeChat\Work\" />
+    <Folder Include="Entities\WeChat\MiniProgram\" />
+    <Folder Include="Entities\WeChat\Open\" />
     <Folder Include="Properties\" />
   </ItemGroup>
 

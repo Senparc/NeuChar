@@ -80,6 +80,10 @@ namespace Senparc.NeuChar.MessageHandlers
 
         public abstract GlobalMessageContext<TC, TRequest, TResponse> GlobalMessageContext { get; }
 
+        /// <summary>
+        /// 请求和响应消息有差别化的定义
+        /// </summary>
+        public abstract MessageEntityEnlighten Enlighten { get; }
 
         /// <summary>
         /// 当前用户消息上下文
@@ -273,6 +277,16 @@ namespace Senparc.NeuChar.MessageHandlers
 
         //public abstract TR CreateResponseMessage<TR>() where TR : ResponseMessageBase;
 
+        public virtual TR CreateResponseMessage<TR>() where TR : ResponseMessageBase
+        {
+            if (RequestMessage == null)
+            {
+                return null;
+            }
+
+            return this.CreateResponseMessage<TR>(RequestMessage);
+        }
+
 
         public virtual void OnExecuting()
         {
@@ -292,5 +306,6 @@ namespace Senparc.NeuChar.MessageHandlers
         ///// 默认返回消息（当任何OnXX消息没有被重写，都将自动返回此默认消息）
         ///// </summary>
         //public abstract IResponseMessageBase DefaultResponseMessage(IRequestMessageBase requestMessage);
+
     }
 }

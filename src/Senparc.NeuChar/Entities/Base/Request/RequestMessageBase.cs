@@ -35,11 +35,16 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 
 namespace Senparc.NeuChar.Entities
 {
+    /// <summary>
+    /// 请求消息基础接口
+    /// </summary>
     public interface IRequestMessageBase : IMessageBase
     {
         //删除MsgType因为企业号和公众号的MsgType为两个独立的枚举类型
         //RequestMessageType MsgType { get; }
         long MsgId { get; set; }
+
+        RequestMsgType MsgType { get; set; }
     }
 
     /// <summary>
@@ -58,5 +63,6 @@ namespace Senparc.NeuChar.Entities
         //}
 
         public long MsgId { get; set; }
+        public RequestMsgType MsgType { get; set; }
     }
 }

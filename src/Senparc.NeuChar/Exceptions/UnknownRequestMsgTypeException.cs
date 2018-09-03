@@ -21,42 +21,34 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 /*----------------------------------------------------------------
     Copyright (C) 2018 Senparc
     
-    文件名：ResponseMessageBase.cs
-    文件功能描述：响应回复消息基类
+    文件名：UnknownRequestMsgTypeException.cs
+    文件功能描述：未知请求类型
     
     
     创建标识：Senparc - 20150211
     
-    修改标识：Senparc - 20150303
-    修改描述：整理接口
-
-    修改标识：Senparc - 20190902
-    修改描述：添加 MsgType 接口
+    修改标识：Senparc - 20170101
+    修改描述：1、统一构造函数调用（将第一个构造函数的base改为this）
+              2、修改基类为MessageHandlerException
 ----------------------------------------------------------------*/
 
 
-namespace Senparc.NeuChar.Entities
+using System;
+
+namespace Senparc.NeuChar.Exceptions
 {
     /// <summary>
-    /// 响应回复消息基类接口
+    /// 未知请求类型异常
     /// </summary>
-	public interface IResponseMessageBase : IMessageBase
+    public class UnknownRequestMsgTypeException : MessageHandlerException //ArgumentOutOfRangeException
     {
-        RequestMsgType MsgType { get; set; }
-        //string Content { get; set; }
-        //bool FuncFlag { get; set; }
-    }
+        public UnknownRequestMsgTypeException(string message)
+            : this(message, null)
+        {
+        }
 
-    /// <summary>
-    /// 响应回复消息基类
-    /// </summary>
-    public abstract class ResponseMessageBase : MessageBase, IResponseMessageBase
-    {
-        public RequestMsgType MsgType { get; set; }
-
-        //public virtual ResponseMessageType MsgType
-        //{
-        //    get { return ResponseMessageType.Text; }
-        //}
+        public UnknownRequestMsgTypeException(string message, Exception inner)
+            : base(message, inner)
+        { }
     }
 }

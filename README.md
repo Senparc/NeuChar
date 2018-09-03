@@ -13,7 +13,7 @@ PM> Install-Package Senparc.NeuChar
 
 ## RequestMsgType 支持（存在）情况
 
-| 枚举类型        |   微信   |    钉钉    |    QQ公众号  |  头条第三方   |  Facebook  |   
+| 枚举类型        |   微信<br>公众号   |    钉钉    |    QQ公众号  |  头条第三方   |  Facebook  |   
 |----------------|----------|------------|-------------|--------------|------------|
 |  Text          |    Y     |      Y     |       Y     |       -      |      -     |
 |  Location      |    Y     |      N     |       Y     |       -      |      -     |

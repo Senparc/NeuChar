@@ -44,17 +44,6 @@ using System.Text.RegularExpressions;
 
 namespace Senparc.NeuChar.Entities.Request
 {
-    /// <summary>
-    /// 所有RequestMessageText的接口
-    /// </summary>
-    public interface IRequestMessageText
-    {
-        /// <summary>
-        /// 文本消息内容
-        /// </summary>
-        string Content { get; set; }
-    }
-
     public class RequestMessageTextKeywordHandler
     {
         internal string Keyword { get; set; }
