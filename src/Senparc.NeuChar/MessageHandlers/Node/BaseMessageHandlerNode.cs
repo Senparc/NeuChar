@@ -133,6 +133,7 @@ namespace Senparc.NeuChar.MessageHandlers
                 default:
                     break;
             }
+
             return responseMessage;
         }
 

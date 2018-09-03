@@ -15,20 +15,20 @@ namespace Senparc.NeuChar.MessageHandlers
 
         #region 请求消息
 
-        public Func<IRequestMessageText> NewRequestMessageText { get; }
-        public Func<IRequestMessageImage> NewRequestMessageImage { get; }
+        public Func<IRequestMessageText> NewRequestMessageText { get; } = () => null;
+        public Func<IRequestMessageImage> NewRequestMessageImage { get; } = () => null;
 
         #endregion
 
         #region 响应消息
 
-        public Func<IResponseMessageText> NewResponseMessageText { get; }
-        public Func<IResponseMessageNews> NewResponseMessageNews { get; }
-        public Func<IResponseMessageMusic> NewResponseMessageMusic { get; }
-        public Func<IResponseMessageImage> NewResponseMessageImage { get; }
-        public Func<IResponseMessageVoice> NewResponseMessageVoice { get; }
-        public Func<IResponseMessageVideo> NewResponseMessageVideo { get; }
-        public Func<IResponseMessageTransfer_Customer_Service> NewResponseMessageTransfer_Customer_Service { get; }
+        public Func<IResponseMessageText> NewResponseMessageText { get; } = () => null;
+        public Func<IResponseMessageNews> NewResponseMessageNews { get; } = () => null;
+        public Func<IResponseMessageMusic> NewResponseMessageMusic { get; } = () => null;
+        public Func<IResponseMessageImage> NewResponseMessageImage { get; } = () => null;
+        public Func<IResponseMessageVoice> NewResponseMessageVoice { get; } = () => null;
+        public Func<IResponseMessageVideo> NewResponseMessageVideo { get; } = () => null;
+        public Func<IResponseMessageTransfer_Customer_Service> NewResponseMessageTransfer_Customer_Service { get; } = () => null;
 
         #endregion
 

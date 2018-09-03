@@ -284,7 +284,7 @@ namespace Senparc.NeuChar.MessageHandlers
                 return null;
             }
 
-            return this.CreateResponseMessage<TR>(RequestMessage);
+            return this.CreateResponseMessage<TR>(RequestMessage,this.Enlighten);
         }
 
 

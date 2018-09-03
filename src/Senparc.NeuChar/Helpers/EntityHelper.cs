@@ -224,7 +224,8 @@ namespace Senparc.NeuChar.Helpers
                                     prop.SetValue(entity, Enum.Parse(prop.PropertyType, root.Element(propName).Value, true), null);
                                     enumSuccess = true;
                                 }
-                                catch {
+                                catch
+                                {
                                 }
                             }
 
@@ -425,16 +426,17 @@ namespace Senparc.NeuChar.Helpers
             return entity.ConvertEntityToXml().ToString();
         }
 
-        ///// <summary>
-        ///// ResponseMessageBase.CreateFromRequestMessage&lt;T&gt;(requestMessage)的扩展方法
-        ///// </summary>
-        ///// <typeparam name="T">需要生成的ResponseMessage类型</typeparam>
-        ///// <param name="requestMessage">IRequestMessageBase接口下的接收信息类型</param>
-        ///// <returns></returns>
-        //public static T CreateResponseMessage<T>(this IRequestMessageBase requestMessage) where T : ResponseMessageBase
-        //{
-        //    return ResponseMessageBase.CreateFromRequestMessage<T>(requestMessage);
-        //}
+        /// <summary>
+        /// ResponseMessageBase.CreateFromRequestMessage&lt;T&gt;(requestMessage)的扩展方法
+        /// </summary>
+        /// <typeparam name="T">需要生成的ResponseMessage类型</typeparam>
+        /// <param name="requestMessage">IRequestMessageBase接口下的接收信息类型</param>
+        /// <param name="enlighten">MessageEntityEnlighten，当 T 为接口时必须提供</param>
+        /// <returns></returns>
+        public static T CreateResponseMessage<T>(this IRequestMessageBase requestMessage, MessageEntityEnlighten enlighten = null) where T : ResponseMessageBase
+        {
+            return ResponseMessageBase.CreateFromRequestMessage<T>(requestMessage, enlighten);
+        }
 
 
         /// <summary>
@@ -444,7 +446,7 @@ namespace Senparc.NeuChar.Helpers
         /// <param name="enlighten">MessageEntityEnlighten</param>
         /// <param name="requestMessage">IRequestMessageBase接口下的接收信息类型</param>
         /// <returns></returns>
-        public static T CreateResponseMessage<T>(this MessageEntityEnlighten enlighten, IRequestMessageBase requestMessage) 
+        public static T CreateResponseMessage<T>(this MessageEntityEnlighten enlighten, IRequestMessageBase requestMessage)
             where T : ResponseMessageBase
         {
             return ResponseMessageBase.CreateFromRequestMessage<T>(requestMessage, enlighten);
