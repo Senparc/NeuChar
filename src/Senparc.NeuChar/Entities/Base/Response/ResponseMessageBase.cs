@@ -40,6 +40,7 @@ using Senparc.NeuChar.Exceptions;
 using Senparc.NeuChar.MessageHandlers;
 using System;
 using System.Xml.Linq;
+using Senparc.NeuChar.Helpers;
 
 namespace Senparc.NeuChar.Entities
 {
@@ -56,9 +57,11 @@ namespace Senparc.NeuChar.Entities
     /// <summary>
     /// 响应回复消息基类
     /// </summary>
-    public abstract class ResponseMessageBase : MessageBase, IResponseMessageBase
+    public class ResponseMessageBase : MessageBase, IResponseMessageBase
     {
         public RequestMsgType MsgType { get; set; }
+
+        public ResponseMessageBase() { }
 
         //public virtual ResponseMessageType MsgType
         //{
@@ -124,11 +127,11 @@ namespace Senparc.NeuChar.Entities
         /// <param name="enlighten">MessageEntityEnlighten，当 T 为接口时必须提供</param>
         /// <returns></returns>
         public static T CreateFromRequestMessage<T>(IRequestMessageBase requestMessage, MessageEntityEnlighten enlighten = null)
-            where T : ResponseMessageBase
+            where T : IResponseMessageBase
         {
             try
             {
-                T responseMessage = null;
+                T responseMessage = default(T);
                 var tType = typeof(T);
 
                 if (tType.IsInterface)
@@ -136,13 +139,13 @@ namespace Senparc.NeuChar.Entities
                     //是接口，需要使用 Enlighten
                     var responseName = tType.Name.Replace("IResponseMessage", "").Replace("ResponseMessage", ""); //请求名称
                     ResponseMsgType msgType = (ResponseMsgType)Enum.Parse(typeof(ResponseMsgType), responseName);
-                    responseMessage = CreateFromRequestMessage(requestMessage, msgType, enlighten) as T;
+                    responseMessage = (T)CreateFromRequestMessage(requestMessage, msgType, enlighten);
                 }
                 else
                 {
                     //非接口，直接初始化
                     //Senparc.CO2NET.Helpers.ReflectionHelper.
-                    responseMessage = Activator.CreateInstance(tType) as T;
+                    responseMessage = (T)Activator.CreateInstance(tType);
                 }
 
                 if (responseMessage != null)
@@ -165,7 +168,7 @@ namespace Senparc.NeuChar.Entities
         /// </summary>
         /// <param name="xml">返回给服务器的Response Xml</param>
         /// <returns></returns>
-        public static IResponseMessageBase CreateFromResponseXml(string xml)
+        public static IResponseMessageBase CreateFromResponseXml(string xml, MessageEntityEnlighten enlighten)
         {
             try
             {
@@ -175,39 +178,39 @@ namespace Senparc.NeuChar.Entities
                 }
 
                 var doc = XDocument.Parse(xml);
-                ResponseMessageBase responseMessage = null;
+                IResponseMessageBase responseMessage = null;
                 var msgType = (ResponseMsgType)Enum.Parse(typeof(ResponseMsgType), doc.Root.Element("MsgType").Value, true);
                 switch (msgType)
                 {
                     case ResponseMsgType.Text:
-                        responseMessage = new ResponseMessageText();
-                        break;
-                    case ResponseMsgType.Image:
-                        responseMessage = new ResponseMessageImage();
-                        break;
-                    case ResponseMsgType.Voice:
-                        responseMessage = new ResponseMessageVoice();
-                        break;
-                    case ResponseMsgType.Video:
-                        responseMessage = new ResponseMessageVideo();
-                        break;
-                    case ResponseMsgType.Music:
-                        responseMessage = new ResponseMessageMusic();
+                        responseMessage = enlighten.NewResponseMessageText();// new ResponseMessageText();
                         break;
                     case ResponseMsgType.News:
-                        responseMessage = new ResponseMessageNews();
+                        responseMessage = enlighten.NewResponseMessageNews();// new ResponseMessageNews();
+                        break;
+                    case ResponseMsgType.Music:
+                        responseMessage = enlighten.NewResponseMessageMusic();// new ResponseMessageMusic();
+                        break;
+                    case ResponseMsgType.Image:
+                        responseMessage = enlighten.NewResponseMessageImage();// new ResponseMessageImage();
+                        break;
+                    case ResponseMsgType.Voice:
+                        responseMessage = enlighten.NewResponseMessageVoice();// new ResponseMessageVoice();
+                        break;
+                    case ResponseMsgType.Video:
+                        responseMessage = enlighten.NewResponseMessageVideo();// new ResponseMessageVideo();
                         break;
                     case ResponseMsgType.Transfer_Customer_Service:
-                        responseMessage = new ResponseMessageTransfer_Customer_Service();
+                        responseMessage = enlighten.NewResponseMessageTransfer_Customer_Service();// new ResponseMessageTransfer_Customer_Service();
                         break;
                 }
 
-                responseMessage.FillEntityWithXml(doc);
+                (responseMessage as ResponseMessageBase).FillEntityWithXml(doc);//如果不是ResponseMessageBase会抛出异常
                 return responseMessage;
             }
             catch (Exception ex)
             {
-                throw new WeixinException("ResponseMessageBase.CreateFromResponseXml<T>过程发生异常！" + ex.Message, ex);
+                throw new MessageHandlerException("ResponseMessageBase.CreateFromResponseXml<T>过程发生异常！" + ex.Message, ex);
             }
         }
     }

@@ -44,10 +44,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
+using System.Xml.Serialization;
 using Senparc.CO2NET.Helpers;
 using Senparc.CO2NET.Utilities;
 using Senparc.NeuChar.Entities;
 using Senparc.NeuChar.MessageHandlers;
+using Senparc.NeuCHar.Entities;
 
 namespace Senparc.NeuChar.Helpers
 {
@@ -115,104 +117,104 @@ namespace Senparc.NeuChar.Helpers
                         //以下为实体类型
                         case "List`1": //List<T>类型，ResponseMessageNews适用
                             {
-                                //var genericArguments = prop.PropertyType.GetGenericArguments();
-                                //var genericArgumentTypeName = genericArguments[0].Name;
-                                //if (genericArgumentTypeName == "Article")
-                                //{
-                                //    //文章下属节点item
-                                //    List<Article> articles = new List<Article>();
-                                //    foreach (var item in root.Element(propName).Elements("item"))
-                                //    {
-                                //        var article = new Article();
-                                //        FillEntityWithXml(article, new XDocument(item));
-                                //        articles.Add(article);
-                                //    }
-                                //    prop.SetValue(entity, articles, null);
-                                //}
-                                //else if (genericArgumentTypeName == "Account")
-                                //{
-                                //    List<CustomerServiceAccount> accounts = new List<CustomerServiceAccount>();
-                                //    foreach (var item in root.Elements(propName))
-                                //    {
-                                //        var account = new CustomerServiceAccount();
-                                //        FillEntityWithXml(account, new XDocument(item));
-                                //        accounts.Add(account);
-                                //    }
-                                //    prop.SetValue(entity, accounts, null);
-                                //}
-                                //else if (genericArgumentTypeName == "PicItem")
-                                //{
-                                //    List<PicItem> picItems = new List<PicItem>();
-                                //    foreach (var item in root.Elements(propName).Elements("item"))
-                                //    {
-                                //        var picItem = new PicItem();
-                                //        var picMd5Sum = item.Element("PicMd5Sum").Value;
-                                //        Md5Sum md5Sum = new Md5Sum() { PicMd5Sum = picMd5Sum };
-                                //        picItem.item = md5Sum;
-                                //        picItems.Add(picItem);
-                                //    }
-                                //    prop.SetValue(entity, picItems, null);
-                                //}
-                                //else if (genericArgumentTypeName == "AroundBeacon")
-                                //{
-                                //    List<AroundBeacon> aroundBeacons = new List<AroundBeacon>();
-                                //    foreach (var item in root.Elements(propName).Elements("AroundBeacon"))
-                                //    {
-                                //        var aroundBeaconItem = new AroundBeacon();
-                                //        FillEntityWithXml(aroundBeaconItem, new XDocument(item));
-                                //        aroundBeacons.Add(aroundBeaconItem);
-                                //    }
-                                //    prop.SetValue(entity, aroundBeacons, null);
-                                //}
-                                //else if (genericArgumentTypeName == "CopyrightCheckResult_ResultList")//RequestMessageEvent_MassSendJobFinish
-                                //{
-                                //    List<CopyrightCheckResult_ResultList> resultList = new List<CopyrightCheckResult_ResultList>();
-                                //    foreach (var item in root.Elements("ResultList").Elements("item"))
-                                //    {
-                                //        CopyrightCheckResult_ResultList resultItem = new CopyrightCheckResult_ResultList();
-                                //        FillEntityWithXml(resultItem.item, new XDocument(item));
-                                //        resultList.Add(resultItem);
-                                //    }
-                                //    prop.SetValue(entity, resultList, null);
-                                //}
+                                var genericArguments = prop.PropertyType.GetGenericArguments();
+                                var genericArgumentTypeName = genericArguments[0].Name;
+                                if (genericArgumentTypeName == "Article")
+                                {
+                                    //文章下属节点item
+                                    List<Article> articles = new List<Article>();
+                                    foreach (var item in root.Element(propName).Elements("item"))
+                                    {
+                                        var article = new Article();
+                                        FillEntityWithXml(article, new XDocument(item));
+                                        articles.Add(article);
+                                    }
+                                    prop.SetValue(entity, articles, null);
+                                }
+                                else if (genericArgumentTypeName == "Account")
+                                {
+                                    List<CustomerServiceAccount> accounts = new List<CustomerServiceAccount>();
+                                    foreach (var item in root.Elements(propName))
+                                    {
+                                        var account = new CustomerServiceAccount();
+                                        FillEntityWithXml(account, new XDocument(item));
+                                        accounts.Add(account);
+                                    }
+                                    prop.SetValue(entity, accounts, null);
+                                }
+                                else if (genericArgumentTypeName == "PicItem")
+                                {
+                                    List<PicItem> picItems = new List<PicItem>();
+                                    foreach (var item in root.Elements(propName).Elements("item"))
+                                    {
+                                        var picItem = new PicItem();
+                                        var picMd5Sum = item.Element("PicMd5Sum").Value;
+                                        Md5Sum md5Sum = new Md5Sum() { PicMd5Sum = picMd5Sum };
+                                        picItem.item = md5Sum;
+                                        picItems.Add(picItem);
+                                    }
+                                    prop.SetValue(entity, picItems, null);
+                                }
+                                else if (genericArgumentTypeName == "AroundBeacon")
+                                {
+                                    List<AroundBeacon> aroundBeacons = new List<AroundBeacon>();
+                                    foreach (var item in root.Elements(propName).Elements("AroundBeacon"))
+                                    {
+                                        var aroundBeaconItem = new AroundBeacon();
+                                        FillEntityWithXml(aroundBeaconItem, new XDocument(item));
+                                        aroundBeacons.Add(aroundBeaconItem);
+                                    }
+                                    prop.SetValue(entity, aroundBeacons, null);
+                                }
+                                else if (genericArgumentTypeName == "CopyrightCheckResult_ResultList")//RequestMessageEvent_MassSendJobFinish
+                                {
+                                    List<CopyrightCheckResult_ResultList> resultList = new List<CopyrightCheckResult_ResultList>();
+                                    foreach (var item in root.Elements("ResultList").Elements("item"))
+                                    {
+                                        CopyrightCheckResult_ResultList resultItem = new CopyrightCheckResult_ResultList();
+                                        FillEntityWithXml(resultItem.item, new XDocument(item));
+                                        resultList.Add(resultItem);
+                                    }
+                                    prop.SetValue(entity, resultList, null);
+                                }
                                 break;
                             }
-                        //case "Music"://ResponseMessageMusic适用
-                        //    FillClassValue<Music>(entity, root, propName, prop);
-                        //    break;
-                        //case "Image"://ResponseMessageImage适用
-                        //    FillClassValue<Image>(entity, root, propName, prop);
-                        //    break;
-                        //case "Voice"://ResponseMessageVoice适用
-                        //    FillClassValue<Voice>(entity, root, propName, prop);
-                        //    break;
-                        //case "Video"://ResponseMessageVideo适用
-                        //    FillClassValue<Video>(entity, root, propName, prop);
-                        //    break;
-                        //case "ScanCodeInfo"://扫码事件中的ScanCodeInfo适用
-                        //    FillClassValue<ScanCodeInfo>(entity, root, propName, prop);
-                        //    break;
-                        //case "SendLocationInfo"://弹出地理位置选择器的事件推送中的SendLocationInfo适用
-                        //    FillClassValue<SendLocationInfo>(entity, root, propName, prop);
-                        //    break;
-                        //case "SendPicsInfo"://系统拍照发图中的SendPicsInfo适用
-                        //    FillClassValue<SendPicsInfo>(entity, root, propName, prop);
-                        //    break;
-                        //case "ChosenBeacon"://摇一摇事件通知
-                        //    FillClassValue<ChosenBeacon>(entity, root, propName, prop);
-                        //    break;
-                        //case "AroundBeacon"://摇一摇事件通知
-                        //    FillClassValue<AroundBeacon>(entity, root, propName, prop);
-                        //    break;
+                        case "Music"://ResponseMessageMusic适用
+                            FillClassValue<Music>(entity, root, propName, prop);
+                            break;
+                        case "Image"://ResponseMessageImage适用
+                            FillClassValue<Image>(entity, root, propName, prop);
+                            break;
+                        case "Voice"://ResponseMessageVoice适用
+                            FillClassValue<Voice>(entity, root, propName, prop);
+                            break;
+                        case "Video"://ResponseMessageVideo适用
+                            FillClassValue<Video>(entity, root, propName, prop);
+                            break;
+                        case "ScanCodeInfo"://扫码事件中的ScanCodeInfo适用
+                            FillClassValue<ScanCodeInfo>(entity, root, propName, prop);
+                            break;
+                        case "SendLocationInfo"://弹出地理位置选择器的事件推送中的SendLocationInfo适用
+                            FillClassValue<SendLocationInfo>(entity, root, propName, prop);
+                            break;
+                        case "SendPicsInfo"://系统拍照发图中的SendPicsInfo适用
+                            FillClassValue<SendPicsInfo>(entity, root, propName, prop);
+                            break;
+                        case "ChosenBeacon"://摇一摇事件通知
+                            FillClassValue<ChosenBeacon>(entity, root, propName, prop);
+                            break;
+                        case "AroundBeacon"://摇一摇事件通知
+                            FillClassValue<AroundBeacon>(entity, root, propName, prop);
+                            break;
 
-                        //#region RequestMessageEvent_MassSendJobFinish
-                        //case "CopyrightCheckResult":
-                        //    FillClassValue<CopyrightCheckResult>(entity, root, propName, prop);
-                        //    break;
-                        //case "CopyrightCheckResult_ResultList_Item":
-                        //    FillClassValue<CopyrightCheckResult_ResultList_Item>(entity, root, "item", prop);
-                        //    break;
-                        //#endregion
+                        #region RequestMessageEvent_MassSendJobFinish
+                        case "CopyrightCheckResult":
+                            FillClassValue<CopyrightCheckResult>(entity, root, propName, prop);
+                            break;
+                        case "CopyrightCheckResult_ResultList_Item":
+                            FillClassValue<CopyrightCheckResult_ResultList_Item>(entity, root, "item", prop);
+                            break;
+                        #endregion
 
                         default:
                             var enumSuccess = false;
@@ -264,14 +266,19 @@ namespace Senparc.NeuChar.Helpers
         public static XDocument ConvertEntityToXml<T>(this T entity) where T : class, new()
         {
             entity = entity ?? new T();
+
+            //XmlSerializer xmldes = new XmlSerializer(typeof(T));
+
+
             var doc = new XDocument();
+
             doc.Add(new XElement("xml"));
             var root = doc.Root;
 
             /* 注意！
-             * 经过测试，微信对字段排序有严格要求，这里对排序进行强制约束
+             * 经过测试，微信对字段排序有严格要求，这里对排序进行强制约束    —— 目前已经不敏感 20180904
             */
-            var propNameOrder = new List<string>() { "ToUserName", "FromUserName", "CreateTime", "MsgType" };
+            //var propNameOrder = new List<string>() { "ToUserName", "FromUserName", "CreateTime", "MsgType" };
             //不同返回类型需要对应不同特殊格式的排序
             //if (entity is ResponseMessageNews)
             //{
@@ -298,41 +305,41 @@ namespace Senparc.NeuChar.Helpers
             //    propNameOrder.AddRange(new[] { "Video",/*以下是Video属性*/ "MediaId ", "Title", "Description" });
             //}
             //else
-            {
-                //如Text类型
-                propNameOrder.AddRange(new[] { "Content", "FuncFlag" });
-            }
+            //{
+            //    //如Text类型
+            //    propNameOrder.AddRange(new[] { "Content", "FuncFlag" });
+            //}
 
-            Func<string, int> orderByPropName = propNameOrder.IndexOf;
+            //Func<string, int> orderByPropName = propNameOrder.IndexOf;
 
-            var props = entity.GetType().GetProperties().OrderBy(p => orderByPropName(p.Name)).ToList();
+            var props = entity.GetType().GetProperties();//.OrderBy(p => orderByPropName(p.Name)).ToList();
             foreach (var prop in props)
             {
                 var propName = prop.Name;
-                //if (propName == "Articles")
-                //{
-                //    //文章列表
-                //    var atriclesElement = new XElement("Articles");
-                //    var articales = prop.GetValue(entity, null) as List<Article>;
-                //    foreach (var articale in articales)
-                //    {
-                //        var subNodes = ConvertEntityToXml(articale).Root.Elements();
-                //        atriclesElement.Add(new XElement("item", subNodes));
-                //    }
-                //    root.Add(atriclesElement);
-                //}
-                //else if (propName == "TransInfo")
-                //{
-                //    var transInfoElement = new XElement("TransInfo");
-                //    var transInfo = prop.GetValue(entity, null) as List<CustomerServiceAccount>;
-                //    foreach (var account in transInfo)
-                //    {
-                //        var trans = ConvertEntityToXml(account).Root.Elements();
-                //        transInfoElement.Add(trans);
-                //    }
+                if (propName == "Articles")
+                {
+                    //文章列表
+                    var atriclesElement = new XElement("Articles");
+                    var articales = prop.GetValue(entity, null) as List<Article>;
+                    foreach (var articale in articales)
+                    {
+                        var subNodes = ConvertEntityToXml(articale).Root.Elements();
+                        atriclesElement.Add(new XElement("item", subNodes));
+                    }
+                    root.Add(atriclesElement);
+                }
+                else if (propName == "TransInfo")
+                {
+                    var transInfoElement = new XElement("TransInfo");
+                    var transInfo = prop.GetValue(entity, null) as List<CustomerServiceAccount>;
+                    foreach (var account in transInfo)
+                    {
+                        var trans = ConvertEntityToXml(account).Root.Elements();
+                        transInfoElement.Add(trans);
+                    }
 
-                //    root.Add(transInfoElement);
-                //}
+                    root.Add(transInfoElement);
+                }
                 else if (propName == "Music" || propName == "Image" || propName == "Video" || propName == "Voice")
                 {
                     //音乐、图片、视频、语音格式
@@ -344,33 +351,30 @@ namespace Senparc.NeuChar.Helpers
                 }
                 else if (propName == "PicList")
                 {
-                    //var picListElement = new XElement("PicList");
-                    //var picItems = prop.GetValue(entity, null) as List<PicItem>;
-                    //foreach (var picItem in picItems)
-                    //{
-                    //    var item = ConvertEntityToXml(picItem).Root.Elements();
-                    //    picListElement.Add(item);
-                    //}
-                    //root.Add(picListElement);
+                    var picListElement = new XElement("PicList");
+                    var picItems = prop.GetValue(entity, null) as List<PicItem>;
+                    foreach (var picItem in picItems)
+                    {
+                        var item = ConvertEntityToXml(picItem).Root.Elements();
+                        picListElement.Add(item);
+                    }
+                    root.Add(picListElement);
                 }
-                //else if (propName == "KfAccount")
-                //{
-                //    //TODO:可以交给string处理
-                //    root.Add(new XElement(propName, prop.GetValue(entity, null).ToString().ToLower()));
-                //}
+                else if (propName == "KfAccount")
+                {
+                    //TODO:可以交给string处理
+                    root.Add(new XElement(propName, prop.GetValue(entity, null).ToString().ToLower()));
+                }
                 else
                 {
                     //其他非特殊类型
                     switch (prop.PropertyType.Name)
                     {
                         case "String":
-                            root.Add(new XElement(propName,
-                                             new XCData(prop.GetValue(entity, null) as string ?? "")));
+                            root.Add(new XElement(propName, new XCData(prop.GetValue(entity, null) as string ?? "")));
                             break;
                         case "DateTime":
-                            root.Add(new XElement(propName,
-                                                  DateTimeHelper.GetWeixinDateTime(
-                                                      (DateTime)prop.GetValue(entity, null))));
+                            root.Add(new XElement(propName, DateTimeHelper.GetUnixDateTime((DateTime)prop.GetValue(entity, null))));
                             break;
                         case "Boolean":
                             if (propName == "FuncFlag")
@@ -433,7 +437,7 @@ namespace Senparc.NeuChar.Helpers
         /// <param name="requestMessage">IRequestMessageBase接口下的接收信息类型</param>
         /// <param name="enlighten">MessageEntityEnlighten，当 T 为接口时必须提供</param>
         /// <returns></returns>
-        public static T CreateResponseMessage<T>(this IRequestMessageBase requestMessage, MessageEntityEnlighten enlighten = null) where T : ResponseMessageBase
+        public static T CreateResponseMessage<T>(this IRequestMessageBase requestMessage, MessageEntityEnlighten enlighten = null) where T : IResponseMessageBase
         {
             return ResponseMessageBase.CreateFromRequestMessage<T>(requestMessage, enlighten);
         }
@@ -447,7 +451,7 @@ namespace Senparc.NeuChar.Helpers
         /// <param name="requestMessage">IRequestMessageBase接口下的接收信息类型</param>
         /// <returns></returns>
         public static T CreateResponseMessage<T>(this MessageEntityEnlighten enlighten, IRequestMessageBase requestMessage)
-            where T : ResponseMessageBase
+            where T : IResponseMessageBase
         {
             return ResponseMessageBase.CreateFromRequestMessage<T>(requestMessage, enlighten);
         }
@@ -457,9 +461,9 @@ namespace Senparc.NeuChar.Helpers
         /// </summary>
         /// <param name="xml">返回给服务器的Response Xml</param>
         /// <returns></returns>
-        public static IResponseMessageBase CreateResponseMessage(this string xml)
+        public static IResponseMessageBase CreateResponseMessage(this string xml, MessageEntityEnlighten enlighten)
         {
-            return ResponseMessageBase.CreateFromResponseXml(xml);
+            return ResponseMessageBase.CreateFromResponseXml(xml, enlighten);
         }
 
         ///// <summary>

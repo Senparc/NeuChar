@@ -12,4 +12,9 @@ namespace Senparc.NeuChar.Entities
     {
 
     }
+
+    public class CustomerServiceAccount
+    {
+        public string KfAccount { get; set; }
+    }
 }

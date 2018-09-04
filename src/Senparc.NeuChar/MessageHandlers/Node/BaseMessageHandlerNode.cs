@@ -2,6 +2,7 @@
 using Senparc.CO2NET.Trace;
 using Senparc.NeuChar;
 using Senparc.NeuChar.Entities;
+using Senparc.NeuChar.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;

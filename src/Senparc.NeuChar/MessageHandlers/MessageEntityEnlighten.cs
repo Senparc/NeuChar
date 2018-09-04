@@ -16,7 +16,15 @@ namespace Senparc.NeuChar.MessageHandlers
         #region 请求消息
 
         public Func<IRequestMessageText> NewRequestMessageText { get; } = () => null;
+        public Func<IRequestMessageLocation> NewRequestMessageLocation { get; } = () => null;
         public Func<IRequestMessageImage> NewRequestMessageImage { get; } = () => null;
+        public Func<IRequestMessageVoice> NewRequestMessageVoice { get; } = () => null;
+        public Func<IRequestMessageVideo> NewRequestMessageVideo { get; } = () => null;
+        public Func<IRequestMessageLink> NewRequestMessageLink { get; } = () => null;
+        public Func<IRequestMessageShortVideo> NewRequestMessageShortVideo { get; } = () => null;
+        public Func<IRequestMessageEvent> NewRequestMessageEvent { get; } = () => null;
+        public Func<IRequestMessageFile> NewRequestMessageFile { get; } = () => null;
+
 
         #endregion
 

@@ -55,6 +55,7 @@ using System.Xml.Linq;
 using Senparc.CO2NET.Utilities;
 using Senparc.NeuChar.Context;
 using Senparc.NeuChar.Entities;
+using Senparc.NeuChar.Helpers;
 
 namespace Senparc.NeuChar.MessageHandlers
 {
@@ -284,7 +285,7 @@ namespace Senparc.NeuChar.MessageHandlers
                 return null;
             }
 
-            return this.CreateResponseMessage<TR>(RequestMessage,this.Enlighten);
+            return RequestMessage.CreateResponseMessage<TR>(this.Enlighten);
         }
 
 
