@@ -52,6 +52,8 @@ namespace Senparc.NeuChar.Entities
         RequestMsgType MsgType { get; set; }
         //string Content { get; set; }
         //bool FuncFlag { get; set; }
+
+
     }
 
     /// <summary>
@@ -59,7 +61,7 @@ namespace Senparc.NeuChar.Entities
     /// </summary>
     public class ResponseMessageBase : MessageBase, IResponseMessageBase
     {
-        public RequestMsgType MsgType { get; set; }
+        public virtual RequestMsgType MsgType { get; set; }
 
         public ResponseMessageBase() { }
 
