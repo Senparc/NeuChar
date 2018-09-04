@@ -39,7 +39,7 @@ namespace Senparc.NeuChar.Entities
     /// </summary>
     public class SuccessResponseMessage : SuccessResponseMessageBase, IResponseMessageBase
     {
-        public ResponseMsgType MsgType
+        public override ResponseMsgType MsgType
         {
             get { return ResponseMsgType.SuccessResponse; }
         }
