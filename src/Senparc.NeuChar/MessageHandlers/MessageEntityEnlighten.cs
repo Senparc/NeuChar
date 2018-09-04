@@ -15,28 +15,33 @@ namespace Senparc.NeuChar.MessageHandlers
 
         #region 请求消息
 
-        public Func<IRequestMessageText> NewRequestMessageText { get; } = () => null;
-        public Func<IRequestMessageLocation> NewRequestMessageLocation { get; } = () => null;
-        public Func<IRequestMessageImage> NewRequestMessageImage { get; } = () => null;
-        public Func<IRequestMessageVoice> NewRequestMessageVoice { get; } = () => null;
-        public Func<IRequestMessageVideo> NewRequestMessageVideo { get; } = () => null;
-        public Func<IRequestMessageLink> NewRequestMessageLink { get; } = () => null;
-        public Func<IRequestMessageShortVideo> NewRequestMessageShortVideo { get; } = () => null;
-        public Func<IRequestMessageEvent> NewRequestMessageEvent { get; } = () => null;
-        public Func<IRequestMessageFile> NewRequestMessageFile { get; } = () => null;
+        public Func<IRequestMessageText> NewRequestMessageText { get; set; } = () => null;
+        public Func<IRequestMessageLocation> NewRequestMessageLocation { get; set; } = () => null;
+        public Func<IRequestMessageImage> NewRequestMessageImage { get; set; } = () => null;
+        public Func<IRequestMessageVoice> NewRequestMessageVoice { get; set; } = () => null;
+        public Func<IRequestMessageVideo> NewRequestMessageVideo { get; set; } = () => null;
+        public Func<IRequestMessageLink> NewRequestMessageLink { get; set; } = () => null;
+        public Func<IRequestMessageShortVideo> NewRequestMessageShortVideo { get; set; } = () => null;
+        public Func<IRequestMessageEvent> NewRequestMessageEvent { get; set; } = () => null;
+        public Func<IRequestMessageFile> NewRequestMessageFile { get; set; } = () => null;
 
 
         #endregion
 
         #region 响应消息
 
-        public Func<IResponseMessageText> NewResponseMessageText { get; } = () => null;
-        public Func<IResponseMessageNews> NewResponseMessageNews { get; } = () => null;
-        public Func<IResponseMessageMusic> NewResponseMessageMusic { get; } = () => null;
-        public Func<IResponseMessageImage> NewResponseMessageImage { get; } = () => null;
-        public Func<IResponseMessageVoice> NewResponseMessageVoice { get; } = () => null;
-        public Func<IResponseMessageVideo> NewResponseMessageVideo { get; } = () => null;
-        public Func<IResponseMessageTransfer_Customer_Service> NewResponseMessageTransfer_Customer_Service { get; } = () => null;
+        public Func<IResponseMessageText> NewResponseMessageText { get; set; } = () => null;
+        public Func<IResponseMessageNews> NewResponseMessageNews { get; set; } = () => null;
+        public Func<IResponseMessageMusic> NewResponseMessageMusic { get; set; } = () => null;
+        public Func<IResponseMessageImage> NewResponseMessageImage { get; set; } = () => null;
+        public Func<IResponseMessageVoice> NewResponseMessageVoice { get; set; } = () => null;
+        public Func<IResponseMessageVideo> NewResponseMessageVideo { get; set; } = () => null;
+        public Func<IResponseMessageTransfer_Customer_Service> NewResponseMessageTransfer_Customer_Service { get; set; } = () => null;
+
+        /// <summary>
+        /// 默认为 SuccessResponseMessage 类型，返回字符串 "success"
+        /// </summary>
+        public Func<SuccessResponseMessageBase> NewSuccessResponseMessage { get; set; } = () => new SuccessResponseMessage();
 
         #endregion
 

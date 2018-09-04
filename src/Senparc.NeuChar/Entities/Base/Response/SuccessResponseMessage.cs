@@ -21,48 +21,27 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 /*----------------------------------------------------------------
     Copyright (C) 2018 Senparc
     
-    文件名：RequestMessageBase.cs
-    文件功能描述：接收请求消息基类
+    文件名：SuccessResponseMessage.cs
+    文件功能描述：只返回"success"等指定字符串的响应信息
     
     
-    创建标识：Senparc - 20150211
-    
-    修改标识：Senparc - 20150303
-    修改描述：整理接口
+    创建标识：Senparc - 20170106
+
+    修改标识：Senparc - 20180901
+    修改描述：支持 NeuChar
+
 ----------------------------------------------------------------*/
-
-
 
 namespace Senparc.NeuChar.Entities
 {
     /// <summary>
-    /// 请求消息基础接口
+    /// 只返回"success"等指定字符串的响应信息
     /// </summary>
-    public interface IRequestMessageBase : IMessageBase
+    public class SuccessResponseMessage : SuccessResponseMessageBase, IResponseMessageBase
     {
-        //删除MsgType因为企业号和公众号的MsgType为两个独立的枚举类型
-        //RequestMessageType MsgType { get; }
-        long MsgId { get; set; }
-
-        RequestMsgType MsgType { get; set; }
-    }
-
-    /// <summary>
-    /// 接收到请求的消息基类
-    /// </summary>
-    public abstract class RequestMessageBase : MessageBase, IRequestMessageBase
-    {
-        public RequestMessageBase()
+        public ResponseMsgType MsgType
         {
-
+            get { return ResponseMsgType.SuccessResponse; }
         }
-
-        //public virtual RequestMessageType MsgType
-        //{
-        //    get { return RequestMessageType.Text; }
-        //}
-
-        public long MsgId { get; set; }
-        public virtual RequestMsgType MsgType { get; set; }
     }
 }

@@ -70,7 +70,7 @@ namespace Senparc.NeuChar
         Event = 7, //事件推送
         File = 8,//文件类型
 
-        //NeuChar = 99//NeuChar请求
+        NeuChar = 999//NeuChar请求
     }
 
     /// <summary>
