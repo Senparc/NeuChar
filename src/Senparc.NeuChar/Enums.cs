@@ -70,6 +70,7 @@ namespace Senparc.NeuChar
         Event = 7, //事件推送
         File = 8,//文件类型
 
+
         NeuChar = 999//NeuChar请求
     }
 
@@ -93,8 +94,12 @@ namespace Senparc.NeuChar
         [Description("视频")]
         Video = 5,
         [Description("多客服")]
-        Transfer_Customer_Service,
+        Transfer_Customer_Service=6,
         //transfer_customer_service
+        [Description("素材多图文")]
+        MpNews = 7,//素材多图文
+
+
 
         //以下为延伸类型，微信官方并未提供具体的回复类型
         [Description("多图文")]

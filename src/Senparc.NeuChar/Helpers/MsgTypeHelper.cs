@@ -44,17 +44,61 @@ namespace Senparc.NeuChar.Helpers
         /// 根据xml信息，返回RequestMsgType
         /// </summary>
         /// <returns></returns>
-        public static RequestMsgType GetRequestMsgType(XDocument doc)
+        public static string GetRequestMsgTypeString(XDocument requestMessageDocument)
         {
-            return GetRequestMsgType(doc.Root.Element("MsgType").Value);
+            if (requestMessageDocument == null || requestMessageDocument.Root == null || requestMessageDocument.Root.Element("MsgType") == null)
+            {
+                return "Unknow";
+            }
+
+            return requestMessageDocument.Root.Element("MsgType").Value;
         }
+
+        /// <summary>
+        /// 根据xml信息，返回RequestMsgType
+        /// </summary>
+        /// <returns></returns>
+        public static RequestMsgType GetRequestMsgType(XDocument requestMessageDocument)
+        {
+            return GetRequestMsgType(GetRequestMsgTypeString(requestMessageDocument));
+        }
+
         /// <summary>
         /// 根据xml信息，返回RequestMsgType
         /// </summary>
         /// <returns></returns>
         public static RequestMsgType GetRequestMsgType(string str)
         {
-            return (RequestMsgType)Enum.Parse(typeof(RequestMsgType), str, true);
+            try
+            {
+                return (RequestMsgType)Enum.Parse(typeof(RequestMsgType), str, true);
+            }
+            catch
+            {
+                return RequestMsgType.Unknown;
+            }
+        }
+
+
+        #endregion
+
+
+        #region ResponseMsgType
+        /// <summary>
+        /// 根据xml信息，返回ResponseMsgType
+        /// </summary>
+        /// <returns></returns>
+        public static ResponseMsgType GetResponseMsgType(XDocument doc)
+        {
+            return GetResponseMsgType(doc.Root.Element("MsgType").Value);
+        }
+        /// <summary>
+        /// 根据xml信息，返回ResponseMsgType
+        /// </summary>
+        /// <returns></returns>
+        public static ResponseMsgType GetResponseMsgType(string str)
+        {
+            return (ResponseMsgType)Enum.Parse(typeof(ResponseMsgType), str, true);
         }
 
         #endregion
