@@ -21,38 +21,42 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 /*----------------------------------------------------------------
     Copyright (C) 2018 Senparc
     
-    文件名：Article.cs
-    文件功能描述：响应回复消息 图文类
+    文件名：MsgTypeHelper.cs
+    文件功能描述：根据xml信息返回MsgType
     
     
-    创建标识：Senparc - 20150211
-    
-    修改标识：Senparc - 20150303
-    修改描述：整理接口
+    创建标识：Senparc - 20170106
 ----------------------------------------------------------------*/
 
-namespace Senparc.NeuCHar.Entities
+using Senparc.NeuChar;
+using System;
+using System.Xml.Linq;
+
+namespace Senparc.NeuChar.Helpers
 {
     /// <summary>
-    /// 文章
+    /// 消息类型帮助类
     /// </summary>
-    public class Article
+    public static class MsgTypeHelper
     {
+        #region RequestMsgType
         /// <summary>
-        /// 标题
+        /// 根据xml信息，返回RequestMsgType
         /// </summary>
-        public string Title { get; set; }
+        /// <returns></returns>
+        public static RequestMsgType GetRequestMsgType(XDocument doc)
+        {
+            return GetRequestMsgType(doc.Root.Element("MsgType").Value);
+        }
         /// <summary>
-        /// 描述
+        /// 根据xml信息，返回RequestMsgType
         /// </summary>
-        public string Description { get; set; }
-        /// <summary>
-        /// 点击后跳转的链接
-        /// </summary>
-        public string Url { get; set; }
-        /// <summary>
-        /// 图文消息的图片链接，支持JPG、PNG格式，较好的效果为大图640*320，小图80*80。如不填，在客户端不显示图片
-        /// </summary>
-        public string PicUrl { get; set; }
+        /// <returns></returns>
+        public static RequestMsgType GetRequestMsgType(string str)
+        {
+            return (RequestMsgType)Enum.Parse(typeof(RequestMsgType), str, true);
+        }
+
+        #endregion
     }
 }
