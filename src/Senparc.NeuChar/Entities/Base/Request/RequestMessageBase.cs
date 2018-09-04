@@ -45,6 +45,8 @@ namespace Senparc.NeuChar.Entities
         long MsgId { get; set; }
 
         RequestMsgType MsgType { get; set; }
+        string Encrypt { get; set; }
+
     }
 
     /// <summary>
@@ -64,5 +66,7 @@ namespace Senparc.NeuChar.Entities
 
         public long MsgId { get; set; }
         public virtual RequestMsgType MsgType { get; set; }
+        public string Encrypt { get; set; }
+
     }
 }
