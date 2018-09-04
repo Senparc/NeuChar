@@ -21,52 +21,34 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 /*----------------------------------------------------------------
     Copyright (C) 2018 Senparc
     
-    文件名：RequestMessageBase.cs
-    文件功能描述：接收请求消息基类
+    文件名：RequestMessageUnknownType.cs
+    文件功能描述：未知请求类型
     
     
-    创建标识：Senparc - 20150211
+    创建标识：Senparc - 20171027
     
-    修改标识：Senparc - 20150303
-    修改描述：整理接口
 ----------------------------------------------------------------*/
 
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Xml.Linq;
 
 namespace Senparc.NeuChar.Entities
 {
-    /// <summary>
-    /// 请求消息基础接口
-    /// </summary>
-    public interface IRequestMessageBase : IMessageBase
+    public class RequestMessageUnknownType : RequestMessageBase, IRequestMessageBase
     {
-        //删除MsgType因为企业号和公众号的MsgType为两个独立的枚举类型
-        //RequestMessageType MsgType { get; }
-        long MsgId { get; set; }
-
-        RequestMsgType MsgType { get; set; }
-        string Encrypt { get; set; }
-
-    }
-
-    /// <summary>
-    /// 接收到请求的消息基类
-    /// </summary>
-    public class RequestMessageBase : MessageBase, IRequestMessageBase
-    {
-        public RequestMessageBase()
+        public override RequestMsgType MsgType
         {
-
+            get { return RequestMsgType.Unknown; }
         }
 
-        //public virtual RequestMessageType MsgType
-        //{
-        //    get { return RequestMessageType.Text; }
-        //}
-
-        public long MsgId { get; set; }
-        public virtual RequestMsgType MsgType { get; set; }
-        public string Encrypt { get; set; }
+        /// <summary>
+        /// 请求消息的XML对象（明文）
+        /// </summary>
+        public XDocument RequestDocument { get; set; }
 
     }
 }
