@@ -49,7 +49,6 @@ using Senparc.CO2NET.Helpers;
 using Senparc.CO2NET.Utilities;
 using Senparc.NeuChar.Entities;
 using Senparc.NeuChar.MessageHandlers;
-using Senparc.NeuCHar.Entities;
 
 namespace Senparc.NeuChar.Helpers
 {
@@ -177,6 +176,18 @@ namespace Senparc.NeuChar.Helpers
                                     }
                                     prop.SetValue(entity, resultList, null);
                                 }
+                                //企业微信
+                                else if (genericArguments[0].Name == "MpNewsArticle")
+                                {
+                                    List<MpNewsArticle> mpNewsArticles = new List<MpNewsArticle>();
+                                    foreach (var item in root.Elements(propName))
+                                    {
+                                        var mpNewsArticle = new MpNewsArticle();
+                                        FillEntityWithXml(mpNewsArticle, new XDocument(item));
+                                        mpNewsArticles.Add(mpNewsArticle);
+                                    }
+                                    prop.SetValue(entity, mpNewsArticles, null);
+                                }
                                 break;
                             }
                         case "Music"://ResponseMessageMusic适用
@@ -214,6 +225,39 @@ namespace Senparc.NeuChar.Helpers
                         case "CopyrightCheckResult_ResultList_Item":
                             FillClassValue<CopyrightCheckResult_ResultList_Item>(entity, root, "item", prop);
                             break;
+                        #region 企业号
+/* 暂时放在Work.dll中
+                        case "AgentType":
+                            {
+                                AgentType tp;
+#if NET35
+                                try
+                                {
+                                    tp = (AgentType)Enum.Parse(typeof(AgentType), root.Element(propName).Value, true);
+                                    prop.SetValue(entity, tp, null);
+                                }
+                                catch
+                                {
+
+                                }
+#else
+                                if (Enum.TryParse(root.Element(propName).Value, out tp))
+                                {
+                                    prop.SetValue(entity, tp, null);
+                                }
+#endif
+                                break;
+                            }
+                        case "Receiver":
+                            {
+                                Receiver receiver = new Receiver();
+                                FillEntityWithXml(receiver, new XDocument(root.Element(propName)));
+                                prop.SetValue(entity, receiver, null);
+                                break;
+                            }
+                            */
+                        #endregion
+
                         #endregion
 
                         default:

@@ -25,6 +25,7 @@ namespace Senparc.NeuChar.MessageHandlers
         public Func<IRequestMessageEvent> NewRequestMessageEvent { get; set; } = () => null;
         public Func<IRequestMessageFile> NewRequestMessageFile { get; set; } = () => null;
 
+        
 
         #endregion
 
@@ -37,6 +38,13 @@ namespace Senparc.NeuChar.MessageHandlers
         public Func<IResponseMessageVoice> NewResponseMessageVoice { get; set; } = () => null;
         public Func<IResponseMessageVideo> NewResponseMessageVideo { get; set; } = () => null;
         public Func<IResponseMessageTransfer_Customer_Service> NewResponseMessageTransfer_Customer_Service { get; set; } = () => null;
+
+
+        /// <summary>
+        /// 素材多图文
+        /// </summary>
+        public Func<IResponseMessageMpNews> NewResponseMessageMpNews { get; set; } = () => null;
+
 
         /// <summary>
         /// 默认为 SuccessResponseMessage 类型，返回字符串 "success"
