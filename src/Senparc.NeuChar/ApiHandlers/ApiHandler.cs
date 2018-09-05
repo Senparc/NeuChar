@@ -1,4 +1,6 @@
-﻿using Senparc.NeuChar.Entities;
+﻿using Senparc.CO2NET.Trace;
+using Senparc.NeuChar.Entities;
+using Senparc.NeuChar.Exceptions;
 using Senparc.NeuChar.Helpers;
 using Senparc.NeuChar.MessageHandlers;
 using System;
@@ -39,47 +41,56 @@ namespace Senparc.NeuChar.ApiHandlers
             }
 
             ApiResult apiResult = null;
-
-            switch (response.Type)
+            try
             {
-                case ResponseMsgType.Unknown:
-                    break;
-                case ResponseMsgType.Text:
-                    var cotnent = NeuralNodeHelper.FillTextMessage(response.Content);
-                    apiResult = ApiEnlighten.SendText(accessTokenOrAppId, openId, response.Content);
-                    break;
-                case ResponseMsgType.News:
-                    break;
-                case ResponseMsgType.Music:
-                    break;
-                case ResponseMsgType.Image:
-                    var mediaId = NeuralNodeHelper.GetImageMessageMediaId(requestMessage, response.Content);
-                    if (true)
-                    {
-                        //TODO:其他mediaId的情况
-                    }
-                    apiResult = ApiEnlighten.SendImage(accessTokenOrAppId, openId, mediaId);
-                    break;
-                case ResponseMsgType.Voice:
-                    break;
-                case ResponseMsgType.Video:
-                    break;
-                case ResponseMsgType.Transfer_Customer_Service:
-                    break;
-                case ResponseMsgType.MpNews:
-                    break;
-                case ResponseMsgType.MultipleNews:
-                    break;
-                case ResponseMsgType.LocationMessage:
-                    break;
-                case ResponseMsgType.NoResponse:
-                    break;
-                case ResponseMsgType.SuccessResponse:
-                    break;
-                default:
-                    apiResult = new ApiResult(-1, "未找到支持的响应消息类型", null);
-                    break;
+                switch (response.Type)
+                {
+                    case ResponseMsgType.Unknown:
+                        break;
+                    case ResponseMsgType.Text:
+                        var cotnent = NeuralNodeHelper.FillTextMessage(response.Content);
+                        apiResult = ApiEnlighten.SendText(accessTokenOrAppId, openId, cotnent);
+                        break;
+                    case ResponseMsgType.News:
+                        break;
+                    case ResponseMsgType.Music:
+                        break;
+                    case ResponseMsgType.Image:
+                        var mediaId = NeuralNodeHelper.GetImageMessageMediaId(requestMessage, response.Content);
+                        SenparcTrace.SendCustomLog("ExecuteApi-Image", $"mediaId:{mediaId}");
+                        if (true)
+                        {
+                            //TODO:其他mediaId的情况
+                        }
+                        apiResult = ApiEnlighten.SendImage(accessTokenOrAppId, openId, mediaId);
+                        break;
+                    case ResponseMsgType.Voice:
+                        break;
+                    case ResponseMsgType.Video:
+                        break;
+                    case ResponseMsgType.Transfer_Customer_Service:
+                        break;
+                    case ResponseMsgType.MpNews:
+                        break;
+                    case ResponseMsgType.MultipleNews:
+                        break;
+                    case ResponseMsgType.LocationMessage:
+                        break;
+                    case ResponseMsgType.NoResponse:
+                        break;
+                    case ResponseMsgType.SuccessResponse:
+                        break;
+                    default:
+                        apiResult = new ApiResult(-1, "未找到支持的响应消息类型", null);
+                        break;
+                }
             }
+            catch (Exception ex)
+            {
+                new MessageHandlerException("NeuChar API调用过程发生错误:" + ex.Message, ex);
+                return new ApiResult(-1, "API调用过程发生错误！",null);
+            }
+           
 
             return apiResult;
         }
