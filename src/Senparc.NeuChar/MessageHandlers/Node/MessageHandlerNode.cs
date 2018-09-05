@@ -16,7 +16,7 @@ namespace Senparc.NeuChar.MessageHandlers
     /// <summary>
     /// MessageHandler 的神经节点
     /// </summary>
-    public abstract class BaseMessageHandlerNode : BaseNeuralNode
+    public class MessageHandlerNode : BaseNeuralNode
     {
         public override string Version { get; set; }
 
@@ -26,7 +26,7 @@ namespace Senparc.NeuChar.MessageHandlers
         /// </summary>
         new public MessageReply Config { get; set; }
 
-        public BaseMessageHandlerNode()
+        public MessageHandlerNode()
         {
             Config = new MessageReply();
         }
