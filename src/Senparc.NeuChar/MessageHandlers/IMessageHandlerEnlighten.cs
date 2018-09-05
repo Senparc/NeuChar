@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Senparc.NeuChar.ApiHandlers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,7 +11,15 @@ namespace Senparc.NeuChar.MessageHandlers
     /// </summary>
     public interface IMessageHandlerEnlighten
     {
+
+        /// <summary>
+        /// 请求和响应消息有差别化的定义
+        /// </summary>
         MessageEntityEnlighten MessageEntityEnlighten { get; }
 
+        /// <summary>
+        /// 请求和响应消息有差别化的定义
+        /// </summary>
+        ApiEnlighten ApiEnlighten { get; }
     }
 }

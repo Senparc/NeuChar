@@ -226,36 +226,36 @@ namespace Senparc.NeuChar.Helpers
                             FillClassValue<CopyrightCheckResult_ResultList_Item>(entity, root, "item", prop);
                             break;
                         #region 企业号
-/* 暂时放在Work.dll中
-                        case "AgentType":
-                            {
-                                AgentType tp;
-#if NET35
-                                try
-                                {
-                                    tp = (AgentType)Enum.Parse(typeof(AgentType), root.Element(propName).Value, true);
-                                    prop.SetValue(entity, tp, null);
-                                }
-                                catch
-                                {
+                        /* 暂时放在Work.dll中
+                                                case "AgentType":
+                                                    {
+                                                        AgentType tp;
+                        #if NET35
+                                                        try
+                                                        {
+                                                            tp = (AgentType)Enum.Parse(typeof(AgentType), root.Element(propName).Value, true);
+                                                            prop.SetValue(entity, tp, null);
+                                                        }
+                                                        catch
+                                                        {
 
-                                }
-#else
-                                if (Enum.TryParse(root.Element(propName).Value, out tp))
-                                {
-                                    prop.SetValue(entity, tp, null);
-                                }
-#endif
-                                break;
-                            }
-                        case "Receiver":
-                            {
-                                Receiver receiver = new Receiver();
-                                FillEntityWithXml(receiver, new XDocument(root.Element(propName)));
-                                prop.SetValue(entity, receiver, null);
-                                break;
-                            }
-                            */
+                                                        }
+                        #else
+                                                        if (Enum.TryParse(root.Element(propName).Value, out tp))
+                                                        {
+                                                            prop.SetValue(entity, tp, null);
+                                                        }
+                        #endif
+                                                        break;
+                                                    }
+                                                case "Receiver":
+                                                    {
+                                                        Receiver receiver = new Receiver();
+                                                        FillEntityWithXml(receiver, new XDocument(root.Element(propName)));
+                                                        prop.SetValue(entity, receiver, null);
+                                                        break;
+                                                    }
+                                                    */
                         #endregion
 
                         #endregion
@@ -481,11 +481,24 @@ namespace Senparc.NeuChar.Helpers
         /// <param name="requestMessage">IRequestMessageBase接口下的接收信息类型</param>
         /// <param name="enlighten">MessageEntityEnlighten，当 T 为接口时必须提供</param>
         /// <returns></returns>
-        public static T CreateResponseMessage<T>(this IRequestMessageBase requestMessage, MessageEntityEnlighten enlighten = null) where T : IResponseMessageBase
+        public static T CreateResponseMessage<T>(this IRequestMessageBase requestMessage, MessageEntityEnlighten enlighten)
+            where T : IResponseMessageBase
         {
             return ResponseMessageBase.CreateFromRequestMessage<T>(requestMessage, enlighten);
         }
 
+        /// <summary>
+        /// ResponseMessageBase.CreateFromRequestMessage&lt;T&gt;(requestMessage)的扩展方法
+        /// </summary>
+        /// <typeparam name="T">需要生成的ResponseMessage类型</typeparam>
+        /// <param name="requestMessage">IRequestMessageBase接口下的接收信息类型</param>
+        /// <param name="enlighten">MessageEntityEnlighten，当 T 为接口时必须提供</param>
+        /// <returns></returns>
+        public static T CreateResponseMessage<T>(this IRequestMessageBase requestMessage)
+            where T :class, IResponseMessageBase //只有class才可以enlighten = null
+        {
+            return ResponseMessageBase.CreateFromRequestMessage<T>(requestMessage);
+        }
 
         /// <summary>
         /// ResponseMessageBase.CreateFromRequestMessage&lt;T&gt;(requestMessage)的扩展方法

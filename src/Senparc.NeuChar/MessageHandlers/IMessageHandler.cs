@@ -35,6 +35,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
  * V4.0 添加异步方法
  */
 
+using Senparc.NeuChar.ApiHandlers;
 using Senparc.NeuChar.Entities;
 using System.Threading.Tasks;
 

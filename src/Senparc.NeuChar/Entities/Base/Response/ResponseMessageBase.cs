@@ -139,6 +139,11 @@ namespace Senparc.NeuChar.Entities
                 if (tType.IsInterface)
                 {
                     //是接口，需要使用 Enlighten
+                    if (enlighten == null)
+                    {
+                        throw new MessageHandlerException("MessageEntityEnlighten 不能为 null");
+                    }
+
                     var responseName = tType.Name.Replace("IResponseMessage", "").Replace("ResponseMessage", ""); //请求名称
                     ResponseMsgType msgType = (ResponseMsgType)Enum.Parse(typeof(ResponseMsgType), responseName);
                     responseMessage = (T)CreateFromRequestMessage(requestMessage, msgType, enlighten);

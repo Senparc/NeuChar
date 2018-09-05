@@ -36,7 +36,7 @@ namespace Senparc.NeuChar.MessageHandlers
         /// </summary>
         /// <param name="requestMessage"></param>
         /// <returns></returns>
-        public IResponseMessageBase Execute(IRequestMessageBase requestMessage, ApiEnlighten apiEnlighten,string accessTokenOrApi)
+        public IResponseMessageBase Execute(IRequestMessageBase requestMessage, IMessageHandlerEnlighten messageHandler, string accessTokenOrApi)
         {
             IResponseMessageBase responseMessage = null;
 
@@ -53,8 +53,8 @@ namespace Senparc.NeuChar.MessageHandlers
                             {
                                 if (keyword.Equals(textRequestMessage.Content, StringComparison.OrdinalIgnoreCase))//TODO:加入大小写敏感设计
                                 {
-                                    responseMessage = GetResponseMessage(requestMessage, messagePair.Response);
-                                    ExecuteApi(messagePair, apiEnlighten, accessTokenOrApi, requestMessage.ToUserName);
+                                    responseMessage = GetResponseMessage(requestMessage, messagePair.Response, messageHandler.MessageEntityEnlighten);
+                                    ExecuteApi(messagePair, messageHandler.ApiEnlighten, accessTokenOrApi, requestMessage.ToUserName);
                                     break;
                                 }
                             }
@@ -72,8 +72,8 @@ namespace Senparc.NeuChar.MessageHandlers
 
                         foreach (var messagePair in Config.MessagePair.Where(z => z.Request.Type == RequestMsgType.Image))
                         {
-                            responseMessage = GetResponseMessage(requestMessage, messagePair.Response);
-                            ExecuteApi(messagePair, apiEnlighten, accessTokenOrApi, requestMessage.ToUserName);
+                            responseMessage = GetResponseMessage(requestMessage, messagePair.Response, messageHandler.MessageEntityEnlighten);
+                            ExecuteApi(messagePair, messageHandler.ApiEnlighten, accessTokenOrApi, requestMessage.ToUserName);
 
                             if (responseMessage != null)
                             {
@@ -98,27 +98,27 @@ namespace Senparc.NeuChar.MessageHandlers
         /// </summary>
         /// <param name="requestMessage"></param>
         /// <returns></returns>
-        public async Task<IResponseMessageBase> ExecuteAsync(IRequestMessageBase requestMessage, ApiEnlighten apiEnlighten, string accessTokenOrApi)
+        public async Task<IResponseMessageBase> ExecuteAsync(IRequestMessageBase requestMessage, IMessageHandlerEnlighten messageHandler, string accessTokenOrApi)
         {
-            return await Task.Run(() => Execute(requestMessage, apiEnlighten, accessTokenOrApi));
+            return await Task.Run(() => Execute(requestMessage, messageHandler, accessTokenOrApi));
         }
 #endif
         #region 返回信息
 
-        private IResponseMessageBase GetResponseMessage(IRequestMessageBase requestMessage, Response responseConfig)
+        private IResponseMessageBase GetResponseMessage(IRequestMessageBase requestMessage, Response responseConfig, MessageEntityEnlighten enlighten)
         {
             IResponseMessageBase responseMessage = null;
             switch (responseConfig.Type)
             {
                 case ResponseMsgType.Text:
-                    responseMessage = RenderResponseMessageText(requestMessage, responseConfig);
+                    responseMessage = RenderResponseMessageText(requestMessage, responseConfig, enlighten);
                     break;
                 case ResponseMsgType.News:
                     break;
                 case ResponseMsgType.Music:
                     break;
                 case ResponseMsgType.Image:
-                    responseMessage = RenderResponseMessageImage(requestMessage, responseConfig);
+                    responseMessage = RenderResponseMessageImage(requestMessage, responseConfig, enlighten);
                     break;
                 case ResponseMsgType.Voice:
                     break;
@@ -140,9 +140,9 @@ namespace Senparc.NeuChar.MessageHandlers
             return responseMessage;
         }
 
-        private List<ApiResult> ExecuteApi(MessagePair messagePair,ApiEnlighten apiEnlighten,string accessTokenOrApi,string openId)
+        private List<ApiResult> ExecuteApi(MessagePair messagePair, ApiEnlighten apiEnlighten, string accessTokenOrApi, string openId)
         {
-            if (messagePair==null || messagePair.ExtendResponses.Count ==0)
+            if (messagePair == null || messagePair.ExtendResponses.Count == 0)
             {
                 return null;
             }
@@ -162,9 +162,9 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <param name="requestMessage"></param>
         /// <param name="responseConfig"></param>
         /// <returns></returns>
-        private IResponseMessageText RenderResponseMessageText(IRequestMessageBase requestMessage, Response responseConfig)
+        private IResponseMessageText RenderResponseMessageText(IRequestMessageBase requestMessage, Response responseConfig, MessageEntityEnlighten enlighten)
         {
-            var strongResponseMessage = requestMessage.CreateResponseMessage<IResponseMessageText>();
+            var strongResponseMessage = requestMessage.CreateResponseMessage<IResponseMessageText>(enlighten);
             strongResponseMessage.Content = responseConfig.Content.Replace("{now}", DateTime.Now.ToString());
             return strongResponseMessage;
         }
@@ -175,9 +175,9 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <param name="requestMessage"></param>
         /// <param name="responseConfig"></param>
         /// <returns></returns>
-        private IResponseMessageBase RenderResponseMessageImage(IRequestMessageBase requestMessage, Response responseConfig)
+        private IResponseMessageBase RenderResponseMessageImage(IRequestMessageBase requestMessage, Response responseConfig, MessageEntityEnlighten enlighten)
         {
-            var strongResponseMessage = requestMessage.CreateResponseMessage<IResponseMessageImage>();
+            var strongResponseMessage = requestMessage.CreateResponseMessage<IResponseMessageImage>(enlighten);
 
             if (responseConfig.Content.Equals("{current_img}", StringComparison.OrdinalIgnoreCase))
             {
@@ -188,7 +188,7 @@ namespace Senparc.NeuChar.MessageHandlers
                 }
                 else
                 {
-                    var textResponseMessage = requestMessage.CreateResponseMessage<IResponseMessageText>();
+                    var textResponseMessage = requestMessage.CreateResponseMessage<IResponseMessageText>(enlighten);
                     textResponseMessage.Content = "消息中未获取到图片信息";
                     return textResponseMessage;
                 }
