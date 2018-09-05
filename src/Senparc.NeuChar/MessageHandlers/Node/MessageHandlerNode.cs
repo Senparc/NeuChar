@@ -35,9 +35,16 @@ namespace Senparc.NeuChar.MessageHandlers
         /// 执行NeuChar判断过程，获取响应消息
         /// </summary>
         /// <param name="requestMessage"></param>
+        /// <param name="messageHandler"></param>
+        /// <param name="accessTokenOrApi"></param>
         /// <returns></returns>
         public IResponseMessageBase Execute(IRequestMessageBase requestMessage, IMessageHandlerEnlighten messageHandler, string accessTokenOrApi)
         {
+            if (accessTokenOrApi == null)
+            {
+                throw new ArgumentNullException(nameof(accessTokenOrApi));
+            }
+
             IResponseMessageBase responseMessage = null;
 
             switch (requestMessage.MsgType)
@@ -54,7 +61,7 @@ namespace Senparc.NeuChar.MessageHandlers
                                 if (keyword.Equals(textRequestMessage.Content, StringComparison.OrdinalIgnoreCase))//TODO:加入大小写敏感设计
                                 {
                                     responseMessage = GetResponseMessage(requestMessage, messagePair.Response, messageHandler.MessageEntityEnlighten);
-                                    ExecuteApi(messagePair, messageHandler.ApiEnlighten, accessTokenOrApi, requestMessage.ToUserName);
+                                    ExecuteApi(messagePair, requestMessage, messageHandler.ApiEnlighten, accessTokenOrApi, requestMessage.FromUserName);
                                     break;
                                 }
                             }
@@ -73,7 +80,7 @@ namespace Senparc.NeuChar.MessageHandlers
                         foreach (var messagePair in Config.MessagePair.Where(z => z.Request.Type == RequestMsgType.Image))
                         {
                             responseMessage = GetResponseMessage(requestMessage, messagePair.Response, messageHandler.MessageEntityEnlighten);
-                            ExecuteApi(messagePair, messageHandler.ApiEnlighten, accessTokenOrApi, requestMessage.ToUserName);
+                            ExecuteApi(messagePair, requestMessage,  messageHandler.ApiEnlighten, accessTokenOrApi, requestMessage.FromUserName);
 
                             if (responseMessage != null)
                             {
@@ -140,7 +147,7 @@ namespace Senparc.NeuChar.MessageHandlers
             return responseMessage;
         }
 
-        private List<ApiResult> ExecuteApi(MessagePair messagePair, ApiEnlighten apiEnlighten, string accessTokenOrApi, string openId)
+        private List<ApiResult> ExecuteApi(MessagePair messagePair, IRequestMessageBase requestMessage, ApiEnlighten apiEnlighten, string accessTokenOrApi, string openId)
         {
             if (messagePair == null || messagePair.ExtendResponses.Count == 0)
             {
@@ -150,7 +157,7 @@ namespace Senparc.NeuChar.MessageHandlers
             List<ApiResult> results = new List<ApiResult>();
             foreach (var response in messagePair.ExtendResponses)
             {
-                ApiResult apiResult = apiHandler.ExecuteApi(response, accessTokenOrApi, openId);
+                ApiResult apiResult = apiHandler.ExecuteApi(response, requestMessage ,accessTokenOrApi, openId);
                 results.Add(apiResult);
             }
             return results;
@@ -165,7 +172,7 @@ namespace Senparc.NeuChar.MessageHandlers
         private IResponseMessageText RenderResponseMessageText(IRequestMessageBase requestMessage, Response responseConfig, MessageEntityEnlighten enlighten)
         {
             var strongResponseMessage = requestMessage.CreateResponseMessage<IResponseMessageText>(enlighten);
-            strongResponseMessage.Content = responseConfig.Content.Replace("{now}", DateTime.Now.ToString());
+            strongResponseMessage.Content = NeuralNodeHelper.FillTextMessage(responseConfig.Content);
             return strongResponseMessage;
         }
 
@@ -178,25 +185,20 @@ namespace Senparc.NeuChar.MessageHandlers
         private IResponseMessageBase RenderResponseMessageImage(IRequestMessageBase requestMessage, Response responseConfig, MessageEntityEnlighten enlighten)
         {
             var strongResponseMessage = requestMessage.CreateResponseMessage<IResponseMessageImage>(enlighten);
-
-            if (responseConfig.Content.Equals("{current_img}", StringComparison.OrdinalIgnoreCase))
+            var mediaId = NeuralNodeHelper.GetImageMessageMediaId(requestMessage, responseConfig.Content);
+            if (string.IsNullOrEmpty(mediaId))
             {
-                var strongRequestMessage = requestMessage as IRequestMessageImage;
-                if (strongRequestMessage != null)
-                {
-                    strongResponseMessage.Image.MediaId = strongRequestMessage.MediaId;
-                }
-                else
-                {
-                    var textResponseMessage = requestMessage.CreateResponseMessage<IResponseMessageText>(enlighten);
-                    textResponseMessage.Content = "消息中未获取到图片信息";
-                    return textResponseMessage;
-                }
+                var textResponseMessage = requestMessage.CreateResponseMessage<IResponseMessageText>(enlighten);
+                textResponseMessage.Content = "消息中未获取到图片信息";
+                return textResponseMessage;
             }
             else
             {
-                //TODO：其他情况
+                strongResponseMessage.Image.MediaId = mediaId;
             }
+
+
+            //TODO：其他情况
 
             return strongResponseMessage;
         }

@@ -1,4 +1,6 @@
-﻿using Senparc.NeuChar.MessageHandlers;
+﻿using Senparc.NeuChar.Entities;
+using Senparc.NeuChar.Helpers;
+using Senparc.NeuChar.MessageHandlers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,7 +31,7 @@ namespace Senparc.NeuChar.ApiHandlers
         /// <param name="accessTokenOrAppId"></param>
         /// <param name="openId"></param>
         /// <returns></returns>
-        public ApiResult ExecuteApi(Response response, string accessTokenOrAppId, string openId)
+        public ApiResult ExecuteApi(Response response, IRequestMessageBase requestMessage, string accessTokenOrAppId, string openId)
         {
             if (response == null)
             {
@@ -43,6 +45,7 @@ namespace Senparc.NeuChar.ApiHandlers
                 case ResponseMsgType.Unknown:
                     break;
                 case ResponseMsgType.Text:
+                    var cotnent = NeuralNodeHelper.FillTextMessage(response.Content);
                     apiResult = ApiEnlighten.SendText(accessTokenOrAppId, openId, response.Content);
                     break;
                 case ResponseMsgType.News:
@@ -50,7 +53,12 @@ namespace Senparc.NeuChar.ApiHandlers
                 case ResponseMsgType.Music:
                     break;
                 case ResponseMsgType.Image:
-                    apiResult = ApiEnlighten.SendImage(accessTokenOrAppId, openId, response.Content);
+                    var mediaId = NeuralNodeHelper.GetImageMessageMediaId(requestMessage, response.Content);
+                    if (true)
+                    {
+                        //TODO:其他mediaId的情况
+                    }
+                    apiResult = ApiEnlighten.SendImage(accessTokenOrAppId, openId, mediaId);
                     break;
                 case ResponseMsgType.Voice:
                     break;
