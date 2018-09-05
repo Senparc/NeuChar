@@ -21,7 +21,7 @@ namespace Senparc.NeuChar
     /// <summary>
     /// NeuChar 消息的乐行
     /// </summary>
-    public enum NeuCharMessageType
+    public enum NeuCharActionType
     {
         /// <summary>
         /// 获取配置
@@ -32,7 +32,6 @@ namespace Senparc.NeuChar
         /// </summary>
         SaveConfig,
     }
-
 
     /// <summary>
     /// AppStore状态
@@ -94,7 +93,7 @@ namespace Senparc.NeuChar
         [Description("视频")]
         Video = 5,
         [Description("多客服")]
-        Transfer_Customer_Service=6,
+        Transfer_Customer_Service = 6,
         //transfer_customer_service
         [Description("素材多图文")]
         MpNews = 7,//素材多图文

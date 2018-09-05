@@ -42,7 +42,7 @@ namespace Senparc.NeuChar.Entities
             get { return RequestMsgType.NeuChar; }
         }
 
-        public NeuCharMessageType NeuCharMessageType { get; set; }
+        public NeuCharActionType NeuCharMessageType { get; set; }
 
         /// <summary>
         /// 设置信息（通常为JSON）
