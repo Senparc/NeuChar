@@ -10,7 +10,7 @@ namespace Senparc.NeuChar.MessageHandlers
     /// </summary>
     public interface IMessageHandlerEnlighten
     {
-        MessageEntityEnlighten Enlighten { get; }
+        MessageEntityEnlighten MessageEntityEnlighten { get; }
 
     }
 }

@@ -13,7 +13,7 @@ namespace Senparc.NeuChar.ApiHandlers
         /// <summary>
         /// 发送文本消息
         /// </summary>
-        /// <param name="accessTokenOrApi"></param>
+        /// <param name="accessTokenOrAppId"></param>
         /// <param name="openId"></param>
         /// <param name="content"></param>
         /// <returns></returns>
@@ -22,9 +22,9 @@ namespace Senparc.NeuChar.ApiHandlers
         /// <summary>
         /// 发送图片消息
         /// </summary>
-        /// <param name="accessTokenOrApi"></param>
+        /// <param name="accessTokenOrAppId"></param>
         /// <param name="openId"></param>
-        /// <param name="content"></param>
+        /// <param name="mediaId"></param>
         /// <returns></returns>
         public abstract ApiResult SendImage(string accessTokenOrAppId, string openId, string mediaId);
 

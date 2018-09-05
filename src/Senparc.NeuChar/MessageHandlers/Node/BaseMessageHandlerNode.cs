@@ -1,6 +1,7 @@
 ﻿using Senparc.CO2NET.Extensions;
 using Senparc.CO2NET.Trace;
 using Senparc.NeuChar;
+using Senparc.NeuChar.ApiHandlers;
 using Senparc.NeuChar.Entities;
 using Senparc.NeuChar.Helpers;
 using System;
@@ -35,7 +36,7 @@ namespace Senparc.NeuChar.MessageHandlers
         /// </summary>
         /// <param name="requestMessage"></param>
         /// <returns></returns>
-        public IResponseMessageBase Execute(IRequestMessageBase requestMessage)
+        public IResponseMessageBase Execute(IRequestMessageBase requestMessage, ApiEnlighten apiEnlighten,string accessTokenOrApi)
         {
             IResponseMessageBase responseMessage = null;
 
@@ -53,6 +54,7 @@ namespace Senparc.NeuChar.MessageHandlers
                                 if (keyword.Equals(textRequestMessage.Content, StringComparison.OrdinalIgnoreCase))//TODO:加入大小写敏感设计
                                 {
                                     responseMessage = GetResponseMessage(requestMessage, messagePair.Response);
+                                    ExecuteApi(messagePair, apiEnlighten, accessTokenOrApi, requestMessage.ToUserName);
                                     break;
                                 }
                             }
@@ -71,6 +73,7 @@ namespace Senparc.NeuChar.MessageHandlers
                         foreach (var messagePair in Config.MessagePair.Where(z => z.Request.Type == RequestMsgType.Image))
                         {
                             responseMessage = GetResponseMessage(requestMessage, messagePair.Response);
+                            ExecuteApi(messagePair, apiEnlighten, accessTokenOrApi, requestMessage.ToUserName);
 
                             if (responseMessage != null)
                             {
@@ -95,9 +98,9 @@ namespace Senparc.NeuChar.MessageHandlers
         /// </summary>
         /// <param name="requestMessage"></param>
         /// <returns></returns>
-        public async Task<IResponseMessageBase> ExecuteAsync(IRequestMessageBase requestMessage)
+        public async Task<IResponseMessageBase> ExecuteAsync(IRequestMessageBase requestMessage, ApiEnlighten apiEnlighten, string accessTokenOrApi)
         {
-            return await Task.Run(() => Execute(requestMessage));
+            return await Task.Run(() => Execute(requestMessage, apiEnlighten, accessTokenOrApi));
         }
 #endif
         #region 返回信息
@@ -134,8 +137,23 @@ namespace Senparc.NeuChar.MessageHandlers
                 default:
                     break;
             }
-
             return responseMessage;
+        }
+
+        private List<ApiResult> ExecuteApi(MessagePair messagePair,ApiEnlighten apiEnlighten,string accessTokenOrApi,string openId)
+        {
+            if (messagePair==null || messagePair.ExtendResponses.Count ==0)
+            {
+                return null;
+            }
+            ApiHandler apiHandler = new ApiHandler(apiEnlighten);
+            List<ApiResult> results = new List<ApiResult>();
+            foreach (var response in messagePair.ExtendResponses)
+            {
+                ApiResult apiResult = apiHandler.ExecuteApi(response, accessTokenOrApi, openId);
+                results.Add(apiResult);
+            }
+            return results;
         }
 
         /// <summary>

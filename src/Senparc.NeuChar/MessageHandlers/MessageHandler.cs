@@ -53,6 +53,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Senparc.CO2NET.Utilities;
+using Senparc.NeuChar.ApiHandlers;
 using Senparc.NeuChar.Context;
 using Senparc.NeuChar.Entities;
 using Senparc.NeuChar.Helpers;
@@ -84,7 +85,12 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <summary>
         /// 请求和响应消息有差别化的定义
         /// </summary>
-        public abstract MessageEntityEnlighten Enlighten { get; }
+        public abstract MessageEntityEnlighten MessageEntityEnlighten { get; }
+
+        /// <summary>
+        /// 请求和响应消息有差别化的定义
+        /// </summary>
+        public abstract ApiEnlighten ApiEnlighten { get; }
 
         /// <summary>
         /// 当前用户消息上下文
@@ -285,7 +291,7 @@ namespace Senparc.NeuChar.MessageHandlers
                 return null;
             }
 
-            return RequestMessage.CreateResponseMessage<TR>(this.Enlighten);
+            return RequestMessage.CreateResponseMessage<TR>(this.MessageEntityEnlighten);
         }
 
 
