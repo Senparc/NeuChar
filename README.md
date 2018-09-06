@@ -15,9 +15,9 @@ PM> Install-Package Senparc.NeuChar
 
 | 枚举类型        |   微信<br>公众号   |    钉钉    |    QQ公众号  |  头条第三方   |  Facebook  |   
 |----------------|-------------------|------------|-------------|--------------|------------|
-|  Text          |    Y              |      Y     |       Y     |       -      |      -     |
+|  Text          |    Y              |      Y     |       Y     |       -      |      Y     |
 |  Location      |    Y              |      N     |       Y     |       -      |      -     |
-|  Image         |    Y              |      Y     |       -     |       -      |      -     |
+|  Image         |    Y              |      Y     |       -     |       -      |      Y     |
 |  Voice         |    Y              |      Y     |       N     |       -      |      -     |
 |  Video         |    Y              |      N     |       N     |       -      |      -     |
 |  Link          |    Y              |      Y     |       N     |       -      |      -     |
