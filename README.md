@@ -14,17 +14,17 @@ PM> Install-Package Senparc.NeuChar
 ## RequestMsgType 支持（存在）情况
 
 | 枚举类型        |   微信<br>公众号   |    钉钉    |    QQ公众号  |  头条第三方   |  Facebook  |   
-|----------------|----------|------------|-------------|--------------|------------|
-|  Text          |    Y     |      Y     |       Y     |       -      |      -     |
-|  Location      |    Y     |      N     |       Y     |       -      |      -     |
-|  Image         |    Y     |      Y     |       -     |       -      |      -     |
-|  Voice         |    Y     |      Y     |       N     |       -      |      -     |
-|  Video         |    Y     |      N     |       N     |       -      |      -     |
-|  Link          |    Y     |      Y     |       N     |       -      |      -     |
-|  ShortVideo    |    Y     |      N     |       N     |       -      |      -     |
-|  Event         |    Y     |      N     |       Y     |       -      |      -     |
-|  File          |    Y     |      Y     |       N     |       -      |      -     |
-|  OA            |    N     |      Y     |       N     |       -      |      -     |
+|----------------|-------------------|------------|-------------|--------------|------------|
+|  Text          |    Y              |      Y     |       Y     |       -      |      -     |
+|  Location      |    Y              |      N     |       Y     |       -      |      -     |
+|  Image         |    Y              |      Y     |       -     |       -      |      -     |
+|  Voice         |    Y              |      Y     |       N     |       -      |      -     |
+|  Video         |    Y              |      N     |       N     |       -      |      -     |
+|  Link          |    Y              |      Y     |       N     |       -      |      -     |
+|  ShortVideo    |    Y              |      N     |       N     |       -      |      -     |
+|  Event         |    Y              |      N     |       Y     |       -      |      -     |
+|  File          |    Y              |      Y     |       N     |       -      |      -     |
+|  OA            |    N              |      Y     |       N     |       -      |      -     |
 
 Y：支持，N：不支持，-：待确定（较为可能不支持）
 
