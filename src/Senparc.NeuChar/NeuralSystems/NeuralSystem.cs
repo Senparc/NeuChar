@@ -113,7 +113,6 @@ namespace Senparc.NeuChar
 
                                 Root.SetChildNode(finalNeuralNode);
 
-
                                 //SerializerHelper.GetObject()
                             }
                         }

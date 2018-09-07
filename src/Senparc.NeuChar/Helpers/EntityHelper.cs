@@ -75,6 +75,11 @@ namespace Senparc.NeuChar.Helpers
             var props = entity.GetType().GetProperties();
             foreach (var prop in props)
             {
+                if (!prop.CanWrite)
+                {
+                   continue;//如果不可读则跳过
+                }
+
                 var propName = prop.Name;
                 if (root.Element(propName) != null)
                 {
