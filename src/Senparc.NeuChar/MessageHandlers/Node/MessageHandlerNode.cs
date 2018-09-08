@@ -40,6 +40,8 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <returns></returns>
         public IResponseMessageBase Execute(IRequestMessageBase requestMessage, IMessageHandlerEnlighten messageHandler, string accessTokenOrApi)
         {
+            //SenparcTrace.SendCustomLog("neuchar trace", "2");
+
             if (accessTokenOrApi == null)
             {
                 throw new ArgumentNullException(nameof(accessTokenOrApi));
@@ -47,29 +49,41 @@ namespace Senparc.NeuChar.MessageHandlers
 
             IResponseMessageBase responseMessage = null;
 
+            //SenparcTrace.SendCustomLog("neuchar trace", "3");
+
             switch (requestMessage.MsgType)
             {
                 case RequestMsgType.Text:
                     {
-                        var textRequestMessage = requestMessage as IRequestMessageText;
-                        //遍历所有的消息设置
-                        foreach (var messagePair in Config.MessagePair.Where(z => z.Request.Type == RequestMsgType.Text))
+                        try
                         {
-                            //遍历每一个消息设置中的关键词
-                            foreach (var keyword in messagePair.Request.Keywords)
+                            //SenparcTrace.SendCustomLog("neuchar trace", "3.1");
+
+                            var textRequestMessage = requestMessage as IRequestMessageText;
+                            //遍历所有的消息设置
+                            foreach (var messagePair in Config.MessagePair.Where(z => z.Request.Type == RequestMsgType.Text))
                             {
-                                if (keyword.Equals(textRequestMessage.Content, StringComparison.OrdinalIgnoreCase))//TODO:加入大小写敏感设计
+                                //遍历每一个消息设置中的关键词
+                                foreach (var keyword in messagePair.Request.Keywords)
                                 {
-                                    responseMessage = GetResponseMessage(requestMessage, messagePair.Response, messageHandler.MessageEntityEnlighten);
-                                    ExecuteApi(messagePair, requestMessage, messageHandler.ApiEnlighten, accessTokenOrApi, requestMessage.FromUserName);
+                                    if (keyword.Equals(textRequestMessage.Content, StringComparison.OrdinalIgnoreCase))//TODO:加入大小写敏感设计
+                                    {
+                                        responseMessage = GetResponseMessage(requestMessage, messagePair.Response, messageHandler.MessageEntityEnlighten);
+                                        ExecuteApi(messagePair, requestMessage, messageHandler.ApiEnlighten, accessTokenOrApi, requestMessage.FromUserName);
+                                        break;
+                                    }
+                                }
+                                if (responseMessage != null)
+                                {
                                     break;
                                 }
                             }
-                            if (responseMessage != null)
-                            {
-                                break;
-                            }
                         }
+                        catch (Exception ex)
+                        {
+                            SenparcTrace.SendCustomLog("neuchar text error", ex.Message + "\r\n|||\r\n" + (ex.InnerException != null ? ex.InnerException.ToString() : ""));
+                        }
+
                     }
                     break;
                 case RequestMsgType.Image:
@@ -96,6 +110,8 @@ namespace Senparc.NeuChar.MessageHandlers
                     break;
 
             }
+            //SenparcTrace.SendCustomLog("neuchar trace", "4");
+
             return responseMessage;
         }
 
@@ -107,6 +123,7 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <returns></returns>
         public async Task<IResponseMessageBase> ExecuteAsync(IRequestMessageBase requestMessage, IMessageHandlerEnlighten messageHandler, string accessTokenOrApi)
         {
+            SenparcTrace.SendCustomLog("neuchar trace","1");
             return await Task.Run(() => Execute(requestMessage, messageHandler, accessTokenOrApi));
         }
 #endif
@@ -138,6 +155,7 @@ namespace Senparc.NeuChar.MessageHandlers
                 case ResponseMsgType.LocationMessage:
                     break;
                 case ResponseMsgType.NoResponse:
+                    responseMessage = RenderResponseMessageNoResponse(requestMessage, responseConfig, enlighten);
                     break;
                 case ResponseMsgType.SuccessResponse:
                     break;
@@ -202,6 +220,20 @@ namespace Senparc.NeuChar.MessageHandlers
 
             return strongResponseMessage;
         }
+
+        /// <summary>
+        /// 返回图片类型信息
+        /// </summary>
+        /// <param name="requestMessage"></param>
+        /// <param name="responseConfig"></param>
+        /// <returns></returns>
+        private IResponseMessageBase RenderResponseMessageNoResponse(IRequestMessageBase requestMessage, Response responseConfig, MessageEntityEnlighten enlighten)
+        {
+            var strongResponseMessage = requestMessage.CreateResponseMessage<ResponseMessageNoResponse>(enlighten);
+            var mediaId = NeuralNodeHelper.GetImageMessageMediaId(requestMessage, responseConfig.Content);
+            return strongResponseMessage;
+        }
+
 
         #endregion
     }

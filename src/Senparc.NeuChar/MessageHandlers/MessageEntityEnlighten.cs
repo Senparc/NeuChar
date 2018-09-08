@@ -25,11 +25,13 @@ namespace Senparc.NeuChar.MessageHandlers
         public Func<IRequestMessageEvent> NewRequestMessageEvent { get; set; } = () => null;
         public Func<IRequestMessageFile> NewRequestMessageFile { get; set; } = () => null;
 
-        
+
 
         #endregion
 
         #region 响应消息
+
+        public Func<ResponseMessageNoResponse> NewResponseMessageNoResponse { get; set; } = () => new ResponseMessageNoResponse();
 
         public Func<IResponseMessageText> NewResponseMessageText { get; set; } = () => null;
         public Func<IResponseMessageNews> NewResponseMessageNews { get; set; } = () => null;
