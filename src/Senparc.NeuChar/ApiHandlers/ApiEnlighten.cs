@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Senparc.NeuChar.Enlighten;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,8 +9,10 @@ namespace Senparc.NeuChar.ApiHandlers
     /// <summary>
     /// API信息初始化
     /// </summary>
-    public abstract class ApiEnlighten
+    public abstract class ApiEnlighten : IEnlighten
     {
+        public abstract PlatformType PlatformType { get; set; }
+
         /// <summary>
         /// 发送文本消息
         /// </summary>
