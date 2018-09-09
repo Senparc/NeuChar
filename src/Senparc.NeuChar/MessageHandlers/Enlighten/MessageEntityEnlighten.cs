@@ -10,13 +10,13 @@ namespace Senparc.NeuChar.MessageHandlers
     /// <summary>
     /// MessageHandler初始化请求和响应消息的定义类
     /// </summary>
-    public abstract class MessageEntityEnlighten : IEnlighten
+    public class MessageEntityEnlighten : IEnlighten
     {
 
         /// <summary>
         /// 支持平台类型
         /// </summary>
-        public abstract PlatformType PlatformType { get; set; } //= NeuChar.PlatformType.General;
+        public PlatformType PlatformType { get; set; } //= NeuChar.PlatformType.General;
 
         #region 不同消息类型明确示例类型的委托
 
@@ -67,5 +67,14 @@ namespace Senparc.NeuChar.MessageHandlers
         #endregion
 
         #endregion
+
+        /// <summary>
+        /// MessageEntityEnlighten 构造函数
+        /// </summary>
+        /// <param name="platformType"></param>
+        public MessageEntityEnlighten(PlatformType platformType = PlatformType.General)
+        {
+            PlatformType = platformType;
+        }
     }
 }
