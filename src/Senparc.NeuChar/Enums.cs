@@ -112,4 +112,30 @@ namespace Senparc.NeuChar
 
     }
 
+    /// <summary>
+    /// 平台类型
+    /// </summary>
+    public enum PlatformType
+    {
+        /// <summary>
+        /// 通用
+        /// </summary>
+        General,
+        /// <summary>
+        /// 微信公众号
+        /// </summary>
+        WeChat_OfficialAccount,
+        /// <summary>
+        /// 微信小程序
+        /// </summary>
+        WeChat_MiniProgram,
+        /// <summary>
+        /// 微信企业号
+        /// </summary>
+        WeChat_Work,
+        /// <summary>
+        /// 微信开放平台
+        /// </summary>
+        WeChat_Open,
+    }
 }
