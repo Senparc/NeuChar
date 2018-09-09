@@ -120,22 +120,22 @@ namespace Senparc.NeuChar
         /// <summary>
         /// 通用
         /// </summary>
-        General,
+        General = 0,
         /// <summary>
         /// 微信公众号
         /// </summary>
-        WeChat_OfficialAccount,
+        WeChat_OfficialAccount = 1,
         /// <summary>
         /// 微信小程序
         /// </summary>
-        WeChat_MiniProgram,
+        WeChat_MiniProgram = 2,
         /// <summary>
         /// 微信企业号
         /// </summary>
-        WeChat_Work,
+        WeChat_Work = 4,
         /// <summary>
         /// 微信开放平台
         /// </summary>
-        WeChat_Open,
+        WeChat_Open = 8,
     }
 }

@@ -1,4 +1,5 @@
-﻿using Senparc.NeuChar.Entities;
+﻿using Senparc.NeuChar.Enlighten;
+using Senparc.NeuChar.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,8 +10,14 @@ namespace Senparc.NeuChar.MessageHandlers
     /// <summary>
     /// MessageHandler初始化请求和响应消息的定义类
     /// </summary>
-    public class MessageEntityEnlighten
+    public class MessageEntityEnlighten : IEnlighten
     {
+
+        /// <summary>
+        /// 支持平台类型
+        /// </summary>
+        public PlatformType PlatformType { get; set; } = NeuChar.PlatformType.General;
+
         #region 不同消息类型明确示例类型的委托
 
         #region 请求消息

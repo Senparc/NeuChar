@@ -1,4 +1,5 @@
 ﻿using Senparc.NeuChar.ApiHandlers;
+using Senparc.NeuChar.Enlighten;
 using System;
 using System.Collections.Generic;
 using System.Linq;
