@@ -11,6 +11,9 @@ namespace Senparc.NeuChar.ApiHandlers
     /// </summary>
     public abstract class ApiEnlighten : IEnlighten
     {
+        /// <summary>
+        /// 支持平台类型
+        /// </summary>
         public abstract PlatformType PlatformType { get; set; }
 
         /// <summary>
