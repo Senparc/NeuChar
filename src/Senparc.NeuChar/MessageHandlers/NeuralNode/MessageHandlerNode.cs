@@ -147,55 +147,51 @@ namespace Senparc.NeuChar.MessageHandlers
             //获取第一个响应设置
             var firstResponse = responseConfigs.First();
             //从第二个响应开始：扩展响应
-            var extendReponses = responseConfigs.Count > 1 
-                    ? responseConfigs.Skip(1).Take(responseConfigs.Count - 1).ToList() 
+            var extendReponses = responseConfigs.Count > 1
+                    ? responseConfigs.Skip(1).Take(responseConfigs.Count - 1).ToList()
                     : new List<Response>();
-            //是否跳过第一个响应设置（附加到扩展响应）
-            var skipFirstResponse = false;
 
             //处理特殊情况
             if (messageHandler.MessageEntityEnlightener.PlatformType == PlatformType.WeChat_MiniProgram)
             {
                 //小程序，所有的请求都使用客服消息接口
-                firstResponse = new Response() { Type = ResponseMsgType.SuccessResponse };//返回成功信息
                 extendReponses.Insert(0, firstResponse);
-                skipFirstResponse = true;
+                firstResponse = new Response() { Type = ResponseMsgType.SuccessResponse };//返回成功信息
+                responseMessage = new SuccessResponseMessage();
             }
 
-            if (!skipFirstResponse)
+
+            //第一项，优先使用消息回复
+            switch (firstResponse.Type)
             {
-                //第一项，优先使用消息回复
-                switch (firstResponse.Type)
-                {
-                    case ResponseMsgType.Text:
-                        responseMessage = RenderResponseMessageText(requestMessage, firstResponse, messageHandler.MessageEntityEnlightener);
-                        break;
-                    case ResponseMsgType.News:
-                        break;
-                    case ResponseMsgType.Music:
-                        break;
-                    case ResponseMsgType.Image:
-                        responseMessage = RenderResponseMessageImage(requestMessage, firstResponse, messageHandler.MessageEntityEnlightener);
-                        break;
-                    case ResponseMsgType.Voice:
-                        break;
-                    case ResponseMsgType.Video:
-                        break;
-                    case ResponseMsgType.Transfer_Customer_Service:
-                        break;
-                    case ResponseMsgType.MultipleNews:
-                        break;
-                    case ResponseMsgType.LocationMessage:
-                        break;
-                    case ResponseMsgType.NoResponse:
-                        responseMessage = RenderResponseMessageNoResponse(requestMessage, firstResponse, messageHandler.MessageEntityEnlightener);
-                        break;
-                    case ResponseMsgType.SuccessResponse:
-                        responseMessage = RenderResponseMessageNoResponse(requestMessage, firstResponse, messageHandler.MessageEntityEnlightener);
-                        break;
-                    default:
-                        break;
-                }
+                case ResponseMsgType.Text:
+                    responseMessage = RenderResponseMessageText(requestMessage, firstResponse, messageHandler.MessageEntityEnlightener);
+                    break;
+                case ResponseMsgType.News:
+                    break;
+                case ResponseMsgType.Music:
+                    break;
+                case ResponseMsgType.Image:
+                    responseMessage = RenderResponseMessageImage(requestMessage, firstResponse, messageHandler.MessageEntityEnlightener);
+                    break;
+                case ResponseMsgType.Voice:
+                    break;
+                case ResponseMsgType.Video:
+                    break;
+                case ResponseMsgType.Transfer_Customer_Service:
+                    break;
+                case ResponseMsgType.MultipleNews:
+                    break;
+                case ResponseMsgType.LocationMessage:
+                    break;
+                case ResponseMsgType.NoResponse:
+                    responseMessage = RenderResponseMessageNoResponse(requestMessage, firstResponse, messageHandler.MessageEntityEnlightener);
+                    break;
+                case ResponseMsgType.SuccessResponse:
+                    responseMessage = RenderResponseMessageNoResponse(requestMessage, firstResponse, messageHandler.MessageEntityEnlightener);
+                    break;
+                default:
+                    break;
             }
 
             //使用客服接口（高级接口）发送
