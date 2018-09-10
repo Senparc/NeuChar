@@ -80,17 +80,20 @@ namespace Senparc.NeuChar.MessageHandlers
         [Obsolete("请使用 GlobalMessageContext")]
         public GlobalMessageContext<TC, TRequest, TResponse> WeixinContext { get { return GlobalMessageContext; } }
 
+        /// <summary>
+        /// 全局消息上下文
+        /// </summary>
         public abstract GlobalMessageContext<TC, TRequest, TResponse> GlobalMessageContext { get; }
 
         /// <summary>
         /// 请求和响应消息有差别化的定义
         /// </summary>
-        public abstract MessageEntityEnlighten MessageEntityEnlighten { get; }
+        public abstract MessageEntityEnlightener MessageEntityEnlightener { get; }
 
         /// <summary>
         /// 请求和响应消息有差别化的定义
         /// </summary>
-        public abstract ApiEnlightener ApiEnlighten { get; }
+        public abstract ApiEnlightener ApiEnlightener { get; }
 
         /// <summary>
         /// 当前用户消息上下文
@@ -100,10 +103,11 @@ namespace Senparc.NeuChar.MessageHandlers
             get { return GlobalMessageContext.GetMessageContext(RequestMessage); }
         }
 
+
         /// <summary>
         /// 发送者用户名（OpenId）
         /// </summary>
-        public string WeixinOpenId
+        public string OpenId
         {
             get
             {
@@ -116,6 +120,18 @@ namespace Senparc.NeuChar.MessageHandlers
         }
 
         /// <summary>
+        /// 发送者用户名（OpenId）
+        /// </summary>
+        [Obsolete("请使用OpenId")]
+        public string WeixinOpenId
+        {
+            get
+            {
+                return OpenId;
+            }
+        }
+
+        /// <summary>
         /// 
         /// </summary>
         [Obsolete("UserName属性从v0.6起已过期，建议使用WeixinOpenId")]
@@ -123,7 +139,7 @@ namespace Senparc.NeuChar.MessageHandlers
         {
             get
             {
-                return WeixinOpenId;
+                return OpenId;
             }
         }
 
@@ -291,7 +307,7 @@ namespace Senparc.NeuChar.MessageHandlers
                 return null;
             }
 
-            return RequestMessage.CreateResponseMessage<TR>(this.MessageEntityEnlighten);
+            return RequestMessage.CreateResponseMessage<TR>(this.MessageEntityEnlightener);
         }
 
 

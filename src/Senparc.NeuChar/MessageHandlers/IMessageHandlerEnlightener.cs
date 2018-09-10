@@ -16,11 +16,11 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <summary>
         /// 请求和响应消息有差别化的定义
         /// </summary>
-        MessageEntityEnlighten MessageEntityEnlighten { get; }
+        MessageEntityEnlightener MessageEntityEnlightener { get; }
 
         /// <summary>
         /// 请求和响应消息有差别化的定义
         /// </summary>
-        ApiEnlightener ApiEnlighten { get; }
+        ApiEnlightener ApiEnlightener { get; }
     }
 }

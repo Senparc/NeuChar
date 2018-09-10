@@ -78,7 +78,7 @@ namespace Senparc.NeuChar.Entities
         /// <param name="msgType">响应类型</param>
         /// <returns></returns>
         //[Obsolete("建议使用CreateFromRequestMessage<T>(IRequestMessageBase requestMessage)取代此方法")]
-        private static IResponseMessageBase CreateFromRequestMessage(IRequestMessageBase requestMessage, ResponseMsgType msgType, MessageEntityEnlighten enlighten)
+        private static IResponseMessageBase CreateFromRequestMessage(IRequestMessageBase requestMessage, ResponseMsgType msgType, MessageEntityEnlightener enlighten)
         {
             IResponseMessageBase responseMessage = null;
             try
@@ -128,7 +128,7 @@ namespace Senparc.NeuChar.Entities
         /// <param name="requestMessage">请求数据</param>
         /// <param name="enlighten">MessageEntityEnlighten，当 T 为接口时必须提供</param>
         /// <returns></returns>
-        public static T CreateFromRequestMessage<T>(IRequestMessageBase requestMessage, MessageEntityEnlighten enlighten = null)
+        public static T CreateFromRequestMessage<T>(IRequestMessageBase requestMessage, MessageEntityEnlightener enlighten = null)
             where T : IResponseMessageBase
         {
             try
@@ -175,7 +175,7 @@ namespace Senparc.NeuChar.Entities
         /// </summary>
         /// <param name="xml">返回给服务器的Response Xml</param>
         /// <returns></returns>
-        public static IResponseMessageBase CreateFromResponseXml(string xml, MessageEntityEnlighten enlighten)
+        public static IResponseMessageBase CreateFromResponseXml(string xml, MessageEntityEnlightener enlighten)
         {
             try
             {

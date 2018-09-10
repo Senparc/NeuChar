@@ -486,7 +486,7 @@ namespace Senparc.NeuChar.Helpers
         /// <param name="requestMessage">IRequestMessageBase接口下的接收信息类型</param>
         /// <param name="enlighten">MessageEntityEnlighten，当 T 为接口时必须提供</param>
         /// <returns></returns>
-        public static T CreateResponseMessage<T>(this IRequestMessageBase requestMessage, MessageEntityEnlighten enlighten)
+        public static T CreateResponseMessage<T>(this IRequestMessageBase requestMessage, MessageEntityEnlightener enlighten)
             where T : IResponseMessageBase
         {
             return ResponseMessageBase.CreateFromRequestMessage<T>(requestMessage, enlighten);
@@ -512,7 +512,7 @@ namespace Senparc.NeuChar.Helpers
         /// <param name="enlighten">MessageEntityEnlighten</param>
         /// <param name="requestMessage">IRequestMessageBase接口下的接收信息类型</param>
         /// <returns></returns>
-        public static T CreateResponseMessage<T>(this MessageEntityEnlighten enlighten, IRequestMessageBase requestMessage)
+        public static T CreateResponseMessage<T>(this MessageEntityEnlightener enlighten, IRequestMessageBase requestMessage)
             where T : IResponseMessageBase
         {
             return ResponseMessageBase.CreateFromRequestMessage<T>(requestMessage, enlighten);
@@ -523,7 +523,7 @@ namespace Senparc.NeuChar.Helpers
         /// </summary>
         /// <param name="xml">返回给服务器的Response Xml</param>
         /// <returns></returns>
-        public static IResponseMessageBase CreateResponseMessage(this string xml, MessageEntityEnlighten enlighten)
+        public static IResponseMessageBase CreateResponseMessage(this string xml, MessageEntityEnlightener enlighten)
         {
             return ResponseMessageBase.CreateFromResponseXml(xml, enlighten);
         }

@@ -10,7 +10,7 @@ namespace Senparc.NeuChar.MessageHandlers
     /// <summary>
     /// MessageHandler初始化请求和响应消息的定义类
     /// </summary>
-    public class MessageEntityEnlighten : IEnlightener
+    public class MessageEntityEnlightener : IEnlightener
     {
 
         /// <summary>
@@ -72,7 +72,7 @@ namespace Senparc.NeuChar.MessageHandlers
         /// MessageEntityEnlighten 构造函数
         /// </summary>
         /// <param name="platformType"></param>
-        public MessageEntityEnlighten(PlatformType platformType = PlatformType.General)
+        public MessageEntityEnlightener(PlatformType platformType = PlatformType.General)
         {
             PlatformType = platformType;
         }

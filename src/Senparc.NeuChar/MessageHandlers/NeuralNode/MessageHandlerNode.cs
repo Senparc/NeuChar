@@ -154,7 +154,7 @@ namespace Senparc.NeuChar.MessageHandlers
             var skipFirstResponse = false;
 
             //处理特殊情况
-            if (messageHandler.MessageEntityEnlighten.PlatformType == PlatformType.WeChat_MiniProgram)
+            if (messageHandler.MessageEntityEnlightener.PlatformType == PlatformType.WeChat_MiniProgram)
             {
                 //小程序，所有的请求都使用客服消息接口
                 firstResponse = new Response() { Type = ResponseMsgType.SuccessResponse };//返回成功信息
@@ -168,14 +168,14 @@ namespace Senparc.NeuChar.MessageHandlers
                 switch (firstResponse.Type)
                 {
                     case ResponseMsgType.Text:
-                        responseMessage = RenderResponseMessageText(requestMessage, firstResponse, messageHandler.MessageEntityEnlighten);
+                        responseMessage = RenderResponseMessageText(requestMessage, firstResponse, messageHandler.MessageEntityEnlightener);
                         break;
                     case ResponseMsgType.News:
                         break;
                     case ResponseMsgType.Music:
                         break;
                     case ResponseMsgType.Image:
-                        responseMessage = RenderResponseMessageImage(requestMessage, firstResponse, messageHandler.MessageEntityEnlighten);
+                        responseMessage = RenderResponseMessageImage(requestMessage, firstResponse, messageHandler.MessageEntityEnlightener);
                         break;
                     case ResponseMsgType.Voice:
                         break;
@@ -188,10 +188,10 @@ namespace Senparc.NeuChar.MessageHandlers
                     case ResponseMsgType.LocationMessage:
                         break;
                     case ResponseMsgType.NoResponse:
-                        responseMessage = RenderResponseMessageNoResponse(requestMessage, firstResponse, messageHandler.MessageEntityEnlighten);
+                        responseMessage = RenderResponseMessageNoResponse(requestMessage, firstResponse, messageHandler.MessageEntityEnlightener);
                         break;
                     case ResponseMsgType.SuccessResponse:
-                        responseMessage = RenderResponseMessageNoResponse(requestMessage, firstResponse, messageHandler.MessageEntityEnlighten);
+                        responseMessage = RenderResponseMessageNoResponse(requestMessage, firstResponse, messageHandler.MessageEntityEnlightener);
                         break;
                     default:
                         break;
@@ -199,7 +199,7 @@ namespace Senparc.NeuChar.MessageHandlers
             }
 
             //使用客服接口（高级接口）发送
-            ExecuteApi(extendReponses, requestMessage, messageHandler.ApiEnlighten, accessTokenOrApi, requestMessage.FromUserName);
+            ExecuteApi(extendReponses, requestMessage, messageHandler.ApiEnlightener, accessTokenOrApi, requestMessage.FromUserName);
 
             return responseMessage;
         }
@@ -237,7 +237,7 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <param name="requestMessage"></param>
         /// <param name="responseConfig"></param>
         /// <returns></returns>
-        private IResponseMessageText RenderResponseMessageText(IRequestMessageBase requestMessage, Response responseConfig, MessageEntityEnlighten enlighten)
+        private IResponseMessageText RenderResponseMessageText(IRequestMessageBase requestMessage, Response responseConfig, MessageEntityEnlightener enlighten)
         {
             var strongResponseMessage = requestMessage.CreateResponseMessage<IResponseMessageText>(enlighten);
             strongResponseMessage.Content = NeuralNodeHelper.FillTextMessage(responseConfig.Content);
@@ -250,7 +250,7 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <param name="requestMessage"></param>
         /// <param name="responseConfig"></param>
         /// <returns></returns>
-        private IResponseMessageBase RenderResponseMessageImage(IRequestMessageBase requestMessage, Response responseConfig, MessageEntityEnlighten enlighten)
+        private IResponseMessageBase RenderResponseMessageImage(IRequestMessageBase requestMessage, Response responseConfig, MessageEntityEnlightener enlighten)
         {
             var strongResponseMessage = requestMessage.CreateResponseMessage<IResponseMessageImage>(enlighten);
             var mediaId = NeuralNodeHelper.GetImageMessageMediaId(requestMessage, responseConfig.Content);
@@ -277,7 +277,7 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <param name="requestMessage"></param>
         /// <param name="responseConfig"></param>
         /// <returns></returns>
-        private IResponseMessageBase RenderResponseMessageNoResponse(IRequestMessageBase requestMessage, Response responseConfig, MessageEntityEnlighten enlighten)
+        private IResponseMessageBase RenderResponseMessageNoResponse(IRequestMessageBase requestMessage, Response responseConfig, MessageEntityEnlightener enlighten)
         {
             var strongResponseMessage = requestMessage.CreateResponseMessage<ResponseMessageNoResponse>(enlighten);
             var mediaId = NeuralNodeHelper.GetImageMessageMediaId(requestMessage, responseConfig.Content);
