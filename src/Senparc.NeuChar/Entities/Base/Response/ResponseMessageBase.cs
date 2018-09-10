@@ -138,7 +138,7 @@ namespace Senparc.NeuChar.Entities
 
                 if (tType.IsInterface)
                 {
-                    //是接口，需要使用 Enlighten
+                    //是接口，需要使用 Enlightener
                     if (enlighten == null)
                     {
                         throw new MessageHandlerException("MessageEntityEnlighten 不能为 null");

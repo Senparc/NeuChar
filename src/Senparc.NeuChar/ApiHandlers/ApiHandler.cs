@@ -15,13 +15,13 @@ namespace Senparc.NeuChar.ApiHandlers
     /// </summary>
     public class ApiHandler
     {
-        public ApiEnlighten ApiEnlighten { get; set; }
+        public ApiEnlightener ApiEnlighten { get; set; }
 
         /// <summary>
         /// ApiHandler
         /// </summary>
         /// <param name="apiEnlighten"></param>
-        public ApiHandler(ApiEnlighten apiEnlighten)
+        public ApiHandler(ApiEnlightener apiEnlighten)
         {
             ApiEnlighten = apiEnlighten;
         }

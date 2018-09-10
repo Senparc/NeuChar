@@ -90,7 +90,7 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <summary>
         /// 请求和响应消息有差别化的定义
         /// </summary>
-        public abstract ApiEnlighten ApiEnlighten { get; }
+        public abstract ApiEnlightener ApiEnlighten { get; }
 
         /// <summary>
         /// 当前用户消息上下文

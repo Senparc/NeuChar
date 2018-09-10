@@ -1,5 +1,5 @@
 ﻿using Senparc.NeuChar.ApiHandlers;
-using Senparc.NeuChar.Enlighten;
+using Senparc.NeuChar.Enlightener;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +10,7 @@ namespace Senparc.NeuChar.MessageHandlers
     /// <summary>
     /// 用于提供MessageHandler中的“请求及响应”详细类型定义
     /// </summary>
-    public interface IMessageHandlerEnlighten
+    public interface IMessageHandlerEnlightener
     {
 
         /// <summary>
@@ -21,6 +21,6 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <summary>
         /// 请求和响应消息有差别化的定义
         /// </summary>
-        ApiEnlighten ApiEnlighten { get; }
+        ApiEnlightener ApiEnlighten { get; }
     }
 }

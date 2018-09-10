@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Senparc.NeuChar.Enlighten
+namespace Senparc.NeuChar.Enlightener
 {
     /// <summary>
-    /// 所有 Enlighten 定义的接口
+    /// 所有 Enlightener 定义的接口
     /// </summary>
     public interface IEnlighten
     {

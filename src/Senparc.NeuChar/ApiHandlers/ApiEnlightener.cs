@@ -1,4 +1,4 @@
-﻿using Senparc.NeuChar.Enlighten;
+﻿using Senparc.NeuChar.Enlightener;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +9,7 @@ namespace Senparc.NeuChar.ApiHandlers
     /// <summary>
     /// API信息初始化
     /// </summary>
-    public abstract class ApiEnlighten : IEnlighten
+    public abstract class ApiEnlightener : IEnlighten
     {
         /// <summary>
         /// 支持平台类型

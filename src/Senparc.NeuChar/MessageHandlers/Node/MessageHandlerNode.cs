@@ -38,7 +38,7 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <param name="messageHandler"></param>
         /// <param name="accessTokenOrApi"></param>
         /// <returns></returns>
-        public IResponseMessageBase Execute(IRequestMessageBase requestMessage, IMessageHandlerEnlighten messageHandler, string accessTokenOrApi)
+        public IResponseMessageBase Execute(IRequestMessageBase requestMessage, IMessageHandlerEnlightener messageHandler, string accessTokenOrApi)
         {
             //SenparcTrace.SendCustomLog("neuchar trace", "2");
 
@@ -121,7 +121,7 @@ namespace Senparc.NeuChar.MessageHandlers
         /// </summary>
         /// <param name="requestMessage"></param>
         /// <returns></returns>
-        public async Task<IResponseMessageBase> ExecuteAsync(IRequestMessageBase requestMessage, IMessageHandlerEnlighten messageHandler, string accessTokenOrApi)
+        public async Task<IResponseMessageBase> ExecuteAsync(IRequestMessageBase requestMessage, IMessageHandlerEnlightener messageHandler, string accessTokenOrApi)
         {
             SenparcTrace.SendCustomLog("neuchar trace","1");
             return await Task.Run(() => Execute(requestMessage, messageHandler, accessTokenOrApi));
@@ -165,7 +165,7 @@ namespace Senparc.NeuChar.MessageHandlers
             return responseMessage;
         }
 
-        private List<ApiResult> ExecuteApi(MessagePair messagePair, IRequestMessageBase requestMessage, ApiEnlighten apiEnlighten, string accessTokenOrApi, string openId)
+        private List<ApiResult> ExecuteApi(MessagePair messagePair, IRequestMessageBase requestMessage, ApiEnlightener apiEnlighten, string accessTokenOrApi, string openId)
         {
             if (messagePair == null || messagePair.ExtendResponses.Count == 0)
             {

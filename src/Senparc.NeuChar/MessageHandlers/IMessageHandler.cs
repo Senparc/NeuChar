@@ -46,7 +46,7 @@ namespace Senparc.NeuChar.MessageHandlers
     /// </summary>
     /// <typeparam name="TRequest">IRequestMessageBase</typeparam>
     /// <typeparam name="TResponse">IResponseMessageBase</typeparam>
-    public interface IMessageHandler<TRequest, TResponse> : IMessageHandlerDocument, IMessageHandlerEnlighten
+    public interface IMessageHandler<TRequest, TResponse> : IMessageHandlerDocument, IMessageHandlerEnlightener
         where TRequest : IRequestMessageBase
         where TResponse : IResponseMessageBase
     {

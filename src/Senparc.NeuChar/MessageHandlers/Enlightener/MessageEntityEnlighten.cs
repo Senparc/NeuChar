@@ -1,4 +1,4 @@
-﻿using Senparc.NeuChar.Enlighten;
+﻿using Senparc.NeuChar.Enlightener;
 using Senparc.NeuChar.Entities;
 using System;
 using System.Collections.Generic;
