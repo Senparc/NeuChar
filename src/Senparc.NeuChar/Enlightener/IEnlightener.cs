@@ -8,7 +8,7 @@ namespace Senparc.NeuChar.Enlightener
     /// <summary>
     /// 所有 Enlightener 定义的接口
     /// </summary>
-    public interface IEnlighten
+    public interface IEnlightener
     {
         /// <summary>
         /// 支持平台类型

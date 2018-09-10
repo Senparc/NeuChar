@@ -9,7 +9,7 @@ namespace Senparc.NeuChar.ApiHandlers
     /// <summary>
     /// API信息初始化
     /// </summary>
-    public abstract class ApiEnlightener : IEnlighten
+    public abstract class ApiEnlightener : IEnlightener
     {
         /// <summary>
         /// 支持平台类型

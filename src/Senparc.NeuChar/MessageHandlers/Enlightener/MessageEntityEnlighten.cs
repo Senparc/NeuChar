@@ -10,7 +10,7 @@ namespace Senparc.NeuChar.MessageHandlers
     /// <summary>
     /// MessageHandler初始化请求和响应消息的定义类
     /// </summary>
-    public class MessageEntityEnlighten : IEnlighten
+    public class MessageEntityEnlighten : IEnlightener
     {
 
         /// <summary>
