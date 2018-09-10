@@ -68,8 +68,7 @@ namespace Senparc.NeuChar.MessageHandlers
                                 {
                                     if (keyword.Equals(textRequestMessage.Content, StringComparison.OrdinalIgnoreCase))//TODO:加入大小写敏感设计
                                     {
-                                        responseMessage = GetResponseMessage(requestMessage, messagePair.Response, messageHandler.MessageEntityEnlighten);
-                                        ExecuteApi(messagePair, requestMessage, messageHandler.ApiEnlighten, accessTokenOrApi, requestMessage.FromUserName);
+                                        responseMessage = GetResponseMessage(requestMessage, messagePair.Responses, messageHandler, accessTokenOrApi);
                                         break;
                                     }
                                 }
@@ -93,8 +92,7 @@ namespace Senparc.NeuChar.MessageHandlers
 
                         foreach (var messagePair in Config.MessagePair.Where(z => z.Request.Type == RequestMsgType.Image))
                         {
-                            responseMessage = GetResponseMessage(requestMessage, messagePair.Response, messageHandler.MessageEntityEnlighten);
-                            ExecuteApi(messagePair, requestMessage,  messageHandler.ApiEnlighten, accessTokenOrApi, requestMessage.FromUserName);
+                            responseMessage = GetResponseMessage(requestMessage, messagePair.Responses, messageHandler, accessTokenOrApi);
 
                             if (responseMessage != null)
                             {
@@ -129,53 +127,105 @@ namespace Senparc.NeuChar.MessageHandlers
 #endif
         #region 返回信息
 
-        private IResponseMessageBase GetResponseMessage(IRequestMessageBase requestMessage, Response responseConfig, MessageEntityEnlighten enlighten)
+        /// <summary>
+        /// 获取响应消息
+        /// </summary>
+        /// <param name="requestMessage"></param>
+        /// <param name="responseConfigs"></param>
+        /// <param name="messageHandler"></param>
+        /// <param name="accessTokenOrApi"></param>
+        /// <returns></returns>
+        private IResponseMessageBase GetResponseMessage(IRequestMessageBase requestMessage, List<Response> responseConfigs, IMessageHandlerEnlightener messageHandler, string accessTokenOrApi)
         {
             IResponseMessageBase responseMessage = null;
-            switch (responseConfig.Type)
-            {
-                case ResponseMsgType.Text:
-                    responseMessage = RenderResponseMessageText(requestMessage, responseConfig, enlighten);
-                    break;
-                case ResponseMsgType.News:
-                    break;
-                case ResponseMsgType.Music:
-                    break;
-                case ResponseMsgType.Image:
-                    responseMessage = RenderResponseMessageImage(requestMessage, responseConfig, enlighten);
-                    break;
-                case ResponseMsgType.Voice:
-                    break;
-                case ResponseMsgType.Video:
-                    break;
-                case ResponseMsgType.Transfer_Customer_Service:
-                    break;
-                case ResponseMsgType.MultipleNews:
-                    break;
-                case ResponseMsgType.LocationMessage:
-                    break;
-                case ResponseMsgType.NoResponse:
-                    responseMessage = RenderResponseMessageNoResponse(requestMessage, responseConfig, enlighten);
-                    break;
-                case ResponseMsgType.SuccessResponse:
-                    break;
-                default:
-                    break;
-            }
-            return responseMessage;
-        }
-
-        private List<ApiResult> ExecuteApi(MessagePair messagePair, IRequestMessageBase requestMessage, ApiEnlightener apiEnlighten, string accessTokenOrApi, string openId)
-        {
-            if (messagePair == null || messagePair.ExtendResponses.Count == 0)
+            responseConfigs = responseConfigs ?? new List<Response>();
+            if (responseConfigs.Count == 0)
             {
                 return null;
             }
-            ApiHandler apiHandler = new ApiHandler(apiEnlighten);
-            List<ApiResult> results = new List<ApiResult>();
-            foreach (var response in messagePair.ExtendResponses)
+
+            //获取第一个响应设置
+            var firstResponse = responseConfigs.First();
+            //从第二个响应开始：扩展响应
+            var extendReponses = responseConfigs.Count > 1 
+                    ? responseConfigs.Skip(1).Take(responseConfigs.Count - 1).ToList() 
+                    : new List<Response>();
+            //是否跳过第一个响应设置（附加到扩展响应）
+            var skipFirstResponse = false;
+
+            //处理特殊情况
+            if (messageHandler.MessageEntityEnlighten.PlatformType == PlatformType.WeChat_MiniProgram)
             {
-                ApiResult apiResult = apiHandler.ExecuteApi(response, requestMessage ,accessTokenOrApi, openId);
+                //小程序，所有的请求都使用客服消息接口
+                firstResponse = new Response() { Type = ResponseMsgType.SuccessResponse };//返回成功信息
+                extendReponses.Insert(0, firstResponse);
+                skipFirstResponse = true;
+            }
+
+            if (!skipFirstResponse)
+            {
+                //第一项，优先使用消息回复
+                switch (firstResponse.Type)
+                {
+                    case ResponseMsgType.Text:
+                        responseMessage = RenderResponseMessageText(requestMessage, firstResponse, messageHandler.MessageEntityEnlighten);
+                        break;
+                    case ResponseMsgType.News:
+                        break;
+                    case ResponseMsgType.Music:
+                        break;
+                    case ResponseMsgType.Image:
+                        responseMessage = RenderResponseMessageImage(requestMessage, firstResponse, messageHandler.MessageEntityEnlighten);
+                        break;
+                    case ResponseMsgType.Voice:
+                        break;
+                    case ResponseMsgType.Video:
+                        break;
+                    case ResponseMsgType.Transfer_Customer_Service:
+                        break;
+                    case ResponseMsgType.MultipleNews:
+                        break;
+                    case ResponseMsgType.LocationMessage:
+                        break;
+                    case ResponseMsgType.NoResponse:
+                        responseMessage = RenderResponseMessageNoResponse(requestMessage, firstResponse, messageHandler.MessageEntityEnlighten);
+                        break;
+                    case ResponseMsgType.SuccessResponse:
+                        responseMessage = RenderResponseMessageNoResponse(requestMessage, firstResponse, messageHandler.MessageEntityEnlighten);
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            //使用客服接口（高级接口）发送
+            ExecuteApi(extendReponses, requestMessage, messageHandler.ApiEnlighten, accessTokenOrApi, requestMessage.FromUserName);
+
+            return responseMessage;
+        }
+
+        /// <summary>
+        /// 执行API高级接口回复
+        /// </summary>
+        /// <param name="responses"></param>
+        /// <param name="requestMessage"></param>
+        /// <param name="apiEnlighten"></param>
+        /// <param name="accessTokenOrApi"></param>
+        /// <param name="openId"></param>
+        /// <returns></returns>
+        private List<ApiResult> ExecuteApi(List<Response> responses, IRequestMessageBase requestMessage, ApiEnlightener apiEnlighten, string accessTokenOrApi, string openId)
+        {
+            List<ApiResult> results = new List<ApiResult>();
+
+            if (responses == null || responses.Count == 0)
+            {
+                return results;
+            }
+
+            ApiHandler apiHandler = new ApiHandler(apiEnlighten);
+            foreach (var response in responses)
+            {
+                ApiResult apiResult = apiHandler.ExecuteApi(response, requestMessage, accessTokenOrApi, openId);
                 results.Add(apiResult);
             }
             return results;

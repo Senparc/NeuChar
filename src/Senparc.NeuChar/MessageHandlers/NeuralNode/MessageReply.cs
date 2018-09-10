@@ -70,13 +70,9 @@ namespace Senparc.NeuChar.MessageHandlers
         /// </summary>
         public Request Request { get; set; }
         /// <summary>
-        /// 优先响应设置（必须）
+        /// 优先响应设置（至少一项）
         /// </summary>
-        public Response Response { get; set; }
-        /// <summary>
-        /// 后续响应设置（可选）
-        /// </summary>
-        public List<Response> ExtendResponses { get; set; }
+        public List<Response> Responses { get; set; }
 
         /// <summary>
         /// MessagePair 构造函数
@@ -84,8 +80,7 @@ namespace Senparc.NeuChar.MessageHandlers
         public MessagePair()
         {
             Request = new Request();
-            Response = new Response();
-            ExtendResponses = new List<Response>();
+            Responses = new List<Response>();
         }
     }
 
