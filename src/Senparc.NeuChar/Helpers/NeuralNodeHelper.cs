@@ -1,4 +1,5 @@
-﻿using Senparc.NeuChar.Entities;
+﻿using Senparc.CO2NET.Helpers;
+using Senparc.NeuChar.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +18,24 @@ namespace Senparc.NeuChar.Helpers
         public static string FillTextMessage(string originContent)
         {
             return originContent.Replace("{now}", DateTime.Now.ToString());
+        }
+
+        /// <summary>
+        /// 处理图文消息
+        /// </summary>
+        /// <param name="originContent"></param>
+        /// <returns></returns>
+        public static List<Article> FillNewsMessage(string originContent)
+        {
+            var list = SerializerHelper.GetObject<List<Article>>(originContent);
+
+            foreach (var item in list)
+            {
+                item.Title = FillTextMessage(item.Title);
+                item.Description = FillTextMessage(item.Description);
+            }
+
+            return list;
         }
 
         /// <summary>

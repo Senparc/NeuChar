@@ -168,6 +168,7 @@ namespace Senparc.NeuChar.MessageHandlers
                     responseMessage = RenderResponseMessageText(requestMessage, firstResponse, messageHandler.MessageEntityEnlightener);
                     break;
                 case ResponseMsgType.News:
+                    responseMessage = RenderResponseMessageNews(requestMessage, firstResponse, messageHandler.MessageEntityEnlightener);
                     break;
                 case ResponseMsgType.Music:
                     break;
@@ -237,6 +238,19 @@ namespace Senparc.NeuChar.MessageHandlers
         {
             var strongResponseMessage = requestMessage.CreateResponseMessage<IResponseMessageText>(enlighten);
             strongResponseMessage.Content = NeuralNodeHelper.FillTextMessage(responseConfig.Content);
+            return strongResponseMessage;
+        }
+
+        /// <summary>
+        /// 返回图文类型信息
+        /// </summary>
+        /// <param name="requestMessage"></param>
+        /// <param name="responseConfig"></param>
+        /// <returns></returns>
+        private IResponseMessageNews RenderResponseMessageNews(IRequestMessageBase requestMessage, Response responseConfig, MessageEntityEnlightener enlighten)
+        {
+            var strongResponseMessage = requestMessage.CreateResponseMessage<IResponseMessageNews>(enlighten);
+            strongResponseMessage.Articles = NeuralNodeHelper.FillNewsMessage(responseConfig.Content);
             return strongResponseMessage;
         }
 
