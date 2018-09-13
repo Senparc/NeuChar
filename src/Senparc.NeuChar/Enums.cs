@@ -78,6 +78,8 @@ namespace Senparc.NeuChar
     /// </summary>
     public enum ResponseMsgType
     {
+        [Description("其他")]
+        Other = -2,
         [Description("未知")]
         Unknown = -1,//未知类型
         [Description("文本")]
