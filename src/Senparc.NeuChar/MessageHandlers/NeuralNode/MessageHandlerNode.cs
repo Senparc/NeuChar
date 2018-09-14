@@ -121,7 +121,7 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <returns></returns>
         public async Task<IResponseMessageBase> ExecuteAsync(IRequestMessageBase requestMessage, IMessageHandlerEnlightener messageHandler, string accessTokenOrApi)
         {
-            SenparcTrace.SendCustomLog("neuchar trace","1");
+            //SenparcTrace.SendCustomLog("neuchar trace","1");
             return await Task.Run(() => Execute(requestMessage, messageHandler, accessTokenOrApi));
         }
 #endif
