@@ -21,6 +21,11 @@ namespace Senparc.NeuChar
         public string Name { get; set; }
 
         /// <summary>
+        /// 是否需要使用 AccessToken
+        /// </summary>
+        public bool NeedAccessToken { get; set; }
+
+        /// <summary>
         /// ApiBindAttributes 构造函数
         /// </summary>
         public ApiBindAttributes() { }
@@ -30,10 +35,12 @@ namespace Senparc.NeuChar
         /// </summary>
         /// <param name="platformType">平台类型</param>
         /// <param name="name">平台内唯一名称（如使用 PlatformType.General，请使用宇宙唯一名称）</param>
-        public ApiBindAttributes(PlatformType platformType, string name)
+        /// <param name="needAccessToken">是否需要使用 AccessToken</param>
+        public ApiBindAttributes(PlatformType platformType, string name,bool needAccessToken)
         {
             PlatformType = platformType;
             Name = name;
+            NeedAccessToken = needAccessToken;
         }
     }
 }
