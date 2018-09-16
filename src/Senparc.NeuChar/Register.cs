@@ -1,4 +1,5 @@
-﻿using Senparc.CO2NET.Trace;
+﻿using Senparc.CO2NET.Cache;
+using Senparc.CO2NET.Trace;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,9 +14,26 @@ namespace Senparc.NeuChar
     public static class Register
     {
         /// <summary>
+        /// 是否API绑定已经执行完
+        /// </summary>
+        private static bool RegisterApiBindFinished = false;
+
+
+        /// <summary>
         /// 节点类型注册集合
         /// </summary>
         public static Dictionary<string, Type> NeuralNodeRegisterCollection = new Dictionary<string, Type>();
+
+        /// <summary>
+        /// Api绑定信息集合
+        /// </summary>
+        public static Dictionary<string, ApiBindInfo> ApiBindInfoCollection = new Dictionary<string, ApiBindInfo>();
+
+        static Register()
+        {
+            RegisterApiBind();
+        }
+
 
         /// <summary>
         /// 注册节点
@@ -32,44 +50,54 @@ namespace Senparc.NeuChar
         /// </summary>
         public static void RegisterApiBind()
         {
-            //查找所有扩展缓存
-            var scanTypesCount = 0;
-
-            var apiBindList = new Dictionary<string, ApiBindInfo>();
-
-            var assembiles = AppDomain.CurrentDomain.GetAssemblies();
-
-            foreach (var assembly in assembiles)
+            var cacheStragegy = CacheStrategyFactory.GetObjectCacheStrategyInstance();
+            using (cacheStragegy.BeginCacheLock("Senparc.NeuChar.Register", "RegisterApiBind"))
             {
-                try
+                if (RegisterApiBindFinished == true)
                 {
-                    scanTypesCount++;
-                    var aTypes = assembly.GetTypes();
+                    return;
+                }
 
-                    foreach (var type in aTypes)
+                //查找所有扩展缓存
+                var scanTypesCount = 0;
+
+
+                var assembiles = AppDomain.CurrentDomain.GetAssemblies();
+
+                foreach (var assembly in assembiles)
+                {
+                    try
                     {
-                        if (type.IsAbstract || !type.IsPublic)
-                        {
-                            continue;
-                        }
+                        scanTypesCount++;
+                        var aTypes = assembly.GetTypes();
 
-                        var methods = type.GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod);
-                        foreach (var method in methods)
+                        foreach (var type in aTypes)
                         {
-                            var attrs = method.GetCustomAttributes(typeof(ApiBindAttribute), true);
-                            foreach (var attr in attrs)
+                            if (type.IsAbstract || !type.IsPublic)
                             {
-                                var apiBindAttr = attr as ApiBindAttribute;
-                                var name = $"{apiBindAttr.Name}";//TODO：生成全局唯一名称
-                                apiBindList.Add(name, new ApiBindInfo(apiBindAttr, method));
+                                continue;
+                            }
+
+                            var methods = type.GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod);
+                            foreach (var method in methods)
+                            {
+                                var attrs = method.GetCustomAttributes(typeof(ApiBindAttribute), true);
+                                foreach (var attr in attrs)
+                                {
+                                    var apiBindAttr = attr as ApiBindAttribute;
+                                    var name = $"{apiBindAttr.Name}";//TODO：生成全局唯一名称
+                                    ApiBindInfoCollection.Add(name, new ApiBindInfo(apiBindAttr, method));
+                                }
                             }
                         }
                     }
+                    catch (Exception ex)
+                    {
+                        SenparcTrace.SendCustomLog("RegisterApiBind() 自动扫描程序集异常：" + assembly.FullName, ex.ToString());
+                    }
                 }
-                catch (Exception ex)
-                {
-                    SenparcTrace.SendCustomLog("RegisterApiBind() 自动扫描程序集异常：" + assembly.FullName, ex.ToString());
-                }
+
+                RegisterApiBindFinished = true;
             }
         }
     }

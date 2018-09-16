@@ -189,7 +189,9 @@ namespace Senparc.NeuChar.MessageHandlers
                     responseMessage = RenderResponseMessageNoResponse(requestMessage, firstResponse, messageHandler.MessageEntityEnlightener);
                     break;
                 case ResponseMsgType.SuccessResponse:
-                    responseMessage = RenderResponseMessageNoResponse(requestMessage, firstResponse, messageHandler.MessageEntityEnlightener);
+                    responseMessage = RenderResponseMessageSuccessResponse(requestMessage, firstResponse, messageHandler.MessageEntityEnlightener);
+                    break;
+                case ResponseMsgType.UseApi:
                     break;
                 default:
                     break;
@@ -282,7 +284,7 @@ namespace Senparc.NeuChar.MessageHandlers
         }
 
         /// <summary>
-        /// 返回图片类型信息
+        /// 不返回任何响应消息
         /// </summary>
         /// <param name="requestMessage"></param>
         /// <param name="responseConfig"></param>
@@ -290,9 +292,21 @@ namespace Senparc.NeuChar.MessageHandlers
         private IResponseMessageBase RenderResponseMessageNoResponse(IRequestMessageBase requestMessage, Response responseConfig, MessageEntityEnlightener enlighten)
         {
             var strongResponseMessage = requestMessage.CreateResponseMessage<ResponseMessageNoResponse>(enlighten);
-            var mediaId = NeuralNodeHelper.GetImageMessageMediaId(requestMessage, responseConfig.Content);
             return strongResponseMessage;
         }
+
+        /// <summary>
+        /// 回复“成功”信息（默认为字符串success）
+        /// </summary>
+        /// <param name="requestMessage"></param>
+        /// <param name="responseConfig"></param>
+        /// <returns></returns>
+        private IResponseMessageBase RenderResponseMessageSuccessResponse(IRequestMessageBase requestMessage, Response responseConfig, MessageEntityEnlightener enlighten)
+        {
+            var strongResponseMessage = requestMessage.CreateResponseMessage<SuccessResponseMessageBase>(enlighten);
+            return strongResponseMessage;
+        }
+
 
 
         #endregion
