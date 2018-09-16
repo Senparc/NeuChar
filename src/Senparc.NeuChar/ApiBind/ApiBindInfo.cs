@@ -20,5 +20,11 @@ namespace Senparc.NeuChar
         /// 绑定 API 方法对象信息
         /// </summary>
         public MemberInfo MemberInfo { get; set; }
+
+        public ApiBindInfo(ApiBindAttribute apiBindAttribute, MemberInfo memberInfo) {
+            ApiBindAttribute = ApiBindAttribute;
+            MemberInfo = memberInfo;
+
+        }
     }
 }
