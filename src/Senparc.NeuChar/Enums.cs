@@ -70,7 +70,6 @@ namespace Senparc.NeuChar
         File = 8,//文件类型
 
 
-        UseApi = 998,//使用接口访问
         NeuChar = 999,//NeuChar请求
     }
 
@@ -111,8 +110,11 @@ namespace Senparc.NeuChar
         [Description("无回复")]
         NoResponse = 110,
         [Description("success")]
-        SuccessResponse = 200
+        SuccessResponse = 200,
 
+
+        [Description("使用API回复")]
+        UseApi = 998,//使用接口访问
     }
 
     /// <summary>
