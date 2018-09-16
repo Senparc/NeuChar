@@ -8,7 +8,8 @@ namespace Senparc.NeuChar
     /// <summary>
     /// 自动绑定属性
     /// </summary>
-    public class ApiBindAttributes
+    [AttributeUsage(AttributeTargets.Method, Inherited = true, AllowMultiple = true)]
+    public class ApiBindAttribute : Attribute
     {
         /// <summary>
         /// 平台类型
@@ -28,7 +29,7 @@ namespace Senparc.NeuChar
         /// <summary>
         /// ApiBindAttributes 构造函数
         /// </summary>
-        public ApiBindAttributes() { }
+        public ApiBindAttribute() { }
 
         /// <summary>
         /// ApiBindAttributes 构造函数
@@ -36,7 +37,7 @@ namespace Senparc.NeuChar
         /// <param name="platformType">平台类型</param>
         /// <param name="name">平台内唯一名称（如使用 PlatformType.General，请使用宇宙唯一名称）</param>
         /// <param name="needAccessToken">是否需要使用 AccessToken</param>
-        public ApiBindAttributes(PlatformType platformType, string name,bool needAccessToken)
+        public ApiBindAttribute(PlatformType platformType, string name, bool needAccessToken)
         {
             PlatformType = platformType;
             Name = name;
