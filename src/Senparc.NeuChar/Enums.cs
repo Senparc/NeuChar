@@ -70,7 +70,8 @@ namespace Senparc.NeuChar
         File = 8,//文件类型
 
 
-        NeuChar = 999//NeuChar请求
+        UseApi = 998,//使用接口访问
+        NeuChar = 999,//NeuChar请求
     }
 
     /// <summary>
@@ -156,7 +157,7 @@ namespace Senparc.NeuChar
         /// <summary>
         /// 钉钉
         /// </summary>
-        DingDing=2048,
+        DingDing = 2048,
 
         //空余：4096
         //空余：8192

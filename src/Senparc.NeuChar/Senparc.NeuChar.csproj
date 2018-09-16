@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net35;net40;net45;netstandard2.0;netcoreapp2.0;netcoreapp2.1</TargetFrameworks>
-    <Version>0.0.9</Version>
+    <Version>0.0.9.1</Version>
     <AssemblyName>Senparc.NeuChar</AssemblyName>
     <RootNamespace>Senparc.NeuChar</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -32,6 +32,7 @@
       v0.0.6.10 修复 EntityHelper.FillEntityWithXml() 方法对只读对象的过滤
       v0.0.7 添加 PlatformType 枚举，以及 IEnlighten 接口
       v0.0.8 添加News响应消息接口及处理
+      v0.0.9 添加 ApiBindAttribute，对 API 进行绑定操作
     </PackageReleaseNotes>
     <RepositoryUrl>https://github.com/JeffreySu/WeiXinMPSDK</RepositoryUrl>
     <Configurations>Debug;Release;Test</Configurations>
