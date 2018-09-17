@@ -191,7 +191,8 @@ namespace Senparc.NeuChar.MessageHandlers
                 case ResponseMsgType.SuccessResponse:
                     responseMessage = RenderResponseMessageSuccessResponse(requestMessage, firstResponse, messageHandler.MessageEntityEnlightener);
                     break;
-                case ResponseMsgType.UseApi:
+                case ResponseMsgType.UseApi://常规官方平台转发的请求不会到达这里
+
                     break;
                 default:
                     break;
@@ -306,7 +307,6 @@ namespace Senparc.NeuChar.MessageHandlers
             var strongResponseMessage = requestMessage.CreateResponseMessage<SuccessResponseMessageBase>(enlighten);
             return strongResponseMessage;
         }
-
 
 
         #endregion

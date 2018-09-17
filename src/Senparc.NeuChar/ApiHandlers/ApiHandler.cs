@@ -30,6 +30,7 @@ namespace Senparc.NeuChar.ApiHandlers
         /// 执行API
         /// </summary>
         /// <param name="response"></param>
+        /// <param name="requestMessage"></param>
         /// <param name="accessTokenOrAppId"></param>
         /// <param name="openId"></param>
         /// <returns></returns>
@@ -79,6 +80,9 @@ namespace Senparc.NeuChar.ApiHandlers
                     case ResponseMsgType.NoResponse:
                         break;
                     case ResponseMsgType.SuccessResponse:
+                        break;
+                    case ResponseMsgType.UseApi:
+                        apiResult = ApiEnlighten.CustomApi(response);
                         break;
                     default:
                         apiResult = new ApiResult(-1, "未找到支持的响应消息类型", null);

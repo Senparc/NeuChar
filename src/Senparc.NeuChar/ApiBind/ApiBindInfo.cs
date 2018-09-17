@@ -7,7 +7,7 @@ using System.Text;
 namespace Senparc.NeuChar
 {
     /// <summary>
-    /// ApiBind 属性所绑定的方法信息
+    /// ApiBind 属性所绑定的方法信息（Mapping）
     /// </summary>
     public class ApiBindInfo
     {
@@ -19,11 +19,11 @@ namespace Senparc.NeuChar
         /// <summary>
         /// 绑定 API 方法对象信息
         /// </summary>
-        public MemberInfo MemberInfo { get; set; }
+        public MethodInfo MethodInfo { get; set; }
 
-        public ApiBindInfo(ApiBindAttribute apiBindAttribute, MemberInfo memberInfo) {
+        public ApiBindInfo(ApiBindAttribute apiBindAttribute, MethodInfo methodInfo) {
             ApiBindAttribute = ApiBindAttribute;
-            MemberInfo = memberInfo;
+            MethodInfo = methodInfo;
 
         }
     }
