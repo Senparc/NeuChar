@@ -50,6 +50,8 @@ namespace Senparc.NeuChar
         /// </summary>
         public static void RegisterApiBind()
         {
+            DateTime dt1 = DateTime.Now;
+
             var cacheStragegy = CacheStrategyFactory.GetObjectCacheStrategyInstance();
             using (cacheStragegy.BeginCacheLock("Senparc.NeuChar.Register", "RegisterApiBind"))
             {
@@ -68,19 +70,10 @@ namespace Senparc.NeuChar
 
                 foreach (var assembly in assembiles)
                 {
-
-                    var methods1 = assembly.GetTypes()
-      .SelectMany(t => t.GetMethods())
-      .Where(m => m.GetCustomAttributes(typeof(ApiBindAttribute), false).Length > 0)
-      .ToArray();
-
-                    Console.WriteLine(methods1.Count());
-
-
                     try
                     {
                         scanTypesCount++;
-                        var aTypes = assembly.GetTypes();
+                        var aTypes = assembly.GetTypes().Where(z => z.GetInterfaces().Contains(typeof(IApi))).ToArray();
 
                         foreach (var type in aTypes)
                         {
@@ -109,6 +102,9 @@ namespace Senparc.NeuChar
                 }
 
                 RegisterApiBindFinished = true;
+
+                DateTime dt2 = DateTime.Now;
+                Console.WriteLine($"RegisterApiBind 用时：{(dt2 - dt1).TotalMilliseconds}ms");
             }
         }
     }

@@ -7,7 +7,7 @@ using System.Text;
 namespace Senparc.NeuChar.Tests
 {
 
-    public class ApiTest
+    public class ApiTest: IApi
     {
         [ApiBind(PlatformType.WeChat_OfficialAccount, "CustomApi.SendText", true)]
         public static void MethodForTest(string accessTokenOrApi,string p1,string p2)

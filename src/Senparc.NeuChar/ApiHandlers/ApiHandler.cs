@@ -13,7 +13,7 @@ namespace Senparc.NeuChar.ApiHandlers
     /// <summary>
     /// 
     /// </summary>
-    public class ApiHandler
+    public class ApiHandler : IApi
     {
         public ApiEnlightener ApiEnlighten { get; set; }
 
@@ -92,9 +92,9 @@ namespace Senparc.NeuChar.ApiHandlers
             catch (Exception ex)
             {
                 new MessageHandlerException("NeuChar API调用过程发生错误:" + ex.Message, ex);
-                return new ApiResult(-1, "API调用过程发生错误！",null);
+                return new ApiResult(-1, "API调用过程发生错误！", null);
             }
-           
+
 
             return apiResult;
         }
