@@ -6,6 +6,7 @@ using Senparc.CO2NET.RegisterServices;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Moq;
 
 namespace Senparc.NeuChar.Tests
 {

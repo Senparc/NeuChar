@@ -62,10 +62,21 @@ namespace Senparc.NeuChar
                 var scanTypesCount = 0;
 
 
+
+
                 var assembiles = AppDomain.CurrentDomain.GetAssemblies();
 
                 foreach (var assembly in assembiles)
                 {
+
+                    var methods1 = assembly.GetTypes()
+      .SelectMany(t => t.GetMethods())
+      .Where(m => m.GetCustomAttributes(typeof(ApiBindAttribute), false).Length > 0)
+      .ToArray();
+
+                    Console.WriteLine(methods1.Count());
+
+
                     try
                     {
                         scanTypesCount++;
@@ -73,7 +84,7 @@ namespace Senparc.NeuChar
 
                         foreach (var type in aTypes)
                         {
-                            if (type.IsAbstract || !type.IsPublic)
+                            if (type.IsAbstract || !type.IsPublic || !type.IsClass || type.IsEnum)
                             {
                                 continue;
                             }
@@ -81,7 +92,7 @@ namespace Senparc.NeuChar
                             var methods = type.GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod);
                             foreach (var method in methods)
                             {
-                                var attrs = method.GetCustomAttributes(typeof(ApiBindAttribute), true);
+                                var attrs = method.GetCustomAttributes(typeof(ApiBindAttribute), false);
                                 foreach (var attr in attrs)
                                 {
                                     var apiBindAttr = attr as ApiBindAttribute;

@@ -6,17 +6,18 @@ using System.Text;
 
 namespace Senparc.NeuChar.Tests
 {
-    public class ApiTest: BaseTest
-    {
 
-        public void MethodForTest(string accessTokenOrApi,string p1,string p2)
+    public class ApiTest
+    {
+        [ApiBind(PlatformType.WeChat_OfficialAccount, "CustomApi.SendText", true)]
+        public static void MethodForTest(string accessTokenOrApi,string p1,string p2)
         {
             Console.WriteLine($"accessTokenOrApi:{accessTokenOrApi} , p1:{p1} , p2 {p2}");
         }
     }
 
     [TestClass]
-    public class RegisterTests
+    public class RegisterTests : BaseTest
     {
         [TestMethod]
         public void RegisterApiBindTest()

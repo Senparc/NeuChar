@@ -83,9 +83,7 @@ namespace Senparc.NeuChar.ApiHandlers
             {
                 new NeuCharException(ex.Message, ex);//不抛出
                 return new ApiResult(-1, ex.Message, null);
-
             }
         }
-
     }
 }
