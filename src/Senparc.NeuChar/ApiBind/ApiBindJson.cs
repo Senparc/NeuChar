@@ -17,6 +17,6 @@ namespace Senparc.NeuChar.ApiBind
         /// <summary>
         /// 参数
         /// </summary>
-        public object[] @parameters { get; set; }
+        public object[] parameters { get; set; }
     }
 }

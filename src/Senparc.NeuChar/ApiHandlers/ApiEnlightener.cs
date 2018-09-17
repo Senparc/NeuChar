@@ -76,20 +76,20 @@ namespace Senparc.NeuChar.ApiHandlers
             try
             {
                 var filledParameters = new List<object>();
-                foreach (var para in apiBindJson.parameters)
-                {
-                    if (para == null || !(para is string))
-                    {
-                        filledParameters.Add(para);
-                    }
+                //foreach (var para in apiBindJson.parameters)
+                //{
+                //    if (para == null || !(para is string))
+                //    {
+                //        filledParameters.Add(para);
+                //    }
 
-                    filledParameters.Add((para as string).Replace("{openid}", openId));
-                }
+                //    filledParameters.Add((para as string).Replace("{openid}", openId));
+                //}
 
                 var prarmeters = apiBindInfo.MethodInfo.GetParameters();
                 for (int i = 0; i < prarmeters.Length; i++)
                 {
-                    if (i< apiBindJson.parameters.Length)
+                    if (apiBindJson.parameters != null && i < apiBindJson.parameters.Length)
                     {
                         //设置参数数量在方法参数数量范围以内
                         var para = apiBindJson.parameters[i];
@@ -103,7 +103,7 @@ namespace Senparc.NeuChar.ApiHandlers
                     else
                     {
                         //设置参数数量在方法参数数量范围以外
-                        filledParameters.Add(prarmeters[i]);
+                        filledParameters.Add(prarmeters[i].DefaultValue);
                     }
                 }
 
