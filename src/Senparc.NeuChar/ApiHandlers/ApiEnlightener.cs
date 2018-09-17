@@ -1,4 +1,5 @@
 ﻿using Senparc.CO2NET.Helpers;
+using Senparc.CO2NET.Trace;
 using Senparc.NeuChar.ApiBind;
 using Senparc.NeuChar.Enlightener;
 using Senparc.NeuChar.Exceptions;
@@ -86,6 +87,7 @@ namespace Senparc.NeuChar.ApiHandlers
                 //    filledParameters.Add((para as string).Replace("{openid}", openId));
                 //}
 
+
                 var prarmeters = apiBindInfo.MethodInfo.GetParameters();
                 for (int i = 0; i < prarmeters.Length; i++)
                 {
@@ -93,8 +95,10 @@ namespace Senparc.NeuChar.ApiHandlers
                     {
                         //设置参数数量在方法参数数量范围以内
                         var para = apiBindJson.parameters[i];
+
                         if (para != null && para is string)
                         {
+
                             filledParameters.Add((para as string).Replace("{openid}", openId));
                         }
                         else
@@ -111,6 +115,7 @@ namespace Senparc.NeuChar.ApiHandlers
 
                 //TODO：判断是否为静态类，否则需要有实例
                 var invokeResult = apiBindInfo.MethodInfo.Invoke(null, filledParameters.ToArray());
+
                 var apiResult = new ApiResult(0, "success", invokeResult);
                 return apiResult;
             }
