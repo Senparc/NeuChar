@@ -144,36 +144,37 @@ namespace Senparc.NeuChar.MessageHandlers
                 return null;
             }
 
-            //获取第一个响应设置
-            var firstResponse = responseConfigs.First();
-            //从第二个响应开始：扩展响应
+            //扩展响应，会在消息回复之前发送
             var extendReponses = responseConfigs.Count > 1
-                    ? responseConfigs.Skip(1).Take(responseConfigs.Count - 1).ToList()
+                    ? responseConfigs.Take(responseConfigs.Count - 1).ToList()
                     : new List<Response>();
+
+            //获取最后一个响应设置
+            var lastResponse = responseConfigs.Last();//取最后一个
 
             //处理特殊情况
             if (messageHandler.MessageEntityEnlightener.PlatformType == PlatformType.WeChat_MiniProgram)
             {
-                //小程序，所有的请求都使用客服消息接口
-                extendReponses.Insert(0, firstResponse);
-                firstResponse = new Response() { Type = ResponseMsgType.SuccessResponse };//返回成功信息
+                //小程序，所有的请求都使用客服消息接口，回填取出的最后一个
+                extendReponses.Add(lastResponse);
+                lastResponse = new Response() { Type = ResponseMsgType.SuccessResponse };//返回成功信息
                 responseMessage = new SuccessResponseMessage();
             }
 
 
             //第一项，优先使用消息回复
-            switch (firstResponse.Type)
+            switch (lastResponse.Type)
             {
                 case ResponseMsgType.Text:
-                    responseMessage = RenderResponseMessageText(requestMessage, firstResponse, messageHandler.MessageEntityEnlightener);
+                    responseMessage = RenderResponseMessageText(requestMessage, lastResponse, messageHandler.MessageEntityEnlightener);
                     break;
                 case ResponseMsgType.News:
-                    responseMessage = RenderResponseMessageNews(requestMessage, firstResponse, messageHandler.MessageEntityEnlightener);
+                    responseMessage = RenderResponseMessageNews(requestMessage, lastResponse, messageHandler.MessageEntityEnlightener);
                     break;
                 case ResponseMsgType.Music:
                     break;
                 case ResponseMsgType.Image:
-                    responseMessage = RenderResponseMessageImage(requestMessage, firstResponse, messageHandler.MessageEntityEnlightener);
+                    responseMessage = RenderResponseMessageImage(requestMessage, lastResponse, messageHandler.MessageEntityEnlightener);
                     break;
                 case ResponseMsgType.Voice:
                     break;
@@ -186,13 +187,12 @@ namespace Senparc.NeuChar.MessageHandlers
                 case ResponseMsgType.LocationMessage:
                     break;
                 case ResponseMsgType.NoResponse:
-                    responseMessage = RenderResponseMessageNoResponse(requestMessage, firstResponse, messageHandler.MessageEntityEnlightener);
+                    responseMessage = RenderResponseMessageNoResponse(requestMessage, lastResponse, messageHandler.MessageEntityEnlightener);
                     break;
                 case ResponseMsgType.SuccessResponse:
-                    responseMessage = RenderResponseMessageSuccessResponse(requestMessage, firstResponse, messageHandler.MessageEntityEnlightener);
+                    responseMessage = RenderResponseMessageSuccessResponse(requestMessage, lastResponse, messageHandler.MessageEntityEnlightener);
                     break;
                 case ResponseMsgType.UseApi://常规官方平台转发的请求不会到达这里
-
                     break;
                 default:
                     break;
