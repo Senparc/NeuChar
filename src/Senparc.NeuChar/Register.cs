@@ -63,9 +63,6 @@ namespace Senparc.NeuChar
                 //查找所有扩展缓存
                 var scanTypesCount = 0;
 
-
-
-
                 var assembiles = AppDomain.CurrentDomain.GetAssemblies();
 
                 foreach (var assembly in assembiles)
@@ -73,11 +70,15 @@ namespace Senparc.NeuChar
                     try
                     {
                         scanTypesCount++;
-                        var aTypes = assembly.GetTypes().Where(z => z.GetInterfaces().Contains(typeof(IApi))).ToArray();
+                        var classTypes = assembly.GetTypes()
+                                    .Where(z => z.Name.EndsWith("api", StringComparison.OrdinalIgnoreCase) || 
+                                                z.Name.EndsWith("apis", StringComparison.OrdinalIgnoreCase))
+                                    .ToArray();
 
-                        foreach (var type in aTypes)
+                        foreach (var type in classTypes)
                         {
-                            if (type.IsAbstract || !type.IsPublic || !type.IsClass || type.IsEnum)
+                            if (/*type.IsAbstract || 静态类会被识别为 IsAbstract*/ 
+                                !type.IsPublic || !type.IsClass || type.IsEnum)
                             {
                                 continue;
                             }

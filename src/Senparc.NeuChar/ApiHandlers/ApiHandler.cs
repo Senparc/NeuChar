@@ -13,7 +13,7 @@ namespace Senparc.NeuChar.ApiHandlers
     /// <summary>
     /// 
     /// </summary>
-    public class ApiHandler : IApi
+    public class ApiHandler
     {
         public ApiEnlightener ApiEnlighten { get; set; }
 
@@ -82,7 +82,7 @@ namespace Senparc.NeuChar.ApiHandlers
                     case ResponseMsgType.SuccessResponse:
                         break;
                     case ResponseMsgType.UseApi:
-                        apiResult = ApiEnlighten.CustomApi(response);
+                        apiResult = ApiEnlighten.CustomApi(response,requestMessage.FromUserName);
                         break;
                     default:
                         apiResult = new ApiResult(-1, "未找到支持的响应消息类型", null);

@@ -57,7 +57,7 @@ namespace Senparc.NeuChar.ApiHandlers
         /// </summary>
         /// <param name="response">响应设置信息</param>
         /// <returns></returns>
-        public virtual ApiResult CustomApi(Response response)
+        public virtual ApiResult CustomApi(Response response, string openId)
         {
             ApiBindJson apiBindJson = SerializerHelper.GetObject<ApiBindJson>(response.Content);
             if (apiBindJson == null)
@@ -75,6 +75,38 @@ namespace Senparc.NeuChar.ApiHandlers
             //开始使用反射调用
             try
             {
+                var filledParameters = new List<object>();
+                foreach (var para in apiBindJson.parameters)
+                {
+                    if (para == null || !(para is string))
+                    {
+                        filledParameters.Add(para);
+                    }
+
+                    filledParameters.Add((para as string).Replace("{openid}", openId));
+                }
+
+                var prarmeters = apiBindInfo.MethodInfo.GetParameters();
+                for (int i = 0; i < prarmeters.Length; i++)
+                {
+                    if (i< apiBindJson.parameters.Length)
+                    {
+                        //设置参数数量在方法参数数量范围以内
+                        var para = apiBindJson.parameters[i];
+                        if (para == null || !(para is string))
+                        {
+                            filledParameters.Add(para);
+                        }
+
+                        filledParameters.Add((para as string).Replace("{openid}", openId));
+                    }
+                    else
+                    {
+                        //设置参数数量在方法参数数量范围以外
+                        filledParameters.Add(prarmeters[i]);
+                    }
+                }
+
                 var invokeResult = apiBindInfo.MethodInfo.Invoke(null, apiBindJson.parameters);
                 var apiResult = new ApiResult(0, "success", invokeResult);
                 return apiResult;
