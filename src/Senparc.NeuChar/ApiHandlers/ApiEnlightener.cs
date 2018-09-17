@@ -93,12 +93,14 @@ namespace Senparc.NeuChar.ApiHandlers
                     {
                         //设置参数数量在方法参数数量范围以内
                         var para = apiBindJson.parameters[i];
-                        if (para == null || !(para is string))
+                        if (para != null && para is string)
+                        {
+                            filledParameters.Add((para as string).Replace("{openid}", openId));
+                        }
+                        else
                         {
                             filledParameters.Add(para);
                         }
-
-                        filledParameters.Add((para as string).Replace("{openid}", openId));
                     }
                     else
                     {
@@ -107,7 +109,8 @@ namespace Senparc.NeuChar.ApiHandlers
                     }
                 }
 
-                var invokeResult = apiBindInfo.MethodInfo.Invoke(null, apiBindJson.parameters);
+                //TODO：判断是否为静态类，否则需要有实例
+                var invokeResult = apiBindInfo.MethodInfo.Invoke(null, filledParameters.ToArray());
                 var apiResult = new ApiResult(0, "success", invokeResult);
                 return apiResult;
             }
