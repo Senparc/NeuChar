@@ -41,6 +41,7 @@ using Senparc.NeuChar.MessageHandlers;
 using System;
 using System.Xml.Linq;
 using Senparc.NeuChar.Helpers;
+using Senparc.CO2NET.Trace;
 
 namespace Senparc.NeuChar.Entities
 {
@@ -72,7 +73,7 @@ namespace Senparc.NeuChar.Entities
 
         /// <summary>
         /// 获取响应类型实例，并初始化
-        /// <para>如果是直接调用，建议使用CreateFromRequestMessage<T>(IRequestMessageBase requestMessage)取代此方法</para>
+        /// <para>如果是直接调用，建议使用CreateFromRequestMessage&lt;T&gt;(IRequestMessageBase requestMessage)取代此方法</para>
         /// </summary>
         /// <param name="requestMessage">请求</param>
         /// <param name="msgType">响应类型</param>
@@ -166,6 +167,8 @@ namespace Senparc.NeuChar.Entities
             }
             catch (Exception ex)
             {
+                SenparcTrace.SendCustomLog("CreateFromRequestMessage异常调试",typeof(T).FullName);
+
                 throw new BaseException("ResponseMessageBase.CreateFromRequestMessage<T>过程发生异常！", ex);
             }
         }
