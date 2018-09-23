@@ -42,10 +42,10 @@ namespace Senparc.NeuChar.MessageHandlers
         {
             //SenparcTrace.SendCustomLog("neuchar trace", "2");
 
-            if (accessTokenOrApi == null)
-            {
-                throw new ArgumentNullException(nameof(accessTokenOrApi));
-            }
+            //if (accessTokenOrApi == null)
+            //{
+            //    throw new ArgumentNullException(nameof(accessTokenOrApi));
+            //}
 
             IResponseMessageBase responseMessage = null;
 
