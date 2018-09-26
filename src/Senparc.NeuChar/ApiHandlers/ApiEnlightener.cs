@@ -3,7 +3,9 @@ using Senparc.CO2NET.Trace;
 using Senparc.NeuChar.ApiBind;
 using Senparc.NeuChar.Enlightener;
 using Senparc.NeuChar.Exceptions;
+using Senparc.NeuChar.Helpers;
 using Senparc.NeuChar.MessageHandlers;
+using Senparc.NeuChar.NeuralSystems;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -58,9 +60,9 @@ namespace Senparc.NeuChar.ApiHandlers
         /// </summary>
         /// <param name="response">响应设置信息</param>
         /// <returns></returns>
-        public virtual ApiResult CustomApi(Response response, string openId)
+        public virtual ApiResult CustomApi(Response response, MaterialData materialData ,string openId)
         {
-            ApiBindJson apiBindJson = SerializerHelper.GetObject<ApiBindJson>(response.Content);
+            ApiBindJson apiBindJson = SerializerHelper.GetObject<ApiBindJson>(response.GetMaterialContent(materialData));
             if (apiBindJson == null)
             {
                 throw new NeuCharException("自定义API设置格式错误或未提供设置！");

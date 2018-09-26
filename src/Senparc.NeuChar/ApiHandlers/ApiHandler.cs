@@ -3,6 +3,7 @@ using Senparc.NeuChar.Entities;
 using Senparc.NeuChar.Exceptions;
 using Senparc.NeuChar.Helpers;
 using Senparc.NeuChar.MessageHandlers;
+using Senparc.NeuChar.NeuralSystems;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,7 +35,7 @@ namespace Senparc.NeuChar.ApiHandlers
         /// <param name="accessTokenOrAppId"></param>
         /// <param name="openId"></param>
         /// <returns></returns>
-        public ApiResult ExecuteApi(Response response, IRequestMessageBase requestMessage, string accessTokenOrAppId, string openId)
+        public ApiResult ExecuteApi(Response response, MaterialData materialData, IRequestMessageBase requestMessage, string accessTokenOrAppId, string openId)
         {
             if (response == null)
             {
@@ -49,7 +50,7 @@ namespace Senparc.NeuChar.ApiHandlers
                     case ResponseMsgType.Unknown:
                         break;
                     case ResponseMsgType.Text:
-                        var cotnent = NeuralNodeHelper.FillTextMessage(response.Content);
+                        var cotnent = NeuralNodeHelper.FillTextMessage(response.GetMaterialContent(materialData));
                         apiResult = ApiEnlighten.SendText(accessTokenOrAppId, openId, cotnent);
                         break;
                     case ResponseMsgType.News:
@@ -57,7 +58,7 @@ namespace Senparc.NeuChar.ApiHandlers
                     case ResponseMsgType.Music:
                         break;
                     case ResponseMsgType.Image:
-                        var mediaId = NeuralNodeHelper.GetImageMessageMediaId(requestMessage, response.Content);
+                        var mediaId = NeuralNodeHelper.GetImageMessageMediaId(requestMessage, response.GetMaterialContent(materialData));
                         SenparcTrace.SendCustomLog("ExecuteApi-Image", $"mediaId:{mediaId}");
                         if (true)
                         {
@@ -82,7 +83,7 @@ namespace Senparc.NeuChar.ApiHandlers
                     case ResponseMsgType.SuccessResponse:
                         break;
                     case ResponseMsgType.UseApi:
-                        apiResult = ApiEnlighten.CustomApi(response,requestMessage.FromUserName);
+                        apiResult = ApiEnlighten.CustomApi(response, materialData, requestMessage.FromUserName);
                         break;
                     default:
                         apiResult = new ApiResult(-1, "未找到支持的响应消息类型", null);

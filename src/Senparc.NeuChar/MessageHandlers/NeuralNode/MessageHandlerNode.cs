@@ -4,6 +4,7 @@ using Senparc.NeuChar;
 using Senparc.NeuChar.ApiHandlers;
 using Senparc.NeuChar.Entities;
 using Senparc.NeuChar.Helpers;
+using Senparc.NeuChar.NeuralSystems;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,7 @@ using System.Threading.Tasks;
 
 namespace Senparc.NeuChar.MessageHandlers
 {
+
     /// <summary>
     /// MessageHandler 的神经节点
     /// </summary>
@@ -20,6 +22,10 @@ namespace Senparc.NeuChar.MessageHandlers
     {
         public override string Version { get; set; }
 
+        /// <summary>
+        /// 素材数据库
+        /// </summary>
+        public MaterialData MaterialData { get; set; }
 
         /// <summary>
         /// 设置信息（系统约定Config为固定名称）
@@ -225,7 +231,7 @@ namespace Senparc.NeuChar.MessageHandlers
             ApiHandler apiHandler = new ApiHandler(apiEnlighten);
             foreach (var response in responses)
             {
-                ApiResult apiResult = apiHandler.ExecuteApi(response, requestMessage, accessTokenOrApi, openId);
+                ApiResult apiResult = apiHandler.ExecuteApi(response, MaterialData, requestMessage, accessTokenOrApi, openId);
                 results.Add(apiResult);
             }
             return results;
@@ -240,7 +246,7 @@ namespace Senparc.NeuChar.MessageHandlers
         private IResponseMessageText RenderResponseMessageText(IRequestMessageBase requestMessage, Response responseConfig, MessageEntityEnlightener enlighten)
         {
             var strongResponseMessage = requestMessage.CreateResponseMessage<IResponseMessageText>(enlighten);
-            strongResponseMessage.Content = NeuralNodeHelper.FillTextMessage(responseConfig.Content);
+            strongResponseMessage.Content = NeuralNodeHelper.FillTextMessage(responseConfig.GetMaterialContent(MaterialData));
             return strongResponseMessage;
         }
 
@@ -253,7 +259,7 @@ namespace Senparc.NeuChar.MessageHandlers
         private IResponseMessageNews RenderResponseMessageNews(IRequestMessageBase requestMessage, Response responseConfig, MessageEntityEnlightener enlighten)
         {
             var strongResponseMessage = requestMessage.CreateResponseMessage<IResponseMessageNews>(enlighten);
-            strongResponseMessage.Articles = NeuralNodeHelper.FillNewsMessage(responseConfig.Content);
+            strongResponseMessage.Articles = NeuralNodeHelper.FillNewsMessage(responseConfig.GetMaterialContent(MaterialData));
             return strongResponseMessage;
         }
 
@@ -266,7 +272,7 @@ namespace Senparc.NeuChar.MessageHandlers
         private IResponseMessageBase RenderResponseMessageImage(IRequestMessageBase requestMessage, Response responseConfig, MessageEntityEnlightener enlighten)
         {
             var strongResponseMessage = requestMessage.CreateResponseMessage<IResponseMessageImage>(enlighten);
-            var mediaId = NeuralNodeHelper.GetImageMessageMediaId(requestMessage, responseConfig.Content);
+            var mediaId = NeuralNodeHelper.GetImageMessageMediaId(requestMessage, responseConfig.GetMaterialContent(MaterialData));
             if (string.IsNullOrEmpty(mediaId))
             {
                 var textResponseMessage = requestMessage.CreateResponseMessage<IResponseMessageText>(enlighten);

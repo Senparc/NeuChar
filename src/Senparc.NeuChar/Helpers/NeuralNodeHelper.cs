@@ -1,5 +1,7 @@
 ﻿using Senparc.CO2NET.Helpers;
 using Senparc.NeuChar.Entities;
+using Senparc.NeuChar.MessageHandlers;
+using Senparc.NeuChar.NeuralSystems;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +9,7 @@ using System.Text;
 
 namespace Senparc.NeuChar.Helpers
 {
-    public class NeuralNodeHelper
+    public static class NeuralNodeHelper
     {
 
         /// <summary>
@@ -46,13 +48,30 @@ namespace Senparc.NeuChar.Helpers
         /// <returns></returns>
         public static string GetImageMessageMediaId(IRequestMessageBase requestMessage, string originContent)
         {
-            if (originContent!=null && originContent.Equals("{current_img}", StringComparison.OrdinalIgnoreCase) && 
+            if (originContent != null && originContent.Equals("{current_img}", StringComparison.OrdinalIgnoreCase) &&
                 requestMessage is IRequestMessageImage)
             {
                 return (requestMessage as IRequestMessageImage).MediaId;
             }
 
             return originContent;
+        }
+
+        /// <summary>
+        /// 获取响应素材内容
+        /// </summary>
+        /// <param name="responseConfig"></param>
+        /// <param name="materialData"></param>
+        /// <returns></returns>
+        public static string GetMaterialContent(this Response responseConfig, MaterialData materialData)
+        {
+            var id = responseConfig.MaterialId;
+            var materialDataItem = materialData.FirstOrDefault(z => z.Id == id);
+            if (materialDataItem != null)
+            {
+                return materialDataItem.Content;
+            }
+            return null;
         }
     }
 }

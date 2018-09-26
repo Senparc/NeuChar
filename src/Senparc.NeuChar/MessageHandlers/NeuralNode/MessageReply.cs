@@ -63,8 +63,27 @@ namespace Senparc.NeuChar.MessageHandlers
     /// <summary>
     /// 请求-响应 配置
     /// </summary>
-    public class MessagePair
+    public class MessagePair : IConfigItem
     {
+        #region IConfigItem
+        /// <summary>
+        /// 备注名称
+        /// </summary>
+        public string Name { get; set; }
+        /// <summary>
+        /// 唯一编号
+        /// </summary>
+        public string Id { get; set; }
+        /// <summary>
+        /// 备注
+        /// </summary>
+        public string Note { get; set; }
+        /// <summary>
+        /// 版本号，如："2018.9.27.1"
+        /// </summary>
+        public string Version { get; set; }
+        #endregion
+
         /// <summary>
         /// 请求条件设置
         /// </summary>
@@ -114,10 +133,11 @@ namespace Senparc.NeuChar.MessageHandlers
         /// 响应类型
         /// </summary>
         public ResponseMsgType Type { get; set; }
+
         /// <summary>
         /// 响应内容
         /// </summary>
-        public string Content { get; set; }
+        public string MaterialId { get; set; }
 
         public Response()
         {
