@@ -33,6 +33,18 @@ namespace Senparc.NeuChar.MessageHandlers
                 var file = Path.Combine(path, "NeuCharRoot.config");
                 string result = null;
 
+                if (!File.Exists(file))
+                {
+                    using (var fs = new FileStream(file,FileMode.CreateNew))
+                    {
+                        using (var sw = new StreamWriter(fs))
+                        {
+                            sw.WriteLine("{}");
+                        }
+                        fs.Flush();
+                    }
+                }
+
                 switch (requestMessage.NeuCharMessageType)
                 {
                     case NeuCharActionType.GetConfig:

@@ -134,7 +134,11 @@ namespace Senparc.NeuChar.Entities
         {
             try
             {
+                SenparcTrace.SendCustomLog("GetResponseMessage", "2.1");
+
                 T responseMessage = default(T);
+                SenparcTrace.SendCustomLog("GetResponseMessage", "2.1");
+
                 var tType = typeof(T);
 
                 if (tType.IsInterface)

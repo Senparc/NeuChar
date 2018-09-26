@@ -1,4 +1,6 @@
-﻿using Senparc.CO2NET.Helpers;
+﻿using Senparc.CO2NET.Extensions;
+using Senparc.CO2NET.Helpers;
+using Senparc.CO2NET.Trace;
 using Senparc.NeuChar.Entities;
 using Senparc.NeuChar.MessageHandlers;
 using Senparc.NeuChar.NeuralSystems;
@@ -65,6 +67,8 @@ namespace Senparc.NeuChar.Helpers
         /// <returns></returns>
         public static string GetMaterialContent(this Response responseConfig, MaterialData materialData)
         {
+            //SenparcTrace.SendCustomLog("GetMaterialContent", $"{responseConfig.ToJson()} //// {materialData.ToJson()}");
+
             var id = responseConfig.MaterialId;
             var materialDataItem = materialData.FirstOrDefault(z => z.Id == id);
             if (materialDataItem != null)
