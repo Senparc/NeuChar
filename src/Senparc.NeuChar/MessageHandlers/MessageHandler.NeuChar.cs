@@ -35,7 +35,7 @@ namespace Senparc.NeuChar.MessageHandlers
 
                 if (!File.Exists(file))
                 {
-                    using (var fs = new FileStream(file,FileMode.CreateNew))
+                    using (var fs = new FileStream(file, FileMode.CreateNew))
                     {
                         using (var sw = new StreamWriter(fs))
                         {
@@ -69,7 +69,7 @@ namespace Senparc.NeuChar.MessageHandlers
                     case NeuCharActionType.SaveConfig:
                         {
                             var configRootJson = requestMessage.ConfigRoot;
-                            SenparcTrace.SendCustomLog("收到NeuCharRequest", configRootJson);
+                            SenparcTrace.SendCustomLog("收到NeuCharRequest", "字符串长度：" + configRootJson.Length.ToString());
                             var configRoot = SerializerHelper.GetObject<ConfigRoot>(configRootJson);//这里只做序列化校验
 
                             //TODO:进行验证
@@ -95,7 +95,7 @@ namespace Senparc.NeuChar.MessageHandlers
                             }
 
                             //历史文件备份，并替换临时文件
-                            File.Move(file,file.Replace(".config",$".bak.{DateTime.Now.ToString("yyyyMMdd-HHmmss")}.config"));
+                            File.Move(file, file.Replace(".config", $".bak.{DateTime.Now.ToString("yyyyMMdd-HHmmss")}.config"));
                             File.Move(fileTemp, file);
 
                             //刷新数据
