@@ -145,8 +145,6 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <returns></returns>
         private IResponseMessageBase GetResponseMessage(IRequestMessageBase requestMessage, List<Response> responseConfigs, IMessageHandlerEnlightener messageHandler, string accessTokenOrApi)
         {
-            SenparcTrace.SendCustomLog("GetResponseMessage", "1.1");
-
             IResponseMessageBase responseMessage = null;
             responseConfigs = responseConfigs ?? new List<Response>();
             if (responseConfigs.Count == 0)
@@ -170,8 +168,6 @@ namespace Senparc.NeuChar.MessageHandlers
                 lastResponse = new Response() { Type = ResponseMsgType.SuccessResponse };//返回成功信息
                 responseMessage = new SuccessResponseMessage();
             }
-            SenparcTrace.SendCustomLog("GetResponseMessage", "1.2");
-
 
             //第一项，优先使用消息回复
             switch (lastResponse.Type)

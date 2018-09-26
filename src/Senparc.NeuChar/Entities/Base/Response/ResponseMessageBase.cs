@@ -134,10 +134,7 @@ namespace Senparc.NeuChar.Entities
         {
             try
             {
-                SenparcTrace.SendCustomLog("GetResponseMessage", "2.1");
-
                 T responseMessage = default(T);
-                SenparcTrace.SendCustomLog("GetResponseMessage", "2.1");
 
                 var tType = typeof(T);
 
@@ -150,7 +147,9 @@ namespace Senparc.NeuChar.Entities
                     }
 
                     var responseName = tType.Name.Replace("IResponseMessage", "").Replace("ResponseMessage", ""); //请求名称
+
                     ResponseMsgType msgType = (ResponseMsgType)Enum.Parse(typeof(ResponseMsgType), responseName);
+
                     responseMessage = (T)CreateFromRequestMessage(requestMessage, msgType, enlighten);
                 }
                 else
