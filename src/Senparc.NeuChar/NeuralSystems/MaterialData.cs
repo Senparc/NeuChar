@@ -46,6 +46,7 @@ namespace Senparc.NeuChar.NeuralSystems
         public ResponseMsgType Type { get; set; }
         /// <summary>
         /// 素材内容
+        /// <para>如果是多图文（News）类型，则对应ArticleData类型的JSON数据</para>
         /// </summary>
         public string Content { get; set; }
     }
