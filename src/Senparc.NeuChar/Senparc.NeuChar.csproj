@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net35;net40;net45;netstandard2.0;netcoreapp2.0;netcoreapp2.1</TargetFrameworks>
-    <Version>0.2.3</Version>
+    <Version>0.2.4</Version>
     <AssemblyName>Senparc.NeuChar</AssemblyName>
     <RootNamespace>Senparc.NeuChar</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -39,6 +39,8 @@
       2、fix bug：MessageHandlerNode.Execute() 的 accessTokenOrApi 参数输入 null 会抛错
       v0.2.0 重构标准结构，可加载素材数据库（MeterialData）
       v0.2.2 添加 ArticleData.cs
+      v0.2.3 更新图文响应
+      v0.2.4 添加图片链接和详情链接
     </PackageReleaseNotes>
     <RepositoryUrl>https://github.com/JeffreySu/WeiXinMPSDK</RepositoryUrl>
     <Configurations>Debug;Release;Test</Configurations>
