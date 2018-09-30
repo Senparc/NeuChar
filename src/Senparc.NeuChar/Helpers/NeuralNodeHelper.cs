@@ -27,19 +27,45 @@ namespace Senparc.NeuChar.Helpers
         /// <summary>
         /// 处理图文消息
         /// </summary>
-        /// <param name="originContent"></param>
+        /// <param name="originContent">id|id|id</param>
+        /// <param name="data">素材资源库</param>
         /// <returns></returns>
-        public static List<Article> FillNewsMessage(string originContent)
+        public static List<Article> FillNewsMessage(string originContent, MaterialData data)
         {
-            var list = SerializerHelper.GetObject<List<Article>>(originContent);
+            originContent = originContent ?? "";
+            var idList = originContent.Split('|');
+            var articleList = data
+                .Where(z => idList.Contains(z.Id))
+                .Select(z =>
+                {
+                    try
+                    {
+                        var articleData = SerializerHelper.GetObject<ArticleData>(z.Content);
+                        return new Article
+                        {
+                            Title = articleData?.Title,
+                            Description = articleData?.Digest
+                        };
+                    }
+                    catch
+                    {
+                        return null;
+                    }
+                })
+                .Where(z => z != null)
+                .ToList();
 
-            foreach (var item in list)
-            {
-                item.Title = FillTextMessage(item.Title);
-                item.Description = FillTextMessage(item.Description);
-            }
+            return articleList;
 
-            return list;
+            //var list = SerializerHelper.GetObject<List<Article>>(originContent);
+
+            //foreach (var item in list)
+            //{
+            //    item.Title = FillTextMessage(item.Title);
+            //    item.Description = FillTextMessage(item.Description);
+            //}
+
+            //return list;
         }
 
         /// <summary>

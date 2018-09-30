@@ -261,7 +261,7 @@ namespace Senparc.NeuChar.MessageHandlers
         private IResponseMessageNews RenderResponseMessageNews(IRequestMessageBase requestMessage, Response responseConfig, MessageEntityEnlightener enlighten)
         {
             var strongResponseMessage = requestMessage.CreateResponseMessage<IResponseMessageNews>(enlighten);
-            strongResponseMessage.Articles = NeuralNodeHelper.FillNewsMessage(responseConfig.GetMaterialContent(MaterialData));
+            strongResponseMessage.Articles = NeuralNodeHelper.FillNewsMessage(responseConfig.MaterialId, MaterialData);
             return strongResponseMessage;
         }
 
