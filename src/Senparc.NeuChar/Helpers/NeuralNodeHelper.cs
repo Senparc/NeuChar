@@ -44,7 +44,9 @@ namespace Senparc.NeuChar.Helpers
                         return new Article
                         {
                             Title = articleData?.Title,
-                            Description = articleData?.Digest
+                            PicUrl = articleData?.ThumbCoverUrl,
+                            Description = articleData?.Digest,
+                            Url = $"http://neuchar.senparc.com/Material/Details?uniqueId={articleData.ArticleIds[0]}"
                         };
                     }
                     catch
