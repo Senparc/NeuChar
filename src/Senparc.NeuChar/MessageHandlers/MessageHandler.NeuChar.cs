@@ -30,6 +30,13 @@ namespace Senparc.NeuChar.MessageHandlers
             try
             {
                 var path = ServerUtility.ContentRootMapPath("~/App_Data/NeuChar");
+                //SenparcTrace.SendCustomLog("OnNeuCharRequest path", path);
+
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+
                 var file = Path.Combine(path, "NeuCharRoot.config");
                 string result = null;
 
@@ -44,6 +51,8 @@ namespace Senparc.NeuChar.MessageHandlers
                         fs.Flush();
                     }
                 }
+
+                //TODO:如果第一次创建文件，此处会报：无法访问已关闭文件d的错误
 
                 switch (requestMessage.NeuCharMessageType)
                 {

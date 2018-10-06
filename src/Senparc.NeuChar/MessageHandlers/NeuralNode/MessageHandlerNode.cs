@@ -114,6 +114,8 @@ namespace Senparc.NeuChar.MessageHandlers
 
                             //构造返回结果
                             List<Response> responses = new List<Response>();
+
+
                             switch (eventType)
                             {
                                 case "CLICK" when requestMessage is IRequestMessageEventKey clickRequestMessage:
