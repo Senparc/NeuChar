@@ -24,6 +24,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
     文件名：RequestMessageEvent.cs
     文件功能描述：所有事件消息的基类
     
+    TODO：此类暂时没有用到，预留方便今后扩展时重构
     
     创建标识：Senparc - 20181006
     

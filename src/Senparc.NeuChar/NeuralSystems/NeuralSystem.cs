@@ -75,6 +75,12 @@ namespace Senparc.NeuChar
             InitRoot();//独立放在外面强制执行
 
             var path = ServerUtility.ContentRootMapPath("~/App_Data/NeuChar");
+
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+
             var file = Path.Combine(path, "NeuCharRoot.config");
             //SenparcTrace.SendCustomLog("NeuChar file path", file);
 
