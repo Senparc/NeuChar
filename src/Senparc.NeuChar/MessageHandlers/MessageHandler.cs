@@ -107,20 +107,20 @@ namespace Senparc.NeuChar.MessageHandlers
         {
             get
             {
-                if (_messageHandlerNode == null)
+                if (_currentMessageHandlerNode == null)
                 {
                     //TODO:Neuchar：在这里先做一次NeuChar标准的判断
 
                     var neuralSystem = NeuralSystem.Instance;
 
                     //获取当前设置节点
-                    _messageHandlerNode = (neuralSystem.GetNode("MessageHandlerNode") as MessageHandlerNode) ?? new MessageHandlerNode();
+                    _currentMessageHandlerNode = (neuralSystem.GetNode("MessageHandlerNode") as MessageHandlerNode) ?? new MessageHandlerNode();
                 }
-                return _messageHandlerNode;
+                return _currentMessageHandlerNode;
             }
             set
             {
-                _messageHandlerNode = value;
+                _currentMessageHandlerNode = value;
             }
         }
 

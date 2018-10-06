@@ -70,16 +70,12 @@ namespace Senparc.NeuChar.MessageHandlers
                             foreach (var messagePair in Config.MessagePair.Where(z => z.Request.Type == RequestMsgType.Text))
                             {
                                 //遍历每一个消息设置中的关键词
-                                foreach (var keyword in messagePair.Request.Keywords)
+                                var pairSuccess = messagePair.Request.Keywords.Exists(keyword => keyword.Equals(textRequestMessage.Content, StringComparison.OrdinalIgnoreCase));
+                                if (pairSuccess)
                                 {
-                                    if (keyword.Equals(textRequestMessage.Content, StringComparison.OrdinalIgnoreCase))//TODO:加入大小写敏感设计
-                                    {
-                                        //SenparcTrace.SendCustomLog("neuchar trace", "4.1");
-
-                                        responseMessage = GetResponseMessage(requestMessage, messagePair.Responses, messageHandler, accessTokenOrApi);
-                                        break;
-                                    }
+                                    responseMessage = GetResponseMessage(requestMessage, messagePair.Responses, messageHandler, accessTokenOrApi);
                                 }
+
                                 if (responseMessage != null)
                                 {
                                     break;
@@ -111,8 +107,41 @@ namespace Senparc.NeuChar.MessageHandlers
                     break;
                 case RequestMsgType.Event:
                     {
-                        var eventRequestMessage = requestMessage as IRequestMessageEvent;
+                        //菜单或其他系统事件
+                        if (requestMessage is IRequestMessageEvent eventRequestMessage)
+                        {
+                            var eventType = eventRequestMessage.EventName.ToUpper();
 
+                            //构造返回结果
+                            List<Response> responses = new List<Response>();
+                            switch (eventType)
+                            {
+                                case "CLICK" when requestMessage is IRequestMessageEventKey clickRequestMessage:
+                                    {
+                                        //TODO:暂时只支持CLICK，因此在这里遍历
+                                        foreach (var messagePair in Config.MessagePair.Where(z => z.Request.Type == RequestMsgType.Event))
+                                        {
+                                            var pairSuccess = messagePair.Request.Keywords.Exists(keyword => keyword.Equals(clickRequestMessage.EventKey, StringComparison.OrdinalIgnoreCase));
+                                            if (pairSuccess)
+                                            {
+                                                responseMessage = GetResponseMessage(requestMessage, messagePair.Responses, messageHandler, accessTokenOrApi);
+                                            }
+
+                                            if (responseMessage != null)
+                                            {
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                        else
+                        {
+                            //下级模块中没有正确处理 requestMessage 类型
+                        }
                     }
                     break;
                 default:

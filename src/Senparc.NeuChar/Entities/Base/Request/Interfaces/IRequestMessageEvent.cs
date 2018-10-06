@@ -17,6 +17,6 @@ namespace Senparc.NeuChar.Entities
         /// <summary>
         /// 获取事件类型的字符串
         /// </summary>
-        string GetEventName { get; }
+        string EventName { get; }
     }
 }

@@ -87,6 +87,25 @@ namespace Senparc.NeuChar.Helpers
             return originContent;
         }
 
+
+        /// <summary>
+        /// 获取响应素材内容
+        /// </summary>
+        /// <param name="materialId"></param>
+        /// <param name="materialData"></param>
+        /// <returns></returns>
+        public static string GetMaterialContent(string materialId, MaterialData materialData)
+        {
+            //SenparcTrace.SendCustomLog("GetMaterialContent", $"{responseConfig.ToJson()} //// {materialData.ToJson()}");
+
+            var materialDataItem = materialData.FirstOrDefault(z => z.Id == materialId);
+            if (materialDataItem != null)
+            {
+                return materialDataItem.Content;
+            }
+            return null;
+        }
+
         /// <summary>
         /// 获取响应素材内容
         /// </summary>
@@ -98,12 +117,7 @@ namespace Senparc.NeuChar.Helpers
             //SenparcTrace.SendCustomLog("GetMaterialContent", $"{responseConfig.ToJson()} //// {materialData.ToJson()}");
 
             var id = responseConfig.MaterialId;
-            var materialDataItem = materialData.FirstOrDefault(z => z.Id == id);
-            if (materialDataItem != null)
-            {
-                return materialDataItem.Content;
-            }
-            return null;
+            return GetMaterialContent(id, materialData);
         }
     }
 }
