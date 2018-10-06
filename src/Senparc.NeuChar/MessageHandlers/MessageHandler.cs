@@ -99,6 +99,31 @@ namespace Senparc.NeuChar.MessageHandlers
         /// </summary>
         public abstract ApiEnlightener ApiEnlightener { get; }
 
+        private MessageHandlerNode _currentMessageHandlerNode;
+        /// <summary>
+        /// 默认 MessageHandlerNode 对象
+        /// </summary>
+        public MessageHandlerNode CurrentMessageHandlerNode
+        {
+            get
+            {
+                if (_messageHandlerNode == null)
+                {
+                    //TODO:Neuchar：在这里先做一次NeuChar标准的判断
+
+                    var neuralSystem = NeuralSystem.Instance;
+
+                    //获取当前设置节点
+                    _messageHandlerNode = (neuralSystem.GetNode("MessageHandlerNode") as MessageHandlerNode) ?? new MessageHandlerNode();
+                }
+                return _messageHandlerNode;
+            }
+            set
+            {
+                _messageHandlerNode = value;
+            }
+        }
+
         /// <summary>
         /// 当前用户消息上下文
         /// </summary>
@@ -329,7 +354,7 @@ namespace Senparc.NeuChar.MessageHandlers
         {
         }
 
-     
+
 
         ///// <summary>
         ///// 默认返回消息（当任何OnXX消息没有被重写，都将自动返回此默认消息）

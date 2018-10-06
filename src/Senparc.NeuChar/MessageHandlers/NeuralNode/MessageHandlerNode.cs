@@ -109,6 +109,12 @@ namespace Senparc.NeuChar.MessageHandlers
                         }
                     }
                     break;
+                case RequestMsgType.Event:
+                    {
+                        var eventRequestMessage = requestMessage as IRequestMessageEvent;
+
+                    }
+                    break;
                 default:
                     //不作处理
 
