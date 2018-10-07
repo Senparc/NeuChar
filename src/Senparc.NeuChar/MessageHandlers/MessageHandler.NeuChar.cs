@@ -40,25 +40,24 @@ namespace Senparc.NeuChar.MessageHandlers
                 var file = Path.Combine(path, "NeuCharRoot.config");
                 string result = null;
 
-                if (!File.Exists(file))
+                var configFileExisted = File.Exists(file);
+                if (! configFileExisted)
                 {
                     using (var fs = new FileStream(file, FileMode.CreateNew))
                     {
                         using (var sw = new StreamWriter(fs))
                         {
-                            sw.WriteLine("{}");
+                            sw.WriteLine(NeuralSystem.DEFAULT_CONFIG_FILE_CONENT);
                         }
                         fs.Flush();
                     }
                 }
 
-                //TODO:如果第一次创建文件，此处会报：无法访问已关闭文件d的错误
-
                 switch (requestMessage.NeuCharMessageType)
                 {
                     case NeuCharActionType.GetConfig:
                         {
-                            if (File.Exists(file))
+                            if (configFileExisted)//本次对话会创建，但不在读取，利可读取可能会发生“无法访问已关闭文件”的错误
                             {
                                 using (var fs = FileHelper.GetFileStream(file))
                                 {
@@ -71,7 +70,7 @@ namespace Senparc.NeuChar.MessageHandlers
                             }
                             else
                             {
-                                result = "{}";//TODO:初始化一个对象
+                                result = NeuralSystem.DEFAULT_CONFIG_FILE_CONENT;//TODO:初始化一个对象
                             }
                         }
                         break;

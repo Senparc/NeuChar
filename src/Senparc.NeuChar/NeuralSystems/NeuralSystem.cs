@@ -40,7 +40,14 @@ namespace Senparc.NeuChar
 
         //TODO：开发流程：实体->JSON/XML->General
 
+        /// <summary>
+        /// 默认配置文件内容
+        /// </summary>
+        internal const string DEFAULT_CONFIG_FILE_CONENT = "{}";
 
+        /// <summary>
+        /// 根节点
+        /// </summary>
         public INeuralNode Root { get; set; }
 
         /// <summary>
