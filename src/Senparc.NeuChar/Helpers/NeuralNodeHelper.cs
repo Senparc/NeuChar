@@ -11,6 +11,9 @@ using System.Text;
 
 namespace Senparc.NeuChar.Helpers
 {
+    /// <summary>
+    /// NeuralNode 帮助类
+    /// </summary>
     public static class NeuralNodeHelper
     {
 
