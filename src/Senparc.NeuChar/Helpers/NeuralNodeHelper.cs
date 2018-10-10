@@ -36,46 +36,42 @@ namespace Senparc.NeuChar.Helpers
         public static List<Article> FillNewsMessage(string originContent, MaterialData data)
         {
             originContent = originContent ?? "";
-            var firstMaterialId = originContent.Split('|')[0];
+            if (!originContent.Contains("|"))
+            {
+                return null;
+            }
+
+            var firstMaterialId = originContent.Split('|')?[0];
+
             List<Article> articleList = new List<Article>();
 
-            Func<string, List<string>> getArticle = materialId =>
-             {
-                 var material = data.FirstOrDefault(z => z.Id == materialId);
-                 if (material == null)
-                 {
-                     return null;
-                 }
-
-                 var articleData = SerializerHelper.GetObject<ArticleData>(material.Content);
-                 var article = new Article()
-                 {
-                     Title = articleData?.Title,
-                     PicUrl = articleData?.ThumbCoverUrl,
-                     Description = articleData?.Digest,
-                     //   Url = $"http://neuchar.senparc.com/Material/Details?uniqueId={articleData.ArticleIds[0]}"
-                 };
-
-                 if (articleData.ContentSourceUrl.IsNullOrWhiteSpace())
-                 {
-                     article.Url = $"http://neuchar.senparc.com/WX/Material/Details?uniqueId={material.Id}";
-                 }
-                 else
-                 {
-                     article.Url = articleData.ContentSourceUrl;
-                 }
-
-                 articleList.Add(article);
-                 return articleData.ArticleIds;
-             };
-
-            var ids = getArticle(firstMaterialId);//第一篇
-            if (ids != null)
+            var material = data.FirstOrDefault(z => z.Id == firstMaterialId);
+            if (material == null)
             {
-                foreach (var item in ids)
+                return null;
+            }
+
+            var articleData = SerializerHelper.GetObject<ArticleData>(material.Content);
+            foreach (var item in articleData.ArticleIds)
+            {
+                var article = new Article()
                 {
-                    getArticle(item);
+                    Title = articleData?.Title,
+                    PicUrl = articleData?.ThumbCoverUrl,
+                    Description = articleData?.Digest,
+                    //   Url = $"http://neuchar.senparc.com/Material/Details?uniqueId={articleData.ArticleIds[0]}"
+                };
+
+                if (articleData.ContentSourceUrl.IsNullOrWhiteSpace())
+                {
+                    article.Url = $"http://neuchar.senparc.com/WX/Material/Details?uniqueId={material.Id}";
                 }
+                else
+                {
+                    article.Url = articleData.ContentSourceUrl;
+                }
+
+                articleList.Add(article);
             }
 
             return articleList.Count > 0 ? articleList : null;//TODO:可以返回一条默认有好消息

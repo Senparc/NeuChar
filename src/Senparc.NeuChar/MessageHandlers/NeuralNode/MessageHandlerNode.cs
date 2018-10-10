@@ -307,8 +307,20 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <returns></returns>
         private IResponseMessageNews RenderResponseMessageNews(IRequestMessageBase requestMessage, Response responseConfig, MessageEntityEnlightener enlighten)
         {
+            var articles = NeuralNodeHelper.FillNewsMessage(responseConfig.MaterialId, MaterialData);
             var strongResponseMessage = requestMessage.CreateResponseMessage<IResponseMessageNews>(enlighten);
-            strongResponseMessage.Articles = NeuralNodeHelper.FillNewsMessage(responseConfig.MaterialId, MaterialData);
+            if (articles != null)
+            {
+                strongResponseMessage.Articles = articles;
+            }
+            else
+            {
+                strongResponseMessage.Articles = new List<Article>() {
+                    new Article() {
+                     Title="您要查找的素材不存在，或格式定义错误！",
+                     Description="您要查找的素材不存在，或格式定义错误！"
+                } };
+            }
             return strongResponseMessage;
         }
 
