@@ -126,7 +126,17 @@ namespace Senparc.NeuChar.MessageHandlers
                                             var pairSuccess = messagePair.Request.Keywords.Exists(keyword => keyword.Equals(clickRequestMessage.EventKey, StringComparison.OrdinalIgnoreCase));
                                             if (pairSuccess)
                                             {
-                                                responseMessage = GetResponseMessage(requestMessage, messagePair.Responses, messageHandler, accessTokenOrApi);
+                                                try
+                                                {
+                                                    SenparcTrace.SendCustomLog("CLICK 跟踪 1.0", clickRequestMessage.EventKey);
+
+                                                    responseMessage = GetResponseMessage(requestMessage, messagePair.Responses, messageHandler, accessTokenOrApi);
+
+                                                }
+                                                catch (Exception ex)
+                                                {
+                                                    SenparcTrace.SendCustomLog("CLICK 跟踪 1.1", ex.Message + "\r\n" + ex.StackTrace);
+                                                }
                                             }
 
                                             if (responseMessage != null)
