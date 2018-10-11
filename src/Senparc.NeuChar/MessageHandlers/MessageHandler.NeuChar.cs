@@ -111,6 +111,11 @@ namespace Senparc.NeuChar.MessageHandlers
                             neuralSystem.ReloadNode();
                         }
                         break;
+                    case NeuCharActionType.CheckNeuChar:
+                        {
+                            //TODO：进行有效性检验
+                        }
+                        break;
                     default:
                         break;
                 }

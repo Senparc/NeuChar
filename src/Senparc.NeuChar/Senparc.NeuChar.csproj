@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net35;net40;net45;netstandard2.0;netcoreapp2.0;netcoreapp2.1</TargetFrameworks>
-    <Version>0.2.7.3</Version>
+    <Version>0.2.8</Version>
     <AssemblyName>Senparc.NeuChar</AssemblyName>
     <RootNamespace>Senparc.NeuChar</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -44,6 +44,7 @@
       v0.2.5 添加 MenuButtonType 枚举类型
       v0.2.6 支持 菜单点击事件和素材引用；添加 RequestMessageEvent 基类
       v0.2.7 改进图文消息回复
+      v0.2.8 添加 NeuChar 服务器有效性检验
     </PackageReleaseNotes>
     <RepositoryUrl>https://github.com/JeffreySu/WeiXinMPSDK</RepositoryUrl>
     <Configurations>Debug;Release;Test</Configurations>

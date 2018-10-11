@@ -31,6 +31,10 @@ namespace Senparc.NeuChar
         /// 储存配置
         /// </summary>
         SaveConfig,
+        /// <summary>
+        /// 检查NeuChar服务是否可用
+        /// </summary>
+        CheckNeuChar,
     }
 
     /// <summary>
