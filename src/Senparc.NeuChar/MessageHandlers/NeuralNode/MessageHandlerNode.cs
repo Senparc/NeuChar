@@ -190,8 +190,12 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <returns></returns>
         private IResponseMessageBase GetResponseMessage(IRequestMessageBase requestMessage, List<Response> responseConfigs, IMessageHandlerEnlightener messageHandler, string accessTokenOrApi)
         {
+
             IResponseMessageBase responseMessage = null;
             responseConfigs = responseConfigs ?? new List<Response>();
+
+
+
             if (responseConfigs.Count == 0)
             {
                 return null;
