@@ -9,7 +9,7 @@ using System.Xml.Linq;
 namespace Senparc.NeuChar.Tests.MessageHandlers.NeuralNode
 {
     [TestClass]
-    public class MessageHandlerNodeTests
+    public class MessageHandlerNodeTests : BaseTest
     {
 
         [TestMethod]
@@ -19,7 +19,7 @@ namespace Senparc.NeuChar.Tests.MessageHandlers.NeuralNode
  <xml>
   <ToUserName><![CDATA[gh_0fe614101343]]></ToUserName>
   <FromUserName><![CDATA[oxRg0uLsnpHjb8o93uVnwMK_WAVw]]></FromUserName>
-  <CreateTime> 1539684529 </CreateTime>
+  <CreateTime>1539684529</CreateTime>
   <MsgType><![CDATA[event]]></MsgType>
   <Event><![CDATA[CLICK]]></Event>
   <EventKey><![CDATA[NEUCHAR|43E8BCD9]]></EventKey>
