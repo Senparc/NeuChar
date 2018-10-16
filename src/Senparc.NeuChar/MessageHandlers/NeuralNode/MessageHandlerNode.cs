@@ -128,8 +128,6 @@ namespace Senparc.NeuChar.MessageHandlers
                                             {
                                                 try
                                                 {
-                                                    SenparcTrace.SendCustomLog("CLICK 跟踪 1.0", clickRequestMessage.EventKey);
-
                                                     responseMessage = GetResponseMessage(requestMessage, messagePair.Responses, messageHandler, accessTokenOrApi);
 
                                                 }
@@ -224,6 +222,7 @@ namespace Senparc.NeuChar.MessageHandlers
 
                     break;
                 case ResponseMsgType.News:
+                case ResponseMsgType.MultipleNews:
                     responseMessage = RenderResponseMessageNews(requestMessage, lastResponse, messageHandler.MessageEntityEnlightener);
                     break;
                 case ResponseMsgType.Music:
@@ -237,8 +236,8 @@ namespace Senparc.NeuChar.MessageHandlers
                     break;
                 case ResponseMsgType.Transfer_Customer_Service:
                     break;
-                case ResponseMsgType.MultipleNews:
-                    break;
+                //case ResponseMsgType.MultipleNews:
+                //    break;
                 case ResponseMsgType.LocationMessage:
                     break;
                 case ResponseMsgType.NoResponse:
@@ -304,6 +303,7 @@ namespace Senparc.NeuChar.MessageHandlers
         /// </summary>
         /// <param name="requestMessage"></param>
         /// <param name="responseConfig"></param>
+        /// <param name="enlighten"></param>
         /// <returns></returns>
         private IResponseMessageNews RenderResponseMessageNews(IRequestMessageBase requestMessage, Response responseConfig, MessageEntityEnlightener enlighten)
         {
