@@ -35,17 +35,17 @@ namespace Senparc.NeuChar.Helpers
         /// <returns></returns>
         public static List<Article> FillNewsMessage(string originContent, MaterialData data)
         {
-            originContent = originContent ?? "";
-            if (!originContent.Contains("|"))
+            if (originContent.IsNullOrWhiteSpace())
             {
                 return null;
             }
 
-            var firstMaterialId = originContent.Split('|')?[0];
+            //var firstMaterialId = originContent.Split('|')?[0];
+
 
             List<Article> articleList = new List<Article>();
 
-            var material = data.FirstOrDefault(z => z.Id == firstMaterialId);
+            var material = data.FirstOrDefault(z => z.Id == originContent);
             if (material == null)
             {
                 return null;

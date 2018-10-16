@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Senparc.Weixin.MP.Entities.Request;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -25,7 +26,9 @@ namespace Senparc.NeuChar.Tests.MessageHandlers.NeuralNode
   <EventKey><![CDATA[NEUCHAR|43E8BCD9]]></EventKey>
 </xml>";
 
-            var messageHandler = new TestMpMessageHandler(XDocument.Parse(xmlText));
+            var postModel = new PostModel() { AppId="" };
+
+            var messageHandler = new TestMpMessageHandler(XDocument.Parse(xmlText), postModel);
             messageHandler.Execute();
 
             Assert.IsNotNull(messageHandler.TextResponseMessage);
