@@ -164,6 +164,24 @@ namespace Senparc.NeuChar.Entities.Request
         }
 
         /// <summary>
+        /// 自然语言理解
+        /// Natural Language Understanding
+        /// 可以使用第三方NLU服务接口或开源聊天机器人框架BotSharp(https://github.com/Oceania2018/BotSharp)
+        /// </summary>
+        /// <param name="handler"></param>
+        /// <param name="func"></param>
+        /// <returns></returns>
+        public static RequestMessageTextKeywordHandler NLU(this RequestMessageTextKeywordHandler handler, Func<IResponseMessageBase> func)
+        {
+            if (!handler.MatchSuccessed)
+            {
+                handler.ResponseMessage = func();
+            }
+
+            return handler;
+        }
+
+        /// <summary>
         /// 默认消息
         /// </summary>
         /// <param name="handler"></param>
