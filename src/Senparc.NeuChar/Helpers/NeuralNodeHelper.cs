@@ -51,27 +51,56 @@ namespace Senparc.NeuChar.Helpers
                 return null;
             }
 
-            var articleData = SerializerHelper.GetObject<ArticleData>(material.Content);
-            foreach (var item in articleData.ArticleIds)
+            var articleData = SerializerHelper.GetObject<ArticleData>(material.Content);//获取主文章（第一篇图文）内容
+            if (articleData != null && articleData.ArticleIds != null)
             {
-                var article = new Article()
+                for (int i = 0; i < articleData.ArticleIds.Count; i++)
                 {
-                    Title = articleData?.Title,
-                    PicUrl = articleData?.ThumbCoverUrl,
-                    Description = articleData?.Digest,
-                    //   Url = $"http://neuchar.senparc.com/Material/Details?uniqueId={articleData.ArticleIds[0]}"
-                };
+                    ArticleData articleItem = null;
+                    string materialId = null;
+                    if (i == 0)
+                    {
+                        articleItem = articleData;//第一项就是自己
+                        materialId = material.Id;
+                    }
+                    else
+                    {
+                        var materialItem = data.FirstOrDefault(z => z.Id == articleData.ArticleIds[i]);//后续选项从素材中查找
+                        if (materialItem != null)
+                        {
+                            articleItem = SerializerHelper.GetObject<ArticleData>(materialItem.Content);
+                            if (articleItem == null)
+                            {
+                                continue;
+                            }
+                            materialId = materialItem.Id;
+                        }
+                        else
+                        {
+                            continue;
+                        }
+                    }
 
-                if (articleData.ContentSourceUrl.IsNullOrWhiteSpace())
-                {
-                    article.Url = $"http://neuchar.senparc.com/WX/Material/Details?uniqueId={material.Id}";
-                }
-                else
-                {
-                    article.Url = articleData.ContentSourceUrl;
-                }
+                    var article = new Article()
+                    {
+                        Title = articleItem?.Title,
+                        PicUrl = articleItem?.ThumbCoverUrl,
+                        Description = articleItem?.Digest,
+                        //   Url = $"http://neuchar.senparc.com/Material/Details?uniqueId={articleItem.ArticleIds[0]}"
+                    };
 
-                articleList.Add(article);
+                    if (articleItem.ContentSourceUrl.IsNullOrWhiteSpace())
+                    {
+                        article.Url = $"http://neuchar.senparc.com/WX/Material/Details?uniqueId={materialId}";
+                    }
+                    else
+                    {
+                        article.Url = articleItem.ContentSourceUrl;
+                    }
+
+                    articleList.Add(article);
+
+                }
             }
 
             return articleList.Count > 0 ? articleList : null;//TODO:可以返回一条默认有好消息
