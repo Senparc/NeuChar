@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 
-namespace Senparc.NeuChar.Tests.MessageHandlers.NeuralNode
+namespace Senparc.NeuChar.Tests.MessageHandlers.NeuralNode.WxOpen
 {
     [TestClass]
     public class MessageHandlerNodeTests : BaseTest
@@ -17,13 +17,13 @@ namespace Senparc.NeuChar.Tests.MessageHandlers.NeuralNode
         public void RenderResponseMessageNewsTest()
         {
             var xmlText = @"<?xml version=""1.0"" encoding=""utf-8""?>
- <xml>
-  <ToUserName><![CDATA[gh_0fe614101343]]></ToUserName>
-  <FromUserName><![CDATA[oxRg0uLsnpHjb8o93uVnwMK_WAVw]]></FromUserName>
-  <CreateTime>1539684529</CreateTime>
-  <MsgType><![CDATA[event]]></MsgType>
-  <Event><![CDATA[CLICK]]></Event>
-  <EventKey><![CDATA[NEUCHAR|43E8BCD9]]></EventKey>
+<xml>
+  <ToUserName><![CDATA[gh_6e306981e699]]></ToUserName>
+  <FromUserName><![CDATA[oeaTy0DgoGq-lyqvTauWVjbIVuP0]]></FromUserName>
+  <CreateTime>1539828411</CreateTime>
+  <MsgType><![CDATA[text]]></MsgType>
+  <Content><![CDATA[N]]></Content>
+  <MsgId>6613512667117942239</MsgId>
 </xml>";
 
             var postModel = new PostModel() { AppId="" };
