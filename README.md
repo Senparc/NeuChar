@@ -33,6 +33,13 @@ Senparc.NeuChar 跨平台信息交互标准。使用 NeuChar 标准可以跨平�
 [nuget-img-base]: https://img.shields.io/nuget/dt/Senparc.NeuChar.svg
 [nuget-url-base]: https://www.nuget.org/packages/Senparc.NeuChar
 
+## 官网地址
+
+<a href="https://www.neuchar.com" target="_blank">https://www.neuchar.com</a>
+
+公测期间备用域名：<a href="https://neuchar.senparc.com" target="_blank">https://neuchar.senparc.com</a>
+
+
 ## 如何使用 Nuget 安装？
 
 * NeuChar Nuget 地址：https://www.nuget.org/packages/Senparc.NeuChar
