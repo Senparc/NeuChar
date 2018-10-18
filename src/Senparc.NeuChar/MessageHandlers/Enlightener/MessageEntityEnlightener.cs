@@ -61,9 +61,8 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <summary>
         /// 默认为 SuccessResponseMessage 类型，返回字符串 "success"
         /// </summary>
-        public SuccessResponseMessageBase SuccessResponseMessage()
+        public virtual SuccessResponseMessageBase SuccessResponseMessage()
         {
-
             return new SuccessResponseMessage();
         }
 
