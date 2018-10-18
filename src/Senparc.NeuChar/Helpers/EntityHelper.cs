@@ -497,7 +497,6 @@ namespace Senparc.NeuChar.Helpers
         /// </summary>
         /// <typeparam name="T">需要生成的ResponseMessage类型</typeparam>
         /// <param name="requestMessage">IRequestMessageBase接口下的接收信息类型</param>
-        /// <param name="enlighten">MessageEntityEnlighten，当 T 为接口时必须提供</param>
         /// <returns></returns>
         public static T CreateResponseMessage<T>(this IRequestMessageBase requestMessage)
             where T :class, IResponseMessageBase //只有class才可以enlighten = null
