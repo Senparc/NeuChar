@@ -64,7 +64,7 @@ namespace Senparc.NeuChar.MessageHandlers
         public SuccessResponseMessageBase SuccessResponseMessage()
         {
 
-            return SuccessResponseMessage();
+            return new SuccessResponseMessage();
         }
 
 

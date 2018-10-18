@@ -214,10 +214,10 @@ namespace Senparc.NeuChar.MessageHandlers
                 //小程序，所有的请求都使用客服消息接口，回填取出的最后一个
                 extendReponses.Add(lastResponse);
                 lastResponse = new Response() { Type = ResponseMsgType.SuccessResponse };//返回成功信息
-                responseMessage = new SuccessResponseMessage();
+                //responseMessage = new SuccessResponseMessage();
             }
 
-            //第一项，优先使用消息回复
+            //最后一项，使用 MesageHandler 的普通消息回复
             switch (lastResponse.Type)
             {
                 case ResponseMsgType.Text:
@@ -374,7 +374,7 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <returns></returns>
         private IResponseMessageBase RenderResponseMessageSuccessResponse(IRequestMessageBase requestMessage, Response responseConfig, MessageEntityEnlightener enlighten)
         {
-            var strongResponseMessage = requestMessage.CreateResponseMessage<SuccessResponseMessageBase>(enlighten);
+            var strongResponseMessage = requestMessage.CreateResponseMessage<SuccessResponseMessage>(enlighten);
             return strongResponseMessage;
         }
 

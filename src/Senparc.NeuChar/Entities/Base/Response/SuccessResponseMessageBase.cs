@@ -38,7 +38,7 @@ namespace Senparc.NeuChar.Entities
         /// <summary>
         /// SuccessResponseMessage构造函数
         /// </summary>
-        protected SuccessResponseMessageBase()
+        public SuccessResponseMessageBase()
         {
             ReturnText = "success";
         }
