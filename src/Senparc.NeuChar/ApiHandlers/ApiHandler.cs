@@ -31,6 +31,7 @@ namespace Senparc.NeuChar.ApiHandlers
         /// 执行API
         /// </summary>
         /// <param name="response"></param>
+        /// <param name="materialData"></param>
         /// <param name="requestMessage"></param>
         /// <param name="accessTokenOrAppId"></param>
         /// <param name="openId"></param>

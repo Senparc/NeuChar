@@ -170,7 +170,7 @@ namespace Senparc.NeuChar.Entities
             }
             catch (Exception ex)
             {
-                SenparcTrace.SendCustomLog("CreateFromRequestMessage异常调试",typeof(T).FullName);
+                SenparcTrace.SendCustomLog("CreateFromRequestMessage异常调试", typeof(T).FullName);
 
                 throw new BaseException("ResponseMessageBase.CreateFromRequestMessage<T>过程发生异常！", ex);
             }

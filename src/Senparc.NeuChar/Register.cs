@@ -1,5 +1,6 @@
 ﻿using Senparc.CO2NET.Cache;
 using Senparc.CO2NET.Trace;
+using Senparc.NeuChar.ApiBind;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,10 +25,6 @@ namespace Senparc.NeuChar
         /// </summary>
         public static Dictionary<string, Type> NeuralNodeRegisterCollection = new Dictionary<string, Type>();
 
-        /// <summary>
-        /// Api绑定信息集合
-        /// </summary>
-        public static Dictionary<string, ApiBindInfo> ApiBindInfoCollection = new Dictionary<string, ApiBindInfo>();
 
         static Register()
         {
@@ -71,13 +68,13 @@ namespace Senparc.NeuChar
                     {
                         scanTypesCount++;
                         var classTypes = assembly.GetTypes()
-                                    .Where(z => z.Name.EndsWith("api", StringComparison.OrdinalIgnoreCase) || 
+                                    .Where(z => z.Name.EndsWith("api", StringComparison.OrdinalIgnoreCase) ||
                                                 z.Name.EndsWith("apis", StringComparison.OrdinalIgnoreCase))
                                     .ToArray();
 
                         foreach (var type in classTypes)
                         {
-                            if (/*type.IsAbstract || 静态类会被识别为 IsAbstract*/ 
+                            if (/*type.IsAbstract || 静态类会被识别为 IsAbstract*/
                                 !type.IsPublic || !type.IsClass || type.IsEnum)
                             {
                                 continue;
@@ -89,9 +86,7 @@ namespace Senparc.NeuChar
                                 var attrs = method.GetCustomAttributes(typeof(ApiBindAttribute), false);
                                 foreach (var attr in attrs)
                                 {
-                                    var apiBindAttr = attr as ApiBindAttribute;
-                                    var name = $"{apiBindAttr.Name}";//TODO：生成全局唯一名称
-                                    ApiBindInfoCollection.Add(name, new ApiBindInfo(apiBindAttr, method));
+                                    ApiBindInfoCollection.Instance.Add(method, attr as ApiBindAttribute);
                                 }
                             }
                         }

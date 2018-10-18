@@ -41,27 +41,21 @@ namespace Senparc.NeuChar.ApiHandlers
         /// <returns></returns>
         public abstract ApiResult SendImage(string accessTokenOrAppId, string openId, string mediaId);
 
-        /// <summary>
-        /// 获取 ApiBindInfo
-        /// </summary>
-        /// <param name="name">唯一标识名称</param>
-        /// <returns></returns>
-        private ApiBindInfo GetApiBindInfo(string name)
-        {
-            if (Register.ApiBindInfoCollection.ContainsKey(name))
-            {
-                return Register.ApiBindInfoCollection[name];
-            }
-            return null;
-        }
 
         /// <summary>
         /// 调用自定义接口（使用ApiBind特性）
         /// </summary>
         /// <param name="response">响应设置信息</param>
+        /// <param name="materialData"></param>
+        /// <param name="openId"></param>
         /// <returns></returns>
-        public virtual ApiResult CustomApi(Response response, MaterialData materialData ,string openId)
+        public virtual ApiResult CustomApi(Response response, MaterialData materialData, string openId)
         {
+            if (openId == null)
+            {
+                throw new ArgumentNullException(nameof(openId));
+            }
+
             ApiBindJson apiBindJson = SerializerHelper.GetObject<ApiBindJson>(response.GetMaterialContent(materialData));
             if (apiBindJson == null)
             {
@@ -69,7 +63,7 @@ namespace Senparc.NeuChar.ApiHandlers
             }
 
             //查找映射
-            ApiBindInfo apiBindInfo = this.GetApiBindInfo(apiBindJson.name);
+            ApiBindInfo apiBindInfo = ApiBindInfoCollection.Instance.Get(PlatformType, apiBindJson.name);
             if (apiBindInfo == null)
             {
                 throw new NeuCharException($"自定义API未找到，名称：{apiBindJson.name}");
