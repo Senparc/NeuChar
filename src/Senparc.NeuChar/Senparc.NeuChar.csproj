@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net35;net40;net45;netstandard2.0;netcoreapp2.0;netcoreapp2.1</TargetFrameworks>
-    <Version>0.2.9.1</Version>
+    <Version>0.2.10</Version>
     <AssemblyName>Senparc.NeuChar</AssemblyName>
     <RootNamespace>Senparc.NeuChar</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -46,6 +46,7 @@
       v0.2.7 改进图文消息回复
       v0.2.8 添加 NeuChar 服务器有效性检验
       v0.2.9 优化多图文处理
+      v0.2.10 提供 NeuChar 服务器连接检测能力
     </PackageReleaseNotes>
     <RepositoryUrl>https://github.com/JeffreySu/WeiXinMPSDK</RepositoryUrl>
     <Configurations>Debug;Release;Test</Configurations>

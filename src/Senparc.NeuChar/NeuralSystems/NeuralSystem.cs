@@ -44,6 +44,7 @@ namespace Senparc.NeuChar
         /// 默认配置文件内容
         /// </summary>
         internal const string DEFAULT_CONFIG_FILE_CONENT = "{}";
+        internal const string CHECK_CNNECTION_RESULT = "OK";
 
         /// <summary>
         /// 根节点

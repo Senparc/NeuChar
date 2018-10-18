@@ -114,6 +114,7 @@ namespace Senparc.NeuChar.MessageHandlers
                     case NeuCharActionType.CheckNeuChar:
                         {
                             //TODO：进行有效性检验
+                            result = NeuralSystem.CHECK_CNNECTION_RESULT;
                         }
                         break;
                     default:
