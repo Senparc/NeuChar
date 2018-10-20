@@ -12,10 +12,13 @@ using System.Text;
 namespace Senparc.NeuChar.ApiHandlers
 {
     /// <summary>
-    /// 
+    /// ApiHandler
     /// </summary>
     public class ApiHandler
     {
+        /// <summary>
+        /// ApiEnlightener
+        /// </summary>
         public ApiEnlightener ApiEnlighten { get; set; }
 
         /// <summary>
