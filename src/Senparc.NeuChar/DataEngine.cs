@@ -28,9 +28,6 @@ namespace Senparc.NeuChar
         public DataEngine(string filePath = "~/App_Data/NeuChar")
         {
               FullFilePath = filePath;
-
-
-
         }
     }
 }

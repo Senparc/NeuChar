@@ -107,6 +107,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="BaseModel.cs" />
+    <Compile Remove="DataEngine.cs" />
     <Compile Remove="Properties\AssemblyInfo.cs" />
   </ItemGroup>
 
