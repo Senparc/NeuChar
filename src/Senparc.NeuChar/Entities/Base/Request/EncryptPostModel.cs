@@ -36,7 +36,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 namespace Senparc.NeuChar
 {
     /// <summary>
-    /// 接收加密信息统一接口
+    /// 接收加密信息统一接口（同时也支持非加密信息）
     /// </summary>
     public interface IEncryptPostModel
     {
@@ -70,7 +70,7 @@ namespace Senparc.NeuChar
     }
 
     /// <summary>
-    /// 接收加密信息统一基类
+    /// 接收加密信息统一基类（同时也支持非加密信息）
     /// </summary>
     public class EncryptPostModel : IEncryptPostModel
     {

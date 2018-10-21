@@ -270,12 +270,12 @@ namespace Senparc.NeuChar.MessageHandlers
         /// </summary>
         /// <param name="postDataDocument"></param>
         /// <param name="maxRecordCount"></param>
-        /// <param name="postData"></param>
-        public void CommonInitialize(XDocument postDataDocument, int maxRecordCount, object postData)
+        /// <param name="postModel"></param>
+        public void CommonInitialize(XDocument postDataDocument, int maxRecordCount, IEncryptPostModel postModel)
         {
             OmitRepeatedMessage = true;//默认开启去重
             GlobalMessageContext.MaxRecordCount = maxRecordCount;
-            RequestDocument = Init(postDataDocument, postData);
+            RequestDocument = Init(postDataDocument, postModel);
         }
 
         /// <summary>
@@ -283,12 +283,12 @@ namespace Senparc.NeuChar.MessageHandlers
         /// </summary>
         /// <param name="inputStream"></param>
         /// <param name="maxRecordCount"></param>
-        /// <param name="postData">需要传入到Init的参数</param>
-        public MessageHandler(Stream inputStream, int maxRecordCount = 0, object postData = null)
+        /// <param name="postModel">需要传入到Init的参数</param>
+        public MessageHandler(Stream inputStream, IEncryptPostModel postModel, int maxRecordCount = 0)
         {
             var postDataDocument = XmlUtility.Convert(inputStream);
 
-            CommonInitialize(postDataDocument, maxRecordCount, postData);
+            CommonInitialize(postDataDocument, maxRecordCount, postModel);
         }
 
         /// <summary>
@@ -296,20 +296,20 @@ namespace Senparc.NeuChar.MessageHandlers
         /// </summary>
         /// <param name="postDataDocument"></param>
         /// <param name="maxRecordCount"></param>
-        /// <param name="postData">需要传入到Init的参数</param>
-        public MessageHandler(XDocument postDataDocument, int maxRecordCount = 0, object postData = null)
+        /// <param name="postModel">需要传入到Init的参数</param>
+        public MessageHandler(XDocument postDataDocument, IEncryptPostModel postModel, int maxRecordCount = 0)
         {
-            CommonInitialize(postDataDocument, maxRecordCount, postData);
+            CommonInitialize(postDataDocument, maxRecordCount, postModel);
         }
 
         /// <summary>
         /// <para>使用requestMessageBase的构造函数</para>
-        /// <para>次构造函数提供给具体的类库进行测试使用，例如Senparc.NeuChar.Work</para>
+        /// <para>此构造函数提供给具体的类库进行测试使用，例如Senparc.NeuChar.Work</para>
         /// </summary>
         /// <param name="requestMessageBase"></param>
         /// <param name="maxRecordCount"></param>
-        /// <param name="postData">需要传入到Init的参数</param>
-        public MessageHandler(RequestMessageBase requestMessageBase, int maxRecordCount = 0, object postData = null)
+        /// <param name="postModel">需要传入到Init的参数</param>
+        public MessageHandler(RequestMessageBase requestMessageBase, IEncryptPostModel postModel, int maxRecordCount = 0)
         {
             ////将requestMessageBase生成XML格式。
             //var xmlStr = XmlUtility.XmlUtility.Serializer(requestMessageBase);
@@ -326,7 +326,8 @@ namespace Senparc.NeuChar.MessageHandlers
         /// Init中需要对上下文添加当前消息（如果使用上下文）
         /// </summary>
         /// <param name="requestDocument"></param>
-        public abstract XDocument Init(XDocument requestDocument, object postData = null);
+        /// <param name="postModel"></param>
+        public abstract XDocument Init(XDocument requestDocument, IEncryptPostModel postModel);
 
         //public abstract TR CreateResponseMessage<TR>() where TR : ResponseMessageBase;
 
