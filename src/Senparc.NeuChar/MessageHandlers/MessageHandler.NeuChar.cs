@@ -3,6 +3,7 @@ using Senparc.CO2NET.Helpers;
 using Senparc.CO2NET.Trace;
 using Senparc.CO2NET.Utilities;
 using Senparc.NeuChar.Entities;
+using Senparc.NeuChar.NeuralSystems;
 using System;
 using System.Collections.Generic;
 using System.IO;

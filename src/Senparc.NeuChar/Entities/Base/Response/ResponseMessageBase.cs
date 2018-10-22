@@ -37,7 +37,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 
 using Senparc.CO2NET.Exceptions;
 using Senparc.NeuChar.Exceptions;
-using Senparc.NeuChar.NeuralSystems;
+using Senparc.NeuChar.MessageHandlers;
 using System;
 using System.Xml.Linq;
 using Senparc.NeuChar.Helpers;

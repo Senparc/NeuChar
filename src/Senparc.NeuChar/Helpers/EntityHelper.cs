@@ -48,6 +48,7 @@ using System.Xml.Serialization;
 using Senparc.CO2NET.Helpers;
 using Senparc.CO2NET.Utilities;
 using Senparc.NeuChar.Entities;
+using Senparc.NeuChar.MessageHandlers;
 using Senparc.NeuChar.NeuralSystems;
 
 namespace Senparc.NeuChar.Helpers
