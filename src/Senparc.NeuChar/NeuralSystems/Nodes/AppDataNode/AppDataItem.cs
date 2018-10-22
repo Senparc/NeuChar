@@ -35,6 +35,8 @@ namespace Senparc.NeuChar.NeuralSystems
         /// </summary>
         public long ExpireTime { get; set; }
 
+        public DateTime ExpireDateTime { get { return DateTimeHelper.GetDateTimeFromXml(ExpireTime); } }
+
         /// <summary>
         /// 进入对话状态关键词
         /// </summary>
@@ -52,6 +54,5 @@ namespace Senparc.NeuChar.NeuralSystems
         /// </summary>
         public int MessageKeepTime { get; set; }
 
-        public DateTime MessageKeepDateTime { get { return DateTimeHelper.GetDateTimeFromXml(MessageKeepTime); } }
     }
 }

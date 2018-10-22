@@ -121,6 +121,9 @@ namespace Senparc.NeuChar.MessageHandlers
         }
 
         private AppDataNode _currentAppDataNode;
+        /// <summary>
+        /// 当前 App 订阅信息
+        /// </summary>
         public AppDataNode CurrentAppDataNode
         {
             get

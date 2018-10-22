@@ -51,8 +51,10 @@ namespace Senparc.NeuChar.MessageHandlers
     /// <summary>
     /// IMessageHandlerExtensionProperties 接口
     /// </summary>
-    public interface IMessageHandlerExtensionProperties : IMessageHandlerEnlightener, IMessageHandlerNeuralNodes
+    public interface IMessageHandlerNeural : IMessageHandlerEnlightener, IMessageHandlerNeuralNodes
     {
+
+
     }
 
     /// <summary>
@@ -60,7 +62,7 @@ namespace Senparc.NeuChar.MessageHandlers
     /// </summary>
     /// <typeparam name="TRequest">IRequestMessageBase</typeparam>
     /// <typeparam name="TResponse">IResponseMessageBase</typeparam>
-    public interface IMessageHandler<TRequest, TResponse> : IMessageHandlerDocument, IMessageHandlerExtensionProperties
+    public interface IMessageHandler<TRequest, TResponse> : IMessageHandlerDocument, IMessageHandlerNeural
         where TRequest : IRequestMessageBase
         where TResponse : IResponseMessageBase
     {

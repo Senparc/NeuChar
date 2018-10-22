@@ -18,6 +18,7 @@ namespace Senparc.NeuChar.MessageHandlers
         {
             //注册节点类型
             Senparc.NeuChar.Register.RegisterNeuralNode("MessageHandlerNode", typeof(MessageHandlerNode));
+            Senparc.NeuChar.Register.RegisterNeuralNode("AppDataNode", typeof(AppDataNode));
         }
 
 

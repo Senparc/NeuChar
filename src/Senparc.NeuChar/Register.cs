@@ -1,6 +1,7 @@
 ﻿using Senparc.CO2NET.Cache;
 using Senparc.CO2NET.Trace;
 using Senparc.NeuChar.ApiBind;
+using Senparc.NeuChar.NeuralSystems;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,6 +30,10 @@ namespace Senparc.NeuChar
         static Register()
         {
             RegisterApiBind();
+
+            //注册节点类型
+           RegisterNeuralNode("MessageHandlerNode", typeof(MessageHandlerNode));
+           RegisterNeuralNode("AppDataNode", typeof(AppDataNode));
         }
 
 

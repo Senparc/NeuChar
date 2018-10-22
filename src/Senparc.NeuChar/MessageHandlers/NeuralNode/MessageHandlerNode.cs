@@ -33,6 +33,9 @@ namespace Senparc.NeuChar.NeuralSystems
         /// </summary>
         new public MessageReply Config { get; set; }
 
+        /// <summary>
+        /// MessageHandlerNode 构造函数
+        /// </summary>
         public MessageHandlerNode()
         {
             Config = new MessageReply();
@@ -42,21 +45,47 @@ namespace Senparc.NeuChar.NeuralSystems
         /// 执行NeuChar判断过程，获取响应消息
         /// </summary>
         /// <param name="requestMessage"></param>
-        /// <param name="messageHandler"></param>
+        /// <param name="messageHandlerNeural"></param>
         /// <param name="accessTokenOrApi"></param>
         /// <returns></returns>
-        public IResponseMessageBase Execute(IRequestMessageBase requestMessage, IMessageHandlerEnlightener messageHandler, string accessTokenOrApi)
+        public IResponseMessageBase Execute(IRequestMessageBase requestMessage, IMessageHandlerNeural messageHandlerNeural,  string accessTokenOrApi)
         {
-            //SenparcTrace.SendCustomLog("neuchar trace", "2");
-
             //if (accessTokenOrApi == null)
             //{
             //    throw new ArgumentNullException(nameof(accessTokenOrApi));
             //}
+            var messageHandlerEnlightener = messageHandlerNeural.MessageEntityEnlightener;
+            var appDataNode = messageHandlerNeural.CurrentAppDataNode;
 
             IResponseMessageBase responseMessage = null;
 
             //SenparcTrace.SendCustomLog("neuchar trace", "3");
+
+            //进行APP特殊处理
+            if (requestMessage is IRequestMessageText || requestMessage is IRequestMessageEventKey requestClick)
+            {
+                var content = (requestMessage is IRequestMessageText requestText) ? requestText.Content : (requestMessage as IRequestMessageEventKey).EventKey;
+
+                //遍历所有App设置
+                foreach (var appDataItem in appDataNode.Config.AppDataItems)
+                {
+                    if (appDataItem.ExpireDateTime < DateTime.Now)
+                    {
+                        continue;
+                    }
+
+
+                    if (appDataItem.MessageEnterWord.Equals(content, StringComparison.OrdinalIgnoreCase))
+                    {
+
+                    }
+                }
+            }
+
+            if (responseMessage != null)
+            {
+                return responseMessage;
+            }
 
             switch (requestMessage.MsgType)
             {
@@ -67,6 +96,7 @@ namespace Senparc.NeuChar.NeuralSystems
                             //SenparcTrace.SendCustomLog("neuchar trace", "3.1");
 
                             var textRequestMessage = requestMessage as IRequestMessageText;
+
                             //遍历所有的消息设置
                             foreach (var messagePair in Config.MessagePair.Where(z => z.Request.Type == RequestMsgType.Text))
                             {
@@ -74,7 +104,7 @@ namespace Senparc.NeuChar.NeuralSystems
                                 var pairSuccess = messagePair.Request.Keywords.Exists(keyword => keyword.Equals(textRequestMessage.Content, StringComparison.OrdinalIgnoreCase));
                                 if (pairSuccess)
                                 {
-                                    responseMessage = GetResponseMessage(requestMessage, messagePair.Responses, messageHandler, accessTokenOrApi);
+                                    responseMessage = GetResponseMessage(requestMessage, messagePair.Responses, messageHandlerNeural, accessTokenOrApi);
                                 }
 
                                 if (responseMessage != null)
@@ -97,7 +127,7 @@ namespace Senparc.NeuChar.NeuralSystems
 
                         foreach (var messagePair in Config.MessagePair.Where(z => z.Request.Type == RequestMsgType.Image))
                         {
-                            responseMessage = GetResponseMessage(requestMessage, messagePair.Responses, messageHandler, accessTokenOrApi);
+                            responseMessage = GetResponseMessage(requestMessage, messagePair.Responses, messageHandlerNeural, accessTokenOrApi);
 
                             if (responseMessage != null)
                             {
@@ -129,7 +159,7 @@ namespace Senparc.NeuChar.NeuralSystems
                                             {
                                                 try
                                                 {
-                                                    responseMessage = GetResponseMessage(requestMessage, messagePair.Responses, messageHandler, accessTokenOrApi);
+                                                    responseMessage = GetResponseMessage(requestMessage, messagePair.Responses, messageHandlerNeural, accessTokenOrApi);
 
                                                 }
                                                 catch (Exception ex)
@@ -173,10 +203,10 @@ namespace Senparc.NeuChar.NeuralSystems
         /// </summary>
         /// <param name="requestMessage"></param>
         /// <returns></returns>
-        public async Task<IResponseMessageBase> ExecuteAsync(IRequestMessageBase requestMessage, IMessageHandlerEnlightener messageHandler, string accessTokenOrApi)
+        public async Task<IResponseMessageBase> ExecuteAsync(IRequestMessageBase requestMessage, IMessageHandlerNeural messageHandlerNeural, string accessTokenOrApi)
         {
             //SenparcTrace.SendCustomLog("neuchar trace","1");
-            return await Task.Run(() => Execute(requestMessage, messageHandler, accessTokenOrApi));
+            return await Task.Run(() => Execute(requestMessage, messageHandlerNeural, accessTokenOrApi));
         }
 #endif
         #region 返回信息
@@ -193,8 +223,6 @@ namespace Senparc.NeuChar.NeuralSystems
         {
             IResponseMessageBase responseMessage = null;
             responseConfigs = responseConfigs ?? new List<Response>();
-
-
 
             if (responseConfigs.Count == 0)
             {
