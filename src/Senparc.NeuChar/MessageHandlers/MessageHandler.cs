@@ -50,12 +50,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 
 using System;
 using System.IO;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
-using Senparc.CO2NET.Extensions;
-using Senparc.CO2NET.Helpers;
-using Senparc.CO2NET.Trace;
 using Senparc.CO2NET.Utilities;
 using Senparc.NeuChar.ApiHandlers;
 using Senparc.NeuChar.Context;
@@ -124,53 +119,48 @@ namespace Senparc.NeuChar.MessageHandlers
             }
         }
 
+        private AppDataNode _currentAppDataNode;
+        public AppDataNode CurrentAppDataNode
+        {
+            get
+            {
+                if (_currentAppDataNode == null)
+                {
+                    //TODO:Neuchar：在这里先做一次NeuChar标准的判断
+
+                    var neuralSystem = NeuralSystem.Instance;
+                    //获取当前设置节点
+                    _currentAppDataNode = (neuralSystem.GetNode("AppDataNode") as AppDataNode) ?? new AppDataNode();
+                }
+                return _currentAppDataNode;
+            }
+            set
+            {
+                _currentAppDataNode = value;
+            }
+        }
+
         /// <summary>
         /// 当前用户消息上下文
         /// </summary>
-        public virtual TC CurrentMessageContext
-        {
-            get { return GlobalMessageContext.GetMessageContext(RequestMessage); }
-        }
-
+        public virtual TC CurrentMessageContext { get { return GlobalMessageContext.GetMessageContext(RequestMessage); } }
 
         /// <summary>
         /// 发送者用户名（OpenId）
         /// </summary>
-        public string OpenId
-        {
-            get
-            {
-                if (RequestMessage != null)
-                {
-                    return RequestMessage.FromUserName;
-                }
-                return null;
-            }
-        }
+        public string OpenId { get { return RequestMessage != null ? RequestMessage.FromUserName : null; } }
 
         /// <summary>
         /// 发送者用户名（OpenId）
         /// </summary>
         [Obsolete("请使用OpenId")]
-        public string WeixinOpenId
-        {
-            get
-            {
-                return OpenId;
-            }
-        }
+        public string WeixinOpenId { get { return OpenId; } }
 
         /// <summary>
         /// 
         /// </summary>
         [Obsolete("UserName属性从v0.6起已过期，建议使用WeixinOpenId")]
-        public string UserName
-        {
-            get
-            {
-                return OpenId;
-            }
-        }
+        public string UserName { get { return OpenId; } }
 
         /// <summary>
         /// 取消执行Execute()方法。一般在OnExecuting()中用于临时阻止执行Execute()。
@@ -331,6 +321,11 @@ namespace Senparc.NeuChar.MessageHandlers
 
         //public abstract TR CreateResponseMessage<TR>() where TR : ResponseMessageBase;
 
+        /// <summary>
+        /// 根据当前的 RequestMessage 创建指定类型（RT）的 ResponseMessage
+        /// </summary>
+        /// <typeparam name="TR"></typeparam>
+        /// <returns></returns>
         public virtual TR CreateResponseMessage<TR>() where TR : ResponseMessageBase
         {
             if (RequestMessage == null)
@@ -341,16 +336,21 @@ namespace Senparc.NeuChar.MessageHandlers
             return RequestMessage.CreateResponseMessage<TR>(this.MessageEntityEnlightener);
         }
 
-
+        /// <summary>
+        /// 在 Execute() 之前运行，可以使用 CancelExcute=true 中断后续 Execute() 和 OnExecuted() 方法的执行
+        /// </summary>
         public virtual void OnExecuting()
         {
         }
 
         /// <summary>
-        /// 执行微信请求
+        /// 执行微信请求（如果没有被 CancelExcute=true 中断）
         /// </summary>
         public abstract void Execute();
 
+        /// <summary>
+        /// 在 Execute() 之后运行（如果没有被 CancelExcute=true 中断）
+        /// </summary>
         public virtual void OnExecuted()
         {
         }

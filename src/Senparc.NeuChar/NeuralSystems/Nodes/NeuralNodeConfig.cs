@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 
 
-namespace Senparc.NeuChar
+namespace Senparc.NeuChar.NeuralSystems
 {
     /// <summary>
     /// 节点设置信息接口

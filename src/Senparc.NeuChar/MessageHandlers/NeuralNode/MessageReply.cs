@@ -39,7 +39,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Senparc.NeuChar.MessageHandlers
+namespace Senparc.NeuChar.NeuralSystems
 {
     /// <summary>
     /// 消息回复设置

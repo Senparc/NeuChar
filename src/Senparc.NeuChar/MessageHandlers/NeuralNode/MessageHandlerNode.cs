@@ -12,7 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 
-namespace Senparc.NeuChar.MessageHandlers
+namespace Senparc.NeuChar.NeuralSystems
 {
 
     /// <summary>

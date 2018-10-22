@@ -2,7 +2,6 @@
 using Senparc.NeuChar.Entities;
 using Senparc.NeuChar.Exceptions;
 using Senparc.NeuChar.Helpers;
-using Senparc.NeuChar.MessageHandlers;
 using Senparc.NeuChar.NeuralSystems;
 using System;
 using System.Collections.Generic;

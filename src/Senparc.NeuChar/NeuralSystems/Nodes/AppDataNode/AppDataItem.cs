@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Senparc.NeuChar.AppDataNode
+namespace Senparc.NeuChar.NeuralSystems
 {
     /// <summary>
     /// 单项 App 订阅信息

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Senparc.NeuChar
+namespace Senparc.NeuChar.NeuralSystems
 {
     /// <summary>
     /// 配置项约束接口
