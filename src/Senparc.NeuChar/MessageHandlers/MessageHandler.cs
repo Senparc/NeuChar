@@ -64,7 +64,7 @@ namespace Senparc.NeuChar.MessageHandlers
     /// 微信请求的集中处理方法
     /// 此方法中所有过程，都基于Senparc.NeuChar.基础功能，只为简化代码而设。
     /// </summary>
-    public abstract partial class MessageHandler<TC, TRequest, TResponse> : IMessageHandler<TRequest, TResponse>
+    public abstract partial class MessageHandler<TC, TRequest, TResponse> : IMessageHandlerWithContext<TC, TRequest, TResponse>
         where TC : class, IMessageContext<TRequest, TResponse>, new()
         where TRequest : IRequestMessageBase
         where TResponse : IResponseMessageBase
