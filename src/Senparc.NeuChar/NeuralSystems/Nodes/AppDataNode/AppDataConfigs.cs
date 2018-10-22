@@ -5,8 +5,14 @@ using System.Text;
 
 namespace Senparc.NeuChar.AppDataNode
 {
+    /// <summary>
+    /// APP 订阅设置（包含所有 APP 订阅）
+    /// </summary>
     public class AppDataConfigs : NeuralNodeConfig
     {
-        public List<AppDataItem> AppDataItem  { get; set; }
+        /// <summary>
+        /// APP 订阅详情
+        /// </summary>
+        public List<AppDataItem> AppDataItem { get; set; } = new List<AppDataItem>();
     }
 }

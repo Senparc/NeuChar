@@ -10,9 +10,9 @@ namespace Senparc.NeuChar.AppDataNode
     /// </summary>
     public class AppDataNode : BaseNeuralNode
     {
-        new public AppDataConfigs Config { get; set; }
-
-
-
+        /// <summary>
+        /// 设置
+        /// </summary>
+        new public AppDataConfigs Config { get; set; } = new AppDataConfigs();
     }
 }
