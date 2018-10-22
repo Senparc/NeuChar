@@ -13,6 +13,6 @@ namespace Senparc.NeuChar.AppDataNode
         /// <summary>
         /// APP 订阅详情
         /// </summary>
-        public List<AppDataItem> AppDataItem { get; set; } = new List<AppDataItem>();
+        public List<AppDataItem> AppDataItems { get; set; } = new List<AppDataItem>();
     }
 }
