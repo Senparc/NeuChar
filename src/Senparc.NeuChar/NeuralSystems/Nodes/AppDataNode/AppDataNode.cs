@@ -10,6 +10,8 @@ namespace Senparc.NeuChar.NeuralSystems
     /// </summary>
     public class AppDataNode : BaseNeuralNode
     {
+        public int NeuralAppId { get; set; }
+
         /// <summary>
         /// 设置
         /// </summary>

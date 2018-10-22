@@ -69,6 +69,9 @@ namespace Senparc.NeuChar.MessageHandlers
         where TRequest : IRequestMessageBase
         where TResponse : IResponseMessageBase
     {
+
+        #region 上下文
+
         ///// <summary>
         ///// 上下文
         ///// </summary>
@@ -84,6 +87,25 @@ namespace Senparc.NeuChar.MessageHandlers
         /// 全局消息上下文
         /// </summary>
         public abstract GlobalMessageContext<TC, TRequest, TResponse> GlobalMessageContext { get; }
+
+
+        /// <summary>
+        /// 当前用户消息上下文
+        /// </summary>
+        public virtual TC CurrentMessageContext { get { return GlobalMessageContext.GetMessageContext(RequestMessage); } }
+
+        /// <summary>
+        /// 忽略重复发送的同一条消息（通常因为微信服务器没有收到及时的响应）
+        /// </summary>
+        public bool OmitRepeatedMessage { get; set; }
+
+        /// <summary>
+        /// 消息是否已经被去重
+        /// </summary>
+        public bool MessageIsRepeated { get; set; }
+
+
+        #endregion
 
         /// <summary>
         /// 请求和响应消息有差别化的定义
@@ -144,10 +166,6 @@ namespace Senparc.NeuChar.MessageHandlers
             }
         }
 
-        /// <summary>
-        /// 当前用户消息上下文
-        /// </summary>
-        public virtual TC CurrentMessageContext { get { return GlobalMessageContext.GetMessageContext(RequestMessage); } }
 
         /// <summary>
         /// 发送者用户名（OpenId）
@@ -209,15 +227,7 @@ namespace Senparc.NeuChar.MessageHandlers
         /// </summary>
         public bool UsedMessageAgent { get; set; }
 
-        /// <summary>
-        /// 忽略重复发送的同一条消息（通常因为微信服务器没有收到及时的响应）
-        /// </summary>
-        public bool OmitRepeatedMessage { get; set; }
 
-        /// <summary>
-        /// 消息是否已经被去重
-        /// </summary>
-        public bool MessageIsRepeated { get; set; }
 
         private string _textResponseMessage = null;
 

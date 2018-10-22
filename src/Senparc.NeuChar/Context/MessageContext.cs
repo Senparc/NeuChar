@@ -38,6 +38,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 
 using System;
 using Senparc.NeuChar.Entities;
+using Senparc.NeuChar.NeuralSystems;
 
 namespace Senparc.NeuChar.Context
 {
@@ -85,6 +86,11 @@ namespace Senparc.NeuChar.Context
         /// </summary>
         AppStoreState AppStoreState { get; set; }
 
+        /// <summary>
+        /// 当前正在服务的 AppDataItem
+        /// </summary>
+        AppDataItem CurrentAppDataItem { get; set; }
+
         event EventHandler<WeixinContextRemovedEventArgs<TRequest, TResponse>> MessageContextRemoved;
 
         void OnRemoved();
@@ -125,6 +131,12 @@ namespace Senparc.NeuChar.Context
         /// AppStore状态，系统属性，请勿操作
         /// </summary>
         public AppStoreState AppStoreState { get; set; }
+
+        /// <summary>
+        /// 当前正在服务的 AppDataItem
+        /// </summary>
+        public AppDataItem CurrentAppDataItem { get; set; }
+        
 
         /// <summary>
         /// 当MessageContext被删除时触发的事件

@@ -51,20 +51,7 @@ namespace Senparc.NeuChar.MessageHandlers
     /// <summary>
     /// IMessageHandlerExtensionProperties 接口
     /// </summary>
-    public interface IMessageHandlerNeural : IMessageHandlerEnlightener, IMessageHandlerNeuralNodes
-    {
-
-
-    }
-
-    /// <summary>
-    /// IMessageHandler 接口
-    /// </summary>
-    /// <typeparam name="TRequest">IRequestMessageBase</typeparam>
-    /// <typeparam name="TResponse">IResponseMessageBase</typeparam>
-    public interface IMessageHandler<TRequest, TResponse> : IMessageHandlerDocument, IMessageHandlerNeural
-        where TRequest : IRequestMessageBase
-        where TResponse : IResponseMessageBase
+    public interface IMessageHandlerBase : IMessageHandlerEnlightener, IMessageHandlerNeuralNodes
     {
         /// <summary>
         /// 发送者用户名（OpenId）
@@ -80,20 +67,6 @@ namespace Senparc.NeuChar.MessageHandlers
         /// </summary>
         bool CancelExcute { get; set; }
 
-        /// <summary>
-        /// 请求实体
-        /// </summary>
-        TRequest RequestMessage { get; set; }
-        /// <summary>
-        /// 响应实体
-        /// 只有当执行Execute()方法后才可能有值
-        /// </summary>
-        TResponse ResponseMessage { get; set; }
-
-        /// <summary>
-        /// 是否使用了MessageAgent代理
-        /// </summary>
-        bool UsedMessageAgent { get; set; }
 
         /// <summary>
         /// 忽略重复发送的同一条消息（通常因为微信服务器没有收到及时的响应）
@@ -105,6 +78,10 @@ namespace Senparc.NeuChar.MessageHandlers
         /// </summary>
         bool MessageIsRepeated { get; set; }
 
+        /// <summary>
+        /// 是否使用了MessageAgent代理
+        /// </summary>
+        bool UsedMessageAgent { get; set; }
 
         #region 同步方法
 
@@ -146,5 +123,27 @@ namespace Senparc.NeuChar.MessageHandlers
 
         #endregion
 #endif
+
+    }
+
+    /// <summary>
+    /// IMessageHandler 接口
+    /// </summary>
+    /// <typeparam name="TRequest">IRequestMessageBase</typeparam>
+    /// <typeparam name="TResponse">IResponseMessageBase</typeparam>
+    public interface IMessageHandler<TRequest, TResponse> : IMessageHandlerDocument, IMessageHandlerBase
+        where TRequest : IRequestMessageBase
+        where TResponse : IResponseMessageBase
+    {
+        /// <summary>
+        /// 请求实体
+        /// </summary>
+        TRequest RequestMessage { get; set; }
+        /// <summary>
+        /// 响应实体
+        /// 只有当执行Execute()方法后才可能有值
+        /// </summary>
+        TResponse ResponseMessage { get; set; }
+
     }
 }

@@ -78,7 +78,7 @@ namespace Senparc.NeuChar.Helpers
             {
                 if (!prop.CanWrite)
                 {
-                   continue;//如果不可读则跳过
+                    continue;//如果不可读则跳过
                 }
 
                 var propName = prop.Name;
@@ -313,9 +313,13 @@ namespace Senparc.NeuChar.Helpers
         /// <typeparam name="T">RequestMessage或ResponseMessage</typeparam>
         /// <param name="entity">实体</param>
         /// <returns></returns>
-        public static XDocument ConvertEntityToXml<T>(this T entity) where T : class, new()
+        public static XDocument ConvertEntityToXml<T>(this T entity) where T : class
         {
-            entity = entity ?? new T();
+            //entity = entity ?? new T();
+            if (entity == null)
+            {
+                throw new Senparc.CO2NET.Exceptions.BaseException("entity 参数不能为 null");
+            }
 
             //XmlSerializer xmldes = new XmlSerializer(typeof(T));
 
@@ -475,7 +479,7 @@ namespace Senparc.NeuChar.Helpers
         /// <typeparam name="T">RequestMessage或ResponseMessage</typeparam>
         /// <param name="entity">实体</param>
         /// <returns></returns>
-        public static string ConvertEntityToXmlString<T>(this T entity) where T : class, new()
+        public static string ConvertEntityToXmlString<T>(this T entity) where T : class
         {
             return entity.ConvertEntityToXml().ToString();
         }
@@ -500,7 +504,7 @@ namespace Senparc.NeuChar.Helpers
         /// <param name="requestMessage">IRequestMessageBase接口下的接收信息类型</param>
         /// <returns></returns>
         public static T CreateResponseMessage<T>(this IRequestMessageBase requestMessage)
-            where T :class, IResponseMessageBase //只有class才可以enlighten = null
+            where T : class, IResponseMessageBase //只有class才可以enlighten = null
         {
             return ResponseMessageBase.CreateFromRequestMessage<T>(requestMessage);
         }

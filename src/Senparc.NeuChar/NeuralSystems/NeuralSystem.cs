@@ -47,6 +47,8 @@ namespace Senparc.NeuChar
         internal const string DEFAULT_CONFIG_FILE_CONENT = "{}";
         internal const string CHECK_CNNECTION_RESULT = "OK";
 
+        public string NeuCharDomainName { get; set; } = "https://www.neuchar.com";
+
         /// <summary>
         /// 根节点
         /// </summary>

@@ -37,6 +37,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 
 using Senparc.NeuChar.Context;
 using Senparc.NeuChar.Entities;
+using System;
 
 namespace Senparc.NeuChar.MessageHandlers
 {
@@ -51,6 +52,26 @@ namespace Senparc.NeuChar.MessageHandlers
         where TRequest : IRequestMessageBase
         where TResponse : IResponseMessageBase
     {
-
+        /// <summary>
+        /// 全局消息上下文
+        /// </summary>
+        [Obsolete("请使用 GlobalMessageContext")]
+        GlobalMessageContext<TC, TRequest, TResponse> WeixinContext { get; }
+        /// <summary>
+        /// 全局消息上下文
+        /// </summary>
+        GlobalMessageContext<TC, TRequest, TResponse> GlobalMessageContext { get; }
+        /// <summary>
+        /// 当前用户消息上下文
+        /// </summary>
+        TC CurrentMessageContext { get; }
+        /// <summary>
+        /// 忽略重复发送的同一条消息（通常因为微信服务器没有收到及时的响应）
+        /// </summary>
+         bool OmitRepeatedMessage { get; set; }
+        /// <summary>
+        /// 消息是否已经被去重
+        /// </summary>
+         bool MessageIsRepeated { get; set; }
     }
 }

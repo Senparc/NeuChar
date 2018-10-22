@@ -1,7 +1,9 @@
 ﻿using Senparc.CO2NET.Extensions;
 using Senparc.CO2NET.Trace;
 using Senparc.NeuChar;
+using Senparc.NeuChar.Agents;
 using Senparc.NeuChar.ApiHandlers;
+using Senparc.NeuChar.Context;
 using Senparc.NeuChar.Entities;
 using Senparc.NeuChar.Helpers;
 using Senparc.NeuChar.MessageHandlers;
@@ -45,42 +47,83 @@ namespace Senparc.NeuChar.NeuralSystems
         /// 执行NeuChar判断过程，获取响应消息
         /// </summary>
         /// <param name="requestMessage"></param>
-        /// <param name="messageHandlerNeural"></param>
+        /// <param name="messageHandler"></param>
         /// <param name="accessTokenOrApi"></param>
         /// <returns></returns>
-        public IResponseMessageBase Execute(IRequestMessageBase requestMessage, IMessageHandlerNeural messageHandlerNeural,  string accessTokenOrApi)
+        public IResponseMessageBase Execute<TC, TRequest, TResponse>(IRequestMessageBase requestMessage, IMessageHandlerWithContext<TC, TRequest, TResponse> messageHandler,
+            string accessTokenOrApi)
+        where TC : class, IMessageContext<TRequest, TResponse>, new()
+        where TRequest : IRequestMessageBase
+        where TResponse : IResponseMessageBase
         {
             //if (accessTokenOrApi == null)
             //{
             //    throw new ArgumentNullException(nameof(accessTokenOrApi));
             //}
-            var messageHandlerEnlightener = messageHandlerNeural.MessageEntityEnlightener;
-            var appDataNode = messageHandlerNeural.CurrentAppDataNode;
+            var messageHandlerEnlightener = messageHandler.MessageEntityEnlightener;
+            var appDataNode = messageHandler.CurrentAppDataNode;
 
             IResponseMessageBase responseMessage = null;
 
             //SenparcTrace.SendCustomLog("neuchar trace", "3");
 
             //进行APP特殊处理
-            if (requestMessage is IRequestMessageText || requestMessage is IRequestMessageEventKey requestClick)
+
+            //判断状态
+            var context = messageHandler.CurrentMessageContext;
+            AppDataItem currentAppDataItem = null;
+
+            switch (context.AppStoreState)
             {
-                var content = (requestMessage is IRequestMessageText requestText) ? requestText.Content : (requestMessage as IRequestMessageEventKey).EventKey;
+                case AppStoreState.None://未进入任何应用
+                case AppStoreState.Exit:
+                    currentAppDataItem = null;
+                    break;
+                case AppStoreState.Enter:
+                    currentAppDataItem = context.CurrentAppDataItem;
+                    break;
+                default:
+                    break;
+            }
 
-                //遍历所有App设置
-                foreach (var appDataItem in appDataNode.Config.AppDataItems)
+            //TODO:暂时限定类型
+
+            if (currentAppDataItem == null)
+            {
+                if (requestMessage is IRequestMessageText || requestMessage is IRequestMessageEventKey requestClick)
                 {
-                    if (appDataItem.ExpireDateTime < DateTime.Now)
+                    var content = (requestMessage is IRequestMessageText requestText) ? requestText.Content : (requestMessage as IRequestMessageEventKey).EventKey;
+
+                    if (currentAppDataItem == null)
                     {
-                        continue;
+                        currentAppDataItem = appDataNode.Config.AppDataItems
+                            .FirstOrDefault(z => z.ExpireDateTime > DateTime.Now && z.MessageEnterWord.Equals(content, StringComparison.OrdinalIgnoreCase));
                     }
-
-
-                    if (appDataItem.MessageEnterWord.Equals(content, StringComparison.OrdinalIgnoreCase))
+                    if (currentAppDataItem != null && currentAppDataItem.MessageKeepTime > 0)
                     {
-
+                        //初次进入应用
+                        context.AppStoreState = AppStoreState.Enter;
+                        context.CurrentAppDataItem = currentAppDataItem;
                     }
                 }
             }
+            else //已经进入应用
+            {
+                //转发AppData消息
+                var neuCharUrl = $"https://neuchar.senparc.com/App/Weixin?appId={currentAppDataItem.Id}&neuralAppId={appDataNode.NeuralAppId}";
+                try
+                {
+                    responseMessage = MessageAgent.RequestResponseMessage(messageHandler, neuCharUrl, "Senparc", requestMessage.ConvertEntityToXmlString());
+                }
+                catch (Exception ex)
+                {
+                    Senparc.CO2NET.Trace.SenparcTrace.SendCustomLog("NeuChar 远程调用 APP 失败", ex.Message);
+                }
+            }
+
+
+            //APP特殊处理结束
+
 
             if (responseMessage != null)
             {
@@ -104,7 +147,7 @@ namespace Senparc.NeuChar.NeuralSystems
                                 var pairSuccess = messagePair.Request.Keywords.Exists(keyword => keyword.Equals(textRequestMessage.Content, StringComparison.OrdinalIgnoreCase));
                                 if (pairSuccess)
                                 {
-                                    responseMessage = GetResponseMessage(requestMessage, messagePair.Responses, messageHandlerNeural, accessTokenOrApi);
+                                    responseMessage = GetResponseMessage(requestMessage, messagePair.Responses, messageHandler, accessTokenOrApi);
                                 }
 
                                 if (responseMessage != null)
@@ -127,7 +170,7 @@ namespace Senparc.NeuChar.NeuralSystems
 
                         foreach (var messagePair in Config.MessagePair.Where(z => z.Request.Type == RequestMsgType.Image))
                         {
-                            responseMessage = GetResponseMessage(requestMessage, messagePair.Responses, messageHandlerNeural, accessTokenOrApi);
+                            responseMessage = GetResponseMessage(requestMessage, messagePair.Responses, messageHandler, accessTokenOrApi);
 
                             if (responseMessage != null)
                             {
@@ -159,7 +202,7 @@ namespace Senparc.NeuChar.NeuralSystems
                                             {
                                                 try
                                                 {
-                                                    responseMessage = GetResponseMessage(requestMessage, messagePair.Responses, messageHandlerNeural, accessTokenOrApi);
+                                                    responseMessage = GetResponseMessage(requestMessage, messagePair.Responses, messageHandler, accessTokenOrApi);
 
                                                 }
                                                 catch (Exception ex)
@@ -203,10 +246,14 @@ namespace Senparc.NeuChar.NeuralSystems
         /// </summary>
         /// <param name="requestMessage"></param>
         /// <returns></returns>
-        public async Task<IResponseMessageBase> ExecuteAsync(IRequestMessageBase requestMessage, IMessageHandlerNeural messageHandlerNeural, string accessTokenOrApi)
+        public async Task<IResponseMessageBase> ExecuteAsync<TC, TRequest, TResponse>(IRequestMessageBase requestMessage, IMessageHandlerWithContext<TC, TRequest, TResponse> messageHandler,
+            string accessTokenOrApi)
+        where TC : class, IMessageContext<TRequest, TResponse>, new()
+        where TRequest : IRequestMessageBase
+        where TResponse : IResponseMessageBase
         {
             //SenparcTrace.SendCustomLog("neuchar trace","1");
-            return await Task.Run(() => Execute(requestMessage, messageHandlerNeural, accessTokenOrApi));
+            return await Task.Run(() => Execute(requestMessage, messageHandler, accessTokenOrApi));
         }
 #endif
         #region 返回信息
@@ -243,7 +290,7 @@ namespace Senparc.NeuChar.NeuralSystems
                 //小程序，所有的请求都使用客服消息接口，回填取出的最后一个
                 extendReponses.Add(lastResponse);
                 lastResponse = new Response() { Type = ResponseMsgType.SuccessResponse };//返回成功信息
-                //responseMessage = new SuccessResponseMessage();
+                                                                                         //responseMessage = new SuccessResponseMessage();
             }
 
             //最后一项，使用 MesageHandler 的普通消息回复
