@@ -56,6 +56,7 @@ using Senparc.NeuChar.ApiHandlers;
 using Senparc.NeuChar.Context;
 using Senparc.NeuChar.Entities;
 using Senparc.NeuChar.Helpers;
+using Senparc.NeuChar.NeuralSystems;
 
 namespace Senparc.NeuChar.MessageHandlers
 {

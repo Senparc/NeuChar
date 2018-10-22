@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Senparc.CO2NET.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -50,5 +51,7 @@ namespace Senparc.NeuChar.NeuralSystems
         /// 状态保持分钟数（0为无状态）
         /// </summary>
         public int MessageKeepTime { get; set; }
+
+        public DateTime MessageKeepDateTime { get { return DateTimeHelper.GetDateTimeFromXml(MessageKeepTime); } }
     }
 }
