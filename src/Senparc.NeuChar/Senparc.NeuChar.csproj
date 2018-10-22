@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net35;net40;net45;netstandard2.0;netcoreapp2.0;netcoreapp2.1</TargetFrameworks>
-    <Version>0.2.11</Version>
+    <Version>0.3.0</Version>
     <AssemblyName>Senparc.NeuChar</AssemblyName>
     <RootNamespace>Senparc.NeuChar</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -50,6 +50,7 @@
       1、提供 NeuChar 服务器连接检测能力
       2、升级 ApiBind
       v0.2.11 MessageHandler 设置 postModel 为必须提供的参数
+      v0.3.0 添加 APP 订阅信息
     </PackageReleaseNotes>
     <RepositoryUrl>https://github.com/JeffreySu/WeiXinMPSDK</RepositoryUrl>
     <Configurations>Debug;Release;Test</Configurations>
@@ -127,6 +128,7 @@
     <Folder Include="Entities\WeChat\Work\" />
     <Folder Include="Entities\WeChat\MiniProgram\" />
     <Folder Include="Entities\WeChat\Open\" />
+    <Folder Include="NeuralSystems\Nodes\Config\" />
     <Folder Include="Properties\" />
   </ItemGroup>
 
