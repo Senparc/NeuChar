@@ -109,8 +109,10 @@ namespace Senparc.NeuChar.NeuralSystems
             }
             else //已经进入应用
             {
+                NeuralSystem.Instance.NeuCharDomainName = "https://neuchar.senparc.com";
+
                 //转发AppData消息
-                var neuCharUrl = $"https://neuchar.senparc.com/App/Weixin?appId={currentAppDataItem.Id}&neuralAppId={appDataNode.NeuralAppId}";
+                var neuCharUrl = $"{NeuralSystem.Instance.NeuCharDomainName}/App/Weixin?appId={currentAppDataItem.Id}&neuralAppId={appDataNode.NeuralAppId}";
                 try
                 {
                     responseMessage = MessageAgent.RequestResponseMessage(messageHandler, neuCharUrl, "Senparc", requestMessage.ConvertEntityToXmlString());
