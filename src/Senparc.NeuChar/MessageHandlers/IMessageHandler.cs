@@ -29,6 +29,12 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
     
     修改标识：Senparc - 20150303
     修改描述：整理接口
+
+    -- NeuChar --
+
+    修改标识：Senparc - 20181022
+    修改描述：添加 IMessageHandlerNeuralNodes 接口
+
 ----------------------------------------------------------------*/
 
 /*
@@ -37,6 +43,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 
 using Senparc.NeuChar.ApiHandlers;
 using Senparc.NeuChar.Entities;
+using Senparc.NeuChar.NeuralSystems;
 using System.Threading.Tasks;
 
 namespace Senparc.NeuChar.MessageHandlers
@@ -46,7 +53,7 @@ namespace Senparc.NeuChar.MessageHandlers
     /// </summary>
     /// <typeparam name="TRequest">IRequestMessageBase</typeparam>
     /// <typeparam name="TResponse">IResponseMessageBase</typeparam>
-    public interface IMessageHandler<TRequest, TResponse> : IMessageHandlerDocument, IMessageHandlerEnlightener
+    public interface IMessageHandler<TRequest, TResponse> : IMessageHandlerDocument, IMessageHandlerEnlightener, IMessageHandlerNeuralNodes
         where TRequest : IRequestMessageBase
         where TResponse : IResponseMessageBase
     {
