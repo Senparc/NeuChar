@@ -159,10 +159,10 @@ namespace Senparc.NeuChar.NeuralSystems
 
             if (responseMessage != null)
             {
-                if (messageHandler.MessageEntityEnlightener.PlatformType == PlatformType.WeChat_MiniProgram && requestMessage is IResponseMessageText)
+                if (messageHandler.MessageEntityEnlightener.PlatformType == PlatformType.WeChat_MiniProgram && responseMessage is IResponseMessageText)
                 {
                     //小程序
-                    messageHandler.ApiEnlightener.SendText(accessTokenOrApi, messageHandler.WeixinOpenId, (requestMessage as IResponseMessageText).Content);
+                    messageHandler.ApiEnlightener.SendText(accessTokenOrApi, messageHandler.WeixinOpenId, (responseMessage as IResponseMessageText).Content);
                     return new SuccessResponseMessage();
                 }
                 else
