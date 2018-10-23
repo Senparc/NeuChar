@@ -87,11 +87,24 @@ namespace Senparc.NeuChar.NeuralSystems
                         {
                             //没有上一条活动，或者对话已过期，则设置为退出状态
                             context.AppStoreState = AppStoreState.None;
+                            context.CurrentAppDataItem = null;//退出清空
                         }
                         else
                         {
                             //继续保持应用状态
                             currentAppDataItem = context.CurrentAppDataItem;
+
+                            if (requestMessage is IRequestMessageText || requestMessage is IRequestMessageEventKey requestClick)
+                            {
+                                var content = (requestMessage is IRequestMessageText requestText) ? requestText.Content : (requestMessage as IRequestMessageEventKey).EventKey;
+                                if (!context.CurrentAppDataItem.MessageExitWord.IsNullOrEmpty() && context.CurrentAppDataItem.MessageExitWord.Equals(content, StringComparison.OrdinalIgnoreCase))
+                                {
+                                    //执行退出命令
+                                    context.AppStoreState = AppStoreState.None;
+                                    context.CurrentAppDataItem = null;//退出清空
+                                    //currentAppDataItem = context.CurrentAppDataItem;//当前消息仍然转发（最后一条退出消息）
+                                }
+                            }
                         }
                     }
                     else
@@ -112,11 +125,9 @@ namespace Senparc.NeuChar.NeuralSystems
                 {
                     var content = (requestMessage is IRequestMessageText requestText) ? requestText.Content : (requestMessage as IRequestMessageEventKey).EventKey;
 
-                    if (currentAppDataItem == null)
-                    {
-                        currentAppDataItem = appDataNode.Config.AppDataItems
-                            .FirstOrDefault(z => z.ExpireDateTime > DateTime.Now && z.MessageEnterWord.Equals(content, StringComparison.OrdinalIgnoreCase));
-                    }
+                    currentAppDataItem = appDataNode.Config.AppDataItems
+                        .FirstOrDefault(z => z.ExpireDateTime > DateTime.Now && !z.MessageEnterWord.IsNullOrEmpty() && z.MessageEnterWord.Equals(content, StringComparison.OrdinalIgnoreCase));
+
                     if (currentAppDataItem != null && currentAppDataItem.MessageKeepTime > 0)
                     {
                         //初次进入应用
@@ -148,7 +159,17 @@ namespace Senparc.NeuChar.NeuralSystems
 
             if (responseMessage != null)
             {
-                return responseMessage;
+                if (messageHandler.MessageEntityEnlightener.PlatformType == PlatformType.WeChat_MiniProgram &&
+                   responseMessage is IResponseMessageText)
+                {
+                    //小程序
+                    messageHandler.ApiEnlightener.SendText(accessTokenOrApi, messageHandler.WeixinOpenId, (responseMessage as IResponseMessageText).Content);
+                    return new SuccessResponseMessage();
+                }
+                else
+                {
+                    return responseMessage;
+                }
             }
 
             //处理普通消息回复
