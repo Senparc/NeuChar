@@ -29,6 +29,10 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
     
     修改标识：Senparc - 20150303
     修改描述：整理接口
+    
+    修改标识：Senparc - 20181023
+    修改描述：修改 timeSpan 获取判断逻辑（firstMessageContext.LastActiveTime 已改为 DateTime? 类型）
+
 ----------------------------------------------------------------*/
 
 /*
@@ -167,7 +171,7 @@ namespace Senparc.NeuChar.Context
             while (MessageQueue.Count > 0)
             {
                 var firstMessageContext = MessageQueue[0];
-                var timeSpan = DateTime.Now - firstMessageContext.LastActiveTime;
+                var timeSpan = DateTime.Now - (firstMessageContext.LastActiveTime.HasValue ? firstMessageContext.LastActiveTime.Value : DateTime.Now);
                 //确定对话过期时间
                 var expireMinutes = firstMessageContext.ExpireMinutes.HasValue
                     ? firstMessageContext.ExpireMinutes.Value //队列自定义事件

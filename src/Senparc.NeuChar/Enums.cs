@@ -6,15 +6,33 @@ using System.Text;
 
 namespace Senparc.NeuChar
 {
+    /// <summary>
+    /// 数据类型
+    /// </summary>
     public enum DataType
     {
+        /// <summary>
+        /// 列表
+        /// </summary>
         List,
+        /// <summary>
+        /// 单项（唯一键）
+        /// </summary>
         Unique
     }
 
+    /// <summary>
+    /// API 类型
+    /// </summary>
     public enum ApiType
     {
+        /// <summary>
+        /// 用于获取 AccessToken 凭证
+        /// </summary>
         AccessToken,
+        /// <summary>
+        /// 普通接口
+        /// </summary>
         Normal
     }
 

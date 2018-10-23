@@ -80,7 +80,25 @@ namespace Senparc.NeuChar.NeuralSystems
                     currentAppDataItem = null;
                     break;
                 case AppStoreState.Enter:
-                    currentAppDataItem = context.CurrentAppDataItem;
+                    //判断是否已过期
+                    if (context.CurrentAppDataItem != null)
+                    {
+                        if (context.LastActiveTime.HasValue && context.LastActiveTime.Value.AddMinutes(context.CurrentAppDataItem.MessageKeepTime) < DateTime.Now)
+                        {
+                            //没有上一条活动，或者对话已过期，则设置为退出状态
+                            context.AppStoreState = AppStoreState.None;
+                        }
+                        else
+                        {
+                            //继续保持应用状态
+                            currentAppDataItem = context.CurrentAppDataItem;
+                        }
+                    }
+                    else
+                    {
+                        //已经进入App状态，但是没有标记退出，此处强制退出
+                        context.AppStoreState = AppStoreState.None;
+                    }
                     break;
                 default:
                     break;
@@ -107,9 +125,10 @@ namespace Senparc.NeuChar.NeuralSystems
                     }
                 }
             }
-            else //已经进入应用
+
+            if (currentAppDataItem != null) //已经锁定某个App
             {
-                NeuralSystem.Instance.NeuCharDomainName = "https://neuchar.senparc.com";
+                //NeuralSystem.Instance.NeuCharDomainName = "https://neuchar.senparc.com";
 
                 //转发AppData消息
                 var neuCharUrl = $"{NeuralSystem.Instance.NeuCharDomainName}/App/Weixin?appId={currentAppDataItem.Id}&neuralAppId={appDataNode.NeuralAppId}";
@@ -132,6 +151,7 @@ namespace Senparc.NeuChar.NeuralSystems
                 return responseMessage;
             }
 
+            //处理普通消息回复
             switch (requestMessage.MsgType)
             {
                 case RequestMsgType.Text:
