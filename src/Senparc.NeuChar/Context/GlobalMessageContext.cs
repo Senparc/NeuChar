@@ -282,7 +282,8 @@ namespace Senparc.NeuChar.Context
                     }
                 }
 
-                messageContext.LastActiveTime = DateTime.Now;//记录请求时间
+                messageContext.LastActiveTime = messageContext.ThisActiveTime;//记录上一次请求时间
+                messageContext.ThisActiveTime = DateTime.Now;//记录本次请求时间
                 messageContext.RequestMessages.Add(requestMessage);//录入消息
             }
         }

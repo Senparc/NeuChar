@@ -58,7 +58,11 @@ namespace Senparc.NeuChar.Context
         /// <summary>
         /// 最后一次活动时间（用户主动发送Resquest请求的时间）
         /// </summary>
-        DateTime LastActiveTime { get; set; }
+        DateTime? LastActiveTime { get; set; }
+        /// <summary>
+        /// 本次活动时间（当前消息收到的时间）
+        /// </summary>
+        DateTime? ThisActiveTime { get; set; }
         /// <summary>
         /// 接收消息记录
         /// </summary>
@@ -106,7 +110,14 @@ namespace Senparc.NeuChar.Context
         private int _maxRecordCount;
 
         public string UserName { get; set; }
-        public DateTime LastActiveTime { get; set; }
+        /// <summary>
+        /// 最后一次活动时间（用户主动发送Resquest请求的时间）
+        /// </summary>
+        public DateTime? LastActiveTime { get; set; }
+        /// <summary>
+        /// 本次活动时间（当前消息收到的时间）
+        /// </summary>
+        public DateTime? ThisActiveTime { get; set; }
         public MessageContainer<TRequest> RequestMessages { get; set; }
         public MessageContainer<TResponse> ResponseMessages { get; set; }
         public int MaxRecordCount
@@ -136,7 +147,7 @@ namespace Senparc.NeuChar.Context
         /// 当前正在服务的 AppDataItem
         /// </summary>
         public AppDataItem CurrentAppDataItem { get; set; }
-        
+
 
         /// <summary>
         /// 当MessageContext被删除时触发的事件

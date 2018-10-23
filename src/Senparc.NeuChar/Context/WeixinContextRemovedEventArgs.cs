@@ -29,6 +29,10 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
     
     修改标识：Senparc - 20150303
     修改描述：整理接口
+
+    修改标识：Senparc - 20181023
+    修改描述：修改 LastActiveTime 输出
+
 ----------------------------------------------------------------*/
 
 
@@ -42,7 +46,7 @@ namespace Senparc.NeuChar.Context
     /// <summary>
     /// 对话上下文被删除时触发事件的事件数据
     /// </summary>
-    public class WeixinContextRemovedEventArgs<TRequest,TResponse> : EventArgs
+    public class WeixinContextRemovedEventArgs<TRequest, TResponse> : EventArgs
         where TRequest : IRequestMessageBase
         where TResponse : IResponseMessageBase
     {
@@ -63,7 +67,7 @@ namespace Senparc.NeuChar.Context
         {
             get
             {
-                return MessageContext.LastActiveTime;
+                return MessageContext.LastActiveTime.HasValue ? MessageContext.LastActiveTime.Value : DateTime.MinValue;
             }
         }
 
