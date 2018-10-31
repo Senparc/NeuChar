@@ -59,7 +59,7 @@ namespace Senparc.NeuChar.ApiHandlers
                         break;
                     case ResponseMsgType.News:
                         {
-                            var articles = NeuralNodeHelper.FillNewsMessage(response.MaterialId, materialData);
+                            var articles = NeuralNodeHelper.FillNewsMessage(response.MaterialId/*"9DAAC45C|6309EAD9"*/, materialData);
                             if (articles == null)
                             {
                                 apiResult = ApiEnlighten.SendText(accessTokenOrAppId, openId, "您要查找的素材不存在，或格式定义错误！");

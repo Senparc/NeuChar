@@ -44,7 +44,10 @@ namespace Senparc.NeuChar.Helpers
 
             List<Article> articleList = new List<Article>();
 
-            var material = data.FirstOrDefault(z => z.Id == originContent);
+            //materialIds 如：9DAAC45C|6309EAD9，记录了设置当时的News的文章顺序，第一个参数为主图文的Id，
+            //主图文的material内已经自带了所有关联的多图文Id，因此这里只需要取第一个
+            var materialIds = originContent.Split('|');
+            var material = data.FirstOrDefault(z => z.Id == materialIds[0]);
             if (material == null)
             {
                 return null;
