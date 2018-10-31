@@ -2,6 +2,7 @@
 using Senparc.CO2NET.Trace;
 using Senparc.NeuChar.ApiBind;
 using Senparc.NeuChar.Enlightener;
+using Senparc.NeuChar.Entities;
 using Senparc.NeuChar.Exceptions;
 using Senparc.NeuChar.Helpers;
 using Senparc.NeuChar.NeuralSystems;
@@ -30,6 +31,15 @@ namespace Senparc.NeuChar.ApiHandlers
         /// <param name="content"></param>
         /// <returns></returns>
         public abstract ApiResult SendText(string accessTokenOrAppId, string openId, string content);
+        /// <summary>
+        /// 发送多图文信息
+        /// </summary>
+        /// <param name="accessTokenOrAppId"></param>
+        /// <param name="openId"></param>
+        /// <param name="articleList"></param>
+        /// <returns></returns>
+
+        public abstract ApiResult SendNews(string accessTokenOrAppId, string openId, List<Article> articleList);
 
         /// <summary>
         /// 发送图片消息

@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net35;net40;net45;netstandard2.0;netcoreapp2.0;netcoreapp2.1</TargetFrameworks>
-    <Version>0.3.1.2</Version>
+    <Version>0.3.2-preview1</Version>
     <AssemblyName>Senparc.NeuChar</AssemblyName>
     <RootNamespace>Senparc.NeuChar</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -52,6 +52,7 @@
       v0.2.11 MessageHandler 设置 postModel 为必须提供的参数
       v0.3.0 添加 APP 订阅信息
       v0.3.1 重构 MessageHandler，提供 App 订阅优先执行功能
+      v0.3.2 支持小程序自动转换公众号的News为Text回复消息
     </PackageReleaseNotes>
     <RepositoryUrl>https://github.com/JeffreySu/WeiXinMPSDK</RepositoryUrl>
     <Configurations>Debug;Release;Test</Configurations>

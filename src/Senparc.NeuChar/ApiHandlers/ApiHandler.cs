@@ -2,6 +2,7 @@
 using Senparc.NeuChar.Entities;
 using Senparc.NeuChar.Exceptions;
 using Senparc.NeuChar.Helpers;
+using Senparc.NeuChar.MessageHandlers;
 using Senparc.NeuChar.NeuralSystems;
 using System;
 using System.Collections.Generic;
@@ -38,7 +39,7 @@ namespace Senparc.NeuChar.ApiHandlers
         /// <param name="accessTokenOrAppId"></param>
         /// <param name="openId"></param>
         /// <returns></returns>
-        public ApiResult ExecuteApi(Response response, MaterialData materialData, IRequestMessageBase requestMessage, string accessTokenOrAppId, string openId)
+        public ApiResult ExecuteApi(Response response, MaterialData materialData, IRequestMessageBase requestMessage, string accessTokenOrAppId, string openId, IMessageHandlerEnlightener enlightener)
         {
             if (response == null)
             {
@@ -57,6 +58,17 @@ namespace Senparc.NeuChar.ApiHandlers
                         apiResult = ApiEnlighten.SendText(accessTokenOrAppId, openId, cotnent);
                         break;
                     case ResponseMsgType.News:
+                        {
+                            var articles = NeuralNodeHelper.FillNewsMessage(response.MaterialId, materialData);
+                            if (articles == null)
+                            {
+                                apiResult = ApiEnlighten.SendText(accessTokenOrAppId, openId, "您要查找的素材不存在，或格式定义错误！");
+                            }
+                            else
+                            {
+                                apiResult = ApiEnlighten.SendNews(accessTokenOrAppId, openId, articles);
+                            }
+                        }
                         break;
                     case ResponseMsgType.Music:
                         break;
