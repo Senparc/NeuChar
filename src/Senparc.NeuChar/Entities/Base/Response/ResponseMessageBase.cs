@@ -180,6 +180,7 @@ namespace Senparc.NeuChar.Entities
         /// 从返回结果XML转换成IResponseMessageBase实体类
         /// </summary>
         /// <param name="xml">返回给服务器的Response Xml</param>
+        /// <param name="enlighten"></param>
         /// <returns></returns>
         public static IResponseMessageBase CreateFromResponseXml(string xml, MessageEntityEnlightener enlighten)
         {

@@ -24,7 +24,7 @@ namespace Senparc.NeuChar.Tests
         {
             Register.RegisterApiBind();
 
-            Assert.IsTrue(Register.ApiBindInfoCollection.Count > 0);
+            Assert.IsTrue(Register.NeuralNodeRegisterCollection.Count > 0);
         }
 
     }
