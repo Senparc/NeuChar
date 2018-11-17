@@ -261,6 +261,10 @@ namespace Senparc.NeuChar
         /// 响应时间（毫秒）
         /// </summary>
         Message_ResponseMillisecond,
+        /// <summary>
+        /// 消息处理异常
+        /// </summary>
+        Message_Exception
 
     }
 }

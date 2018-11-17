@@ -103,8 +103,7 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <summary>
         /// 执行请求内部的消息整理逻辑
         /// </summary>
-        void ExecuteHandler();
-
+        void BuildResponseMessage();
 
         /// <summary>
         /// 执行微信请求后触发
@@ -118,17 +117,21 @@ namespace Senparc.NeuChar.MessageHandlers
         #region 异步方法
 
         /// <summary>
-        /// 执行微信请求前触发
+        /// 【异步方法】执行微信请求前触发
         /// </summary>
         Task OnExecutingAsync();
 
         /// <summary>
-        /// 执行微信请求
+        /// 【异步方法】执行微信请求
         /// </summary>
         Task ExecuteAsync();
+        /// <summary>
+        /// 执行请求内部的消息整理逻辑
+        /// </summary>
+        Task BuildResponseMessageAsync();
 
         /// <summary>
-        /// 执行微信请求后触发
+        /// 【异步方法】执行微信请求后触发
         /// </summary>
         Task OnExecutedAsync();
 

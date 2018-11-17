@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net35;net40;net45;netstandard2.0;netcoreapp2.0;netcoreapp2.1</TargetFrameworks>
-    <Version>0.4.1-preview1</Version>
+    <Version>0.4.1-preview2</Version>
     <AssemblyName>Senparc.NeuChar</AssemblyName>
     <RootNamespace>Senparc.NeuChar</RootNamespace>
     <GeneratePackageOnBuild Condition=" '$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
@@ -143,7 +143,7 @@
 
   <ItemGroup>
     <PackageReference Include="Senparc.CO2NET" Version="0.2.18" />
-    <PackageReference Include="Senparc.CO2NET.APM" Version="0.1.2.1" />
+    <PackageReference Include="Senparc.CO2NET.APM" Version="0.1.2.2" />
   </ItemGroup>
 
 

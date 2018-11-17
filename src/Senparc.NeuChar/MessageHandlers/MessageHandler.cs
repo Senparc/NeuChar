@@ -402,19 +402,21 @@ namespace Senparc.NeuChar.MessageHandlers
                 {
                     GlobalMessageContext.InsertMessage(ResponseMessage);
                 }
+                apm.Set(NeuCharApmKind.Message_SuccessResponse.ToString(), 1, tempStorage: OpenId);
             }
             catch (Exception ex)
             {
+                apm.Set(NeuCharApmKind.Message_Exception.ToString(), 1, tempStorage: OpenId);
                 throw new MessageHandlerException("MessageHandler中Execute()过程发生错误：" + ex.Message, ex);
             }
             finally
             {
                 OnExecuted();
+                apm.Set(NeuCharApmKind.Message_ResponseMillisecond.ToString(), (SystemTime.Now - this.ExecuteStatTime).TotalMilliseconds, tempStorage: OpenId);
             }
-
         }
 
-        protected abstract void BuildResponseMessage();
+        public abstract void BuildResponseMessage();
 
         /// <summary>
         /// 在 Execute() 之后运行（如果没有被 CancelExcute=true 中断）

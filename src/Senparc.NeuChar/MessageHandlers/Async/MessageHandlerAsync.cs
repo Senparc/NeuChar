@@ -80,6 +80,11 @@ namespace Senparc.NeuChar.MessageHandlers
             await Task.Run(() => this.Execute());
         }
 
+        public virtual async Task BuildResponseMessageAsync()
+        {
+            await Task.Run(() => this.BuildResponseMessage());
+        }
+
         public virtual async Task OnExecutedAsync()
         {
             await Task.Run(() => this.OnExecuted());
