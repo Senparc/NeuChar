@@ -116,6 +116,17 @@ namespace Senparc.NeuChar.MessageHandlers
                     case NeuCharActionType.CheckNeuChar:
                         {
                             //TODO：进行有效性检验
+
+                            //进行1万次计算
+                            var calc = 0;
+                            var dt1 = DateTime.Now;
+                            var runCount = 1000000;
+                            for (int i = 0; i < runCount; i++)
+                            {
+                                calc += i;
+                            }
+
+                            var timeSpan = DateTime.Now - dt1;
                             result = NeuralSystem.CHECK_CNNECTION_RESULT;
                         }
                         break;
