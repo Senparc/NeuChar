@@ -23,7 +23,7 @@ namespace Senparc.NeuChar.Helpers
         /// <returns></returns>
         public static string FillTextMessage(string originContent)
         {
-            return originContent.Replace("{now}", DateTime.Now.ToString());
+            return originContent.Replace("{now}", SystemTime.Now.ToString());
         }
 
         /// <summary>

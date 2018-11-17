@@ -163,7 +163,7 @@ namespace Senparc.NeuChar.Entities
                 {
                     responseMessage.ToUserName = requestMessage.FromUserName;
                     responseMessage.FromUserName = requestMessage.ToUserName;
-                    responseMessage.CreateTime = DateTime.Now; //使用当前最新时间
+                    responseMessage.CreateTime = SystemTime.Now; //使用当前最新时间
                 }
 
                 return responseMessage;

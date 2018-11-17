@@ -171,7 +171,7 @@ namespace Senparc.NeuChar.Context
             while (MessageQueue.Count > 0)
             {
                 var firstMessageContext = MessageQueue[0];
-                var timeSpan = DateTime.Now - (firstMessageContext.LastActiveTime.HasValue ? firstMessageContext.LastActiveTime.Value : DateTime.Now);
+                var timeSpan = SystemTime.Now - (firstMessageContext.LastActiveTime.HasValue ? firstMessageContext.LastActiveTime.Value : SystemTime.Now);
                 //确定对话过期时间
                 var expireMinutes = firstMessageContext.ExpireMinutes.HasValue
                     ? firstMessageContext.ExpireMinutes.Value //队列自定义事件
@@ -287,7 +287,7 @@ namespace Senparc.NeuChar.Context
                 }
 
                 messageContext.LastActiveTime = messageContext.ThisActiveTime;//记录上一次请求时间
-                messageContext.ThisActiveTime = DateTime.Now;//记录本次请求时间
+                messageContext.ThisActiveTime = SystemTime.Now;//记录本次请求时间
                 messageContext.RequestMessages.Add(requestMessage);//录入消息
             }
         }

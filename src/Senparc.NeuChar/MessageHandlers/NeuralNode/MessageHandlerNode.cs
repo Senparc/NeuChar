@@ -83,7 +83,7 @@ namespace Senparc.NeuChar.NeuralSystems
                     //判断是否已过期
                     if (context.CurrentAppDataItem != null)
                     {
-                        if (context.LastActiveTime.HasValue && context.LastActiveTime.Value.AddMinutes(context.CurrentAppDataItem.MessageKeepTime) < DateTime.Now)
+                        if (context.LastActiveTime.HasValue && context.LastActiveTime.Value.AddMinutes(context.CurrentAppDataItem.MessageKeepTime) < SystemTime.Now)
                         {
                             //没有上一条活动，或者对话已过期，则设置为退出状态
                             context.AppStoreState = AppStoreState.None;
@@ -126,7 +126,7 @@ namespace Senparc.NeuChar.NeuralSystems
                     var content = (requestMessage is IRequestMessageText requestText) ? requestText.Content : (requestMessage as IRequestMessageEventKey).EventKey;
 
                     currentAppDataItem = appDataNode.Config.AppDataItems
-                        .FirstOrDefault(z => z.ExpireDateTime > DateTime.Now && !z.MessageEnterWord.IsNullOrEmpty() && z.MessageEnterWord.Equals(content, StringComparison.OrdinalIgnoreCase));
+                        .FirstOrDefault(z => z.ExpireDateTime > SystemTime.Now && !z.MessageEnterWord.IsNullOrEmpty() && z.MessageEnterWord.Equals(content, StringComparison.OrdinalIgnoreCase));
 
                     if (currentAppDataItem != null && currentAppDataItem.MessageKeepTime > 0)
                     {

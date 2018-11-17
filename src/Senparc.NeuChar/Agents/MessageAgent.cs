@@ -45,7 +45,7 @@ namespace Senparc.NeuChar.Agents
             {
                 messageHandler.UsedMessageAgent = true;
             }
-            string timestamp = DateTime.Now.Ticks.ToString();
+            string timestamp = SystemTime.Now.Ticks.ToString();
             string nonce = "GodBlessYou";
             string signature = CheckSignatureWeChat.GetSignature(timestamp, nonce, token);
             url += string.Format("{0}signature={1}&timestamp={2}&nonce={3}",
@@ -196,7 +196,7 @@ namespace Senparc.NeuChar.Agents
         {
             try
             {
-                string timestamp = DateTime.Now.Ticks.ToString();
+                string timestamp = SystemTime.Now.Ticks.ToString();
                 string nonce = "GodBlessYou";
                 string echostr = Guid.NewGuid().ToString("n");
                 string signature = CheckSignatureWeChat.GetSignature(timestamp, nonce, token);

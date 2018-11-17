@@ -184,7 +184,7 @@ namespace Senparc.NeuChar.Context
 
             RequestMessages = new MessageContainer<TRequest>(MaxRecordCount);
             ResponseMessages = new MessageContainer<TResponse>(MaxRecordCount);
-            LastActiveTime = DateTime.Now;
+            LastActiveTime = SystemTime.Now;
         }
 
         /// <summary>

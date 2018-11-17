@@ -92,7 +92,7 @@ namespace Senparc.NeuChar.MessageHandlers
                                 Directory.CreateDirectory(path);
                             }
 
-                            var fileTemp = Path.Combine(path, $"NeuCharRoot.temp.{DateTime.Now.ToString("yyyyMMdd-HHmmss")}.config");
+                            var fileTemp = Path.Combine(path, $"NeuCharRoot.temp.{SystemTime.Now.ToString("yyyyMMdd-HHmmss")}.config");
                             //TODO：后期也可以考虑把不同模块分离到不同的文件中
 
                             File.Delete(fileTemp);
@@ -107,7 +107,7 @@ namespace Senparc.NeuChar.MessageHandlers
                             }
 
                             //历史文件备份，并替换临时文件
-                            File.Move(file, file.Replace(".config", $".bak.{DateTime.Now.ToString("yyyyMMdd-HHmmss")}.config"));
+                            File.Move(file, file.Replace(".config", $".bak.{SystemTime.Now.ToString("yyyyMMdd-HHmmss")}.config"));
                             File.Move(fileTemp, file);
 
                             //刷新数据

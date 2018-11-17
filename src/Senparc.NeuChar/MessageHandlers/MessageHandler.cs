@@ -272,6 +272,8 @@ namespace Senparc.NeuChar.MessageHandlers
 
         public IEncryptPostModel PostModel { get; set; }
 
+        protected DateTime ExecuteStatTime { get; set; }
+
         /// <summary>
         /// 构造函数公用的初始化方法
         /// </summary>
@@ -368,8 +370,10 @@ namespace Senparc.NeuChar.MessageHandlers
         public void Execute()
         {
             //进行 APM 记录
-           
-            DataOperation apm = new DataOperation();
+            ExecuteStatTime = SystemTime.Now;
+
+            DataOperation apm = new DataOperation(PostModel?.Domain);
+            apm.Set(NeuCharApmKind.Message_Request.ToString(), 1, tempStorage: OpenId);
 
             if (CancelExcute)
             {

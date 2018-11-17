@@ -246,4 +246,21 @@ namespace Senparc.NeuChar
         /// </summary>
         view_limited = 111
     }
+
+    public enum NeuCharApmKind
+    {
+        /// <summary>
+        /// 消息请求
+        /// </summary>
+        Message_Request,//TODO: 可进一步统计不同的消息类型
+        /// <summary>
+        /// 成功返回
+        /// </summary>
+        Message_SuccessResponse,
+        /// <summary>
+        /// 响应时间（毫秒）
+        /// </summary>
+        Message_ResponseMillisecond,
+
+    }
 }
