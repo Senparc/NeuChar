@@ -2,10 +2,10 @@
 
   <PropertyGroup>
     <TargetFrameworks>net35;net40;net45;netstandard2.0;netcoreapp2.0;netcoreapp2.1</TargetFrameworks>
-    <Version>0.3.3</Version>
+    <Version>0.4.0-preview1</Version>
     <AssemblyName>Senparc.NeuChar</AssemblyName>
     <RootNamespace>Senparc.NeuChar</RootNamespace>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild  Condition=" '$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
 
     <Description>
       NeuChar SDK 跨平台信息交互标准
@@ -33,10 +33,12 @@
       v0.0.7 添加 PlatformType 枚举，以及 IEnlighten 接口
       v0.0.8 添加News响应消息接口及处理
       v0.0.9 添加 ApiBindAttribute，对 API 进行绑定操作
+
       v0.1.0 提供自定义 API 绑定功能
       v0.1.3 取消 SuccessResponseMessageBase 抽象属性
       v0.1.4 1、将 MessageEntityEnlightener 设为抽象类
       2、fix bug：MessageHandlerNode.Execute() 的 accessTokenOrApi 参数输入 null 会抛错
+
       v0.2.0 重构标准结构，可加载素材数据库（MeterialData）
       v0.2.2 添加 ArticleData.cs
       v0.2.3 更新图文响应
@@ -50,10 +52,13 @@
       1、提供 NeuChar 服务器连接检测能力
       2、升级 ApiBind
       v0.2.11 MessageHandler 设置 postModel 为必须提供的参数
+
       v0.3.0 添加 APP 订阅信息
       v0.3.1 重构 MessageHandler，提供 App 订阅优先执行功能
       v0.3.2 支持小程序自动转换公众号的News为Text回复消息
-      v0.3.3 添加 APM 部分监测功能
+      
+      v0.4.0 添加 APM 部分监测功能
+      
     </PackageReleaseNotes>
     <RepositoryUrl>https://github.com/JeffreySu/WeiXinMPSDK</RepositoryUrl>
     <Configurations>Debug;Release;Test</Configurations>

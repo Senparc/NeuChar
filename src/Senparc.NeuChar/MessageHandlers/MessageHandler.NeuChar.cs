@@ -1,4 +1,5 @@
-﻿using Senparc.CO2NET.Extensions;
+﻿using Senparc.CO2NET.APM;
+using Senparc.CO2NET.Extensions;
 using Senparc.CO2NET.Helpers;
 using Senparc.CO2NET.Trace;
 using Senparc.CO2NET.Utilities;
@@ -40,10 +41,11 @@ namespace Senparc.NeuChar.MessageHandlers
                 }
 
                 var file = Path.Combine(path, "NeuCharRoot.config");
+                bool success = true;
                 string result = null;
 
                 var configFileExisted = File.Exists(file);
-                if (! configFileExisted)
+                if (!configFileExisted)
                 {
                     using (var fs = new FileStream(file, FileMode.CreateNew))
                     {
@@ -116,28 +118,29 @@ namespace Senparc.NeuChar.MessageHandlers
                     case NeuCharActionType.CheckNeuChar:
                         {
                             //TODO：进行有效性检验
+                            var configRoot = requestMessage.ConfigRoot?.GetObject<APMDomainConfig>();
 
-                            //进行1万次计算
-                            var calc = 0;
-                            var dt1 = DateTime.Now;
-                            var runCount = 1000000;
-                            for (int i = 0; i < runCount; i++)
+                            if (configRoot== null || configRoot.Domain.IsNullOrWhiteSpace())
                             {
-                                calc += i;
+                                success = false;
+                                result = "未指定 Domain!";
+                                break;
                             }
 
-                            var timeSpan = DateTime.Now - dt1;
-                            result = NeuralSystem.CHECK_CNNECTION_RESULT;
+                            var co2netDataOperation = new DataOperation(configRoot.Domain);
+
+                            //获取所有数据
+                            var dataItems = co2netDataOperation.ReadAndCleanDataItems();
+                            result = dataItems.ToString();
                         }
                         break;
                     default:
                         break;
                 }
 
-
                 var successMsg = new
                 {
-                    success = true,
+                    success = success,
                     result = result
                 };
                 TextResponseMessage = successMsg.ToJson();
