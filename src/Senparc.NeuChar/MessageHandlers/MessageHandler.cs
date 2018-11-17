@@ -372,7 +372,7 @@ namespace Senparc.NeuChar.MessageHandlers
             //进行 APM 记录
             ExecuteStatTime = SystemTime.Now;
 
-            DataOperation apm = new DataOperation(PostModel?.Domain);
+            DataOperation apm = new DataOperation(PostModel?.DomainId);
             apm.Set(NeuCharApmKind.Message_Request.ToString(), 1, tempStorage: OpenId);
 
             if (CancelExcute)

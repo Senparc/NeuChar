@@ -43,7 +43,7 @@ namespace Senparc.NeuChar
         /// <summary>
         /// 指定当前服务账号的唯一领域定义（主要为 APM 服务），例如 AppId
         /// </summary>
-        string Domain { get; set; }
+        string DomainId { get; set; }
 
         /// <summary>
         /// Signature
@@ -82,7 +82,7 @@ namespace Senparc.NeuChar
         /// <summary>
         /// 指定当前服务账号的唯一领域定义（主要为 APM 服务），例如 AppId
         /// </summary>
-       public abstract string Domain { get; set; }
+       public abstract string DomainId { get; set; }
 
         /// <summary>
         /// Signature
