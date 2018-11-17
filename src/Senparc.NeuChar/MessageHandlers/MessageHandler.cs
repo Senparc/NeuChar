@@ -57,6 +57,7 @@ using Senparc.NeuChar.Context;
 using Senparc.NeuChar.Entities;
 using Senparc.NeuChar.Helpers;
 using Senparc.NeuChar.NeuralSystems;
+using Senparc.NeuChar.Exceptions;
 
 namespace Senparc.NeuChar.MessageHandlers
 {
@@ -360,7 +361,48 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <summary>
         /// 执行微信请求（如果没有被 CancelExcute=true 中断）
         /// </summary>
-        public abstract void Execute();
+        public void Execute() {
+            //进行 APM 记录
+            if (CancelExcute)
+            {
+                return;
+            }
+
+            OnExecuting();
+
+            if (CancelExcute)
+            {
+                return;
+            }
+
+            try
+            {
+                if (RequestMessage == null)
+                {
+                    return;
+                }
+
+                ExecuteHandler();
+
+                //记录上下文
+                //此处修改
+                if (MessageContextGlobalConfig.UseMessageContext && ResponseMessage != null && !string.IsNullOrEmpty(ResponseMessage.FromUserName))
+                {
+                    GlobalMessageContext.InsertMessage(ResponseMessage);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new MessageHandlerException("MessageHandler中Execute()过程发生错误：" + ex.Message, ex);
+            }
+            finally
+            {
+                OnExecuted();
+            }
+
+        }
+
+        protected abstract void ExecuteHandler();
 
         /// <summary>
         /// 在 Execute() 之后运行（如果没有被 CancelExcute=true 中断）

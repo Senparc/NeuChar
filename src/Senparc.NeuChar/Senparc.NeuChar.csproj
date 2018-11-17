@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net35;net40;net45;netstandard2.0;netcoreapp2.0;netcoreapp2.1</TargetFrameworks>
-    <Version>0.4.0-preview1</Version>
+    <Version>0.4.1-preview1</Version>
     <AssemblyName>Senparc.NeuChar</AssemblyName>
     <RootNamespace>Senparc.NeuChar</RootNamespace>
     <GeneratePackageOnBuild  Condition=" '$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
@@ -56,9 +56,10 @@
       v0.3.0 添加 APP 订阅信息
       v0.3.1 重构 MessageHandler，提供 App 订阅优先执行功能
       v0.3.2 支持小程序自动转换公众号的News为Text回复消息
-      
+
       v0.4.0 添加 APM 部分监测功能
-      
+      v0.4.1 重构 MessageHandler，抽象方法 Execute() 重命名为 ExecuteHandler()，外层执行方法仍然为 Execute()
+
     </PackageReleaseNotes>
     <RepositoryUrl>https://github.com/JeffreySu/WeiXinMPSDK</RepositoryUrl>
     <Configurations>Debug;Release;Test</Configurations>
