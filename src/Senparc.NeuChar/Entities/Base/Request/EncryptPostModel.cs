@@ -41,6 +41,11 @@ namespace Senparc.NeuChar
     public interface IEncryptPostModel
     {
         /// <summary>
+        /// 指定当前服务账号的唯一领域定义（主要为 APM 服务），例如 AppId
+        /// </summary>
+        string Domain { get; set; }
+
+        /// <summary>
         /// Signature
         /// </summary>
         string Signature { get; set; }
@@ -72,8 +77,13 @@ namespace Senparc.NeuChar
     /// <summary>
     /// 接收加密信息统一基类（同时也支持非加密信息）
     /// </summary>
-    public class EncryptPostModel : IEncryptPostModel
+    public abstract class EncryptPostModel : IEncryptPostModel
     {
+        /// <summary>
+        /// 指定当前服务账号的唯一领域定义（主要为 APM 服务），例如 AppId
+        /// </summary>
+       public abstract string Domain { get; set; }
+
         /// <summary>
         /// Signature
         /// </summary>

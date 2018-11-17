@@ -58,6 +58,7 @@ using Senparc.NeuChar.Entities;
 using Senparc.NeuChar.Helpers;
 using Senparc.NeuChar.NeuralSystems;
 using Senparc.NeuChar.Exceptions;
+using Senparc.CO2NET.APM;
 
 namespace Senparc.NeuChar.MessageHandlers
 {
@@ -269,6 +270,7 @@ namespace Senparc.NeuChar.MessageHandlers
             }
         }
 
+        public IEncryptPostModel PostModel { get; set; }
 
         /// <summary>
         /// 构造函数公用的初始化方法
@@ -280,6 +282,7 @@ namespace Senparc.NeuChar.MessageHandlers
         {
             OmitRepeatedMessage = true;//默认开启去重
             GlobalMessageContext.MaxRecordCount = maxRecordCount;
+            PostModel = postModel;//PostModel 在当前类初始化过程中必须赋值
             RequestDocument = Init(postDataDocument, postModel);
         }
 
@@ -292,7 +295,6 @@ namespace Senparc.NeuChar.MessageHandlers
         public MessageHandler(Stream inputStream, IEncryptPostModel postModel, int maxRecordCount = 0)
         {
             var postDataDocument = XmlUtility.Convert(inputStream);
-
             CommonInitialize(postDataDocument, maxRecordCount, postModel);
         }
 
@@ -323,6 +325,8 @@ namespace Senparc.NeuChar.MessageHandlers
             //CommonInitialize(postDataDocument, maxRecordCount, postData);
 
             //此方法不执行任何方法，提供给具体的类库进行测试使用，例如Senparc.NeuChar.Work
+
+            PostModel = postModel;//PostModel 在当前类初始化过程中必须赋值
         }
 
 
@@ -361,8 +365,12 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <summary>
         /// 执行微信请求（如果没有被 CancelExcute=true 中断）
         /// </summary>
-        public void Execute() {
+        public void Execute()
+        {
             //进行 APM 记录
+           
+            DataOperation apm = new DataOperation();
+
             if (CancelExcute)
             {
                 return;
@@ -382,7 +390,7 @@ namespace Senparc.NeuChar.MessageHandlers
                     return;
                 }
 
-                ExecuteHandler();
+                BuildResponseMessage();
 
                 //记录上下文
                 //此处修改
@@ -402,7 +410,7 @@ namespace Senparc.NeuChar.MessageHandlers
 
         }
 
-        protected abstract void ExecuteHandler();
+        protected abstract void BuildResponseMessage();
 
         /// <summary>
         /// 在 Execute() 之后运行（如果没有被 CancelExcute=true 中断）

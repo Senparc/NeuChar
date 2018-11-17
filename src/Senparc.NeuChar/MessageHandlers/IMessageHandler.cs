@@ -83,6 +83,11 @@ namespace Senparc.NeuChar.MessageHandlers
         /// </summary>
         bool UsedMessageAgent { get; set; }
 
+        /// <summary>
+        /// PostModel
+        /// </summary>
+        IEncryptPostModel PostModel { get; set; }
+
         #region 同步方法
 
         /// <summary>
@@ -91,9 +96,15 @@ namespace Senparc.NeuChar.MessageHandlers
         void OnExecuting();
 
         /// <summary>
-        /// 执行微信请求
+        /// 执行请求
         /// </summary>
         void Execute();
+
+        /// <summary>
+        /// 执行请求内部的消息整理逻辑
+        /// </summary>
+        void ExecuteHandler();
+
 
         /// <summary>
         /// 执行微信请求后触发
