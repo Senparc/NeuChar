@@ -23,4 +23,8 @@
     <ProjectReference Include="..\Senparc.NeuChar\Senparc.NeuChar.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="App_Data\WeChat_OfficialAccount\2018-11-18\" />
+  </ItemGroup>
+
 </Project>

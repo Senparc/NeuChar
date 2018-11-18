@@ -56,6 +56,12 @@ namespace Senparc.NeuChar.Tests.MessageHandlers.NeuralNode.MP
             messageHandler.Execute();
             messageHandler.SaveResponseMessageLog();
 
+            var dt1 = SystemTime.Now;
+            while ((SystemTime.Now - dt1).TotalMilliseconds < 800)
+            {
+                //等待队列执行
+            }
+
             Assert.IsNotNull(messageHandler.TextResponseMessage);
             Console.WriteLine(messageHandler.TextResponseMessage);
         }
