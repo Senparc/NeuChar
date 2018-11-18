@@ -26,7 +26,7 @@ namespace Senparc.NeuChar.Tests.MessageHandlers.NeuralNode.MP
   <EventKey><![CDATA[NEUCHAR|43E8BCD9]]></EventKey>
 </xml>";
 
-            var postModel = new PostModel() { AppId="" };
+            var postModel = new PostModel() { AppId= "AppId" };
 
             var messageHandler = new TestMpMessageHandler(XDocument.Parse(xmlText), postModel);
             messageHandler.Execute();
@@ -35,5 +35,29 @@ namespace Senparc.NeuChar.Tests.MessageHandlers.NeuralNode.MP
             Console.WriteLine(messageHandler.TextResponseMessage);
         }
 
+        [TestMethod]
+        public void SaveLogTest()
+        {
+            var xmlText = @"<?xml version=""1.0"" encoding=""utf-8""?>
+ <xml>
+  <ToUserName><![CDATA[gh_0fe614101343]]></ToUserName>
+  <FromUserName><![CDATA[oxRg0uLsnpHjb8o93uVnwMK_WAVw]]></FromUserName>
+  <CreateTime>1539684529</CreateTime>
+  <MsgType><![CDATA[event]]></MsgType>
+  <Event><![CDATA[CLICK]]></Event>
+  <EventKey><![CDATA[NEUCHAR|43E8BCD9]]></EventKey>
+</xml>";
+
+            var postModel = new PostModel() { AppId = "AppId" };
+
+            var messageHandler = new TestMpMessageHandler(XDocument.Parse(xmlText), postModel);
+
+            messageHandler.SaveRequestMessageLog();
+            messageHandler.Execute();
+            messageHandler.SaveResponseMessageLog();
+
+            Assert.IsNotNull(messageHandler.TextResponseMessage);
+            Console.WriteLine(messageHandler.TextResponseMessage);
+        }
     }
 }

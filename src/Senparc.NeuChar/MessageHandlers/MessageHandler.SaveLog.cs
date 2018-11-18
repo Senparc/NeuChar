@@ -1,9 +1,11 @@
 ﻿using Senparc.CO2NET.APM;
+using Senparc.CO2NET.Exceptions;
 using Senparc.CO2NET.Extensions;
 using Senparc.CO2NET.Helpers;
 using Senparc.CO2NET.Trace;
 using Senparc.CO2NET.Utilities;
 using Senparc.NeuChar.Entities;
+using Senparc.NeuChar.Exceptions;
 using Senparc.NeuChar.NeuralSystems;
 using System;
 using System.Collections.Generic;
@@ -33,7 +35,7 @@ namespace Senparc.NeuChar.MessageHandlers
             var appDomainAppPath = AppContext.BaseDirectory; //dll所在目录：;
 #endif
 
-            var logPath = Path.Combine(appDomainAppPath, $"\\App_Data\\{this.MessageEntityEnlightener.PlatformType.ToString()}\\{ SystemTime.Now.ToString("yyyy-MM-dd")}\\");
+            var logPath = Path.Combine(appDomainAppPath, $"\\App_Data\\{this.MessageEntityEnlightener?.PlatformType.ToString()}\\{ SystemTime.Now.ToString("yyyy-MM-dd")}\\");
             if (!Directory.Exists(logPath))
             {
                 Directory.CreateDirectory(logPath);
@@ -44,44 +46,61 @@ namespace Senparc.NeuChar.MessageHandlers
 
         /// <summary>
         /// 保存请求信息
+        /// <para>测试时可开启此记录，帮助跟踪数据，使用前请确保App_Data文件夹存在，且有读写权限。</para>
         /// </summary>
         /// <param name="logPath">保存日志目录，默认为 ~/App_Data/&lt;模块类型&gt;/<yyyy-MM-dd>/</code></param>
         public void SaveRequestMessageLog(string logPath = null)
         {
-            logPath = logPath ?? GetLogPath();
-            //测试时可开启此记录，帮助跟踪数据，使用前请确保App_Data文件夹存在，且有读写权限。
-            this.RequestDocument.Save(Path.Combine(logPath, string.Format("{0}_Request_{1}_{2}.txt", _getRandomFileName(),
-                this.RequestMessage.FromUserName,
-                this.RequestMessage.MsgType)));
-            if (this.UsingEcryptMessage && this.EcryptRequestDocument != null)
+            try
             {
-                this.EcryptRequestDocument.Save(Path.Combine(logPath, string.Format("{0}_Request_Ecrypt_{1}_{2}.txt", _getRandomFileName(),
+                logPath = logPath ?? GetLogPath();
+
+                this.RequestDocument.Save(Path.Combine(logPath, string.Format("{0}_Request_{1}_{2}.txt", _getRandomFileName(),
                     this.RequestMessage.FromUserName,
                     this.RequestMessage.MsgType)));
+                if (this.UsingEcryptMessage && this.EcryptRequestDocument != null)
+                {
+                    this.EcryptRequestDocument.Save(Path.Combine(logPath, string.Format("{0}_Request_Ecrypt_{1}_{2}.txt", _getRandomFileName(),
+                        this.RequestMessage.FromUserName,
+                        this.RequestMessage.MsgType)));
+                }
             }
+            catch (Exception ex)
+            {
+                new MessageHandlerException(ex.Message,ex);
+            }
+           
         }
 
         /// <summary>
         /// 保存响应信息
+        /// <para>测试时可开启此记录，帮助跟踪数据，使用前请确保App_Data文件夹存在，且有读写权限。</para>
         /// </summary>
         /// <param name="logPath">保存日志目录，默认为 ~/App_Data/&lt;模块类型&gt;/<yyyy-MM-dd>/</code></param>
         public void SaveResponseMessageLog(string logPath = null)
         {
-            logPath = logPath ?? GetLogPath();
-            if (this.ResponseDocument != null && this.ResponseDocument.Root != null)
+            try
             {
-                this.ResponseDocument.Save(Path.Combine(logPath, string.Format("{0}_Response_{1}_{2}.txt", _getRandomFileName(),
-                    this.ResponseMessage.ToUserName,
-                    this.ResponseMessage.MsgType)));
-            }
+                logPath = logPath ?? GetLogPath();
+                if (this.ResponseDocument != null && this.ResponseDocument.Root != null)
+                {
+                    this.ResponseDocument.Save(Path.Combine(logPath, string.Format("{0}_Response_{1}_{2}.txt", _getRandomFileName(),
+                        this.ResponseMessage.ToUserName,
+                        this.ResponseMessage.MsgType)));
+                }
 
-            if (this.UsingEcryptMessage &&
-                this.FinalResponseDocument != null && this.FinalResponseDocument.Root != null)
+                if (this.UsingEcryptMessage &&
+                    this.FinalResponseDocument != null && this.FinalResponseDocument.Root != null)
+                {
+                    //记录加密后的响应信息
+                    this.FinalResponseDocument.Save(Path.Combine(logPath, string.Format("{0}_Response_Final_{1}_{2}.txt", _getRandomFileName(),
+                        this.ResponseMessage.ToUserName,
+                        this.ResponseMessage.MsgType)));
+                }
+            }
+            catch (Exception ex)
             {
-                //记录加密后的响应信息
-                this.FinalResponseDocument.Save(Path.Combine(logPath, string.Format("{0}_Response_Final_{1}_{2}.txt", _getRandomFileName(),
-                    this.ResponseMessage.ToUserName,
-                    this.ResponseMessage.MsgType)));
+                new MessageHandlerException(ex.Message, ex);
             }
         }
 
