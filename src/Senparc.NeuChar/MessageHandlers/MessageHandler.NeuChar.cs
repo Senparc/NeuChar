@@ -21,8 +21,7 @@ namespace Senparc.NeuChar.MessageHandlers
             Senparc.NeuChar.Register.RegisterNeuralNode("MessageHandlerNode", typeof(MessageHandlerNode));
             Senparc.NeuChar.Register.RegisterNeuralNode("AppDataNode", typeof(AppDataNode));
         }
-
-
+        
         #region NeuChar 方法
 
         /// <summary>
@@ -130,7 +129,7 @@ namespace Senparc.NeuChar.MessageHandlers
                             var co2netDataOperation = new DataOperation(configRoot.Domain);
 
                             //获取所有数据
-                            var dataItems = co2netDataOperation.ReadAndCleanDataItems();
+                            var dataItems = co2netDataOperation.ReadAndCleanDataItems(configRoot.RemoveData);
                             result = dataItems.ToString();
                         }
                         break;
