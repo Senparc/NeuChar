@@ -29,13 +29,13 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <returns></returns>
         private string GetLogPath()
         {
-#if NET35 || NET40 || NET45
-            var appDomainAppPath = HttpRuntime.AppDomainAppPath;
-#else
-            var appDomainAppPath = AppContext.BaseDirectory; //dll所在目录：;
-#endif
+//#if NET35 || NET40 || NET45
+//            var appDomainAppPath = HttpRuntime.AppDomainAppPath;
+//#else
+//            var appDomainAppPath = Senparc.CO2NET.Config.RootDictionaryPath; //dll所在目录：;
+//#endif
 
-            var logPath = Path.Combine(appDomainAppPath, $"\\App_Data\\{this.MessageEntityEnlightener?.PlatformType.ToString()}\\{ SystemTime.Now.ToString("yyyy-MM-dd")}\\");
+            var logPath = CO2NET.Utilities.ServerUtility.ContentRootMapPath($"~/App_Data/{this.MessageEntityEnlightener?.PlatformType.ToString()}/{ SystemTime.Now.ToString("yyyy-MM-dd")}/");
             if (!Directory.Exists(logPath))
             {
                 Directory.CreateDirectory(logPath);

@@ -9,3 +9,4 @@ bin/
 /BuildOutPut
 /src/Senparc.NeuChar.Tests/App_Data/SenparcTraceLog
 *.user
+/src/Senparc.NeuChar.Tests/App_Data/WeChat_OfficialAccount/*
