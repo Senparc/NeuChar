@@ -130,7 +130,7 @@ namespace Senparc.NeuChar.MessageHandlers
 
                             //获取所有数据
                             var dataItems = co2netDataOperation.ReadAndCleanDataItems(configRoot.RemoveData);
-                            result = dataItems.ToString();
+                            result = dataItems.ToJson();
                         }
                         break;
                     default:
