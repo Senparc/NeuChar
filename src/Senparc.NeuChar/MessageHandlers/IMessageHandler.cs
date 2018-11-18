@@ -84,6 +84,17 @@ namespace Senparc.NeuChar.MessageHandlers
         bool UsedMessageAgent { get; set; }
 
         /// <summary>
+        /// 是否使用了加密消息格式
+        /// </summary>
+        bool UsingEcryptMessage { get; set; }
+
+        /// <summary>
+        /// 是否使用了兼容模式加密信息
+        /// </summary>
+        bool UsingCompatibilityModelEcryptMessage { get; set; }
+
+
+        /// <summary>
         /// PostModel
         /// </summary>
         IEncryptPostModel PostModel { get; set; }

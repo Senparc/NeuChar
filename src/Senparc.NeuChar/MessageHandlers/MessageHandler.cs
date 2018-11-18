@@ -40,6 +40,11 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
     修改标识：Senparc - 20170409
     修改描述：v4.12.4  MessageHandler基类默认开启消息去重
 
+    -- NeuChar --
+
+    修改标识：Senparc - 20181118
+    修改描述：v0.4.3 
+
 ----------------------------------------------------------------*/
 
 
@@ -229,6 +234,21 @@ namespace Senparc.NeuChar.MessageHandlers
         /// </summary>
         public bool UsedMessageAgent { get; set; }
 
+        /// <summary>
+        /// 是否使用了加密消息格式
+        /// </summary>
+        public bool UsingEcryptMessage { get; set; }
+
+
+        /// <summary>
+        /// 原始的加密请求（如果不加密则为null）
+        /// </summary>
+        public XDocument EcryptRequestDocument { get; set; }
+
+        /// <summary>
+        /// 是否使用了兼容模式加密信息
+        /// </summary>
+        public bool UsingCompatibilityModelEcryptMessage { get; set; }
 
 
         private string _textResponseMessage = null;
