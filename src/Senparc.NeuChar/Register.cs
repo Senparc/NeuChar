@@ -98,7 +98,7 @@ namespace Senparc.NeuChar
                     }
                     catch (Exception ex)
                     {
-                        SenparcTrace.SendCustomLog("RegisterApiBind() 自动扫描程序集异常：" + assembly.FullName, ex.ToString());
+                        SenparcTrace.SendCustomLog("RegisterApiBind() 自动扫描程序集报告（非程序异常）：" + assembly.FullName, ex.ToString());
                     }
                 }
 
