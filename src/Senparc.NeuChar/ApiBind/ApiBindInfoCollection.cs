@@ -60,7 +60,17 @@ namespace Senparc.NeuChar.ApiBind
         public void Add(MethodInfo method, ApiBindAttribute apiBindAttr)
         {
             var name = GetGlobalName(apiBindAttr.PlatformType, apiBindAttr.Name);
-            base.Add(name, new ApiBindInfo(apiBindAttr, method));
+
+            var finalName = name;
+            var suffix = 0;
+            //确保名称不会重复
+            while (base.ContainsKey(finalName))
+            {
+                suffix++;
+                finalName = name + suffix.ToString("00");
+            }
+
+            base.Add(finalName, new ApiBindInfo(apiBindAttr, method));
         }
 
         /// <summary>
