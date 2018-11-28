@@ -5,7 +5,9 @@ VisualStudioVersion = 15.0.28010.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Senparc.NeuChar", "Senparc.NeuChar\Senparc.NeuChar.csproj", "{B5F4440F-31ED-4CB7-B723-54D4B40EE4D6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Senparc.NeuChar.Tests", "Senparc.NeuChar.Tests\Senparc.NeuChar.Tests.csproj", "{D18EE5FA-DBCF-4989-821E-F21AF805133C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Senparc.NeuChar.Tests", "Senparc.NeuChar.Tests\Senparc.NeuChar.Tests.csproj", "{D18EE5FA-DBCF-4989-821E-F21AF805133C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Senparc.NeuChar.App", "Senparc.NeuChar.App\Senparc.NeuChar.App.csproj", "{5DB3871E-712F-47BF-A13F-6DC9AA186C42}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,6 +26,12 @@ Global
 		{D18EE5FA-DBCF-4989-821E-F21AF805133C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D18EE5FA-DBCF-4989-821E-F21AF805133C}.Test|Any CPU.ActiveCfg = Test|Any CPU
 		{D18EE5FA-DBCF-4989-821E-F21AF805133C}.Test|Any CPU.Build.0 = Test|Any CPU
+		{5DB3871E-712F-47BF-A13F-6DC9AA186C42}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5DB3871E-712F-47BF-A13F-6DC9AA186C42}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5DB3871E-712F-47BF-A13F-6DC9AA186C42}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5DB3871E-712F-47BF-A13F-6DC9AA186C42}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5DB3871E-712F-47BF-A13F-6DC9AA186C42}.Test|Any CPU.ActiveCfg = Debug|Any CPU
+		{5DB3871E-712F-47BF-A13F-6DC9AA186C42}.Test|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
