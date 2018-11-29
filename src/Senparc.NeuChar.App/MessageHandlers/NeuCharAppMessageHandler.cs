@@ -33,7 +33,7 @@ namespace Senparc.NeuChar.App.MessageHandlers
 
 
         public NeuCharAppMessageHandler(Stream inputStream, EncryptPostModel postModel)
-            : base(inputStream, postModel)
+            : base(inputStream, postModel, 10)
         {
 
         }
@@ -89,7 +89,7 @@ namespace Senparc.NeuChar.App.MessageHandlers
             //}
 
             var msgType = MsgTypeHelper.GetRequestMsgType(decryptDoc);
-            if (msgType!= RequestMsgType.NeuChar)
+            if (msgType != RequestMsgType.NeuChar)
             {
                 throw new MessageHandlerException("仅支持 NeuChar 类型请求");
             }

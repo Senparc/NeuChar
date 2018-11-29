@@ -31,7 +31,7 @@ namespace Senparc.NeuChar.MessageHandlers
         /// 获取日志保存地址
         /// </summary>
         /// <returns></returns>
-        private string GetLogPath()
+        public string GetLogPath()
         {
             //#if NET35 || NET40 || NET45
             //            var appDomainAppPath = HttpRuntime.AppDomainAppPath;
