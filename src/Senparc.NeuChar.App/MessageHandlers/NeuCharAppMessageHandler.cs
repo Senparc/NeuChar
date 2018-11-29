@@ -100,7 +100,6 @@ namespace Senparc.NeuChar.App.MessageHandlers
                 RequestMessage.Encrypt = postDataDocument.Root.Element("Encrypt").Value;
             }
 
-
             //TODO:分布式系统中本地的上下文会有同步问题，需要同步使用远程的储存
             if (MessageContextGlobalConfig.UseMessageContext)
             {
