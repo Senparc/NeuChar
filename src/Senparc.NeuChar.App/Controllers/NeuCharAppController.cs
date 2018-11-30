@@ -31,7 +31,7 @@ namespace Senparc.NeuChar.App.Controllers
         /// 后台验证地址（使用Get），微信后台的“接口配置信息”的Url填写如：http://sdk.weixin.senparc.com/weixin
         /// </summary>
         [HttpGet]
-        [ActionName("App")]
+        [ActionName("NeuCharApp")]
         public ActionResult Get(PostModel postModel, string echostr, string neucharAppId)
         {
             postModel.Token = Token;
@@ -52,7 +52,7 @@ namespace Senparc.NeuChar.App.Controllers
         /// 最简化的处理流程（不加密）
         /// </summary>
         [HttpPost]
-        [ActionName("Index")]
+        [ActionName("NeuCharApp")]
         public ActionResult Post(PostModel postModel, string neucharAppId)
         {
             postModel.Token = Token;
