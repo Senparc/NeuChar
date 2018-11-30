@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Senparc.CO2NET.HttpUtility;
 using Senparc.CO2NET.Trace;
 using System.IO;
+using Senparc.NeuChar.App.Entities;
 #if NET45
 using System.Web.Mvc;
 #else
@@ -18,6 +19,7 @@ namespace Senparc.NeuChar.App.Controllers
 {
     /// <summary>
     /// 用于快速实现 NeuChar 开发者发布的 App 与 NeuChar 平台交互（如状态发送）的默认 Controller 
+    /// <para>如果你有已经自己实现的带有 MessageHandler 的 Controller，也可以不使用这个基类</para>
     /// </summary>
     public abstract class NeuCharAppController : Controller
     {
@@ -29,18 +31,19 @@ namespace Senparc.NeuChar.App.Controllers
         /// 后台验证地址（使用Get），微信后台的“接口配置信息”的Url填写如：http://sdk.weixin.senparc.com/weixin
         /// </summary>
         [HttpGet]
-        [ActionName("Index")]
-        public ActionResult Get(EncryptPostModel postModel, string echostr)
+        [ActionName("App")]
+        public ActionResult Get(PostModel postModel, string echostr, string neucharAppId)
         {
             postModel.Token = Token;
+            postModel.AppId = neucharAppId;//加密暂时用不到
             if (postModel.Signature == CheckSignatureWeChat.GetSignature(postModel))
             {
                 return Content(echostr); //返回随机字符串则表示验证通过
             }
             else
             {
-                return Content("failed:" + postModel.Signature + "," + CheckSignatureWeChat.GetSignature(postModel.Timestamp, postModel.Nonce, Token) + "。" +
-                    "如果你在浏览器中看到这句话，说明此地址可以被作为 NeuChar - App后台的Url，请注意保持Token一致。");
+                return Content($"failed:{postModel.Signature},{CheckSignatureWeChat.GetSignature(postModel.Timestamp, postModel.Nonce, Token)}。" +
+                    $"如果你在浏览器中看到这句话，说明此地址可以被作为 NeuChar - App后台的Url，请注意保持Token一致。");
             }
         }
 
@@ -50,15 +53,16 @@ namespace Senparc.NeuChar.App.Controllers
         /// </summary>
         [HttpPost]
         [ActionName("Index")]
-        public ActionResult Post(EncryptPostModel postModel)
+        public ActionResult Post(PostModel postModel, string neucharAppId)
         {
             postModel.Token = Token;
+            postModel.AppId = $"NeuCharApp:AppId:{neucharAppId}";
+
             if (postModel.Signature != CheckSignatureWeChat.GetSignature(postModel))
             {
                 return Content("参数错误！");
             }
 
-            postModel.Token = Token;
             //postModel.EncodingAESKey = EncodingAESKey;//根据自己后台的设置保持一致
             //postModel.AppId = AppId;//根据自己后台的设置保持一致
 
