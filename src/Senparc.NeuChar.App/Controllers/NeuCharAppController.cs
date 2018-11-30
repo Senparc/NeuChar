@@ -56,7 +56,7 @@ namespace Senparc.NeuChar.App.Controllers
         public ActionResult Post(PostModel postModel, string neucharAppId)
         {
             postModel.Token = Token;
-            postModel.AppId = $"NeuCharApp:AppId:{neucharAppId}";
+            postModel.AppId = neucharAppId;// $"NeuCharApp:AppId:{neucharAppId}";
 
             if (postModel.Signature != CheckSignatureWeChat.GetSignature(postModel))
             {
