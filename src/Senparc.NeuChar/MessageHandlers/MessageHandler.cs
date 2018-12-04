@@ -165,7 +165,7 @@ namespace Senparc.NeuChar.MessageHandlers
                     //获取当前设置节点
                     _currentAppDataNode = (neuralSystem.GetNode("AppDataNode") as AppDataNode) ?? new AppDataNode();
                 }
-                return _currentAppDataNode;
+                return _currentAppDataNode;  
             }
             set
             {
@@ -317,6 +317,7 @@ namespace Senparc.NeuChar.MessageHandlers
         public MessageHandler(Stream inputStream, IEncryptPostModel postModel, int maxRecordCount = 0)
         {
             var postDataDocument = XmlUtility.Convert(inputStream);
+            //PostModel = postModel;//PostModel 在当前类初始化过程中必须赋值
             CommonInitialize(postDataDocument, maxRecordCount, postModel);
         }
 
@@ -328,6 +329,7 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <param name="postModel">需要传入到Init的参数</param>
         public MessageHandler(XDocument postDataDocument, IEncryptPostModel postModel, int maxRecordCount = 0)
         {
+            //PostModel = postModel;//PostModel 在当前类初始化过程中必须赋值
             CommonInitialize(postDataDocument, maxRecordCount, postModel);
         }
 
@@ -354,7 +356,7 @@ namespace Senparc.NeuChar.MessageHandlers
 
         /// <summary>
         /// 初始化，获取RequestDocument。
-        /// Init中需要对上下文添加当前消息（如果使用上下文）
+        /// Init中需要对上下文添加当前消息（如果使用上下文）；以及判断消息的加密情况，对解密信息进行解密
         /// </summary>
         /// <param name="requestDocument"></param>
         /// <param name="postModel"></param>

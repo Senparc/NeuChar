@@ -162,6 +162,7 @@ namespace Senparc.NeuChar
         /// <para>TODO：建立索引搜索</para>
         /// </summary>
         /// <param name="name"></param>
+        /// <param name="parentNode">父节点</param>
         /// <returns></returns>
         public INeuralNode GetNode(string name, INeuralNode parentNode = null)
         {
