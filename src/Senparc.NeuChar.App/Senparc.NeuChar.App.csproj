@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net45;netstandard2.0;netcoreapp2.1</TargetFrameworks>
-    <Version>0.1.0-preview4</Version>
+    <TargetFrameworks>net45;netstandard2.0</TargetFrameworks>
+    <Version>0.2.0-preview1</Version>
     <AssemblyName>Senparc.NeuChar.App</AssemblyName>
     <RootNamespace>Senparc.NeuChar.App</RootNamespace>
     <GeneratePackageOnBuild Condition=" '$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
@@ -24,12 +24,11 @@
     <PackageProjectUrl>https://github.com/JeffreySu/WeiXinMPSDK</PackageProjectUrl>
     <PackageIconUrl>http://sdk.weixin.senparc.com/Images/Logo.jpg</PackageIconUrl>
     <PackageReleaseNotes>
-
+      v0.5.0 使用 .NETStandard2.0 统一支持 .NET Core，放弃对 .NET Core 1.x 的支持
     </PackageReleaseNotes>
     <RepositoryUrl>https://github.com/JeffreySu/WeiXinMPSDK</RepositoryUrl>
     <Configurations>Debug;Release;Test</Configurations>
   </PropertyGroup>
-
 
 
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
@@ -50,20 +49,10 @@
     <OutputPath>..\..\BuildOutPut\</OutputPath>
     <DocumentationFile>..\..\BuildOutPut\net45\Senparc.NeuChar.App.xml</DocumentationFile>
   </PropertyGroup>
-
-  <!--<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard1.6|AnyCPU'">
-    <OutputPath>..\..\BuildOutPut\</OutputPath>
-    <DocumentationFile>..\..\BuildOutPut\netstandard1.6\Senparc.NeuChar.App.xml</DocumentationFile>
-  </PropertyGroup>-->
-
+  
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard2.0|AnyCPU'">
     <OutputPath>..\..\BuildOutPut\</OutputPath>
     <DocumentationFile>..\..\BuildOutPut\netstandard2.0\Senparc.NeuChar.App.xml</DocumentationFile>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netcoreapp2.1|AnyCPU'">
-    <OutputPath>..\..\BuildOutPut\</OutputPath>
-    <DocumentationFile>..\..\BuildOutPut\netcoreapp2.1\Senparc.NeuChar.App.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -78,18 +67,6 @@
 
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="Microsoft.AspNetCore.Mvc">
-      <Version>2.1.1</Version>
-    </PackageReference>
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp2.1'">
-    <PackageReference Include="Microsoft.AspNetCore.Mvc">
-      <Version>2.1.1</Version>
-    </PackageReference>
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp2.0'">
     <PackageReference Include="Microsoft.AspNetCore.Mvc">
       <Version>2.1.1</Version>
     </PackageReference>

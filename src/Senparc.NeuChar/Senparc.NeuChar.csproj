@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net35;net40;net45;netstandard2.0;netcoreapp2.0;netcoreapp2.1</TargetFrameworks>
-    <Version>0.4.4.4</Version>
+    <TargetFrameworks>net35;net40;net45;netstandard2.0</TargetFrameworks>
+    <Version>0.5.0-preview1</Version>
     <AssemblyName>Senparc.NeuChar</AssemblyName>
     <RootNamespace>Senparc.NeuChar</RootNamespace>
     <GeneratePackageOnBuild Condition=" '$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
@@ -60,6 +60,7 @@
       v0.4.0 添加 APM 部分监测功能
       v0.4.1 重构 MessageHandler，抽象方法 Execute() 重命名为 ExecuteHandler()，外层执行方法仍然为 Execute()
       v0.4.3 添加 MessageHandler.SaveRequestMessageLog() 和 MessageHandler.SaveResponseMessageLog() 方法，用于便捷储存消息记录）
+      v0.5.0 使用 .NETStandard2.0 统一支持 .NET Core，放弃对 .NET Core 1.x 的支持
     </PackageReleaseNotes>
     <RepositoryUrl>https://github.com/JeffreySu/WeiXinMPSDK</RepositoryUrl>
     <Configurations>Debug;Release;Test</Configurations>
@@ -96,25 +97,9 @@
     <DocumentationFile>..\..\BuildOutPut\net45\Senparc.NeuChar.xml</DocumentationFile>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net461|AnyCPU'">
-    <OutputPath>..\..\BuildOutPut\</OutputPath>
-    <DocumentationFile>..\..\BuildOutPut\net461\Senparc.NeuChar.xml</DocumentationFile>
-  </PropertyGroup>
-
-  <!--<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard1.6|AnyCPU'">
-    <OutputPath>..\..\BuildOutPut\</OutputPath>
-    <DocumentationFile>..\..\BuildOutPut\netstandard1.6\Senparc.NeuChar.xml</DocumentationFile>
-  </PropertyGroup>-->
-
-
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard2.0|AnyCPU'">
     <OutputPath>..\..\BuildOutPut\</OutputPath>
     <DocumentationFile>..\..\BuildOutPut\netstandard2.0\Senparc.NeuChar.xml</DocumentationFile>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netcoreapp2.1|AnyCPU'">
-    <OutputPath>..\..\BuildOutPut\</OutputPath>
-    <DocumentationFile>..\..\BuildOutPut\netcoreapp2.1\Senparc.NeuChar.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -142,8 +127,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Senparc.CO2NET" Version="0.3.0.2" />
-    <PackageReference Include="Senparc.CO2NET.APM" Version="0.1.3.2" />
+    <PackageReference Include="Senparc.CO2NET" Version="0.4.0-preview1" />
+    <PackageReference Include="Senparc.CO2NET.APM" Version="0.2.0-preview1" />
   </ItemGroup>
 
 
