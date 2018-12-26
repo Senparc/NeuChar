@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net35;net40;net45;netstandard2.0</TargetFrameworks>
-    <Version>0.5.0</Version>
+    <Version>0.5.1</Version>
     <AssemblyName>Senparc.NeuChar</AssemblyName>
     <RootNamespace>Senparc.NeuChar</RootNamespace>
     <GeneratePackageOnBuild Condition=" '$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
@@ -61,6 +61,7 @@
       v0.4.1 重构 MessageHandler，抽象方法 Execute() 重命名为 ExecuteHandler()，外层执行方法仍然为 Execute()
       v0.4.3 添加 MessageHandler.SaveRequestMessageLog() 和 MessageHandler.SaveResponseMessageLog() 方法，用于便捷储存消息记录）
       v0.5.0 使用 .NETStandard2.0 统一支持 .NET Core，放弃对 .NET Core 1.x 的单独适配
+      v0.5.1 支持 CO2NET v0.4.2
     </PackageReleaseNotes>
     <RepositoryUrl>https://github.com/JeffreySu/WeiXinMPSDK</RepositoryUrl>
     <Configurations>Debug;Release;Test</Configurations>
@@ -127,7 +128,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Senparc.CO2NET" Version="0.4.1" />
+    <PackageReference Include="Senparc.CO2NET" Version="0.4.2" />
     <PackageReference Include="Senparc.CO2NET.APM" Version="0.2.0" />
   </ItemGroup>
 
