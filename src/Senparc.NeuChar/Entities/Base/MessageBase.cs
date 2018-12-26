@@ -57,7 +57,7 @@ namespace Senparc.NeuChar.Entities
         /// <summary>
         /// 消息创建时间
         /// </summary>
-        DateTime CreateTime { get; set; }
+        DateTimeOffset CreateTime { get; set; }
     }
 
     /// <summary>
@@ -76,7 +76,7 @@ namespace Senparc.NeuChar.Entities
         /// <summary>
         /// 消息创建时间
         /// </summary>
-        public DateTime CreateTime { get; set; }
+        public DateTimeOffset CreateTime { get; set; }
 
         /// <summary>
         /// ToString() 方法重写

@@ -52,7 +52,7 @@ namespace Senparc.NeuChar
         /// </summary>
         public static void RegisterApiBind()
         {
-            DateTime dt1 = SystemTime.Now;
+            var dt1 = SystemTime.Now;
 
             var cacheStragegy = CacheStrategyFactory.GetObjectCacheStrategyInstance();
             using (cacheStragegy.BeginCacheLock("Senparc.NeuChar.Register", "RegisterApiBind"))
@@ -104,7 +104,7 @@ namespace Senparc.NeuChar
 
                 RegisterApiBindFinished = true;
 
-                DateTime dt2 = SystemTime.Now;
+                var dt2 = SystemTime.Now;
                 Console.WriteLine($"RegisterApiBind 用时：{(dt2 - dt1).TotalMilliseconds}ms");
             }
         }

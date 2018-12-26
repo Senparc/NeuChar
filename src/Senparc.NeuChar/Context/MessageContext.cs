@@ -32,6 +32,10 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
     
     修改标识：Senparc - 20150708
     修改描述：完善备注
+    
+    修改标识：Senparc - 20181226
+    修改描述：v0.5.2 修改 DateTime 为 DateTimeOffset
+
 ----------------------------------------------------------------*/
 
 
@@ -58,11 +62,11 @@ namespace Senparc.NeuChar.Context
         /// <summary>
         /// 最后一次活动时间（用户主动发送Resquest请求的时间）
         /// </summary>
-        DateTime? LastActiveTime { get; set; }
+        DateTimeOffset? LastActiveTime { get; set; }
         /// <summary>
         /// 本次活动时间（当前消息收到的时间）
         /// </summary>
-        DateTime? ThisActiveTime { get; set; }
+        DateTimeOffset? ThisActiveTime { get; set; }
         /// <summary>
         /// 接收消息记录
         /// </summary>
@@ -113,11 +117,11 @@ namespace Senparc.NeuChar.Context
         /// <summary>
         /// 最后一次活动时间（用户主动发送Resquest请求的时间）
         /// </summary>
-        public DateTime? LastActiveTime { get; set; }
+        public DateTimeOffset? LastActiveTime { get; set; }
         /// <summary>
         /// 本次活动时间（当前消息收到的时间）
         /// </summary>
-        public DateTime? ThisActiveTime { get; set; }
+        public DateTimeOffset? ThisActiveTime { get; set; }
         public MessageContainer<TRequest> RequestMessages { get; set; }
         public MessageContainer<TResponse> ResponseMessages { get; set; }
         public int MaxRecordCount
@@ -172,7 +176,7 @@ namespace Senparc.NeuChar.Context
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="maxRecordCount">maxRecordCount如果小于等于0，则不限制</param>
+        ///// <param name="maxRecordCount">maxRecordCount如果小于等于0，则不限制</param>
         public MessageContext(/*MessageContainer<IRequestMessageBase> requestMessageContainer,
             MessageContainer<IResponseMessageBase> responseMessageContainer*/)
         {
