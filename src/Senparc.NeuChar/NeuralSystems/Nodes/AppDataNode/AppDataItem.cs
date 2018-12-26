@@ -35,7 +35,10 @@ namespace Senparc.NeuChar.NeuralSystems
         /// </summary>
         public long ExpireTime { get; set; }
 
-        public DateTime ExpireDateTime { get { return DateTimeHelper.GetDateTimeFromXml(ExpireTime); } }
+        /// <summary>
+        /// 过期时间
+        /// </summary>
+        public DateTimeOffset ExpireDateTime { get { return DateTimeHelper.GetDateTimeFromXml(ExpireTime); } }
 
         /// <summary>
         /// 进入对话状态关键词

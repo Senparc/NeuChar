@@ -33,6 +33,9 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
     修改标识：Senparc - 20181023
     修改描述：修改 LastActiveTime 输出
 
+    修改标识：Senparc - 20181226
+    修改描述：v0.5.2 修改 DateTime 为 DateTimeOffset
+
 ----------------------------------------------------------------*/
 
 
@@ -63,11 +66,11 @@ namespace Senparc.NeuChar.Context
         /// <summary>
         /// 最后一次响应时间
         /// </summary>
-        public DateTime LastActiveTime
+        public DateTimeOffset LastActiveTime
         {
             get
             {
-                return MessageContext.LastActiveTime.HasValue ? MessageContext.LastActiveTime.Value : DateTime.MinValue;
+                return MessageContext.LastActiveTime.HasValue ? MessageContext.LastActiveTime.Value : DateTimeOffset.MinValue;
             }
         }
 

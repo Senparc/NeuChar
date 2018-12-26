@@ -41,7 +41,7 @@ namespace Senparc.NeuChar.Tests.Helpers
                 get { return RequestInfoType.component_verify_ticket; }
             }
             public string AppId { get; set; }
-            public DateTime CreateTime { get; set; }
+            public DateTimeOffset CreateTime { get; set; }
 
             public string ComponentVerifyTicket { get; set; }
         }

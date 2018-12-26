@@ -23,7 +23,7 @@ namespace Senparc.NeuChar.MessageHandlers
 {
     public abstract partial class MessageHandler<TC, TRequest, TResponse>
     {
-        readonly Func<string> _getRandomFileName = () => DateTime.Now.ToString("yyyyMMdd-HHmmss") + Guid.NewGuid().ToString("n").Substring(0, 6);
+        readonly Func<string> _getRandomFileName = () => SystemTime.Now.ToString("yyyyMMdd-HHmmss") + Guid.NewGuid().ToString("n").Substring(0, 6);
 
         #region 记录 日志 
 

@@ -292,7 +292,7 @@ namespace Senparc.NeuChar.MessageHandlers
 
         public IEncryptPostModel PostModel { get; set; }
 
-        protected DateTime ExecuteStatTime { get; set; }
+        protected DateTimeOffset ExecuteStatTime { get; set; }
 
         /// <summary>
         /// 构造函数公用的初始化方法

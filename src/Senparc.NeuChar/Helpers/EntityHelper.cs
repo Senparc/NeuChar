@@ -89,6 +89,7 @@ namespace Senparc.NeuChar.Helpers
                         //case "String":
                         //    goto default;
                         case "DateTime":
+                        case "DateTimeOffset":
                         case "Int32":
                         case "Int64":
                         case "Double":
@@ -428,7 +429,10 @@ namespace Senparc.NeuChar.Helpers
                             root.Add(new XElement(propName, new XCData(prop.GetValue(entity, null) as string ?? "")));
                             break;
                         case "DateTime":
-                            root.Add(new XElement(propName, DateTimeHelper.GetUnixDateTime((DateTime)prop.GetValue(entity, null))));
+                            root.Add(new XElement(propName, DateTimeHelper.GetUnixDateTime(((DateTime)prop.GetValue(entity, null)))));
+                            break;
+                        case "DateTimeOffset":
+                            root.Add(new XElement(propName, DateTimeHelper.GetUnixDateTime((DateTimeOffset)prop.GetValue(entity, null))));
                             break;
                         case "Boolean":
                             if (propName == "FuncFlag")
