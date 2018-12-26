@@ -13,7 +13,7 @@ Senparc.NeuChar 跨平台信息交互标准。使用 NeuChar 标准可以跨平�
 | 名称    |        DLL          |  Nuget                                                                                | 支持 .NET 版本 
 |---------|---------------------|---------------------------------------------------------------------------------------|--------------------------------------
 | NeuChar | Senparc.NeuChar.dll   | [![Senparc.NeuChar][1.1]][1.2]    [![Senparc.NeuChar][nuget-img-base]][nuget-url-base]  |  ![.NET 3.5][net35Y]    ![.NET 4.0][net40Y]   ![.NET 4.5][net45Y]    ![.NET Core 2.0][core20Y]
-| NeuChar.App | Senparc.NeuChar.App.dll   | [![Senparc.NeuChar.App][1.1]][1.2]    [![Senparc.NeuChar.App][nuget-img-base]][nuget-url-base]  |  ![.NET 3.5][net35Y]    ![.NET 4.0][net40Y]   ![.NET 4.5][net45Y]    ![.NET Core 2.0][core20Y]
+| NeuChar.App | Senparc.NeuChar.App.dll   | [![Senparc.NeuChar.App][1.1]][1.2]    [![Senparc.NeuChar.App][nuget-img-base-app]][nuget-url-base-app]  |  ![.NET 3.5][net35Y]    ![.NET 4.0][net40Y]   ![.NET 4.5][net45Y]    ![.NET Core 2.0][core20Y]
 
 
 [1.1]: https://img.shields.io/nuget/v/Senparc.NeuChar.svg?style=flat
@@ -39,6 +39,9 @@ Senparc.NeuChar 跨平台信息交互标准。使用 NeuChar 标准可以跨平�
 
 [nuget-img-base]: https://img.shields.io/nuget/dt/Senparc.NeuChar.svg
 [nuget-url-base]: https://www.nuget.org/packages/Senparc.NeuChar
+
+[nuget-img-base-app]: https://img.shields.io/nuget/dt/Senparc.NeuChar.App.svg
+[nuget-url-base-app]: https://www.nuget.org/packages/Senparc.NeuChar.App
 
 ## 官网地址
 
