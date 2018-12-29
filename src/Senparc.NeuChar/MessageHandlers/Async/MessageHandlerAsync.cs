@@ -39,6 +39,9 @@ using System.Xml.Linq;
 using Senparc.NeuChar.Context;
 using Senparc.NeuChar.Entities;
 using System.Threading.Tasks;
+using Senparc.NeuChar.Exceptions;
+using Senparc.CO2NET.APM;
+using System.Threading;
 
 namespace Senparc.NeuChar.MessageHandlers
 {
@@ -70,24 +73,69 @@ namespace Senparc.NeuChar.MessageHandlers
             set { _defaultMessageHandlerAsyncEvent = value; }
         }
 
-        public virtual async Task OnExecutingAsync()
+        public virtual async Task OnExecutingAsync(CancellationToken cancellationToken)
         {
-            await Task.Run(() => this.OnExecuting());
+            await Task.Run(() => this.OnExecuting(), cancellationToken);
         }
 
-        public virtual async Task ExecuteAsync()
+        public virtual async Task ExecuteAsync(CancellationToken cancellationToken)
         {
-            await Task.Run(() => this.Execute());
+            //进行 APM 记录
+            ExecuteStatTime = SystemTime.Now;
+
+            DataOperation apm = new DataOperation(PostModel?.DomainId);
+            apm.Set(NeuCharApmKind.Message_Request.ToString(), 1, tempStorage: OpenId);
+            if (CancelExcute)
+            {
+                return;
+            }
+
+            await OnExecutingAsync(cancellationToken);
+
+            if (CancelExcute)
+            {
+                return;
+            }
+
+            try
+            {
+                if (RequestMessage == null)
+                {
+                    return;
+                }
+
+                await BuildResponseMessageAsync(cancellationToken);
+
+                //记录上下文
+                //此处修改
+                if (MessageContextGlobalConfig.UseMessageContext && ResponseMessage != null && !string.IsNullOrEmpty(ResponseMessage.FromUserName))
+                {
+                    GlobalMessageContext.InsertMessage(ResponseMessage);
+                }
+                apm.Set(NeuCharApmKind.Message_SuccessResponse.ToString(), 1, tempStorage: OpenId);
+            }
+            catch (Exception ex)
+            {
+                apm.Set(NeuCharApmKind.Message_Exception.ToString(), 1, tempStorage: OpenId);
+                throw new MessageHandlerException("MessageHandler中Execute()过程发生错误：" + ex.Message, ex);
+            }
+            finally
+            {
+                await OnExecutedAsync(cancellationToken);
+                apm.Set(NeuCharApmKind.Message_ResponseMillisecond.ToString(), (SystemTime.Now - this.ExecuteStatTime).TotalMilliseconds, tempStorage: OpenId);
+            }
+
+            //await Task.Run(() => this.Execute());
         }
 
-        public virtual async Task BuildResponseMessageAsync()
+        public virtual async Task BuildResponseMessageAsync(CancellationToken cancellationToken)
         {
-            await Task.Run(() => this.BuildResponseMessage());
+            await Task.Run(() => this.BuildResponseMessage(), cancellationToken);
         }
 
-        public virtual async Task OnExecutedAsync()
+        public virtual async Task OnExecutedAsync(CancellationToken cancellationToken)
         {
-            await Task.Run(() => this.OnExecuted());
+            await Task.Run(() => this.OnExecuted(), cancellationToken);
         }
 
         #endregion

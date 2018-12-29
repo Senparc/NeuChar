@@ -44,6 +44,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 using Senparc.NeuChar.ApiHandlers;
 using Senparc.NeuChar.Entities;
 using Senparc.NeuChar.NeuralSystems;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Senparc.NeuChar.MessageHandlers
@@ -130,21 +131,21 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <summary>
         /// 【异步方法】执行微信请求前触发
         /// </summary>
-        Task OnExecutingAsync();
+        Task OnExecutingAsync(CancellationToken cancellationToken);
 
         /// <summary>
         /// 【异步方法】执行微信请求
         /// </summary>
-        Task ExecuteAsync();
+        Task ExecuteAsync(CancellationToken cancellationToken);
         /// <summary>
         /// 执行请求内部的消息整理逻辑
         /// </summary>
-        Task BuildResponseMessageAsync();
+        Task BuildResponseMessageAsync(CancellationToken cancellationToken);
 
         /// <summary>
         /// 【异步方法】执行微信请求后触发
         /// </summary>
-        Task OnExecutedAsync();
+        Task OnExecutedAsync(CancellationToken cancellationToken);
 
         #endregion
 #endif
