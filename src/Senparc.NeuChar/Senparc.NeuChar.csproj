@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net35;net40;net45;netstandard2.0</TargetFrameworks>
-    <Version>0.5.3-preview2</Version>
+    <Version>0.5.3.1-preview2</Version>
     <AssemblyName>Senparc.NeuChar</AssemblyName>
     <RootNamespace>Senparc.NeuChar</RootNamespace>
     <GeneratePackageOnBuild Condition=" '$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
@@ -62,6 +62,7 @@
       v0.4.3 添加 MessageHandler.SaveRequestMessageLog() 和 MessageHandler.SaveResponseMessageLog() 方法，用于便捷储存消息记录）
       v0.5.0 使用 .NETStandard2.0 统一支持 .NET Core，放弃对 .NET Core 1.x 的单独适配
       v0.5.1 支持 CO2NET v0.4.2
+      v0.5.4 完善异步 MessageHandler
     </PackageReleaseNotes>
     <RepositoryUrl>https://github.com/JeffreySu/WeiXinMPSDK</RepositoryUrl>
     <Configurations>Debug;Release;Test</Configurations>
