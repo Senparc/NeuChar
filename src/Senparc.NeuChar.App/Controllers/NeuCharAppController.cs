@@ -1,10 +1,6 @@
 ﻿using Senparc.NeuChar.App.MessageHandlers;
 using Senparc.NeuChar.MessageHandlers.CheckSignatures;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Senparc.CO2NET.HttpUtility;
 using Senparc.CO2NET.Trace;
 using System.IO;
@@ -25,14 +21,14 @@ namespace Senparc.NeuChar.App.Controllers
     {
         protected abstract string Token { get; }
 
-        readonly Func<string> _getRandomFileName = () => SystemTime.Now.ToString("yyyyMMdd-HHmmss") + Guid.NewGuid().ToString("n").Substring(0, 6);
+        private readonly Func<string> _getRandomFileName = () => SystemTime.Now.ToString("yyyyMMdd-HHmmss") + Guid.NewGuid().ToString("n").Substring(0, 6);
 
         /// <summary>
         /// 后台验证地址（使用Get），微信后台的“接口配置信息”的Url填写如：http://sdk.weixin.senparc.com/weixin
         /// </summary>
         [HttpGet]
         [ActionName("NeuCharApp")]
-        public ActionResult Get(PostModel postModel, string echostr, string neucharAppId)
+        public virtual ActionResult Get(PostModel postModel, string echostr, string neucharAppId)
         {
             postModel.Token = Token;
             postModel.AppId = neucharAppId;//加密暂时用不到
@@ -53,7 +49,7 @@ namespace Senparc.NeuChar.App.Controllers
         /// </summary>
         [HttpPost]
         [ActionName("NeuCharApp")]
-        public ActionResult Post(PostModel postModel, string neucharAppId)
+        public virtual ActionResult Post(PostModel postModel, string neucharAppId)
         {
             postModel.Token = Token;
             postModel.AppId = neucharAppId;// $"NeuCharApp:AppId:{neucharAppId}";
