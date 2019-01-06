@@ -1,9 +1,44 @@
-﻿using Senparc.CO2NET.APM;
+﻿#region Apache License Version 2.0
+/*----------------------------------------------------------------
+
+Copyright 2018 Suzhou Senparc Network Technology Co.,Ltd.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
+except in compliance with the License. You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under the
+License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+either express or implied. See the License for the specific language governing permissions
+and limitations under the License.
+
+Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
+
+----------------------------------------------------------------*/
+#endregion Apache License Version 2.0
+
+/*----------------------------------------------------------------
+    Copyright (C) 2018 Senparc
+    
+    文件名：MessageHandler.NeuChar.cs
+    文件功能描述：微信请求中有关 NeuChar 方法的集中处理方法
+    
+    
+    创建标识：Senparc - 20180910
+    
+    修改标识：Senparc - 20190106
+    修改描述：v0.6.0 添加 PushNeuCharAppConfig 和 PullNeuCharAppConfig 消息类型
+
+----------------------------------------------------------------*/
+
+using Senparc.CO2NET.APM;
 using Senparc.CO2NET.Extensions;
 using Senparc.CO2NET.Helpers;
 using Senparc.CO2NET.Trace;
 using Senparc.CO2NET.Utilities;
 using Senparc.NeuChar.Entities;
+using Senparc.NeuChar.Entities.App;
 using Senparc.NeuChar.NeuralSystems;
 using System;
 using System.Collections.Generic;
@@ -21,7 +56,7 @@ namespace Senparc.NeuChar.MessageHandlers
             Senparc.NeuChar.Register.RegisterNeuralNode("MessageHandlerNode", typeof(MessageHandlerNode));
             Senparc.NeuChar.Register.RegisterNeuralNode("AppDataNode", typeof(AppDataNode));
         }
-        
+
         #region NeuChar 方法
 
         /// <summary>
@@ -94,9 +129,7 @@ namespace Senparc.NeuChar.MessageHandlers
                             var fileTemp = Path.Combine(path, $"NeuCharRoot.temp.{SystemTime.Now.ToString("yyyyMMdd-HHmmss")}.config");
                             //TODO：后期也可以考虑把不同模块分离到不同的文件中
 
-                            File.Delete(fileTemp);
-
-                            using (var fs = new FileStream(fileTemp, FileMode.CreateNew))
+                            using (var fs = new FileStream(fileTemp, FileMode.Create))
                             {
                                 using (var sw = new StreamWriter(fs))
                                 {
@@ -119,7 +152,7 @@ namespace Senparc.NeuChar.MessageHandlers
                             //TODO：进行有效性检验
                             var configRoot = requestMessage.ConfigRoot?.GetObject<APMDomainConfig>();
 
-                            if (configRoot== null || configRoot.Domain.IsNullOrWhiteSpace())
+                            if (configRoot == null || configRoot.Domain.IsNullOrWhiteSpace())
                             {
                                 success = false;
                                 result = "未指定 Domain!";
@@ -131,6 +164,60 @@ namespace Senparc.NeuChar.MessageHandlers
                             //获取所有数据
                             var dataItems = co2netDataOperation.ReadAndCleanDataItems(configRoot.RemoveData);
                             result = dataItems.ToJson();
+                        }
+                        break;
+                    case NeuCharActionType.PushNeuCharAppConfig:
+                        {
+                            var configFileDir = Path.Combine(path, "AppConfig");
+                            if (!Directory.Exists(configFileDir))
+                            {
+                                Directory.CreateDirectory(configFileDir);//这里也可以不创建，除非是为了推送
+                            }
+
+                            //还原一次，为了统一格式，并未后续处理提供能力（例如调整缩进格式）
+                            var requestData = requestMessage.RequestData.GetObject<PushConfigRequestData>();
+                            var mainVersion = requestData.Version.Split('.')[0];//主版本号
+                            //配置文件路径：~/App_Data/NeuChar/AppConfig/123-v1.config
+                            var configFilePath = Path.Combine(configFileDir, $"{requestData.AppId}-v{mainVersion}.config");
+
+                            using (var fs = new FileStream(configFilePath, FileMode.Create))
+                            {
+                                using (var sw = new StreamWriter(fs, Encoding.UTF8))
+                                {
+                                    var json = requestData.Config.ToJson(true);//带缩进格式的 JSON 字符串
+                                    sw.Write(json);//写入 Json 文件
+                                    sw.Flush();
+                                }
+                            }
+                            result = "OK";
+                        }
+                        break;
+                    case NeuCharActionType.PullNeuCharAppConfig:
+                        {
+                            var requestData = requestMessage.RequestData.GetObject<PullConfigRequestData>();
+                            var mainVersion = requestData.Version.Split('.')[0];//主版本号
+
+                            var configFileDir = Path.Combine(path, "AppConfig");
+                            //配置文件路径：~/App_Data/NeuChar/AppConfig/123-v1.config
+                            var configFilePath = Path.Combine(configFileDir, $"{requestData.AppId}-v{mainVersion}.config");
+                            if (!File.Exists(configFilePath))
+                            {
+                                //文件不存在
+                                result = $"配置文件不存在，请先推送或设置配置文件，地址：{configFilePath}";
+                                success = false;
+                            }
+                            else
+                            {
+                                //读取内容
+                                using (var fs = FileHelper.GetFileStream(configFilePath))
+                                {
+                                    using (var sr = new StreamReader(fs, Encoding.UTF8))
+                                    {
+                                        var json = sr.ReadToEnd();//带缩进格式的 JSON 字符串（文件中的原样）
+                                        result = json;
+                                    }
+                                }
+                            }
                         }
                         break;
                     default:

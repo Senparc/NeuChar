@@ -1,7 +1,7 @@
 ﻿#region Apache License Version 2.0
 /*----------------------------------------------------------------
 
-Copyright 2018 Jeffrey Su & Suzhou Senparc Network Technology Co.,Ltd.
+Copyright 2018 Suzhou Senparc Network Technology Co.,Ltd.
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
 except in compliance with the License. You may obtain a copy of the License at
@@ -27,6 +27,9 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
     
     创建标识：Senparc - 20180829
     
+    修改标识：Senparc - 20190105
+    修改描述：v0.6.0 添加 PullNeuCharAppConfig 消息类型
+
 ----------------------------------------------------------------*/
 
 
@@ -42,11 +45,19 @@ namespace Senparc.NeuChar.Entities
             get { return RequestMsgType.NeuChar; }
         }
 
+        /// <summary>
+        /// 具体操作类型
+        /// </summary>
         public NeuCharActionType NeuCharMessageType { get; set; }
 
         /// <summary>
         /// 设置信息（通常为JSON）
         /// </summary>
         public string ConfigRoot { get; set; }
+
+        /// <summary>
+        /// 请求数据的 JSON 字符串
+        /// </summary>
+        public string RequestData { get; set; } = string.Empty;
     }
 }
