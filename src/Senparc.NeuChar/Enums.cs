@@ -28,7 +28,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
     创建标识：Senparc - 20180901
     
     修改标识：Senparc - 20190105
-    修改描述：v0.6.0 添加 PullNeuCharAppConfig 消息类型
+    修改描述：v0.6.0 添加 PushNeuCharAppConfig 和 PullNeuCharAppConfig 消息类型
 
 ----------------------------------------------------------------*/
 
@@ -80,19 +80,24 @@ namespace Senparc.NeuChar
         /// <summary>
         /// 获取配置
         /// </summary>
-        GetConfig,
+        GetConfig = 0,
         /// <summary>
         /// 储存配置
         /// </summary>
-        SaveConfig,
+        SaveConfig = 1,
         /// <summary>
         /// 检查NeuChar服务是否可用
         /// </summary>
-        CheckNeuChar,
+        CheckNeuChar = 2,
+
+        /// <summary>
+        /// 推送 NeuChar App 的设置
+        /// </summary>
+        PushNeuCharAppConfig = 3,
         /// <summary>
         /// 拉取 NeuChar App 的设置
         /// </summary>
-        PullNeuCharAppConfig
+        PullNeuCharAppConfig = 4
     }
 
     /// <summary>

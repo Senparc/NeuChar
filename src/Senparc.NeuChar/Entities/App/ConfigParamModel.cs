@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Senparc.NeuChar.App.Entities
+namespace Senparc.NeuChar.Entities.App
 {
     /// <summary>
     /// App 输入输出实体

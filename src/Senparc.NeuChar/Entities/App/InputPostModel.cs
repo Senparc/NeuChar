@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Senparc.NeuChar.App.Entities
+namespace Senparc.NeuChar.Entities.App
 {
     /// <summary>
     /// 应用中枢发送到App数据
