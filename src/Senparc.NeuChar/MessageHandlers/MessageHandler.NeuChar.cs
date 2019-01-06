@@ -177,6 +177,7 @@ namespace Senparc.NeuChar.MessageHandlers
                             //还原一次，为了统一格式，并未后续处理提供能力（例如调整缩进格式）
                             var requestData = requestMessage.RequestData.GetObject<PushConfigRequestData>();
                             var mainVersion = requestData.Version.Split('.')[0];//主版本号
+                            //配置文件路径：~/App_Data/NeuChar/AppConfig/123-v1.config
                             var configFilePath = Path.Combine(configFileDir, $"{requestData.AppId}-v{mainVersion}.config");
 
                             using (var fs = new FileStream(configFilePath, FileMode.Create))
@@ -197,6 +198,7 @@ namespace Senparc.NeuChar.MessageHandlers
                             var mainVersion = requestData.Version.Split('.')[0];//主版本号
 
                             var configFileDir = Path.Combine(path, "AppConfig");
+                            //配置文件路径：~/App_Data/NeuChar/AppConfig/123-v1.config
                             var configFilePath = Path.Combine(configFileDir, $"{requestData.AppId}-v{mainVersion}.config");
                             if (!File.Exists(configFilePath))
                             {
