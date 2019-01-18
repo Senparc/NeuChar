@@ -8,8 +8,28 @@ namespace Senparc.NeuChar.Entities.App
     /// </summary>
     public class ConfigParamModel
     {
+        /// <summary>
+        /// 输入参数
+        /// </summary>
         public List<InputParam> InputParams { get; set; }
+        /// <summary>
+        /// 输出参数
+        /// </summary>
         public List<OutputParam> OutputParams { get; set; }
+        /// <summary>
+        /// 是否强制为自动开始
+        /// </summary>
+        public bool ForceAutoStart { get; set; }
+        /// <summary>
+        /// 是否强制为隐藏流程
+        /// </summary>
+        public bool ForceHide { get; set; }
+        /// <summary>
+        /// 后台管理 Url
+        /// <para>如：https://neuchar.weiweihi.com/User/QuestionActivity?app={appId}</para>
+        /// <para>appId 是 InputParams 中 Name 为 appId 的值进行替换</para>
+        /// </summary>
+        public string AdminUrl { get; set; }
     }
 
     /// <summary>
@@ -54,6 +74,13 @@ namespace Senparc.NeuChar.Entities.App
         /// App提供选项
         /// </summary>
         public List<string> OptionValues { get; set; } = new List<string>();
+
+        /// <summary>
+        /// 自动填充数据接口地址
+        /// <para>如：https://neuchar.weiweihi.com/User/AutoFillWindow?app={appId}</para>
+        /// <para>appId 是 InputParams 中 Name 为 appId 的值进行替换</para>
+        /// </summary>
+        public string AutoFillUrl { get; set; }
     }
 
     /// <summary>
