@@ -86,7 +86,7 @@ namespace Senparc.NeuChar
         /// </summary>
         SaveConfig = 1,
         /// <summary>
-        /// 检查NeuChar服务是否可用
+        /// 检查NeuChar服务是否可用，同时拉取 APM 统计数据
         /// </summary>
         CheckNeuChar = 2,
 
