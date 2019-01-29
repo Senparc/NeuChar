@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net35;net40;net45;netstandard2.0</TargetFrameworks>
-    <Version>0.6.1</Version>
+    <Version>0.6.2</Version>
     <AssemblyName>Senparc.NeuChar</AssemblyName>
     <RootNamespace>Senparc.NeuChar</RootNamespace>
     <GeneratePackageOnBuild Condition=" '$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
@@ -66,6 +66,7 @@
       v0.6.0
       1、添加 PullNeuCharAppConfig 消息类型
       2、支持 CO2NET v0.5.0 提供对 .NET Core Console 的全面支持
+      v0.6.2 支持 CO2NET.APM v0.2.5
     </PackageReleaseNotes>
     <RepositoryUrl>https://github.com/JeffreySu/WeiXinMPSDK</RepositoryUrl>
     <Configurations>Debug;Release;Test</Configurations>
@@ -133,7 +134,7 @@
 
   <ItemGroup>
     <PackageReference Include="Senparc.CO2NET" Version="0.5.2" />
-    <PackageReference Include="Senparc.CO2NET.APM" Version="0.2.4" />
+    <PackageReference Include="Senparc.CO2NET.APM" Version="0.2.5" />
   </ItemGroup>
 
 
