@@ -162,7 +162,7 @@ namespace Senparc.NeuChar.MessageHandlers
                             var co2netDataOperation = new DataOperation(configRoot.Domain);
 
                             //获取所有数据
-                            var dataItems = co2netDataOperation.ReadAndCleanDataItems(configRoot.RemoveData);
+                            var dataItems = co2netDataOperation.ReadAndCleanDataItems(configRoot.RemoveData, true);
                             result = dataItems.ToJson();
                         }
                         break;
