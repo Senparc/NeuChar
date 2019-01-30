@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Senparc.NeuChar.App.Entities
 {
+    /// <summary>
+    /// 给 NeuCharAppController 使用的 PostModel
+    /// </summary>
     public class PostModel : EncryptPostModel
     {
         public override string DomainId { get => AppId; set => AppId = value; }
