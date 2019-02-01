@@ -9,9 +9,16 @@ namespace Senparc.NeuChar.App.Entities.AppCentralis
     /// <summary>
     /// 单个应用中枢中的全局变量
     /// </summary>
-   public class AppGlobalVariable
+    [Serializable]
+    public class GlobalVariable
     {
+        /// <summary>
+        /// 变量名称
+        /// </summary>
         public string Name { get; set; }
+        /// <summary>
+        /// 变量值
+        /// </summary>
         public string Value { get; set; }
     }
 }

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Senparc.NeuChar.App.Helpers
 {
     /// <summary>
-    /// 应用中枢
+    /// 应用中枢 帮助类
     /// </summary>
     public class AppCentralisHelper
     {
