@@ -93,7 +93,7 @@ namespace Senparc.NeuChar.Helpers
 
                     if (articleItem.ContentSourceUrl.IsNullOrWhiteSpace())
                     {
-                        article.Url = $"http://neuchar.senparc.com/WX/Material/Details?uniqueId={materialId}";
+                        article.Url = $"https://www.neuchar.com/WX/Material/Details?uniqueId={materialId}";
                     }
                     else
                     {

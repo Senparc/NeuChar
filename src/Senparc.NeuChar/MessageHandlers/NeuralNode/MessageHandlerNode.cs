@@ -139,7 +139,7 @@ namespace Senparc.NeuChar.NeuralSystems
 
             if (currentAppDataItem != null) //已经锁定某个App
             {
-                //NeuralSystem.Instance.NeuCharDomainName = "https://neuchar.senparc.com";
+                //NeuralSystem.Instance.NeuCharDomainName = "https://www.neuchar.com";
 
                 //转发AppData消息
                 var neuCharUrl = $"{NeuralSystem.Instance.NeuCharDomainName}/App/Weixin?appId={currentAppDataItem.Id}&neuralAppId={appDataNode.NeuralAppId}";
