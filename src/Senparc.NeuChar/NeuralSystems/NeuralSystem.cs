@@ -50,7 +50,7 @@ namespace Senparc.NeuChar
         /// <summary>
         /// NeuChar 域名
         /// </summary>
-        public string NeuCharDomainName { get; set; } = "https://neuchar.senparc.com";
+        public string NeuCharDomainName { get; set; } = "https://www.neuchar.com";
 
         /// <summary>
         /// 根节点

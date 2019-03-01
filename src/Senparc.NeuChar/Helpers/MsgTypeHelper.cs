@@ -82,7 +82,6 @@ namespace Senparc.NeuChar.Helpers
 
         #endregion
 
-
         #region ResponseMsgType
         /// <summary>
         /// 根据xml信息，返回ResponseMsgType
