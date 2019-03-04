@@ -43,9 +43,14 @@ Senparc.NeuChar 跨平台信息交互标准。使用 NeuChar 标准可以跨平�
 [nuget-img-base-app]: https://img.shields.io/nuget/dt/Senparc.NeuChar.App.svg
 [nuget-url-base-app]: https://www.nuget.org/packages/Senparc.NeuChar.App
 
-## 官网地址
+## 线上 SaaS 集成服务
 
-<a href="https://www.neuchar.com" target="_blank">https://www.neuchar.com</a>
+官网：<a href="https://www.neuchar.com" target="_blank">https://www.neuchar.com</a>
+
+> https://www.neuchar.com 提供了一整套基于 Senparc.NeuChar 标准的服务平台，同时服务于开发者（提供 App）以及运营者（订阅 App）。<br>
+> 开发者提供的一个 App，即可同时被多个平台的运营人员使用；运营人员维护一次信息，即可同时同步到多个平台。
+
+
 
 ## 如何使用 Nuget 安装？
 
@@ -74,3 +79,9 @@ Y：支持，N：不支持，-：待确定（较为可能不支持）
 
 > 微信消息文档：https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421140453<br>
 > 钉钉消息文档：https://open-doc.dingtalk.com/microapp/serverapi2/al5qyp<br>
+
+
+## QQ 技术交流群
+
+<img src="https://sdk.weixin.senparc.com/images/QQ_Group_Avatar/NeuChar/QQ-Group.jpg" width="380" />
+
