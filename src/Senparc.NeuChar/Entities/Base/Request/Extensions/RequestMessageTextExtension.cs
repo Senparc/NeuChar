@@ -36,6 +36,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 ----------------------------------------------------------------*/
 
 
+using Senparc.CO2NET.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,6 +47,11 @@ namespace Senparc.NeuChar.Entities.Request
 {
     public class RequestMessageTextKeywordHandler
     {
+        /// <summary>
+        /// 选择菜单（对应微信 SendMenu 接口）的关键字格式，{0}代表客户端识别的关键字
+        /// </summary>
+        public const string SELECT_MENU_KEWORD_FORMAT = "s:{0}";
+
         internal string Keyword { get; set; }
 
         /// <summary>
@@ -56,6 +62,11 @@ namespace Senparc.NeuChar.Entities.Request
         internal IRequestMessageText RequestMessage { get; set; }
 
         public IResponseMessageBase ResponseMessage { get; set; }
+
+        /// <summary>
+        /// 选择菜单Id（对应微信 SendMenu 接口所设置的 id 参数）
+        /// </summary>
+        public string SelectMenuId { get; set; }
 
         /// <summary>
         /// 是否已经匹配成功
@@ -73,6 +84,10 @@ namespace Senparc.NeuChar.Entities.Request
             RequestMessage = requestMessage;
             CaseSensitive = caseSensitive;
             Keyword = RequestMessage.Content;
+            if (requestMessage is IRequestMessageSelectMenu selectMenuRequestMessage)
+            {
+                SelectMenuId = selectMenuRequestMessage.bizmsgmenuid;
+            }
         }
     }
 
@@ -140,6 +155,49 @@ namespace Senparc.NeuChar.Entities.Request
             foreach (var keyword in keywords)
             {
                 handler.Keyword(keyword, func);
+            }
+            return handler;
+        }
+
+
+        /// <summary>
+        /// 匹配选择菜单关键词（对应微信的 SendMenu 接口）
+        /// </summary>
+        /// <param name="handler"></param>
+        /// <param name="keywords">多个关键词（匹配格式："s:[关键词]"）</param>
+        /// <param name="func"></param>
+        /// <returns></returns>
+        public static RequestMessageTextKeywordHandler SelectMenuKeyword(this RequestMessageTextKeywordHandler handler, string keyword, Func<IResponseMessageBase> func)
+        {
+            if (!(handler.RequestMessage is IRequestMessageSelectMenu))
+            {
+                throw new Exceptions.MessageHandlerException($"当前请求类型 {handler.RequestMessage.GetType()} 未实现 {nameof(IRequestMessageSelectMenu)} 接口，因此无法使用此方法（{nameof(SelectMenuKeyword)}）。");
+            }
+
+            var finalKeyword = RequestMessageTextKeywordHandler.SELECT_MENU_KEWORD_FORMAT.FormatWith(keyword);
+            if (!handler.MatchSuccessed &&
+               ((handler.CaseSensitive && handler.SelectMenuId == finalKeyword ||
+               (!handler.CaseSensitive && handler.SelectMenuId.ToUpper() == finalKeyword.ToUpper()))))
+                {
+                handler.MatchSuccessed = true;
+                handler.ResponseMessage = func();
+            }
+            return handler;
+        }
+
+
+        /// <summary>
+        /// 匹配选择菜单关键词（对应微信的 SendMenu 接口）
+        /// </summary>
+        /// <param name="handler"></param>
+        /// <param name="keywords">多个关键词（匹配格式："s:[关键词]"）</param>
+        /// <param name="func"></param>
+        /// <returns></returns>
+        public static RequestMessageTextKeywordHandler SelectMenuKeywords(this RequestMessageTextKeywordHandler handler, string[] keywords, Func<IResponseMessageBase> func)
+        {
+            foreach (var keyword in keywords)
+            {
+                handler.SelectMenuKeyword(keyword, func);
             }
             return handler;
         }
