@@ -50,7 +50,7 @@ namespace Senparc.NeuChar.Entities.Request
         /// <summary>
         /// 选择菜单（对应微信 SendMenu 接口）的关键字格式，{0}代表客户端识别的关键字
         /// </summary>
-        public const string SELECT_MENU_KEWORD_FORMAT = "s:{0}";
+        public const string SELECT_MENU_KEWORD_FORMAT = "{0}";//这里保留这个方法，为以后扩充做准备
 
         internal string Keyword { get; set; }
 
