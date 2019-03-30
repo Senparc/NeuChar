@@ -33,6 +33,12 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
     修改标识：Senparc - 20170725
     修改描述：v4.14.2 修复RequestMessageTextExtension.GetResponseMessage()方法判断问题
 
+    修改标识：Senparc - 20190309
+    修改描述：v0.6.3 添加 SelectMenuKeyword() 扩展方法
+     
+    修改标识：Senparc - 20190329
+    修改描述：v0.6.4 方法中添加对 SelectMenuId 是否为空的判断
+     
 ----------------------------------------------------------------*/
 
 
@@ -175,7 +181,7 @@ namespace Senparc.NeuChar.Entities.Request
             }
 
             var finalKeyword = RequestMessageTextKeywordHandler.SELECT_MENU_KEWORD_FORMAT.FormatWith(keyword);
-            if (!handler.MatchSuccessed &&
+            if (!handler.MatchSuccessed && !handler.SelectMenuId.IsNullOrWhiteSpace() &&
                ((handler.CaseSensitive && handler.SelectMenuId == finalKeyword ||
                (!handler.CaseSensitive && handler.SelectMenuId.ToUpper() == finalKeyword.ToUpper()))))
                 {
