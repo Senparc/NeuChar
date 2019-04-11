@@ -1,9 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Senparc.NeuChar.Entities;
 using Senparc.NeuChar.Helpers;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Xml.Linq;
 
 namespace Senparc.NeuChar.Tests.Helpers
@@ -36,10 +33,7 @@ namespace Senparc.NeuChar.Tests.Helpers
 
         public class RequestMessageComponentVerifyTicket
         {
-            public  RequestInfoType InfoType
-            {
-                get { return RequestInfoType.component_verify_ticket; }
-            }
+            public RequestInfoType InfoType => RequestInfoType.component_verify_ticket;
             public string AppId { get; set; }
             public DateTimeOffset CreateTime { get; set; }
 
@@ -50,14 +44,14 @@ namespace Senparc.NeuChar.Tests.Helpers
         [TestMethod]
         public void FillEntityWithXml()
         {
-            var xml = @"<xml>
+            string xml = @"<xml>
   <AppId><![CDATA[wxbbd3f07e2945cf2a]]></AppId>
   <CreateTime>1536250240</CreateTime>
   <InfoType><![CDATA[component_verify_ticket]]></InfoType>
   <ComponentVerifyTicket><![CDATA[ticket@@@oj3_KoMMnlH2SZbBs89CAzABbNF3Wfr12AFbIg19aKeLSgebFJXPE9tS60X38ab-kG5a08oskSWVdHEklNCAhA]]></ComponentVerifyTicket>
 </xml>";
-            var entity = new RequestMessageComponentVerifyTicket();
-            var doc = XDocument.Parse(xml);
+            RequestMessageComponentVerifyTicket entity = new RequestMessageComponentVerifyTicket();
+            XDocument doc = XDocument.Parse(xml);
             EntityHelper.FillEntityWithXml(entity, doc);
 
             Assert.AreEqual("wxbbd3f07e2945cf2a", entity.AppId);

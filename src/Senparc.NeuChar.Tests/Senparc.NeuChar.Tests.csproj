@@ -3,8 +3,6 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <IsPackable>false</IsPackable>
-    <Configurations>Debug;Release;Test</Configurations>
-    <IsTestProject>true</IsTestProject>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,10 +18,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Senparc.NeuChar\Senparc.NeuChar.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="App_Data\WeChat_OfficialAccount\2018-11-18\" />
   </ItemGroup>
 
 </Project>
