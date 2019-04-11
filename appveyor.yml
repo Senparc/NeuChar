@@ -15,8 +15,8 @@ build:
   parallel: true
 build_script:
   - cmd: dotnet build -c Release src
-#test_script:
-#  - cmd: dotnet test -c Release src\Senparc.NeuChar.Tests\
+test_script:
+  - cmd: dotnet test -c Release src
 artifacts:
   - path: '**\*.nupkg'
 nuget:
