@@ -16,7 +16,7 @@ build:
 build_script:
   - cmd: dotnet build -c Release src
 test_script:
-  - cmd: dotnet test -c Release src
+  - cmd: dotnet test -c Release src\Senparc.NeuChar.Tests\
 artifacts:
   - path: '**\*.nupkg'
 nuget:
