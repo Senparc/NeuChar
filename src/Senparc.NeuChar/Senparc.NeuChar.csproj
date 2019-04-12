@@ -5,6 +5,7 @@
     <Version>0.6.4</Version>
     <AssemblyName>Senparc.NeuChar</AssemblyName>
     <RootNamespace>Senparc.NeuChar</RootNamespace>
+    <FrameworkPathOverride Condition="'$(TargetFramework)' == 'net35'">$(Net35FrameworkPathOverride)</FrameworkPathOverride>
     <GeneratePackageOnBuild Condition=" '$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
 
     <Description>
