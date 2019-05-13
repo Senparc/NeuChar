@@ -64,7 +64,7 @@ namespace Senparc.NeuChar
 
         static Register()
         {
-            RegisterApiBind(false);//注意：此处注册可能并不能获取到足够数量的程序集，需要测试并确定是否使用 RegisterApiBind(true) 方法
+            //RegisterApiBind(false);//注意：此处注册可能并不能获取到足够数量的程序集，需要测试并确定是否使用 RegisterApiBind(true) 方法
 
             //注册节点类型
             RegisterNeuralNode("MessageHandlerNode", typeof(MessageHandlerNode));
