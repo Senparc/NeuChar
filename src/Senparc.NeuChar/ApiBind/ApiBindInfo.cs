@@ -24,7 +24,6 @@ namespace Senparc.NeuChar
         public ApiBindInfo(ApiBindAttribute apiBindAttribute, MethodInfo methodInfo) {
             ApiBindAttribute = ApiBindAttribute;
             MethodInfo = methodInfo;
-
         }
     }
 }
