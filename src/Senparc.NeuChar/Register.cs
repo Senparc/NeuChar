@@ -52,9 +52,7 @@ namespace Senparc.NeuChar
         /// <summary>
         /// 是否API绑定已经执行完
         /// </summary>
-        private static bool RegisterApiBindFinished = false;
-
-
+        public static bool RegisterApiBindFinished { get; private set; } = false;
 
         /// <summary>
         /// 节点类型注册集合
@@ -64,7 +62,7 @@ namespace Senparc.NeuChar
 
         static Register()
         {
-            RegisterApiBind();
+            RegisterApiBind();//此处注册可能并不能获取到足够数量的程序集
 
             //注册节点类型
             RegisterNeuralNode("MessageHandlerNode", typeof(MessageHandlerNode));
@@ -97,10 +95,12 @@ namespace Senparc.NeuChar
 
             //var cacheStragegy = CacheStrategyFactory.GetObjectCacheStrategyInstance();
             //using (cacheStragegy.BeginCacheLock("Senparc.NeuChar.Register", "RegisterApiBind"))
-            lock(RegisterApiBindLck)//由于使用的是本地内存进行记录，所以这里不需要使用同步锁，这样就不需要依“缓存注册”等先决条件
+            lock (RegisterApiBindLck)//由于使用的是本地内存进行记录，所以这里不需要使用同步锁，这样就不需要依“缓存注册”等先决条件
             {
                 if (RegisterApiBindFinished == true && forceBindAgain == false)
                 {
+                    Console.WriteLine($"RegisterApiBind has been finished, and doesn't require [forceBindAgain]. Quit build.");
+
                     return;
                 }
 
@@ -108,6 +108,8 @@ namespace Senparc.NeuChar
                 var scanTypesCount = 0;
 
                 var assembiles = AppDomain.CurrentDomain.GetAssemblies();
+
+                var errorCount = 0;
 
                 foreach (var assembly in assembiles)
                 {
@@ -140,6 +142,7 @@ namespace Senparc.NeuChar
                     }
                     catch (Exception ex)
                     {
+                        errorCount++;
                         SenparcTrace.SendCustomLog("RegisterApiBind() 自动扫描程序集报告（非程序异常）：" + assembly.FullName, ex.ToString());
                     }
                 }
@@ -147,7 +150,7 @@ namespace Senparc.NeuChar
                 RegisterApiBindFinished = true;
 
                 var dt2 = SystemTime.Now;
-                Console.WriteLine($"RegisterApiBind 用时：{(dt2 - dt1).TotalMilliseconds}ms");
+                Console.WriteLine($"RegisterApiBind Time: {(dt2 - dt1).TotalMilliseconds}ms, Api Count:{ApiBindInfoCollection.Instance.Count()}, Error Count：{errorCount}");
             }
         }
     }
