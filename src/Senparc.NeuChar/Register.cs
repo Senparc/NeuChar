@@ -55,6 +55,7 @@ namespace Senparc.NeuChar
         private static bool RegisterApiBindFinished = false;
 
 
+
         /// <summary>
         /// 节点类型注册集合
         /// </summary>
@@ -81,6 +82,12 @@ namespace Senparc.NeuChar
         }
 
         /// <summary>
+        /// RegisterApiBind 执行锁
+        /// </summary>
+        private static object RegisterApiBindLck = new object();
+
+
+        /// <summary>
         /// 自动扫描并注册 ApiBind
         /// </summary>
         /// <param name="forceBindAgain">是否强制重刷新</param>
@@ -88,8 +95,9 @@ namespace Senparc.NeuChar
         {
             var dt1 = SystemTime.Now;
 
-            var cacheStragegy = CacheStrategyFactory.GetObjectCacheStrategyInstance();
-            using (cacheStragegy.BeginCacheLock("Senparc.NeuChar.Register", "RegisterApiBind"))
+            //var cacheStragegy = CacheStrategyFactory.GetObjectCacheStrategyInstance();
+            //using (cacheStragegy.BeginCacheLock("Senparc.NeuChar.Register", "RegisterApiBind"))
+            lock(RegisterApiBindLck)//由于使用的是本地内存进行记录，所以这里不需要使用同步锁，这样就不需要依“缓存注册”等先决条件
             {
                 if (RegisterApiBindFinished == true && forceBindAgain == false)
                 {
