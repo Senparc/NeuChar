@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net35;net40;net45;netstandard2.0</TargetFrameworks>
-    <Version>0.6.7.5-preview3</Version>
+    <Version>0.6.8</Version>
     <AssemblyName>Senparc.NeuChar</AssemblyName>
     <RootNamespace>Senparc.NeuChar</RootNamespace>
     <FrameworkPathOverride Condition="'$(TargetFramework)' == 'net35'">$(Net35FrameworkPathOverride)</FrameworkPathOverride>
@@ -71,7 +71,7 @@
       v0.6.2.1 修正 NeuChar 官方地址协议（https）
       v0.6.3 提供选择菜单（对应微信 SendMenu 接口）的 Request 处理方式
       v0.6.4 方法中添加对 SelectMenuId 是否为空的判断
-      v0.6.7
+      v0.6.8
       1、优化 Register.RegisterApiBind() 方法
       2、添加 ApiBindInfoCollection.GetGroupedCollection() 方法
     </PackageReleaseNotes>
@@ -140,8 +140,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Senparc.CO2NET" Version="0.7.0-preview3" />
-    <PackageReference Include="Senparc.CO2NET.APM" Version="0.3.0.1-preview3" />
+    <PackageReference Include="Senparc.CO2NET" Version="0.7.1" />
+    <PackageReference Include="Senparc.CO2NET.APM" Version="0.3.0.2" />
   </ItemGroup>
 
 

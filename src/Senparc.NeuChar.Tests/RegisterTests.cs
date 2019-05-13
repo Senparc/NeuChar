@@ -22,7 +22,7 @@ namespace Senparc.NeuChar.Tests
         [TestMethod]
         public void RegisterApiBindTest()
         {
-            Register.RegisterApiBind();
+            Register.RegisterApiBind(false);
 
             Assert.IsTrue(Register.NeuralNodeRegisterCollection.Count > 0);
         }
