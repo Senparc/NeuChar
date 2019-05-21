@@ -295,7 +295,7 @@ namespace Senparc.NeuChar.NeuralSystems
         where TResponse : IResponseMessageBase
         {
             //SenparcTrace.SendCustomLog("neuchar trace","1");
-            return await Task.Run(() => Execute(requestMessage, messageHandler, accessTokenOrApi));
+            return await Task.Run(() => Execute(requestMessage, messageHandler, accessTokenOrApi)).ConfigureAwait(false);
         }
 #endif
     }
