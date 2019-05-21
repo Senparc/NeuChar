@@ -75,7 +75,7 @@ namespace Senparc.NeuChar.MessageHandlers
 
         public virtual async Task OnExecutingAsync(CancellationToken cancellationToken)
         {
-            await Task.Run(() => this.OnExecuting(), cancellationToken);
+            await Task.Run(() => this.OnExecuting(), cancellationToken).ConfigureAwait(false);
         }
 
         public virtual async Task ExecuteAsync(CancellationToken cancellationToken)
@@ -90,7 +90,7 @@ namespace Senparc.NeuChar.MessageHandlers
                 return;
             }
 
-            await OnExecutingAsync(cancellationToken);
+            await OnExecutingAsync(cancellationToken).ConfigureAwait(false);
 
             if (CancelExcute)
             {
@@ -104,7 +104,7 @@ namespace Senparc.NeuChar.MessageHandlers
                     return;
                 }
 
-                await BuildResponseMessageAsync(cancellationToken);
+                await BuildResponseMessageAsync(cancellationToken).ConfigureAwait(false);
 
                 //记录上下文
                 //此处修改
@@ -121,21 +121,21 @@ namespace Senparc.NeuChar.MessageHandlers
             }
             finally
             {
-                await OnExecutedAsync(cancellationToken);
+                await OnExecutedAsync(cancellationToken).ConfigureAwait(false);
                 apm.Set(NeuCharApmKind.Message_ResponseMillisecond.ToString(), (SystemTime.Now - this.ExecuteStatTime).TotalMilliseconds, tempStorage: OpenId);
             }
 
-            //await Task.Run(() => this.Execute());
+            //await Task.Run(() => this.Execute()).ConfigureAwait(false);
         }
 
         public virtual async Task BuildResponseMessageAsync(CancellationToken cancellationToken)
         {
-            await Task.Run(() => this.BuildResponseMessage(), cancellationToken);
+            await Task.Run(() => this.BuildResponseMessage(), cancellationToken).ConfigureAwait(false);
         }
 
         public virtual async Task OnExecutedAsync(CancellationToken cancellationToken)
         {
-            await Task.Run(() => this.OnExecuted(), cancellationToken);
+            await Task.Run(() => this.OnExecuted(), cancellationToken).ConfigureAwait(false);
         }
 
         #endregion
