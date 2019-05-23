@@ -84,7 +84,7 @@ namespace Senparc.NeuChar.MessageHandlers
             ExecuteStatTime = SystemTime.Now;
 
             DataOperation apm = new DataOperation(PostModel?.DomainId);
-            apm.Set(NeuCharApmKind.Message_Request.ToString(), 1, tempStorage: OpenId);
+            await apm.SetAsync(NeuCharApmKind.Message_Request.ToString(), 1, tempStorage: OpenId).ConfigureAwait(false);
             if (CancelExcute)
             {
                 return;
@@ -112,17 +112,17 @@ namespace Senparc.NeuChar.MessageHandlers
                 {
                     GlobalMessageContext.InsertMessage(ResponseMessage);
                 }
-                apm.Set(NeuCharApmKind.Message_SuccessResponse.ToString(), 1, tempStorage: OpenId);
+                await apm.SetAsync(NeuCharApmKind.Message_SuccessResponse.ToString(), 1, tempStorage: OpenId).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
-                apm.Set(NeuCharApmKind.Message_Exception.ToString(), 1, tempStorage: OpenId);
+                apm.SetAsync(NeuCharApmKind.Message_Exception.ToString(), 1, tempStorage: OpenId).ConfigureAwait(false).GetAwaiter().GetResult();
                 throw new MessageHandlerException("MessageHandler中Execute()过程发生错误：" + ex.Message, ex);
             }
             finally
             {
                 await OnExecutedAsync(cancellationToken).ConfigureAwait(false);
-                apm.Set(NeuCharApmKind.Message_ResponseMillisecond.ToString(), (SystemTime.Now - this.ExecuteStatTime).TotalMilliseconds, tempStorage: OpenId);
+                await apm.SetAsync(NeuCharApmKind.Message_ResponseMillisecond.ToString(), (SystemTime.Now - this.ExecuteStatTime).TotalMilliseconds, tempStorage: OpenId).ConfigureAwait(false);
             }
 
             //await Task.Run(() => this.Execute()).ConfigureAwait(false);
