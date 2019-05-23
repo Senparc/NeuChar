@@ -60,10 +60,16 @@ namespace Senparc.NeuChar.MessageHandlers
 
         #region NeuChar 方法
 
+        [Obsolete("请使用 OnNeuCharRequestAsync() 方法", true)]
+        public virtual async Task<IResponseMessageBase> OnNeuCharRequest(RequestMessageNeuChar requestMessage)
+        {
+            return await OnNeuCharRequestAsync(requestMessage).ConfigureAwait(false);
+        }
+
         /// <summary>
         /// NeuChar 请求
         /// </summary>
-        public virtual async Task<IResponseMessageBase> OnNeuCharRequest(RequestMessageNeuChar requestMessage)
+        public virtual async Task<IResponseMessageBase> OnNeuCharRequestAsync(RequestMessageNeuChar requestMessage)
         {
             try
             {
