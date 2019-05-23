@@ -45,6 +45,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Senparc.NeuChar.MessageHandlers
 {
@@ -62,7 +63,7 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <summary>
         /// NeuChar 请求
         /// </summary>
-        public virtual IResponseMessageBase OnNeuCharRequest(RequestMessageNeuChar requestMessage)
+        public virtual async Task<IResponseMessageBase> OnNeuCharRequest(RequestMessageNeuChar requestMessage)
         {
             try
             {
@@ -85,9 +86,9 @@ namespace Senparc.NeuChar.MessageHandlers
                     {
                         using (var sw = new StreamWriter(fs))
                         {
-                            sw.WriteLine(NeuralSystem.DEFAULT_CONFIG_FILE_CONENT);
+                            await sw.WriteLineAsync(NeuralSystem.DEFAULT_CONFIG_FILE_CONENT).ConfigureAwait(false);
                         }
-                        fs.Flush();
+                        await fs.FlushAsync().ConfigureAwait(false);
                     }
                 }
 
@@ -101,7 +102,7 @@ namespace Senparc.NeuChar.MessageHandlers
                                 {
                                     using (var sr = new StreamReader(fs, Encoding.UTF8))
                                     {
-                                        var json = sr.ReadToEnd();
+                                        var json = await sr.ReadToEndAsync().ConfigureAwait(false);
                                         result = json;
                                     }
                                 }
@@ -133,8 +134,8 @@ namespace Senparc.NeuChar.MessageHandlers
                             {
                                 using (var sw = new StreamWriter(fs))
                                 {
-                                    sw.Write(configRootJson);
-                                    sw.Flush();
+                                    await sw.WriteAsync(configRootJson).ConfigureAwait(false);
+                                    await sw.FlushAsync().ConfigureAwait(false);
                                 }
                             }
 
@@ -162,7 +163,7 @@ namespace Senparc.NeuChar.MessageHandlers
                             var co2netDataOperation = new DataOperation(configRoot.Domain);
 
                             //获取所有数据
-                            var dataItems = co2netDataOperation.ReadAndCleanDataItems(configRoot.RemoveData, true);
+                            var dataItems = await co2netDataOperation.ReadAndCleanDataItemsAsync(configRoot.RemoveData, true).ConfigureAwait(false);
                             result = dataItems.ToJson();
                         }
                         break;
@@ -185,8 +186,8 @@ namespace Senparc.NeuChar.MessageHandlers
                                 using (var sw = new StreamWriter(fs, Encoding.UTF8))
                                 {
                                     var json = requestData.Config.ToJson(true);//带缩进格式的 JSON 字符串
-                                    sw.Write(json);//写入 Json 文件
-                                    sw.Flush();
+                                    await sw.WriteAsync(json).ConfigureAwait(false);//写入 Json 文件
+                                    await sw.FlushAsync().ConfigureAwait(false);
                                 }
                             }
                             result = "OK";
@@ -213,7 +214,7 @@ namespace Senparc.NeuChar.MessageHandlers
                                 {
                                     using (var sr = new StreamReader(fs, Encoding.UTF8))
                                     {
-                                        var json = sr.ReadToEnd();//带缩进格式的 JSON 字符串（文件中的原样）
+                                        var json = await sr.ReadToEndAsync().ConfigureAwait(false);//带缩进格式的 JSON 字符串（文件中的原样）
                                         result = json;
                                     }
                                 }
