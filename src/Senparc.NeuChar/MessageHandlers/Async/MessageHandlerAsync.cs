@@ -84,7 +84,9 @@ namespace Senparc.NeuChar.MessageHandlers
             ExecuteStatTime = SystemTime.Now;
 
             DataOperation apm = new DataOperation(PostModel?.DomainId);
+
             await apm.SetAsync(NeuCharApmKind.Message_Request.ToString(), 1, tempStorage: OpenId).ConfigureAwait(false);
+
             if (CancelExcute)
             {
                 return;
