@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net45;netstandard2.0</TargetFrameworks>
-    <Version>0.3.8-preview1</Version>
+    <Version>0.4.0-preview1</Version>
     <AssemblyName>Senparc.NeuChar.App</AssemblyName>
     <RootNamespace>Senparc.NeuChar.App</RootNamespace>
     <GeneratePackageOnBuild Condition=" '$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
@@ -33,6 +33,10 @@
       v0.3.4 添加对“应用中枢”App的更多功能支持
       v0.3.7 依赖最新版本 Senparc.NeuChar
       v0.3.8 使用 .ConfigureAwait(false) 避免异步锁死的情况
+      v0.4.0 停止对 .NET3.5/4.0 的支持
+
+      v0.4.0 停止对 .NET3.5/4.0 的支持
+
     </PackageReleaseNotes>
     <RepositoryUrl>https://github.com/JeffreySu/WeiXinMPSDK</RepositoryUrl>
     <Configurations>Debug;Release;Test</Configurations>

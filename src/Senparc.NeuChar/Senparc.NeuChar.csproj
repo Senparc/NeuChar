@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net35;net40;net45;netstandard2.0</TargetFrameworks>
-    <Version>0.6.9-preview1</Version>
+    <Version>0.7.0-preview1</Version>
     <AssemblyName>Senparc.NeuChar</AssemblyName>
     <RootNamespace>Senparc.NeuChar</RootNamespace>
     <FrameworkPathOverride Condition="'$(TargetFramework)' == 'net35'">$(Net35FrameworkPathOverride)</FrameworkPathOverride>
@@ -75,6 +75,8 @@
       1、优化 Register.RegisterApiBind() 方法
       2、添加 ApiBindInfoCollection.GetGroupedCollection() 方法
       v0.6.9 使用 .ConfigureAwait(false) 避免异步锁死的情况
+      v0.7.0 停止对 .NET3.5/4.0 的支持
+      
     </PackageReleaseNotes>
     <RepositoryUrl>https://github.com/JeffreySu/WeiXinMPSDK</RepositoryUrl>
     <Configurations>Debug;Release;Test</Configurations>
