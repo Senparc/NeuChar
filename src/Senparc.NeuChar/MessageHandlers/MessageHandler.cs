@@ -64,6 +64,7 @@ using Senparc.NeuChar.Helpers;
 using Senparc.NeuChar.NeuralSystems;
 using Senparc.NeuChar.Exceptions;
 using Senparc.CO2NET.APM;
+using System.Threading.Tasks;
 
 namespace Senparc.NeuChar.MessageHandlers
 {
@@ -165,7 +166,7 @@ namespace Senparc.NeuChar.MessageHandlers
                     //获取当前设置节点
                     _currentAppDataNode = (neuralSystem.GetNode("AppDataNode") as AppDataNode) ?? new AppDataNode();
                 }
-                return _currentAppDataNode;  
+                return _currentAppDataNode;
             }
             set
             {
@@ -395,7 +396,8 @@ namespace Senparc.NeuChar.MessageHandlers
             ExecuteStatTime = SystemTime.Now;
 
             DataOperation apm = new DataOperation(PostModel?.DomainId);
-            apm.Set(NeuCharApmKind.Message_Request.ToString(), 1, tempStorage: OpenId);
+
+            Task.Factory.StartNew(async () => await apm.SetAsync(NeuCharApmKind.Message_Request.ToString(), 1, tempStorage: OpenId)).ConfigureAwait(false);
 
             if (CancelExcute)
             {
@@ -424,17 +426,17 @@ namespace Senparc.NeuChar.MessageHandlers
                 {
                     GlobalMessageContext.InsertMessage(ResponseMessage);
                 }
-                apm.Set(NeuCharApmKind.Message_SuccessResponse.ToString(), 1, tempStorage: OpenId);
+                Task.Factory.StartNew(async () => await apm.SetAsync(NeuCharApmKind.Message_SuccessResponse.ToString(), 1, tempStorage: OpenId)).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
-                apm.Set(NeuCharApmKind.Message_Exception.ToString(), 1, tempStorage: OpenId);
+                Task.Factory.StartNew(async () => await apm.SetAsync(NeuCharApmKind.Message_Exception.ToString(), 1, tempStorage: OpenId)).ConfigureAwait(false);
                 throw new MessageHandlerException("MessageHandler中Execute()过程发生错误：" + ex.Message, ex);
             }
             finally
             {
                 OnExecuted();
-                apm.Set(NeuCharApmKind.Message_ResponseMillisecond.ToString(), (SystemTime.Now - this.ExecuteStatTime).TotalMilliseconds, tempStorage: OpenId);
+                Task.Factory.StartNew(async () => await apm.SetAsync(NeuCharApmKind.Message_ResponseMillisecond.ToString(), (SystemTime.Now - this.ExecuteStatTime).TotalMilliseconds, tempStorage: OpenId)).ConfigureAwait(false);
             }
         }
 
