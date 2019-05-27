@@ -397,7 +397,7 @@ namespace Senparc.NeuChar.MessageHandlers
 
             DataOperation apm = new DataOperation(PostModel?.DomainId);
 
-            Task.Factory.StartNew(async () => await apm.SetAsync(NeuCharApmKind.Message_Request.ToString(), 1, tempStorage: OpenId)).ConfigureAwait(false);
+            Task.Factory.StartNew(async () => await apm.SetAsync(NeuCharApmKind.Message_Request.ToString(), 1, tempStorage: OpenId).ConfigureAwait(true)).ConfigureAwait(false);
 
             if (CancelExcute)
             {
