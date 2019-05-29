@@ -13,6 +13,9 @@ using System.Threading.Tasks;
 
 namespace Senparc.NeuChar.App.Utilities
 {
+    /// <summary>
+    /// HttpUtilities
+    /// </summary>
     public class HttpUtilities
     {
         /// <summary>
