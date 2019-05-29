@@ -21,20 +21,17 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 /*----------------------------------------------------------------
     Copyright (C) 2018 Senparc
     
-    文件名：SendLocationInfo.cs
-    文件功能描述：弹出地理位置选择器的事件推送中的SendLocationInfo
+    文件名：ThirdFasteRegisterInfo.cs
+    文件功能描述：第三方快速注册小程序的注册审核事件推送中的info
     
     
     创建标识：Senparc - 20150211
-    
-    修改标识：Senparc - 20150303
-    修改描述：整理接口
 ----------------------------------------------------------------*/
 
 namespace Senparc.NeuChar.Entities
 {
     /// <summary>
-    /// 弹出地理位置选择器的事件推送中的SendLocationInfo
+    /// 第三方快速注册小程序的注册审核事件推送中的info
     /// </summary>
     public class ThirdFasteRegisterInfo
     {
