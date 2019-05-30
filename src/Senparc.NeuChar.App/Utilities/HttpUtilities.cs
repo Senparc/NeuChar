@@ -101,7 +101,7 @@ namespace Senparc.NeuChar.App.Utilities
                                 checkValidationResult: checkValidationResult).ConfigureAwait(false);
                         }
                     default:
-                        throw new ArgumentOutOfRangeException("sendType");
+                        throw new ArgumentOutOfRangeException(nameof(sendType));
                 }
             }
             catch (NeuCharAppApiRequestException ex)
