@@ -59,7 +59,7 @@ namespace Senparc.NeuChar.App.Utilities
             }
         };
 
-        #region 同步方法
+        #region 异步方法
         /// <summary>
         /// 向需要AccessToken的API发送消息的公共方法
         /// </summary>
