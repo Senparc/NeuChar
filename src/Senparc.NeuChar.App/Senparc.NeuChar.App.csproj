@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net45;netstandard2.0</TargetFrameworks>
-    <Version>0.5.1-preview1</Version>
+    <Version>0.5.2-preview1</Version>
     <AssemblyName>Senparc.NeuChar.App</AssemblyName>
     <RootNamespace>Senparc.NeuChar.App</RootNamespace>
     <GeneratePackageOnBuild Condition=" '$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
@@ -30,8 +30,8 @@
       v0.3.1
       1、添加 PullNeuCharAppConfig 消息类型
       2、支持 CO2NET v0.5.0 提供对 .NET Core Console 的全面支持
-      v0.3.4 添加对“应用中枢”App的更多功能支持
-      v0.3.7 依赖最新版本 Senparc.NeuChar
+      v0.3.4 添加对“应用中枢”App的更多功能支持      v0.3.7 依赖最新版本 Senparc.NeuChar
+
       v0.3.8 使用 .ConfigureAwait(false) 避免异步锁死的情况
       v0.4.0 停止对 .NET3.5/4.0 的支持
 
