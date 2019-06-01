@@ -30,6 +30,11 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
     修改标识：Senparc - 20170522
     修改描述：v16.6.2 修改 DateTime 为 DateTimeOffset
 
+    ---- 从 Senparc.Weixi.MP 移植到 Senparc.NeuChar.App ----
+
+    修改标识：Senparc - 20190601
+    修改描述：v0.5.2 修改 OAuthAccountInfo 属性名称
+
 ----------------------------------------------------------------*/
 
 using Senparc.NeuChar.Utilities;
@@ -37,12 +42,21 @@ using System;
 
 namespace Senparc.NeuChar.App.AppStore
 {
+    /// <summary>
+    /// 通过 OAuth 认证后得到的用户信息 
+    /// </summary>
     public class OAuthAccountInfo
     {
         //public int user_id { get; set; }
         //public int user_name { get; set; }
-        public int weixin_id { get; set; }
-        public string weixin_name { get; set; }
+        /// <summary>
+        /// NeuralApp 的 Id，可以通过如下方式定位：https://www.neuchar.com/User/NeuralAPM?app={neuchar_app_id}
+        /// </summary>
+        public int neuchar_app_id { get; set; }
+        /// <summary>
+        /// NeuralApp 对应的名称
+        /// </summary>
+        public string neuchar_app_name { get; set; }
     }
 
     /// <summary>

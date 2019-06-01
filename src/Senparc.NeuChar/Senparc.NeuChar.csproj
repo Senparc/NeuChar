@@ -77,6 +77,7 @@
       v0.6.9 使用 .ConfigureAwait(false) 避免异步锁死的情况
       v0.7.0 停止对 .NET3.5/4.0 的支持
       v0.7.2 添加 ApiUtility
+      v0.7.3 FillEntityWithXml()方法添加 "ThirdFasteRegisterInfo" 类型: 开放平台-小程序-快速注册
     </PackageReleaseNotes>
     <RepositoryUrl>https://github.com/JeffreySu/WeiXinMPSDK</RepositoryUrl>
     <Configurations>Debug;Release;Test</Configurations>
