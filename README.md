@@ -5,7 +5,6 @@
 Senparc.NeuChar 跨平台信息交互标准。使用 NeuChar 标准可以跨平台兼容不同平台的交互信息设置，一次设置，多平台共享。
 
 [![Build status](https://mysenparc.visualstudio.com/Senparc%20SDK/_apis/build/status/NeuChar/Senparc.NeuCHar-%20CI)](https://mysenparc.visualstudio.com/Senparc%20SDK/_build/latest?definitionId=14)
-[![Build status](https://ci.appveyor.com/api/projects/status/pwat2w0c5cykesi5/branch/master?svg=true)](https://ci.appveyor.com/project/JeffreySu/neuchar/branch/master)
 [![NuGet](https://img.shields.io/nuget/dt/Senparc.NeuChar.svg)](https://www.nuget.org/packages/Senparc.NeuChar)
 [![license](https://img.shields.io/github/license/Senparc/NeuChar.svg)](http://www.apache.org/licenses/LICENSE-2.0)
 
