@@ -36,6 +36,8 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
     修改标识：Senparc - 20180901
     修改描述：优化FillEntityWithXml()方法
 
+    修改标识：Senparc - 20190529
+    修改描述：FillEntityWithXml()方法添加 "ThirdFasteRegisterInfo" 类型: 开放平台-小程序-快速注册
 
 ----------------------------------------------------------------*/
 
@@ -224,6 +226,12 @@ namespace Senparc.NeuChar.Helpers
                         case "AroundBeacon"://摇一摇事件通知
                             FillClassValue<AroundBeacon>(entity, root, propName, prop);
                             break;
+
+                        #region 开放平台-小程序
+                        case "ThirdFasteRegisterInfo": //开放平台-小程序-快速注册
+                            FillClassValue<ThirdFasteRegisterInfo>(entity, root, propName, prop);
+                            break;
+                        #endregion
 
                         #region RequestMessageEvent_MassSendJobFinish
                         case "CopyrightCheckResult":

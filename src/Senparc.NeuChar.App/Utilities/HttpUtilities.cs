@@ -13,6 +13,9 @@ using System.Threading.Tasks;
 
 namespace Senparc.NeuChar.App.Utilities
 {
+    /// <summary>
+    /// HttpUtilities
+    /// </summary>
     public class HttpUtilities
     {
         /// <summary>
@@ -56,7 +59,7 @@ namespace Senparc.NeuChar.App.Utilities
             }
         };
 
-        #region 同步方法
+        #region 异步方法
         /// <summary>
         /// 向需要AccessToken的API发送消息的公共方法
         /// </summary>
@@ -98,7 +101,7 @@ namespace Senparc.NeuChar.App.Utilities
                                 checkValidationResult: checkValidationResult).ConfigureAwait(false);
                         }
                     default:
-                        throw new ArgumentOutOfRangeException("sendType");
+                        throw new ArgumentOutOfRangeException(nameof(sendType));
                 }
             }
             catch (NeuCharAppApiRequestException ex)

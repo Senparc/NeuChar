@@ -79,7 +79,7 @@ namespace Senparc.NeuChar.App.AppStore
             var url = string.Format(Domain + "/OAuth2/AccessToken?clientId={0}&clientSecret={1}&code={2}&grantType={3}",
                         clientId.AsUrlData(), clientSecret.AsUrlData(), code.AsUrlData(), grantType.AsUrlData());
 
-            return await HttpUtilities.SendAsync<OAuthAccessTokenResult>(null, url, null, HttpRequestType.GET);
+            return await HttpUtilities.SendAsync<OAuthAccessTokenResult>(null, url, null, HttpRequestType.GET).ConfigureAwait(false);
         }
     }
 }

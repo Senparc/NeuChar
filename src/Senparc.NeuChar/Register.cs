@@ -60,6 +60,7 @@ namespace Senparc.NeuChar
         /// 节点类型注册集合
         /// </summary>
         public static Dictionary<string, Type> NeuralNodeRegisterCollection = new Dictionary<string, Type>();
+        //TODO: public static Dictionary<string, Type> NeuralNodeRegisterCollection { get; set; } = new Dictionary<string, Type>();
 
 
         static Register()
