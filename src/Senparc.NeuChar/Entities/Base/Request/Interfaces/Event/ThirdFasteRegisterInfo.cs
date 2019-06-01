@@ -25,7 +25,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
     文件功能描述：第三方快速注册小程序的注册审核事件推送中的info
     
     
-    创建标识：Senparc - 20150211
+    创建标识：Senparc - 20190529
 ----------------------------------------------------------------*/
 
 namespace Senparc.NeuChar.Entities
