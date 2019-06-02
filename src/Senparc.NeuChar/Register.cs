@@ -87,7 +87,6 @@ namespace Senparc.NeuChar
         /// </summary>
         private static object RegisterApiBindLck = new object();
 
-
         /// <summary>
         /// 自动扫描并注册 ApiBind
         /// </summary>
