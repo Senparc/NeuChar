@@ -102,8 +102,9 @@ namespace Senparc.NeuChar.MessageHandlers
                 {
                     case NeuCharActionType.GetConfig:
                         {
-                            if (configFileExisted)//本次对话会创建，但不在读取，利可读取可能会发生“无法访问已关闭文件”的错误
+                            if (configFileExisted)
                             {
+                                //文件刚创建，但不再读取，此时读取可能会发生“无法访问已关闭文件”的错误
                                 using (var fs = FileHelper.GetFileStream(file))
                                 {
                                     using (var sr = new StreamReader(fs, Encoding.UTF8))
@@ -173,7 +174,7 @@ namespace Senparc.NeuChar.MessageHandlers
                             result = dataItems.ToJson();
                         }
                         break;
-                    case NeuCharActionType.PushNeuCharAppConfig:
+                    case NeuCharActionType.PushNeuCharAppConfig://推送 NeuChar App 配置
                         {
                             var configFileDir = Path.Combine(path, "AppConfig");
                             if (!Directory.Exists(configFileDir))
@@ -199,7 +200,7 @@ namespace Senparc.NeuChar.MessageHandlers
                             result = "OK";
                         }
                         break;
-                    case NeuCharActionType.PullNeuCharAppConfig:
+                    case NeuCharActionType.PullNeuCharAppConfig://拉取 NeuCharApp 配置
                         {
                             var requestData = requestMessage.RequestData.GetObject<PullConfigRequestData>();
                             var mainVersion = requestData.Version.Split('.')[0];//主版本号
