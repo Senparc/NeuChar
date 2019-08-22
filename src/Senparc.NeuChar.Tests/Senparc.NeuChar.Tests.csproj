@@ -13,7 +13,7 @@
     <PackageReference Include="MSTest.TestAdapter" Version="1.*" />
     <PackageReference Include="MSTest.TestFramework" Version="1.*" />
     <PackageReference Include="Senparc.Weixin.MP" Version="16.7.12" />
-    <PackageReference Include="Senparc.Weixin.WxOpen" Version="3.5.1.1" />
+    <PackageReference Include="Senparc.Weixin.WxOpen" Version="3.5.2" />
   </ItemGroup>
 
   <ItemGroup>
