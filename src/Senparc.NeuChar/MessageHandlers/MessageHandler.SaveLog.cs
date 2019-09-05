@@ -75,7 +75,7 @@ namespace Senparc.NeuChar.MessageHandlers
             }
             catch (Exception ex)
             {
-                new MessageHandlerException(ex.Message, ex);
+                _ = new MessageHandlerException(ex.Message, ex);
             }
         }
 
@@ -114,7 +114,7 @@ namespace Senparc.NeuChar.MessageHandlers
             }
             catch (Exception ex)
             {
-                new MessageHandlerException(ex.Message, ex);
+                _ = new MessageHandlerException(ex.Message, ex);
             }
         }
 
