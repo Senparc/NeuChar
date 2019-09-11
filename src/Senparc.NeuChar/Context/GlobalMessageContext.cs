@@ -83,35 +83,6 @@ namespace Senparc.NeuChar.Context
 
     }
 
-    #region 废除接口
-    //public interface IWeixinContext<TM, TRequest, TResponse>
-    //    where TM : class, IMessageContext<TRequest, TResponse>, new()
-    //    where TRequest : IRequestMessageBase
-    //    where TResponse : IResponseMessageBase
-    //{
-    //    /// <summary>
-    //    /// 所有MessageContext集合，不要直接操作此对象
-    //    /// </summary>
-    //    Dictionary<string, TM> MessageCollection { get; set; }
-    //    /// <summary>
-    //    /// MessageContext队列（LastActiveTime升序排列）,不要直接操作此对象
-    //    /// </summary>
-    //    MessageQueue<TM, TRequest, TResponse> MessageQueue { get; set; }
-
-    //    /// <summary>
-    //    /// 每一个MessageContext过期时间
-    //    /// </summary>
-    //    Double ExpireMinutes { get; set; }
-
-    //    /// <summary>
-    //    /// 最大储存上下文数量（分别针对请求和响应信息）
-    //    /// </summary>
-    //    int MaxRecordCount { get; set; }
-
-    //    TM GetMessageContext(TRequest requestMessage);
-    //    TM GetMessageContext(TResponse responseMessage);
-    //}
-    #endregion
 
     /// <summary>
     /// 微信消息上下文（全局）
