@@ -135,7 +135,7 @@ namespace Senparc.NeuChar.MessageHandlers
                     {
                         System.IO.File.WriteAllText(Path.Combine(logPath, string.Format("{0}_TextResponse_{1}_{2}.txt", _getRandomFileName(),
                             this.RequestMessage.ToUserName,
-                            this.RequestMessage.MsgType)));
+                            this.RequestMessage.MsgType)),this.TextResponseMessage);
                     }
                 });
             }
