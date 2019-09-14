@@ -98,10 +98,10 @@ namespace Senparc.NeuChar.Context
     /// 微信消息上下文操作对象（全局）
     /// 默认过期时间：90分钟
     /// </summary>
-    public class GlobalMessageContext<TM, TRequest, TResponse>
-        where TM : class, IMessageContext<TRequest, TResponse>, new() //TODO:TRequest, TResponse直接写明基类类型
-        where TRequest : IRequestMessageBase
-        where TResponse : IResponseMessageBase
+    public class GlobalMessageContext<TMC, TRequest, TResponse>
+        where TMC : class, IMessageContext<TRequest, TResponse>, new() //TODO:TRequest, TResponse直接写明基类类型
+        where TRequest : class,IRequestMessageBase
+        where TResponse : class, IResponseMessageBase
     {
 
         ///// <summary>
@@ -179,7 +179,7 @@ namespace Senparc.NeuChar.Context
         /// </summary>
         /// <param name="userName">用户名（OpenId）</param>
         /// <returns></returns>
-        private TM GetMessageContext(string userName)
+        private TMC GetMessageContext(string userName)
         {
             //检查并移除过期记录，为了尽量节约资源，这里暂不使用独立线程轮询
 
@@ -230,7 +230,7 @@ namespace Senparc.NeuChar.Context
             //以下为新版本代码
             var cache = CacheStrategyFactory.GetObjectCacheStrategyInstance();
             var cacheKey = this.GetCacheKey(userName);
-            return cache.Get<TM>(cacheKey);
+            return cache.Get<TMC>(cacheKey);
         }
 
         /// <summary>
@@ -240,7 +240,7 @@ namespace Senparc.NeuChar.Context
         /// <param name="createIfNotExists">true：如果用户不存在，则创建一个实例，并返回这个最新的实例
         /// false：如用户不存在，则返回null</param>
         /// <returns></returns>
-        private TM GetMessageContext(string userName, bool createIfNotExists)
+        private TMC GetMessageContext(string userName, bool createIfNotExists)
         {
             var messageContext = GetMessageContext(userName);
 
@@ -249,7 +249,7 @@ namespace Senparc.NeuChar.Context
                 if (createIfNotExists)
                 {
                     //全局只在这一个地方使用写入单用户上下文的原始对象
-                    var newMessageContext = new TM()
+                    var newMessageContext = new TMC()
                     {
                         UserName = userName,
                         MaxRecordCount = MessageContextGlobalConfig.MaxRecordCount
@@ -273,7 +273,7 @@ namespace Senparc.NeuChar.Context
         /// 获取MessageContext，如果不存在，使用requestMessage信息初始化一个，并返回原始实例
         /// </summary>
         /// <returns></returns>
-        public TM GetMessageContext(TRequest requestMessage)
+        public TMC GetMessageContext(TRequest requestMessage)
         {
             var cache = CacheStrategyFactory.GetObjectCacheStrategyInstance();
             using (cache.BeginCacheLock(MessageContextGlobalConfig.MESSAGE_CONTENT_ITEM_LOCK_NAME, $"GetMessageContext-{requestMessage.FromUserName}"))
@@ -286,7 +286,7 @@ namespace Senparc.NeuChar.Context
         /// 获取MessageContext，如果不存在，使用responseMessage信息初始化一个，并返回原始实例
         /// </summary>
         /// <returns></returns>
-        public TM GetMessageContext(TResponse responseMessage)
+        public TMC GetMessageContext(TResponse responseMessage)
         {
             var cache = CacheStrategyFactory.GetObjectCacheStrategyInstance();
             using (cache.BeginCacheLock(MessageContextGlobalConfig.MESSAGE_CONTENT_ITEM_LOCK_NAME, $"GetMessageContext-{responseMessage.ToUserName}"))

@@ -37,7 +37,9 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
     修改描述：v0.5.2 修改 DateTime 为 DateTimeOffset
 
     修改标识：Senparc - 20190914
-    修改描述：v0.8.0 提供支持分布式缓存的消息上下文（MessageContext）
+    修改描述：v0.8.0 
+              1、提供支持分布式缓存的消息上下文（MessageContext）
+              2、将 IMessageContext<TRequest, TResponse> 接口中 TRequest、TResponse 约束为 class
 
 ----------------------------------------------------------------*/
 
@@ -55,8 +57,8 @@ namespace Senparc.NeuChar.Context
     /// <typeparam name="TRequest">请求消息类型</typeparam>
     /// <typeparam name="TResponse">响应消息类型</typeparam>
     public interface IMessageContext<TRequest, TResponse>
-        where TRequest : IRequestMessageBase
-        where TResponse : IResponseMessageBase
+        where TRequest : class, IRequestMessageBase
+        where TResponse : class, IResponseMessageBase
     {
         /// <summary>
         /// 用户名（OpenID）
@@ -111,8 +113,8 @@ namespace Senparc.NeuChar.Context
     /// 微信消息上下文（单个用户）
     /// </summary>
     public class MessageContext<TRequest, TResponse> : IMessageContext<TRequest, TResponse>
-        where TRequest : IRequestMessageBase
-        where TResponse : IResponseMessageBase
+        where TRequest : class, IRequestMessageBase
+        where TResponse : class, IResponseMessageBase
     {
         private int _maxRecordCount;
 

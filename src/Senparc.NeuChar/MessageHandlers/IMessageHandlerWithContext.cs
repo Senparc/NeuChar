@@ -53,8 +53,8 @@ namespace Senparc.NeuChar.MessageHandlers
     /// <typeparam name="TResponse"></typeparam>
     public interface IMessageHandlerWithContext<TC, TRequest, TResponse> : IMessageHandler<TRequest, TResponse>
         where TC : class, IMessageContext<TRequest, TResponse>, new()
-        where TRequest : IRequestMessageBase
-        where TResponse : IResponseMessageBase
+        where TRequest : class, IRequestMessageBase
+        where TResponse : class, IResponseMessageBase
     {
         /// <summary>
         /// 全局消息上下文
@@ -67,10 +67,10 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <summary>
         /// 忽略重复发送的同一条消息（通常因为微信服务器没有收到及时的响应）
         /// </summary>
-         bool OmitRepeatedMessage { get; set; }
+        bool OmitRepeatedMessage { get; set; }
         /// <summary>
         /// 消息是否已经被去重
         /// </summary>
-         bool MessageIsRepeated { get; set; }
+        bool MessageIsRepeated { get; set; }
     }
 }

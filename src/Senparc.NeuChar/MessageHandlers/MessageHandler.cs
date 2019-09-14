@@ -75,10 +75,10 @@ namespace Senparc.NeuChar.MessageHandlers
     /// 微信请求的集中处理方法
     /// 此方法中所有过程，都基于Senparc.NeuChar.基础功能，只为简化代码而设。
     /// </summary>
-    public abstract partial class MessageHandler<TC, TRequest, TResponse> : IMessageHandlerWithContext<TC, TRequest, TResponse>
-        where TC : class, IMessageContext<TRequest, TResponse>, new()
-        where TRequest : IRequestMessageBase
-        where TResponse : IResponseMessageBase
+    public abstract partial class MessageHandler<TMC, TRequest, TResponse> : IMessageHandlerWithContext<TMC, TRequest, TResponse>
+        where TMC : class, IMessageContext<TRequest, TResponse>, new()
+        where TRequest : class, IRequestMessageBase
+        where TResponse : class, IResponseMessageBase
     {
 
         #region 上下文 
@@ -86,12 +86,12 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <summary>
         /// 全局消息上下文
         /// </summary>
-        public abstract GlobalMessageContext<TC, TRequest, TResponse> GlobalMessageContext { get; }
+        public abstract GlobalMessageContext<TMC, TRequest, TResponse> GlobalMessageContext { get; }
 
         /// <summary>
-        /// 当前用户消息上下文
+        /// 当前用户消息上下文（注意：为保持数据一致性，每次访问都将从缓存重新读取）
         /// </summary>
-        public virtual TC CurrentMessageContext { get { return GlobalMessageContext.GetMessageContext(RequestMessage); } }
+        public virtual TMC CurrentMessageContext { get { return GlobalMessageContext.GetMessageContext(RequestMessage); } }
         //TODO：为了提高消息，需要做延迟加载
 
         /// <summary>

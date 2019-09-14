@@ -16,9 +16,9 @@ using System.Xml.Linq;
 
 namespace Senparc.NeuChar.Tests.Context
 {
-    public class CustomMessageHandler : MessageHandler<CustomMessageContext, IRequestMessageBase, IResponseMessageBase>
+    public class CustomMessageHandler : MessageHandler<CustomMessageContext, RequestMessageBase, ResponseMessageBase>
     {
-        public override GlobalMessageContext<CustomMessageContext, IRequestMessageBase, IResponseMessageBase> GlobalMessageContext => new GlobalMessageContext<CustomMessageContext, IRequestMessageBase, IResponseMessageBase>();
+        public override GlobalMessageContext<CustomMessageContext, RequestMessageBase, ResponseMessageBase> GlobalMessageContext => new GlobalMessageContext<CustomMessageContext, RequestMessageBase, ResponseMessageBase>();
 
         public override MessageEntityEnlightener MessageEntityEnlightener => MpMessageEntityEnlightener.Instance;
 
@@ -101,7 +101,7 @@ namespace Senparc.NeuChar.Tests.Context
         public override XDocument Init(XDocument requestDocument, IEncryptPostModel postModel)
         {
             XDocument decryptDoc = requestDocument;
-            RequestMessage = RequestMessageFactory.GetRequestEntity(decryptDoc);
+            RequestMessage = RequestMessageFactory.GetRequestEntity(decryptDoc) as RequestMessageBase;
 
             //去重    TODO：分离独立方法
             if (MessageContextGlobalConfig.UseMessageContext)
