@@ -36,6 +36,9 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
     修改标识：Senparc - 20181226
     修改描述：v0.5.2 修改 DateTime 为 DateTimeOffset
 
+    修改标识：Senparc - 20190914
+    修改描述：v0.8.0 提供支持分布式缓存的消息上下文（MessageContext）
+
 ----------------------------------------------------------------*/
 
 
@@ -113,6 +116,9 @@ namespace Senparc.NeuChar.Context
     {
         private int _maxRecordCount;
 
+        /// <summary>
+        /// 用户识别ID（微信中为 OpenId）
+        /// </summary>
         public string UserName { get; set; }
         /// <summary>
         /// 最后一次活动时间（用户主动发送Resquest请求的时间）
@@ -124,6 +130,10 @@ namespace Senparc.NeuChar.Context
         public DateTimeOffset? ThisActiveTime { get; set; }
         public MessageContainer<TRequest> RequestMessages { get; set; }
         public MessageContainer<TResponse> ResponseMessages { get; set; }
+
+        /// <summary>
+        /// 最大允许记录数
+        /// </summary>
         public int MaxRecordCount
         {
             get

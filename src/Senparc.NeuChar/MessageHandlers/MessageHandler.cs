@@ -45,12 +45,15 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
     修改标识：Senparc - 20181118
     修改描述：v0.4.3 
 
+    修改标识：Senparc - 20190914
+    修改描述：（V5.0）v0.8.0 提供支持分布式缓存的消息上下文（MessageContext）
 ----------------------------------------------------------------*/
 
 
 /*
  * V3.2
  * V4.0 添加异步方法
+ * v5.0 支持分布式缓存
  */
 
 using System;
@@ -78,29 +81,18 @@ namespace Senparc.NeuChar.MessageHandlers
         where TResponse : IResponseMessageBase
     {
 
-        #region 上下文
-
-        ///// <summary>
-        ///// 上下文
-        ///// </summary>
-        //public static WeixinContext<TC> GlobalWeixinContext = new WeixinContext<TC>();
-
-        /// <summary>
-        /// 全局消息上下文
-        /// </summary>
-        [Obsolete("请使用 GlobalMessageContext")]
-        public GlobalMessageContext<TC, TRequest, TResponse> WeixinContext { get { return GlobalMessageContext; } }
+        #region 上下文 
 
         /// <summary>
         /// 全局消息上下文
         /// </summary>
         public abstract GlobalMessageContext<TC, TRequest, TResponse> GlobalMessageContext { get; }
 
-
         /// <summary>
         /// 当前用户消息上下文
         /// </summary>
         public virtual TC CurrentMessageContext { get { return GlobalMessageContext.GetMessageContext(RequestMessage); } }
+        //TODO：为了提高消息，需要做延迟加载
 
         /// <summary>
         /// 忽略重复发送的同一条消息（通常因为微信服务器没有收到及时的响应）
@@ -304,7 +296,7 @@ namespace Senparc.NeuChar.MessageHandlers
         public void CommonInitialize(XDocument postDataDocument, int maxRecordCount, IEncryptPostModel postModel)
         {
             OmitRepeatedMessage = true;//默认开启去重
-            GlobalMessageContext.MaxRecordCount = maxRecordCount;
+            MessageContextGlobalConfig.MaxRecordCount = maxRecordCount;
             PostModel = postModel;//PostModel 在当前类初始化过程中必须赋值
             RequestDocument = Init(postDataDocument, postModel);
         }

@@ -27,12 +27,16 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 
     创建标识：Senparc - 20181022
 
+    修改标识：Senparc - 20190914
+    修改描述：（V5.0）v0.8.0 提供支持分布式缓存的消息上下文（MessageContext）
+
 ----------------------------------------------------------------*/
 
 
 /*
  * V3.2
  * V4.0 添加异步方法
+ * v5.0 支持分布式缓存
  */
 
 using Senparc.NeuChar.Context;
@@ -52,11 +56,6 @@ namespace Senparc.NeuChar.MessageHandlers
         where TRequest : IRequestMessageBase
         where TResponse : IResponseMessageBase
     {
-        /// <summary>
-        /// 全局消息上下文
-        /// </summary>
-        [Obsolete("请使用 GlobalMessageContext")]
-        GlobalMessageContext<TC, TRequest, TResponse> WeixinContext { get; }
         /// <summary>
         /// 全局消息上下文
         /// </summary>
