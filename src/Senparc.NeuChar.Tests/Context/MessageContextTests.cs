@@ -94,6 +94,12 @@ namespace Senparc.NeuChar.Tests.Context
         [TestMethod]
         public void RedisCacheTest()
         {
+            //注册
+            var redisConfigurationStr = "localhost:6379,defaultDatabase=3";
+            Senparc.CO2NET.Cache.Redis.Register.SetConfigurationOption(redisConfigurationStr);
+            Senparc.CO2NET.Cache.Redis.Register.UseKeyValueRedisNow();//键值对缓存策略（推荐）
+
+            DistributedCacheTest(() => CO2NET.Cache.Redis.RedisObjectCacheStrategy.Instance);
         }
     }
 }
