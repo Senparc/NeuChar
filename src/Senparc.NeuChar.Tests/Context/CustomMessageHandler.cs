@@ -38,7 +38,9 @@ namespace Senparc.NeuChar.Tests.Context
         public override void BuildResponseMessage()
         {
             var requestMessage = RequestMessage as RequestMessageText;
-
+            var responseMessge = this.CreateResponseMessage<ResponseMessageText>();
+            responseMessge.Content = $"来自单元测试:{requestMessage.Content}";
+            ResponseMessage = responseMessge;
         }
 
         /// <summary>
@@ -110,8 +112,6 @@ namespace Senparc.NeuChar.Tests.Context
                 using (cache.BeginCacheLock(MessageContextGlobalConfig.MESSAGE_CONTENT_OMIT_REPEAT_LOCK_NAME, "MessageHandler-Init"))//使用分布式锁
                 {
                     #region 消息去重
-
-                    Console.WriteLine("开始消息去重");
 
                     if (omit &&
                         OmitRepeatedMessage &&

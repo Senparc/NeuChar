@@ -28,6 +28,7 @@ namespace Senparc.NeuChar.Tests.MessageHandlers
         public override IResponseMessageBase DefaultResponseMessage(IRequestMessageBase requestMessage)
         {
             var responseMessage = this.CreateResponseMessage<ResponseMessageText>();
+            responseMessage.Content = "来自单元测试消息的默认响应消息";
             return responseMessage;
         }
     }
