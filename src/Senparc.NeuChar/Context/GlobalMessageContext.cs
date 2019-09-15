@@ -287,7 +287,6 @@ namespace Senparc.NeuChar.Context
             {
                 if (createIfNotExists)
                 {
-                    Console.WriteLine("createIfNotExists=true");
                     //全局只在这一个地方使用写入单用户上下文的原始对象
                     var newMessageContext = new TMC()
                     {
@@ -319,7 +318,6 @@ namespace Senparc.NeuChar.Context
             var cache = CacheStrategyFactory.GetObjectCacheStrategyInstance();
             using (cache.BeginCacheLock(MessageContextGlobalConfig.MESSAGE_CONTENT_ITEM_LOCK_NAME, $"GetMessageContext-{requestMessage.FromUserName}"))
             {
-                Console.WriteLine("TR-101-GetMessageContext-true");
                 return GetMessageContext(requestMessage.FromUserName, true);
             }
         }

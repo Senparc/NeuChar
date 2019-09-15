@@ -37,19 +37,20 @@ namespace Senparc.NeuChar.Context
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
-            Console.WriteLine("进入 ReadJson");
+            //参考：https://www.jerriepelser.com/blog/custom-converters-in-json-net-case-study-1/
+            //Console.WriteLine("进入 ReadJson");
 
             if (reader.TokenType == JsonToken.StartObject)
             {
-                Console.WriteLine("进入 JsonToken.StartObject");
+                //Console.WriteLine("进入 JsonToken.StartObject");
                 
                 JObject item = JObject.Load(reader);
-                Console.WriteLine("JObject item:"+ item.ToJson()+$" Count：{item.Count}");
                 if (item.Count==0)
                 {
                     //没有对象，返回空
                     return null;
                 }
+
 
                 var messageContext = new TMC();
                 messageContext.UserName = item["UserName"].Value<string>();
@@ -63,8 +64,6 @@ namespace Senparc.NeuChar.Context
 
                 if (item["RequestMessages"] != null)
                 {
-                    Console.WriteLine("RequestMessage is not null");
-
                     messageContext.RequestMessages = new MessageContainer<TRequest>();
                     foreach (var requestMessage in item["RequestMessages"].Children()) {
                         var msgType = (RequestMsgType)requestMessage["MsgType"].Value<int>();
@@ -75,15 +74,21 @@ namespace Senparc.NeuChar.Context
                             messageContext.RequestMessages.Add(filledEntity);
                         }
                     }
+                }
 
-                    //var users = item["users"].ToObject<IList<User>>(serializer);
-
-                    //int length = item["length"].Value<int>();
-                    //int limit = item["limit"].Value<int>();
-                    //int start = item["start"].Value<int>();
-                    //int total = item["total"].Value<int>();
-
-                    //return new PagedList<User>(users, new PagingInformation(start, limit, length, total));
+                if (item["ResponseMessages"] != null)
+                {
+                    messageContext.ResponseMessages = new MessageContainer<TResponse>();
+                    foreach (var responseMessage in item["ResponseMessages"].Children())
+                    {
+                        var msgType = (ResponseMsgType)responseMessage["MsgType"].Value<int>();
+                        var emptyEntity = messageContext.GetResponseEntityMappingResult(msgType);//获取空对象
+                        var filledEntity = responseMessage.ToObject(emptyEntity.GetType()) as TResponse;
+                        if (filledEntity != null)
+                        {
+                            messageContext.ResponseMessages.Add(filledEntity);
+                        }
+                    }
                 }
 
                 return messageContext;

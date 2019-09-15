@@ -53,7 +53,6 @@ namespace Senparc.NeuChar.Tests.Context
             var dt1 = SystemTime.Now;
             var doc = XDocument.Parse(textRequestXml.FormatWith("TNT2", CO2NET.Helpers.DateTimeHelper.GetUnixDateTime(SystemTime.Now.UtcDateTime), SystemTime.Now.Ticks));
             var messageHandler = new CustomMessageHandler(doc, postModel);
-            messageHandler.Execute();
 
             Assert.AreEqual(1, messageHandler.CurrentMessageContext.RequestMessages.Count);
             Assert.AreEqual(0, messageHandler.CurrentMessageContext.ResponseMessages.Count);
@@ -65,9 +64,7 @@ namespace Senparc.NeuChar.Tests.Context
             Assert.AreEqual(1, messageHandler.CurrentMessageContext.ResponseMessages.Count);
             Console.WriteLine(messageHandler.CurrentMessageContext.ResponseMessages.Last().GetType());
             Console.WriteLine(messageHandler.CurrentMessageContext.ResponseMessages.Last().ToJson());
-
-          
-
+            
             var lastResponseMessage = messageHandler.CurrentMessageContext.ResponseMessages.Last() as ResponseMessageText;
             Assert.IsNotNull(lastResponseMessage);
             Assert.AreEqual("来自单元测试:TNT2", lastResponseMessage.Content);
@@ -94,13 +91,13 @@ namespace Senparc.NeuChar.Tests.Context
             //测试去重
             var dt3 = SystemTime.Now;
             messageHandler = new CustomMessageHandler(doc, postModel);//使用和上次同样的请求
-            Assert.AreEqual(3, messageHandler.CurrentMessageContext.RequestMessages.Count);
+            Assert.AreEqual(2, messageHandler.CurrentMessageContext.RequestMessages.Count);
             Assert.AreEqual(2, messageHandler.CurrentMessageContext.ResponseMessages.Count);
 
             messageHandler.Execute();
             Console.WriteLine($"第 3 次请求耗时：{SystemTime.NowDiff(dt3).TotalMilliseconds} ms");
             //没有变化
-            Assert.AreEqual(3, messageHandler.CurrentMessageContext.RequestMessages.Count);
+            Assert.AreEqual(2, messageHandler.CurrentMessageContext.RequestMessages.Count);
             Assert.AreEqual(2, messageHandler.CurrentMessageContext.ResponseMessages.Count);
             lastResponseMessage = messageHandler.CurrentMessageContext.ResponseMessages.Last() as ResponseMessageText;
             Assert.IsNotNull(lastResponseMessage);
