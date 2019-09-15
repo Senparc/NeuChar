@@ -20,6 +20,16 @@ namespace Senparc.NeuChar.Context
         where TRequest : class, IRequestMessageBase
         where TResponse : class, IResponseMessageBase
     {
+
+        private DateTimeOffset? GetDateTimeOffset(JToken jToken) {
+            DateTime? dateTime = jToken.Value<DateTime?>();
+            if (!dateTime.HasValue)
+            {
+                return (DateTimeOffset?)null;
+            }
+            return DateTime.SpecifyKind(dateTime.Value, DateTimeKind.Utc);
+        }
+
         public override bool CanConvert(Type objectType)
         {
             return typeof(IMessageContext<TRequest, TResponse>).GetTypeInfo().IsAssignableFrom(objectType.GetTypeInfo());
@@ -41,18 +51,23 @@ namespace Senparc.NeuChar.Context
 
                 var messageContext = new TMC();
                 messageContext.UserName = item["UserName"].Value<string>();
-                messageContext.LastActiveTime = item["LastActiveTime"].Value<DateTimeOffset?>();
-                messageContext.ThisActiveTime = item["ThisActiveTime"].Value<DateTimeOffset?>();
+                messageContext.LastActiveTime = GetDateTimeOffset(item["LastActiveTime"]);
+                messageContext.ThisActiveTime = GetDateTimeOffset(item["ThisActiveTime"]);
                 messageContext.MaxRecordCount = item["MaxRecordCount"].Value<int>();
                 messageContext.StorageData = item["StorageData"].Value<object>();
                 messageContext.ExpireMinutes = item["ExpireMinutes"].Value<Double?>();
-                messageContext.AppStoreState = item["AppStoreState"].Value<AppStoreState>();
+                messageContext.AppStoreState = (AppStoreState)(item["AppStoreState"].Value<int>());
                 messageContext.CurrentAppDataItem = item["CurrentAppDataItem"].Value<AppDataItem>();
 
 
-                if (item["RequestMessage"] != null)
+                if (item["RequestMessages"] != null)
                 {
                     Console.WriteLine("RequestMessage is not null");
+
+                    foreach (var requestMessage in item["RequestMessages"].Children()) {
+                        //TODO: 做到这里
+                    }
+
                     //var users = item["users"].ToObject<IList<User>>(serializer);
 
                     //int length = item["length"].Value<int>();

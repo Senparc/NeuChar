@@ -43,7 +43,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 
 ----------------------------------------------------------------*/
 
-
+/* 注意：修改此文件的借口和属性是，需要同步修改 MessageContextJsonConverter 中的赋值，否则可能导致上下文读取时属性值缺失 */
 
 using System;
 using Newtonsoft.Json;

@@ -237,36 +237,21 @@ namespace Senparc.NeuChar.Context
 
             //注意：这里日过直接反序列化成 TMC，将无法保存类型，需要使用JsonConverter
 
-            Console.WriteLine("TR201");
-
-
             if (cache.CheckExisted(cacheKey))
             {
-                Console.WriteLine("TR202");
+                var jsonStr = cache.Get(cacheKey) as Newtonsoft.Json.Linq.JObject;//类型：Newtonsoft.Json.Linq.JObject
 
-                var jsonStr = cache.Get(cacheKey);
-
-                Console.WriteLine($"JsonStr （{cacheKey}）:" + jsonStr);
                 if (jsonStr == null)
                 {
-                    Console.WriteLine("TR202.1");
-
                     return null;
                 }
-                else
-                {
-                    Console.WriteLine(jsonStr.GetType());
-                }
-                Console.WriteLine("TR202.2");
-                return null;//to be remove
-
-
-                var result = JsonConvert.DeserializeObject<TMC>((jsonStr as string ) ?? "{}", new MessageContextJsonConverter<TMC, TRequest, TResponse>());
+                
+                var result = JsonConvert.DeserializeObject<TMC>(jsonStr.ToString(), new MessageContextJsonConverter<TMC, TRequest, TResponse>());
+                Console.WriteLine("从缓存读取result："+result.ToJson());
                 return result;
             }
             else
             {
-                Console.WriteLine("TR203");
 
                 return null;
             }
@@ -283,7 +268,6 @@ namespace Senparc.NeuChar.Context
         /// <returns></returns>
         private TMC GetMessageContext(string userName, bool createIfNotExists)
         {
-            Console.WriteLine("TR101");
             var messageContext = GetMessageContext(userName);
 
             if (messageContext == null)
@@ -300,11 +284,9 @@ namespace Senparc.NeuChar.Context
                     var cache = CacheStrategyFactory.GetObjectCacheStrategyInstance();
                     var cacheKey = this.GetCacheKey(userName);
                     var expireTime = GetExpireTimeSpan();
-                    Console.WriteLine($"TR102:add to cache ({cacheKey}):"+ newMessageContext.ToJson());
-                    Console.WriteLine($"TR103: Thread.Sleep");
-                    Thread.Sleep(500);
                     cache.Set(cacheKey, newMessageContext, expireTime);//插入单用户上下文的原始缓存对象
-                    messageContext = GetMessageContext(userName);
+                    //messageContext = GetMessageContext(userName);//注意！！这里如果使用Redis等分布式缓存立即从缓存读取，可能会因为还没有存入，发生为null的情况
+                    messageContext = newMessageContext;
                 }
                 else
                 {
