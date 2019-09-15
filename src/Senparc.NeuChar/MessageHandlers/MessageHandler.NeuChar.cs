@@ -37,6 +37,7 @@ using Senparc.CO2NET.Extensions;
 using Senparc.CO2NET.Helpers;
 using Senparc.CO2NET.Trace;
 using Senparc.CO2NET.Utilities;
+using Senparc.NeuChar.Context;
 using Senparc.NeuChar.Entities;
 using Senparc.NeuChar.Entities.App;
 using Senparc.NeuChar.NeuralSystems;
@@ -49,7 +50,10 @@ using System.Threading.Tasks;
 
 namespace Senparc.NeuChar.MessageHandlers
 {
-    public abstract partial class MessageHandler<TC, TRequest, TResponse>
+    public abstract partial class MessageHandler<TMC, TRequest, TResponse>
+        where TMC : class, IMessageContext<TRequest, TResponse>, new()
+        where TRequest : class, IRequestMessageBase
+        where TResponse : class, IResponseMessageBase
     {
         static MessageHandler()
         {

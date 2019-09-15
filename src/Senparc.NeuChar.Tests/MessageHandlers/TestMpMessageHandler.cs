@@ -13,7 +13,7 @@ namespace Senparc.NeuChar.Tests.MessageHandlers
     /// <summary>
     /// 测试公众号 MessageHandler
     /// </summary>
-    public class TestMpMessageHandler : MessageHandler<MessageContext<IRequestMessageBase, IResponseMessageBase>>
+    public class TestMpMessageHandler : MessageHandler<TestMpMessageContext>
     {
         public TestMpMessageHandler(XDocument requestDoc, PostModel postModel = null, int maxRecordCount = 0)
                 : base(requestDoc, postModel, maxRecordCount)
@@ -28,6 +28,7 @@ namespace Senparc.NeuChar.Tests.MessageHandlers
         public override IResponseMessageBase DefaultResponseMessage(IRequestMessageBase requestMessage)
         {
             var responseMessage = this.CreateResponseMessage<ResponseMessageText>();
+            responseMessage.Content = "来自单元测试消息的默认响应消息";
             return responseMessage;
         }
     }

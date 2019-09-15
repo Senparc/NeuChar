@@ -45,12 +45,15 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
     修改标识：Senparc - 20181118
     修改描述：v0.4.3 
 
+    修改标识：Senparc - 20190914
+    修改描述：（V5.0）v0.8.0 提供支持分布式缓存的消息上下文（MessageContext）
 ----------------------------------------------------------------*/
 
 
 /*
  * V3.2
  * V4.0 添加异步方法
+ * v5.0 支持分布式缓存
  */
 
 using System;
@@ -72,35 +75,24 @@ namespace Senparc.NeuChar.MessageHandlers
     /// 微信请求的集中处理方法
     /// 此方法中所有过程，都基于Senparc.NeuChar.基础功能，只为简化代码而设。
     /// </summary>
-    public abstract partial class MessageHandler<TC, TRequest, TResponse> : IMessageHandlerWithContext<TC, TRequest, TResponse>
-        where TC : class, IMessageContext<TRequest, TResponse>, new()
-        where TRequest : IRequestMessageBase
-        where TResponse : IResponseMessageBase
+    public abstract partial class MessageHandler<TMC, TRequest, TResponse> : IMessageHandlerWithContext<TMC, TRequest, TResponse>
+        where TMC : class, IMessageContext<TRequest, TResponse>, new()
+        where TRequest : class, IRequestMessageBase
+        where TResponse : class, IResponseMessageBase
     {
 
-        #region 上下文
-
-        ///// <summary>
-        ///// 上下文
-        ///// </summary>
-        //public static WeixinContext<TC> GlobalWeixinContext = new WeixinContext<TC>();
+        #region 上下文 
 
         /// <summary>
         /// 全局消息上下文
         /// </summary>
-        [Obsolete("请使用 GlobalMessageContext")]
-        public GlobalMessageContext<TC, TRequest, TResponse> WeixinContext { get { return GlobalMessageContext; } }
+        public abstract GlobalMessageContext<TMC, TRequest, TResponse> GlobalMessageContext { get; }
 
         /// <summary>
-        /// 全局消息上下文
+        /// 当前用户消息上下文（注意：为保持数据一致性，每次访问都将从缓存重新读取）
         /// </summary>
-        public abstract GlobalMessageContext<TC, TRequest, TResponse> GlobalMessageContext { get; }
-
-
-        /// <summary>
-        /// 当前用户消息上下文
-        /// </summary>
-        public virtual TC CurrentMessageContext { get { return GlobalMessageContext.GetMessageContext(RequestMessage); } }
+        public virtual TMC CurrentMessageContext { get { return GlobalMessageContext.GetMessageContext(RequestMessage); } }
+        //TODO：为了提高消息，需要做延迟加载
 
         /// <summary>
         /// 忽略重复发送的同一条消息（通常因为微信服务器没有收到及时的响应）
@@ -304,7 +296,7 @@ namespace Senparc.NeuChar.MessageHandlers
         public void CommonInitialize(XDocument postDataDocument, int maxRecordCount, IEncryptPostModel postModel)
         {
             OmitRepeatedMessage = true;//默认开启去重
-            GlobalMessageContext.MaxRecordCount = maxRecordCount;
+            MessageContextGlobalConfig.MaxRecordCount = maxRecordCount;
             PostModel = postModel;//PostModel 在当前类初始化过程中必须赋值
             RequestDocument = Init(postDataDocument, postModel);
         }

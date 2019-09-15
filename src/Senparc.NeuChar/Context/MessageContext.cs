@@ -36,11 +36,19 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
     修改标识：Senparc - 20181226
     修改描述：v0.5.2 修改 DateTime 为 DateTimeOffset
 
+    修改标识：Senparc - 20190914
+    修改描述：v0.8.0 
+              1、提供支持分布式缓存的消息上下文（MessageContext）
+              2、将 IMessageContext<TRequest, TResponse> 接口中 TRequest、TResponse 约束为 class
+              3、IMessageContext 接口添加 GetRequestEntityMappingResult() 和 GetResponseEntityMappingResult() 方法
+
 ----------------------------------------------------------------*/
 
-
+/* 注意：修改此文件的借口和属性是，需要同步修改 MessageContextJsonConverter 中的赋值，否则可能导致上下文读取时属性值缺失 */
 
 using System;
+using System.Xml.Linq;
+using Newtonsoft.Json;
 using Senparc.NeuChar.Entities;
 using Senparc.NeuChar.NeuralSystems;
 
@@ -52,8 +60,8 @@ namespace Senparc.NeuChar.Context
     /// <typeparam name="TRequest">请求消息类型</typeparam>
     /// <typeparam name="TResponse">响应消息类型</typeparam>
     public interface IMessageContext<TRequest, TResponse>
-        where TRequest : IRequestMessageBase
-        where TResponse : IResponseMessageBase
+        where TRequest : class, IRequestMessageBase
+        where TResponse : class, IResponseMessageBase
     {
         /// <summary>
         /// 用户名（OpenID）
@@ -102,17 +110,36 @@ namespace Senparc.NeuChar.Context
         event EventHandler<WeixinContextRemovedEventArgs<TRequest, TResponse>> MessageContextRemoved;
 
         void OnRemoved();
+
+        /// <summary>
+        /// 从 Xml 转换 RequestMessage 对象的处理（只是创建实例，不填充数据） 
+        /// </summary>
+        /// <param name="doc"></param>
+        /// <param name="postModel"></param>
+        /// <returns></returns>
+        TRequest GetRequestEntityMappingResult(RequestMsgType requestMsgType);
+
+        /// <summary>
+        /// 从 Xml 转换 RequestMessage 对象的处理（只是创建实例，不填充数据） 
+        /// </summary>
+        /// <param name="doc"></param>
+        /// <param name="postModel"></param>
+        /// <returns></returns>
+        TResponse GetResponseEntityMappingResult(ResponseMsgType responseMsgType);
     }
 
     /// <summary>
     /// 微信消息上下文（单个用户）
     /// </summary>
-    public class MessageContext<TRequest, TResponse> : IMessageContext<TRequest, TResponse>
-        where TRequest : IRequestMessageBase
-        where TResponse : IResponseMessageBase
+    public abstract class MessageContext<TRequest, TResponse> : IMessageContext<TRequest, TResponse>
+        where TRequest : class, IRequestMessageBase
+        where TResponse : class, IResponseMessageBase
     {
         private int _maxRecordCount;
 
+        /// <summary>
+        /// 用户识别ID（微信中为 OpenId）
+        /// </summary>
         public string UserName { get; set; }
         /// <summary>
         /// 最后一次活动时间（用户主动发送Resquest请求的时间）
@@ -122,8 +149,16 @@ namespace Senparc.NeuChar.Context
         /// 本次活动时间（当前消息收到的时间）
         /// </summary>
         public DateTimeOffset? ThisActiveTime { get; set; }
+
+        //[JsonConverter(typeof(MessageContextJsonConverter))]
         public MessageContainer<TRequest> RequestMessages { get; set; }
+
+        //[JsonConverter(typeof(MessageContextJsonConverter))]
         public MessageContainer<TResponse> ResponseMessages { get; set; }
+
+        /// <summary>
+        /// 最大允许记录数
+        /// </summary>
         public int MaxRecordCount
         {
             get
@@ -190,6 +225,22 @@ namespace Senparc.NeuChar.Context
             ResponseMessages = new MessageContainer<TResponse>(MaxRecordCount);
             LastActiveTime = SystemTime.Now;
         }
+
+        /// <summary>
+        /// 从 Xml 转换 RequestMessage 对象的处理（只是创建实例，不填充数据） 
+        /// </summary>
+        /// <param name="doc"></param>
+        /// <param name="postModel"></param>
+        /// <returns></returns>
+        public abstract TRequest GetRequestEntityMappingResult(RequestMsgType requestMsgType);
+
+        /// <summary>
+        /// 从 Xml 转换 RequestMessage 对象的处理（只是创建实例，不填充数据） 
+        /// </summary>
+        /// <param name="doc"></param>
+        /// <param name="postModel"></param>
+        /// <returns></returns>
+        public abstract TResponse GetResponseEntityMappingResult(ResponseMsgType responseMsgType);
 
         /// <summary>
         /// 此上下文被清除的时候触发

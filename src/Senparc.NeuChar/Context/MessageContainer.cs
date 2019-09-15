@@ -29,6 +29,10 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
     
     修改标识：Senparc - 20150303
     修改描述：整理接口
+
+    修改标识：Senparc - 20190914
+    修改描述：v0.8.0 提供支持分布式缓存的消息上下文（MessageContext）
+
 ----------------------------------------------------------------*/
 
 using System.Collections.Generic;
@@ -39,7 +43,7 @@ namespace Senparc.NeuChar.Context
     /// 消息容器（列表）
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class MessageContainer<T> : List<T> 
+    public class MessageContainer<T> : List<T>
         //where T : IMessageBase
     {
         /// <summary>
@@ -62,6 +66,9 @@ namespace Senparc.NeuChar.Context
             RemoveExpressItems();
         }
 
+        /// <summary>
+        /// 移除超出限制的上下文记录
+        /// </summary>
         private void RemoveExpressItems()
         {
             if (MaxRecordCount > 0 && base.Count > MaxRecordCount)

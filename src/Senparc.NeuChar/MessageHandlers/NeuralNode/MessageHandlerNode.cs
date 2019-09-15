@@ -53,8 +53,8 @@ namespace Senparc.NeuChar.NeuralSystems
         public IResponseMessageBase Execute<TC, TRequest, TResponse>(IRequestMessageBase requestMessage, IMessageHandlerWithContext<TC, TRequest, TResponse> messageHandler,
             string accessTokenOrApi)
         where TC : class, IMessageContext<TRequest, TResponse>, new()
-        where TRequest : IRequestMessageBase
-        where TResponse : IResponseMessageBase
+        where TRequest : class, IRequestMessageBase
+        where TResponse : class, IResponseMessageBase
         {
             //if (accessTokenOrApi == null)
             //{
@@ -291,8 +291,8 @@ namespace Senparc.NeuChar.NeuralSystems
         public async Task<IResponseMessageBase> ExecuteAsync<TC, TRequest, TResponse>(IRequestMessageBase requestMessage, IMessageHandlerWithContext<TC, TRequest, TResponse> messageHandler,
             string accessTokenOrApi)
         where TC : class, IMessageContext<TRequest, TResponse>, new()
-        where TRequest : IRequestMessageBase
-        where TResponse : IResponseMessageBase
+        where TRequest : class, IRequestMessageBase
+        where TResponse : class, IResponseMessageBase
         {
             //SenparcTrace.SendCustomLog("neuchar trace","1");
             return await Task.Run(() => Execute(requestMessage, messageHandler, accessTokenOrApi)).ConfigureAwait(false);
