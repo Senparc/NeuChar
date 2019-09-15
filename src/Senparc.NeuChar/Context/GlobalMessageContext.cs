@@ -239,7 +239,7 @@ namespace Senparc.NeuChar.Context
 
             if (cache.CheckExisted(cacheKey))
             {
-                var cacheResult = cache.Get(cacheKey) as Newtonsoft.Json.Linq.JObject;//类型：Newtonsoft.Json.Linq.JObject
+                var cacheResult = cache.Get(cacheKey);
 
                 if (cacheResult == null)
                 {
@@ -255,7 +255,7 @@ namespace Senparc.NeuChar.Context
                 if (cacheResult is Newtonsoft.Json.Linq.JObject jsonObj)
                 {
                     var jsonResult = JsonConvert.DeserializeObject<TMC>(jsonObj.ToString(), new MessageContextJsonConverter<TMC, TRequest, TResponse>());
-                    Console.WriteLine("从缓存读取result：\r\n" + jsonResult.ToJson(true));
+                    //Console.WriteLine("从缓存读取result：\r\n" + jsonResult.ToJson(true));
                     return jsonResult;
                 }
                 else
@@ -287,6 +287,7 @@ namespace Senparc.NeuChar.Context
             {
                 if (createIfNotExists)
                 {
+                    Console.WriteLine("createIfNotExists=true");
                     //全局只在这一个地方使用写入单用户上下文的原始对象
                     var newMessageContext = new TMC()
                     {
@@ -368,7 +369,7 @@ namespace Senparc.NeuChar.Context
                 var expireTime = GetExpireTimeSpan();
                 cache.Set(cacheKey, messageContext, expireTime);
 
-                Console.WriteLine("Insert RequestMessage");
+                //Console.WriteLine("Insert RequestMessage:\r\n"+ messageContext.ToJson(true));
             }
         }
 
