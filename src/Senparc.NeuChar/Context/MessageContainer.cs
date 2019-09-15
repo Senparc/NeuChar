@@ -66,6 +66,9 @@ namespace Senparc.NeuChar.Context
             RemoveExpressItems();
         }
 
+        /// <summary>
+        /// 移除超出限制的上下文记录
+        /// </summary>
         private void RemoveExpressItems()
         {
             if (MaxRecordCount > 0 && base.Count > MaxRecordCount)

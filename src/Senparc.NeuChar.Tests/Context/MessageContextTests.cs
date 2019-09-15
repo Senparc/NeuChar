@@ -1,6 +1,9 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Senparc.CO2NET.Cache;
+using Senparc.CO2NET.Cache.Redis;
 using Senparc.CO2NET.Extensions;
+using Senparc.NeuChar.Context;
+using Senparc.NeuChar.Entities;
 using Senparc.Weixin.MP.Entities;
 using Senparc.Weixin.MP.Entities.Request;
 using System;
@@ -36,15 +39,30 @@ namespace Senparc.NeuChar.Tests.Context
 
             Console.WriteLine($"当前使用缓存：{CacheStrategyFactory.GetObjectCacheStrategyInstance().GetType().FullName}");
 
-            //第一次请求
+            //清空缓存
+            var globalMessageContext = new GlobalMessageContext<CustomMessageContext, RequestMessageBase, ResponseMessageBase>();
+            globalMessageContext.Restore();
+
+
             var postModel = new PostModel()
             {
                 Token = "Token"
             };
 
+            //第一次请求
             var dt1 = SystemTime.Now;
-            var doc = XDocument.Parse(textRequestXml.FormatWith("TNT2", CO2NET.Helpers.DateTimeHelper.GetWeixinDateTime(SystemTime.Now.UtcDateTime), SystemTime.Now.Ticks));
+            var doc = XDocument.Parse(textRequestXml.FormatWith("TNT2", CO2NET.Helpers.DateTimeHelper.GetUnixDateTime(SystemTime.Now.UtcDateTime), SystemTime.Now.Ticks));
             var messageHandler = new CustomMessageHandler(doc, postModel);
+
+            #region 临时测试
+
+            var currentContext = messageHandler.CurrentMessageContext;
+            Console.WriteLine(currentContext);
+
+            return;
+
+            #endregion
+
             Assert.AreEqual(1, messageHandler.CurrentMessageContext.RequestMessages.Count);
             Assert.AreEqual(0, messageHandler.CurrentMessageContext.ResponseMessages.Count);
 
@@ -53,16 +71,19 @@ namespace Senparc.NeuChar.Tests.Context
 
             Assert.AreEqual(1, messageHandler.CurrentMessageContext.RequestMessages.Count);
             Assert.AreEqual(1, messageHandler.CurrentMessageContext.ResponseMessages.Count);
+            Console.WriteLine(messageHandler.CurrentMessageContext.ResponseMessages.Last().GetType());
+            Console.WriteLine(messageHandler.CurrentMessageContext.ResponseMessages.Last().ToJson());
+
+          
 
             var lastResponseMessage = messageHandler.CurrentMessageContext.ResponseMessages.Last() as ResponseMessageText;
             Assert.IsNotNull(lastResponseMessage);
             Assert.AreEqual("来自单元测试:TNT2", lastResponseMessage.Content);
 
 
-
             //第二次请求
             var dt2 = SystemTime.Now;
-            doc = XDocument.Parse(textRequestXml.FormatWith("TNT3", CO2NET.Helpers.DateTimeHelper.GetWeixinDateTime(SystemTime.Now.UtcDateTime), SystemTime.Now.Ticks));
+            doc = XDocument.Parse(textRequestXml.FormatWith("TNT3", CO2NET.Helpers.DateTimeHelper.GetUnixDateTime(SystemTime.Now.UtcDateTime), SystemTime.Now.Ticks));
             messageHandler = new CustomMessageHandler(doc, postModel);
             Assert.AreEqual(2, messageHandler.CurrentMessageContext.RequestMessages.Count);
             Assert.AreEqual(1, messageHandler.CurrentMessageContext.ResponseMessages.Count);

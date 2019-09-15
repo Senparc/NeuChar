@@ -46,6 +46,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 
 
 using System;
+using Newtonsoft.Json;
 using Senparc.NeuChar.Entities;
 using Senparc.NeuChar.NeuralSystems;
 
@@ -130,7 +131,11 @@ namespace Senparc.NeuChar.Context
         /// 本次活动时间（当前消息收到的时间）
         /// </summary>
         public DateTimeOffset? ThisActiveTime { get; set; }
+
+        //[JsonConverter(typeof(MessageContextJsonConverter))]
         public MessageContainer<TRequest> RequestMessages { get; set; }
+
+        //[JsonConverter(typeof(MessageContextJsonConverter))]
         public MessageContainer<TResponse> ResponseMessages { get; set; }
 
         /// <summary>

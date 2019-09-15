@@ -48,7 +48,10 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using Newtonsoft.Json;
 using Senparc.CO2NET.Cache;
+using Senparc.CO2NET.Extensions;
 using Senparc.NeuChar.Entities;
 
 namespace Senparc.NeuChar.Context
@@ -100,7 +103,7 @@ namespace Senparc.NeuChar.Context
     /// </summary>
     public class GlobalMessageContext<TMC, TRequest, TResponse>
         where TMC : class, IMessageContext<TRequest, TResponse>, new() //TODO:TRequest, TResponse直接写明基类类型
-        where TRequest : class,IRequestMessageBase
+        where TRequest : class, IRequestMessageBase
         where TResponse : class, IResponseMessageBase
     {
 
@@ -152,9 +155,10 @@ namespace Senparc.NeuChar.Context
             //删除所有键
             var finalKeyPrefix = cache.GetFinalKey(GetCacheKey(""));
             var allObjects = cache.GetAll();
-            var messageContextObjects = allObjects.Where(z => z.Key.StartsWith(finalKeyPrefix)).ToList();
+            var messageContextObjects = allObjects.Where(z => z.Key.StartsWith(finalKeyPrefix, StringComparison.Ordinal)).ToList();
             foreach (var item in messageContextObjects)
             {
+                Console.WriteLine($"{item.Key}");
                 cache.RemoveFromCache(item.Key, true);//移除
             }
 
@@ -230,7 +234,44 @@ namespace Senparc.NeuChar.Context
             //以下为新版本代码
             var cache = CacheStrategyFactory.GetObjectCacheStrategyInstance();
             var cacheKey = this.GetCacheKey(userName);
-            return cache.Get<TMC>(cacheKey);
+
+            //注意：这里日过直接反序列化成 TMC，将无法保存类型，需要使用JsonConverter
+
+            Console.WriteLine("TR201");
+
+
+            if (cache.CheckExisted(cacheKey))
+            {
+                Console.WriteLine("TR202");
+
+                var jsonStr = cache.Get(cacheKey);
+
+                Console.WriteLine($"JsonStr （{cacheKey}）:" + jsonStr);
+                if (jsonStr == null)
+                {
+                    Console.WriteLine("TR202.1");
+
+                    return null;
+                }
+                else
+                {
+                    Console.WriteLine(jsonStr.GetType());
+                }
+                Console.WriteLine("TR202.2");
+                return null;//to be remove
+
+
+                var result = JsonConvert.DeserializeObject<TMC>((jsonStr as string ) ?? "{}", new MessageContextJsonConverter<TMC, TRequest, TResponse>());
+                return result;
+            }
+            else
+            {
+                Console.WriteLine("TR203");
+
+                return null;
+            }
+
+            //return cache.Get<TMC>(cacheKey);
         }
 
         /// <summary>
@@ -242,6 +283,7 @@ namespace Senparc.NeuChar.Context
         /// <returns></returns>
         private TMC GetMessageContext(string userName, bool createIfNotExists)
         {
+            Console.WriteLine("TR101");
             var messageContext = GetMessageContext(userName);
 
             if (messageContext == null)
@@ -258,6 +300,9 @@ namespace Senparc.NeuChar.Context
                     var cache = CacheStrategyFactory.GetObjectCacheStrategyInstance();
                     var cacheKey = this.GetCacheKey(userName);
                     var expireTime = GetExpireTimeSpan();
+                    Console.WriteLine($"TR102:add to cache ({cacheKey}):"+ newMessageContext.ToJson());
+                    Console.WriteLine($"TR103: Thread.Sleep");
+                    Thread.Sleep(500);
                     cache.Set(cacheKey, newMessageContext, expireTime);//插入单用户上下文的原始缓存对象
                     messageContext = GetMessageContext(userName);
                 }
@@ -341,6 +386,10 @@ namespace Senparc.NeuChar.Context
             {
                 var messageContext = GetMessageContext(userName, true);
                 messageContext.ResponseMessages.Add(responseMessage);
+
+                var cacheKey = GetCacheKey(userName);
+                var expireTime = GetExpireTimeSpan();
+                cache.Set(cacheKey, messageContext, expireTime);
             }
         }
 

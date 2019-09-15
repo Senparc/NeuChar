@@ -18,7 +18,8 @@ namespace Senparc.NeuChar.Tests.Context
 {
     public class CustomMessageHandler : MessageHandler<CustomMessageContext, RequestMessageBase, ResponseMessageBase>
     {
-        public override GlobalMessageContext<CustomMessageContext, RequestMessageBase, ResponseMessageBase> GlobalMessageContext => new GlobalMessageContext<CustomMessageContext, RequestMessageBase, ResponseMessageBase>();
+        public override GlobalMessageContext<CustomMessageContext, RequestMessageBase, ResponseMessageBase> GlobalMessageContext => 
+            new GlobalMessageContext<CustomMessageContext, RequestMessageBase, ResponseMessageBase>();
 
         public override MessageEntityEnlightener MessageEntityEnlightener => MpMessageEntityEnlightener.Instance;
 

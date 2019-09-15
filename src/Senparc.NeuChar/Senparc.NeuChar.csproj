@@ -137,8 +137,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Senparc.CO2NET" Version="0.8.10" />
-    <PackageReference Include="Senparc.CO2NET.APM" Version="0.4.2" />
+    <PackageReference Include="Senparc.CO2NET" Version="0.9.0" />
+    <PackageReference Include="Senparc.CO2NET.APM" Version="0.4.3" />
   </ItemGroup>
 
 
