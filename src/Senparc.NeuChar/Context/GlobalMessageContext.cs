@@ -107,34 +107,6 @@ namespace Senparc.NeuChar.Context
         where TResponse : class, IResponseMessageBase
     {
 
-        ///// <summary>
-        ///// 所有MessageContext集合，不要直接操作此对象
-        ///// </summary>
-        //public Dictionary<string, TM> MessageCollection { get; set; }
-        //TODO:换成整个数据库访问
-
-        ///// <summary>
-        ///// MessageContext队列（LastActiveTime升序排列）,不要直接操作此对象
-        ///// </summary>
-        //public MessageQueue<TM, TRequest, TResponse> MessageQueue
-        //{
-        //    get
-        //    {
-        //        if (_messageQueue == null)
-        //        {
-        //            //载入
-        //            var cache = CacheStrategyFactory.GetObjectCacheStrategyInstance();
-        //            //TODO:获取命名空间下的所有对象
-        //            var messageQueue = (MessageQueue<TM, TRequest, TResponse>)null;
-        //            return messageQueue;
-        //        }
-        //        return null;
-        //    }
-        //}
-
-
-
-
         public GlobalMessageContext()
         {
             //Restore();
@@ -143,6 +115,18 @@ namespace Senparc.NeuChar.Context
         private string GetCacheKey(string userName)
         {
             return $"{MessageContextGlobalConfig.CACHE_KEY_PREFIX}{userName}";
+        }
+
+        /// <summary>
+        /// 获取过期时间 TimeSpan 对象
+        /// </summary>
+        /// <param name="expireMinutes"></param>
+        /// <returns></returns>
+        private TimeSpan? GetExpireTimeSpan(double? expireMinutes = null)
+        {
+            expireMinutes = expireMinutes ?? MessageContextGlobalConfig.ExpireMinutes;
+            TimeSpan? expireTimeSpan = expireMinutes > 0 ? TimeSpan.FromMinutes(expireMinutes.Value) : (TimeSpan?)null;
+            return expireTimeSpan;
         }
 
         /// <summary>
@@ -165,17 +149,6 @@ namespace Senparc.NeuChar.Context
             MessageContextGlobalConfig.ExpireMinutes = 90;
         }
 
-        /// <summary>
-        /// 获取过期时间 TimeSpan 对象
-        /// </summary>
-        /// <param name="expireMinutes"></param>
-        /// <returns></returns>
-        private TimeSpan? GetExpireTimeSpan(double? expireMinutes = null)
-        {
-            expireMinutes = expireMinutes ?? MessageContextGlobalConfig.ExpireMinutes;
-            TimeSpan? expireTimeSpan = expireMinutes > 0 ? TimeSpan.FromMinutes(expireMinutes.Value) : (TimeSpan?)null;
-            return expireTimeSpan;
-        }
 
         /// <summary>
         /// 获取MessageContext，如果不存在，返回null
@@ -185,52 +158,6 @@ namespace Senparc.NeuChar.Context
         /// <returns></returns>
         private TMC GetMessageContext(string userName)
         {
-            //检查并移除过期记录，为了尽量节约资源，这里暂不使用独立线程轮询
-
-
-
-            //while (MessageQueue.Count > 0)
-            //{
-            //    var firstMessageContext = MessageQueue[0];
-            //    var timeSpan = SystemTime.Now - (firstMessageContext.LastActiveTime.HasValue ? firstMessageContext.LastActiveTime.Value : SystemTime.Now);
-            //    //确定对话过期时间
-            //    var expireMinutes = firstMessageContext.ExpireMinutes.HasValue
-            //        ? firstMessageContext.ExpireMinutes.Value //队列自定义事件
-            //        : this.ExpireMinutes;//全局统一默认时间
-
-            //    //TODO:这里假设按照队列顺序过期，实际再加入了自定义过期时间之后，可能不遵循这个规律   —— Jeffrey Su 2018.1.23
-            //    if (timeSpan.TotalMinutes >= expireMinutes)
-            //    {
-            //        MessageQueue.RemoveAt(0);//从队列中移除过期对象
-            //        MessageCollection.Remove(firstMessageContext.UserName);//从集合中删除过期对象
-
-            //        //添加事件回调
-            //        firstMessageContext.OnRemoved();//TODO:此处异步处理，或用户在自己操作的时候异步处理需要耗费时间比较长的操作。
-            //    }
-            //    else
-            //    {
-            //        break;
-            //    }
-            //}
-
-
-            //TODO:使用缓存过期后，OnRemoved() 将失效
-
-            /* 
-                * 全局只有在这里用到MessageCollection.ContainsKey
-                * 充分分离MessageCollection内部操作，
-                * 为以后变化或扩展MessageCollection留余地
-                */
-
-
-            //if (!MessageCollection.ContainsKey(userName))
-            //{
-            //    return null;
-            //}
-
-            //return MessageCollection[userName];
-
-
             //以下为新版本代码
             var cache = CacheStrategyFactory.GetObjectCacheStrategyInstance();
             var cacheKey = this.GetCacheKey(userName);
@@ -268,8 +195,6 @@ namespace Senparc.NeuChar.Context
 
                 return null;
             }
-
-            //return cache.Get<TMC>(cacheKey);
         }
 
         /// <summary>
@@ -419,5 +344,15 @@ namespace Senparc.NeuChar.Context
                 return messageContext.ResponseMessages.LastOrDefault();
             }
         }
+
+        /// <summary>
+        /// 每一个MessageContext过期时间（分钟）
+        /// </summary>
+        public Double ExpireMinutes { get => MessageContextGlobalConfig.ExpireMinutes; set => MessageContextGlobalConfig.ExpireMinutes = value; }
+
+        /// <summary>
+        /// 最大储存上下文数量（分别针对请求和响应信息）
+        /// </summary>
+        public int MaxRecordCount { get => MessageContextGlobalConfig.MaxRecordCount; set => MessageContextGlobalConfig.MaxRecordCount = value; }
     }
 }
