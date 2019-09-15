@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net45;netstandard2.0</TargetFrameworks>
-    <Version>0.5.6</Version>
+    <Version>0.5.7-preview2</Version>
     <AssemblyName>Senparc.NeuChar.App</AssemblyName>
     <RootNamespace>Senparc.NeuChar.App</RootNamespace>
     <GeneratePackageOnBuild Condition=" '$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
@@ -39,6 +39,7 @@
       v0.5.0 从 Senparc.Weixin.MP 移植引入 AppStore
       v0.5.5 使用最新版本 CO2NET
       v0.5.6 使用新版本 NeuChar
+      v0.5.7 使用新版本 NeuChar
     </PackageReleaseNotes>
     <RepositoryUrl>https://github.com/JeffreySu/WeiXinMPSDK</RepositoryUrl>
     <Configurations>Debug;Release;Test</Configurations>
