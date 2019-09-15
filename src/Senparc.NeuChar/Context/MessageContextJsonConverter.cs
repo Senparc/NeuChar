@@ -59,7 +59,6 @@ namespace Senparc.NeuChar.Context
                 messageContext.AppStoreState = (AppStoreState)(item["AppStoreState"].Value<int>());
                 messageContext.CurrentAppDataItem = item["CurrentAppDataItem"].Value<AppDataItem>();
 
-
                 if (item["RequestMessages"] != null)
                 {
                     Console.WriteLine("RequestMessage is not null");
