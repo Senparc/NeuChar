@@ -27,12 +27,16 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 
     创建标识：Senparc - 20181022
 
+    修改标识：Senparc - 20190914
+    修改描述：（V5.0）v0.8.0 提供支持分布式缓存的消息上下文（MessageContext）
+
 ----------------------------------------------------------------*/
 
 
 /*
  * V3.2
  * V4.0 添加异步方法
+ * v5.0 支持分布式缓存
  */
 
 using Senparc.NeuChar.Context;
@@ -49,14 +53,9 @@ namespace Senparc.NeuChar.MessageHandlers
     /// <typeparam name="TResponse"></typeparam>
     public interface IMessageHandlerWithContext<TC, TRequest, TResponse> : IMessageHandler<TRequest, TResponse>
         where TC : class, IMessageContext<TRequest, TResponse>, new()
-        where TRequest : IRequestMessageBase
-        where TResponse : IResponseMessageBase
+        where TRequest : class, IRequestMessageBase
+        where TResponse : class, IResponseMessageBase
     {
-        /// <summary>
-        /// 全局消息上下文
-        /// </summary>
-        [Obsolete("请使用 GlobalMessageContext")]
-        GlobalMessageContext<TC, TRequest, TResponse> WeixinContext { get; }
         /// <summary>
         /// 全局消息上下文
         /// </summary>
@@ -68,10 +67,10 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <summary>
         /// 忽略重复发送的同一条消息（通常因为微信服务器没有收到及时的响应）
         /// </summary>
-         bool OmitRepeatedMessage { get; set; }
+        bool OmitRepeatedMessage { get; set; }
         /// <summary>
         /// 消息是否已经被去重
         /// </summary>
-         bool MessageIsRepeated { get; set; }
+        bool MessageIsRepeated { get; set; }
     }
 }

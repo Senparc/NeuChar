@@ -33,6 +33,8 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 ----------------------------------------------------------------*/
 
 using Senparc.CO2NET.MessageQueue;
+using Senparc.NeuChar.Context;
+using Senparc.NeuChar.Entities;
 using Senparc.NeuChar.Exceptions;
 using System;
 using System.IO;
@@ -41,7 +43,10 @@ using System.Web;
 #endif
 namespace Senparc.NeuChar.MessageHandlers
 {
-    public abstract partial class MessageHandler<TC, TRequest, TResponse>
+    public abstract partial class MessageHandler<TMC, TRequest, TResponse>
+        where TMC : class, IMessageContext<TRequest, TResponse>, new()
+        where TRequest : class, IRequestMessageBase
+        where TResponse : class, IResponseMessageBase
     {
         readonly Func<string> _getRandomFileName = () => SystemTime.Now.ToString("yyyyMMdd-HHmmss") + Guid.NewGuid().ToString("n").Substring(0, 6);
 
@@ -131,11 +136,11 @@ namespace Senparc.NeuChar.MessageHandlers
                             this.ResponseMessage.MsgType)));
                     }
 
-                    if (this.ResponseDocument ==null && this.TextResponseMessage!=null)
+                    if (this.ResponseDocument == null && this.TextResponseMessage != null)
                     {
                         System.IO.File.WriteAllText(Path.Combine(logPath, string.Format("{0}_TextResponse_{1}_{2}.txt", _getRandomFileName(),
                             this.RequestMessage.ToUserName,
-                            this.RequestMessage.MsgType)),this.TextResponseMessage);
+                            this.RequestMessage.MsgType)), this.TextResponseMessage);
                     }
                 });
             }
