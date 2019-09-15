@@ -37,6 +37,8 @@ namespace Senparc.NeuChar.Context
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
+            Console.WriteLine("进入 ReadJson");
+
             if (reader.TokenType == JsonToken.StartObject)
             {
                 Console.WriteLine("进入 JsonToken.StartObject");
@@ -63,8 +65,15 @@ namespace Senparc.NeuChar.Context
                 {
                     Console.WriteLine("RequestMessage is not null");
 
+                    messageContext.RequestMessages = new MessageContainer<TRequest>();
                     foreach (var requestMessage in item["RequestMessages"].Children()) {
-                        //TODO: 做到这里
+                        var msgType = (RequestMsgType)requestMessage["MsgType"].Value<int>();
+                        var emptyEntity = messageContext.GetRequestEntityMappingResult(msgType);//获取空对象
+                        var filledEntity = requestMessage.ToObject(emptyEntity.GetType()) as TRequest;
+                        if (filledEntity!=null)
+                        {
+                            messageContext.RequestMessages.Add(filledEntity);
+                        }
                     }
 
                     //var users = item["users"].ToObject<IList<User>>(serializer);

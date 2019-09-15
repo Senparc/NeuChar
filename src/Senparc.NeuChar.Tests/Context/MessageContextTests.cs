@@ -53,11 +53,12 @@ namespace Senparc.NeuChar.Tests.Context
             var dt1 = SystemTime.Now;
             var doc = XDocument.Parse(textRequestXml.FormatWith("TNT2", CO2NET.Helpers.DateTimeHelper.GetUnixDateTime(SystemTime.Now.UtcDateTime), SystemTime.Now.Ticks));
             var messageHandler = new CustomMessageHandler(doc, postModel);
+            messageHandler.Execute();
 
             #region 临时测试
 
             var currentContext = messageHandler.CurrentMessageContext;
-            Console.WriteLine(currentContext);
+            Console.WriteLine("\r\ncurrentContext:\r\n" + currentContext.ToJson(true));
 
             return;
 

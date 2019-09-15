@@ -239,16 +239,29 @@ namespace Senparc.NeuChar.Context
 
             if (cache.CheckExisted(cacheKey))
             {
-                var jsonStr = cache.Get(cacheKey) as Newtonsoft.Json.Linq.JObject;//类型：Newtonsoft.Json.Linq.JObject
+                var cacheResult = cache.Get(cacheKey) as Newtonsoft.Json.Linq.JObject;//类型：Newtonsoft.Json.Linq.JObject
 
-                if (jsonStr == null)
+                if (cacheResult == null)
                 {
                     return null;
                 }
-                
-                var result = JsonConvert.DeserializeObject<TMC>(jsonStr.ToString(), new MessageContextJsonConverter<TMC, TRequest, TResponse>());
-                Console.WriteLine("从缓存读取result："+result.ToJson());
-                return result;
+
+                if (cacheResult is TMC result)
+                {
+                    return result;//比如使用内存缓存，此处会是原始对象
+                }
+
+                //TODO: 这里强制绑定 Newtonsoft 弹性并不好，后期必须进行分离！！！
+                if (cacheResult is Newtonsoft.Json.Linq.JObject jsonObj)
+                {
+                    var jsonResult = JsonConvert.DeserializeObject<TMC>(jsonObj.ToString(), new MessageContextJsonConverter<TMC, TRequest, TResponse>());
+                    Console.WriteLine("从缓存读取result：\r\n" + jsonResult.ToJson(true));
+                    return jsonResult;
+                }
+                else
+                {
+                    throw new Exception("未知缓存对象，或未经注册的缓存框架");
+                }
             }
             else
             {
@@ -305,6 +318,7 @@ namespace Senparc.NeuChar.Context
             var cache = CacheStrategyFactory.GetObjectCacheStrategyInstance();
             using (cache.BeginCacheLock(MessageContextGlobalConfig.MESSAGE_CONTENT_ITEM_LOCK_NAME, $"GetMessageContext-{requestMessage.FromUserName}"))
             {
+                Console.WriteLine("TR-101-GetMessageContext-true");
                 return GetMessageContext(requestMessage.FromUserName, true);
             }
         }
@@ -353,6 +367,8 @@ namespace Senparc.NeuChar.Context
                 var cacheKey = GetCacheKey(userName);
                 var expireTime = GetExpireTimeSpan();
                 cache.Set(cacheKey, messageContext, expireTime);
+
+                Console.WriteLine("Insert RequestMessage");
             }
         }
 
