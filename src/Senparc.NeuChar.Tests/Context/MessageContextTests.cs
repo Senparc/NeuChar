@@ -103,6 +103,11 @@ namespace Senparc.NeuChar.Tests.Context
             Assert.IsNotNull(lastResponseMessage);
             Assert.AreEqual("来自单元测试:TNT3", lastResponseMessage.Content);
 
+
+            //测试最大纪录储存
+
+
+
             //清空
             messageHandler.GlobalMessageContext.Restore();
             Assert.AreEqual(0, messageHandler.CurrentMessageContext.RequestMessages.Count);
