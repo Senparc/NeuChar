@@ -114,18 +114,18 @@ namespace Senparc.NeuChar.Context
         /// <summary>
         /// 从 Xml 转换 RequestMessage 对象的处理（只是创建实例，不填充数据） 
         /// </summary>
-        /// <param name="doc"></param>
-        /// <param name="postModel"></param>
+        /// <param name="requestMsgType">RequestMsgType</param>
+        /// <param name="doc">RequestMessage 的明文 XML</param>
         /// <returns></returns>
-        TRequest GetRequestEntityMappingResult(RequestMsgType requestMsgType);
+        TRequest GetRequestEntityMappingResult(RequestMsgType requestMsgType, XDocument doc = null);
 
         /// <summary>
         /// 从 Xml 转换 RequestMessage 对象的处理（只是创建实例，不填充数据） 
         /// </summary>
-        /// <param name="doc"></param>
-        /// <param name="postModel"></param>
+        /// <param name="responseMsgType">RequestMsgType</param>
+        /// <param name="doc">ResponseMessage 的明文 XML</param>
         /// <returns></returns>
-        TResponse GetResponseEntityMappingResult(ResponseMsgType responseMsgType);
+        TResponse GetResponseEntityMappingResult(ResponseMsgType responseMsgType, XDocument doc = null);
     }
 
     /// <summary>
@@ -229,18 +229,18 @@ namespace Senparc.NeuChar.Context
         /// <summary>
         /// 从 Xml 转换 RequestMessage 对象的处理（只是创建实例，不填充数据） 
         /// </summary>
-        /// <param name="doc"></param>
-        /// <param name="postModel"></param>
+        /// <param name="requestMsgType">RequestMsgType</param>
+        /// <param name="doc">RequestMessage 的明文 XML</param>
         /// <returns></returns>
-        public abstract TRequest GetRequestEntityMappingResult(RequestMsgType requestMsgType);
+        public abstract TRequest GetRequestEntityMappingResult(RequestMsgType requestMsgType, XDocument doc = null);
 
         /// <summary>
         /// 从 Xml 转换 RequestMessage 对象的处理（只是创建实例，不填充数据） 
         /// </summary>
-        /// <param name="doc"></param>
-        /// <param name="postModel"></param>
+        /// <param name="responseMsgType">RequestMsgType</param>
+        /// <param name="doc">ResponseMessage 的明文 XML</param>
         /// <returns></returns>
-        public abstract TResponse GetResponseEntityMappingResult(ResponseMsgType responseMsgType);
+        public abstract TResponse GetResponseEntityMappingResult(ResponseMsgType responseMsgType, XDocument doc = null);
 
         /// <summary>
         /// 此上下文被清除的时候触发
