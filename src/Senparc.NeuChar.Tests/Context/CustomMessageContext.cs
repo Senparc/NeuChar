@@ -1,5 +1,6 @@
 ﻿using Senparc.NeuChar.Context;
 using Senparc.NeuChar.Entities;
+using Senparc.Weixin.MP.Entities;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,6 +12,36 @@ namespace Senparc.NeuChar.Tests.Context
         public CustomMessageContext()
         {
             base.MessageContextRemoved += CustomMessageContext_MessageContextRemoved;
+        }
+
+        public override RequestMessageBase GetRequestEntityMappingResult(RequestMsgType requestMsgType)
+        {
+            RequestMessageBase requestMessage;
+            switch (requestMsgType)
+            {
+                case RequestMsgType.Text:
+                    requestMessage =  new RequestMessageText();//借用MP的对象，也可以在单元测试中新建类
+                    break;
+                default:
+                    throw new Exception("未定义此类型："+ requestMsgType);
+            }
+
+            return requestMessage;
+        }
+
+        public override ResponseMessageBase GetResponseEntityMappingResult(ResponseMsgType responseMsgType)
+        {
+            ResponseMessageBase responseMessage = null;
+            switch (responseMsgType)
+            {
+                case ResponseMsgType.Text:
+                    responseMessage =  new ResponseMessageText();
+                    break;
+                default:
+                    throw new Exception("未定义此类型：" + responseMsgType);
+            }
+
+            return responseMessage;
         }
 
 

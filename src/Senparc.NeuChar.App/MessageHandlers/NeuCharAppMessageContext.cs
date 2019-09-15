@@ -1,5 +1,6 @@
 ﻿using Senparc.NeuChar.Context;
 using Senparc.NeuChar.Entities;
+using Senparc.NeuChar.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,21 @@ namespace Senparc.NeuChar.App.MessageHandlers
             base.MessageContextRemoved += NeuCharAppMessageContext_MessageContextRemoved;
         }
 
+        public override RequestMessageNeuChar GetRequestEntityMappingResult(RequestMsgType requestMsgType)
+        {
+            if (requestMsgType != RequestMsgType.NeuChar)
+            {
+                throw new MessageHandlerException("仅支持 NeuChar 类型请求");
+            }
+
+            var requestMessage = new RequestMessageNeuChar();
+            return requestMessage;
+        }
+
+        public override SuccessResponseMessage GetResponseEntityMappingResult(ResponseMsgType responseMsgType)
+        {
+            throw new NotImplementedException();//不需要记录上下文，所以这里 ResponseMessage 消息可以忽略
+        }
 
         /// <summary>
         /// 当上下文过期，被移除时触发的时间

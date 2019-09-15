@@ -13,7 +13,7 @@ namespace Senparc.NeuChar.Tests.MessageHandlers
     /// <summary>
     /// 测试公众号 MessageHandler
     /// </summary>
-    public class TestWxOpenMessageHandler : MessageHandler<MessageContext<IRequestMessageBase, IResponseMessageBase>>
+    public class TestWxOpenMessageHandler : MessageHandler<TestWxOpenMessageContext>
     {
         public TestWxOpenMessageHandler(XDocument requestDoc, PostModel postModel = null, int maxRecordCount = 0)
                 : base(requestDoc, postModel, maxRecordCount)
