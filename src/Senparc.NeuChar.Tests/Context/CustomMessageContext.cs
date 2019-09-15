@@ -4,6 +4,7 @@ using Senparc.Weixin.MP.Entities;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Xml.Linq;
 
 namespace Senparc.NeuChar.Tests.Context
 {
@@ -14,7 +15,7 @@ namespace Senparc.NeuChar.Tests.Context
             base.MessageContextRemoved += CustomMessageContext_MessageContextRemoved;
         }
 
-        public override RequestMessageBase GetRequestEntityMappingResult(RequestMsgType requestMsgType)
+        public override RequestMessageBase GetRequestEntityMappingResult(RequestMsgType requestMsgType, XDocument doc = null)
         {
             RequestMessageBase requestMessage;
             switch (requestMsgType)
@@ -29,7 +30,7 @@ namespace Senparc.NeuChar.Tests.Context
             return requestMessage;
         }
 
-        public override ResponseMessageBase GetResponseEntityMappingResult(ResponseMsgType responseMsgType)
+        public override ResponseMessageBase GetResponseEntityMappingResult(ResponseMsgType responseMsgType, XDocument doc = null)
         {
             ResponseMessageBase responseMessage = null;
             switch (responseMsgType)

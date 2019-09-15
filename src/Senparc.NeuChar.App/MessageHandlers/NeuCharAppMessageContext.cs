@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml.Linq;
 
 namespace Senparc.NeuChar.App.MessageHandlers
 {
@@ -15,7 +16,7 @@ namespace Senparc.NeuChar.App.MessageHandlers
             base.MessageContextRemoved += NeuCharAppMessageContext_MessageContextRemoved;
         }
 
-        public override RequestMessageNeuChar GetRequestEntityMappingResult(RequestMsgType requestMsgType)
+        public override RequestMessageNeuChar GetRequestEntityMappingResult(RequestMsgType requestMsgType, XDocument doc = null)
         {
             if (requestMsgType != RequestMsgType.NeuChar)
             {
@@ -26,7 +27,7 @@ namespace Senparc.NeuChar.App.MessageHandlers
             return requestMessage;
         }
 
-        public override SuccessResponseMessage GetResponseEntityMappingResult(ResponseMsgType responseMsgType)
+        public override SuccessResponseMessage GetResponseEntityMappingResult(ResponseMsgType responseMsgType, XDocument doc = null)
         {
             throw new NotImplementedException();//不需要记录上下文，所以这里 ResponseMessage 消息可以忽略
         }
