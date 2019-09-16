@@ -21,11 +21,11 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 /*----------------------------------------------------------------
     Copyright (C) 2018 Senparc
     
-    文件名：RequestMessageUnknownType.cs
-    文件功能描述：未知请求类型
+    文件名：ResponseMessageUnknownType.cs
+    文件功能描述：未知响应类型
     
     
-    创建标识：Senparc - 20171027
+    创建标识：Senparc - 20190916
     
 ----------------------------------------------------------------*/
 
@@ -39,19 +39,19 @@ using System.Xml.Linq;
 namespace Senparc.NeuChar.Entities
 {
     /// <summary>
-    /// 未知请求类型
+    /// 未知响应类型
     /// </summary>
-    public class RequestMessageUnknownType : RequestMessageBase, IRequestMessageBase
+    public class ResponseMessageUnknownType : ResponseMessageBase, IResponseMessageBase
     {
-        public override RequestMsgType MsgType
+        public override ResponseMsgType MsgType
         {
-            get { return RequestMsgType.Unknown; }
+            get { return ResponseMsgType.Unknown; }
         }
 
         /// <summary>
-        /// 请求消息的XML对象（明文）
+        /// 响应消息的XML对象（明文）
         /// </summary>
-        public XDocument RequestDocument { get; set; }
+        public XDocument ResponseDocument { get; set; }
 
     }
 }
