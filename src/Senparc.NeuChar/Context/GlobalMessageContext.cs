@@ -83,17 +83,25 @@ namespace Senparc.NeuChar.Context
         /// </summary>
         public static bool UseMessageContext { get; set; } = true;
 
-
-
         /// <summary>
-        /// 每一个MessageContext过期时间（分钟）
+        /// 每一个MessageContext过期时间（分钟），默认 30
         /// </summary>
-        public static Double ExpireMinutes { get; set; }
-
+        public static int ExpireMinutes { get; set; }
         /// <summary>
-        /// 最大储存上下文数量（分别针对请求和响应信息）
+        /// 最大储存上下文数量（分别针对请求和响应信息），默认 20
         /// </summary>
         public static int MaxRecordCount { get; set; }
+
+        static MessageContextGlobalConfig()
+        {
+            Restore();
+        }
+
+        public static void Restore()
+        {
+            ExpireMinutes = 30;
+            MaxRecordCount = 20;
+        }
     }
 
 
@@ -107,9 +115,61 @@ namespace Senparc.NeuChar.Context
         where TResponse : class, IResponseMessageBase
     {
 
+        private int _lastGlobalExpireMinutes;
+        private int _expireMinutes;
+
+        private int _lastGlobalMaxRecordCount;
+        private int _maxRecordCount;
+
+
+        /// <summary>
+        /// 每一个MessageContext过期时间（分钟）
+        /// </summary>
+        public int ExpireMinutes
+        {
+            get
+            {
+                if (_lastGlobalExpireMinutes != MessageContextGlobalConfig.ExpireMinutes)
+                {
+                    _expireMinutes = MessageContextGlobalConfig.ExpireMinutes;//全局参数已更新，当前上下文参数联动更新
+                    _lastGlobalExpireMinutes = _expireMinutes;
+                }
+                return _expireMinutes;
+            }
+            set
+            {
+                _expireMinutes = value;
+            }
+        }
+
+        /// <summary>
+        /// 最大储存上下文数量（分别针对请求和响应信息）
+        /// </summary>
+        public int MaxRecordCount
+        {
+            get
+            {
+                if (_lastGlobalMaxRecordCount != MessageContextGlobalConfig.MaxRecordCount)
+                {
+                    _maxRecordCount = MessageContextGlobalConfig.MaxRecordCount;
+                    _lastGlobalMaxRecordCount = _maxRecordCount;
+                }
+                return _maxRecordCount;
+            }
+            set
+            {
+                _maxRecordCount = value;
+            }
+        }
+
+
         public GlobalMessageContext()
         {
-            //Restore();
+            ExpireMinutes = MessageContextGlobalConfig.ExpireMinutes;
+            _lastGlobalExpireMinutes = ExpireMinutes;
+
+            MaxRecordCount = MessageContextGlobalConfig.MaxRecordCount;
+            _lastGlobalMaxRecordCount = MaxRecordCount;
         }
 
         private string GetCacheKey(string userName)
@@ -146,7 +206,8 @@ namespace Senparc.NeuChar.Context
                 cache.RemoveFromCache(item.Key, true);//移除
             }
 
-            MessageContextGlobalConfig.ExpireMinutes = 90;
+            ExpireMinutes = MessageContextGlobalConfig.ExpireMinutes;
+            MaxRecordCount = MessageContextGlobalConfig.MaxRecordCount;
         }
 
 
@@ -266,6 +327,11 @@ namespace Senparc.NeuChar.Context
         /// <param name="requestMessage">请求信息</param>
         public void InsertMessage(TRequest requestMessage)
         {
+            if (requestMessage == null)
+            {
+                return;
+            }
+
             var userName = requestMessage.FromUserName;
             var cache = CacheStrategyFactory.GetObjectCacheStrategyInstance();
             using (cache.BeginCacheLock(MessageContextGlobalConfig.MESSAGE_CONTENT_ITEM_LOCK_NAME, $"InsertMessage-{userName}"))
@@ -286,7 +352,7 @@ namespace Senparc.NeuChar.Context
 
                 messageContext.LastActiveTime = messageContext.ThisActiveTime;//记录上一次请求时间
                 messageContext.ThisActiveTime = SystemTime.Now;//记录本次请求时间
-                messageContext.RequestMessages.Add(requestMessage);//录入消息
+                messageContext.RequestMessages.Add(requestMessage);//录入消息（最大纪录限制会自动处理）
 
                 var cacheKey = GetCacheKey(userName);
                 var expireTime = GetExpireTimeSpan();
@@ -302,12 +368,17 @@ namespace Senparc.NeuChar.Context
         /// <param name="responseMessage">响应信息</param>
         public void InsertMessage(TResponse responseMessage)
         {
+            if (responseMessage == null)
+            {
+                return;
+            }
+
             var userName = responseMessage.ToUserName;
             var cache = CacheStrategyFactory.GetObjectCacheStrategyInstance();
             using (cache.BeginCacheLock(MessageContextGlobalConfig.MESSAGE_CONTENT_ITEM_LOCK_NAME, $"InsertMessage-{userName}"))
             {
                 var messageContext = GetMessageContext(userName, true);
-                messageContext.ResponseMessages.Add(responseMessage);
+                messageContext.ResponseMessages.Add(responseMessage);//录入消息（最大纪录限制会自动处理）
 
                 var cacheKey = GetCacheKey(userName);
                 var expireTime = GetExpireTimeSpan();
@@ -344,15 +415,5 @@ namespace Senparc.NeuChar.Context
                 return messageContext.ResponseMessages.LastOrDefault();
             }
         }
-
-        /// <summary>
-        /// 每一个MessageContext过期时间（分钟）
-        /// </summary>
-        public Double ExpireMinutes { get => MessageContextGlobalConfig.ExpireMinutes; set => MessageContextGlobalConfig.ExpireMinutes = value; }
-
-        /// <summary>
-        /// 最大储存上下文数量（分别针对请求和响应信息）
-        /// </summary>
-        public int MaxRecordCount { get => MessageContextGlobalConfig.MaxRecordCount; set => MessageContextGlobalConfig.MaxRecordCount = value; }
     }
 }

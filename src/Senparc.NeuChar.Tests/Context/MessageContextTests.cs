@@ -32,6 +32,12 @@ namespace Senparc.NeuChar.Tests.Context
 </xml>
 ";
 
+        PostModel postModel = new PostModel()
+        {
+            Token = "Token"
+        };
+
+
         public void DistributedCacheTest(Func<IBaseObjectCacheStrategy> cacheStrategy)
         {
             //强制使用本地缓存
@@ -43,12 +49,7 @@ namespace Senparc.NeuChar.Tests.Context
             var globalMessageContext = new GlobalMessageContext<CustomMessageContext, RequestMessageBase, ResponseMessageBase>();
             globalMessageContext.Restore();
 
-
-            var postModel = new PostModel()
-            {
-                Token = "Token"
-            };
-
+           
             //第一次请求
             var dt1 = SystemTime.Now;
             var doc = XDocument.Parse(textRequestXml.FormatWith("TNT2", CO2NET.Helpers.DateTimeHelper.GetUnixDateTime(SystemTime.Now.UtcDateTime), SystemTime.Now.Ticks));
@@ -64,7 +65,7 @@ namespace Senparc.NeuChar.Tests.Context
             Assert.AreEqual(1, messageHandler.CurrentMessageContext.ResponseMessages.Count);
             Console.WriteLine(messageHandler.CurrentMessageContext.ResponseMessages.Last().GetType());
             Console.WriteLine(messageHandler.CurrentMessageContext.ResponseMessages.Last().ToJson());
-            
+
             var lastResponseMessage = messageHandler.CurrentMessageContext.ResponseMessages.Last() as ResponseMessageText;
             Assert.IsNotNull(lastResponseMessage);
             Assert.AreEqual("来自单元测试:TNT2", lastResponseMessage.Content);
@@ -106,6 +107,21 @@ namespace Senparc.NeuChar.Tests.Context
 
             //测试最大纪录储存
 
+            messageHandler.GlobalMessageContext.MaxRecordCount = 10;
+            Console.WriteLine("==== 循环测试开始 ====");
+            for (int i = 0; i < 15; i++)
+            {
+                var dt4 = SystemTime.Now;
+                doc = XDocument.Parse(textRequestXml.FormatWith($"循环测试-{i}", CO2NET.Helpers.DateTimeHelper.GetUnixDateTime(SystemTime.Now.UtcDateTime), SystemTime.Now.Ticks));
+                messageHandler = new CustomMessageHandler(doc, postModel);//使用和上次同样的请求
+                messageHandler.Execute();
+
+                Assert.AreEqual(i < 8 ? i + 3 : 11, messageHandler.CurrentMessageContext.RequestMessages.Count);
+                Assert.AreEqual(i < 8 ? i + 3 : 11, messageHandler.CurrentMessageContext.ResponseMessages.Count);
+
+                Console.WriteLine($"第 {i + 1} 次循环测试请求耗时：{SystemTime.NowDiff(dt4).TotalMilliseconds} ms");
+            }
+            Console.WriteLine("==== 循环测试结束 ====");
 
 
             //清空
@@ -131,6 +147,47 @@ namespace Senparc.NeuChar.Tests.Context
             Senparc.CO2NET.Cache.Redis.Register.UseKeyValueRedisNow();//键值对缓存策略（推荐）
 
             DistributedCacheTest(() => CO2NET.Cache.Redis.RedisObjectCacheStrategy.Instance);
+        }
+
+        /// <summary>
+        /// 全局参数设置
+        /// </summary>
+        [TestMethod]
+        public void GlobalSettingTest()
+        {
+            var doc = XDocument.Parse(textRequestXml.FormatWith("GlobalSettingTest", CO2NET.Helpers.DateTimeHelper.GetUnixDateTime(SystemTime.Now.UtcDateTime), SystemTime.Now.Ticks));
+            var recordCount = 0;
+            var messageHandler = new CustomMessageHandler(doc, postModel, recordCount);
+
+            Assert.AreEqual(MessageContextGlobalConfig.ExpireMinutes, messageHandler.GlobalMessageContext.ExpireMinutes);
+            //Assert.AreEqual(MessageContextGlobalConfig.MaxRecordCount, messageHandler.GlobalMessageContext.MaxRecordCount);
+            Console.WriteLine($"MessageContextGlobalConfig.ExpireMinutes:{MessageContextGlobalConfig.ExpireMinutes}");
+            //Console.WriteLine($"MessageContextGlobalConfig.MaxRecordCount:{MessageContextGlobalConfig.MaxRecordCount}");
+
+            //小范围参数设置不影响全局参数
+            messageHandler.GlobalMessageContext.ExpireMinutes = 99;
+            //messageHandler.GlobalMessageContext.MaxRecordCount = 88;
+
+            Assert.AreEqual(99, messageHandler.GlobalMessageContext.ExpireMinutes);
+            //Assert.AreEqual(88, messageHandler.GlobalMessageContext.MaxRecordCount);
+
+            //全局参数修改后，所有对象都会被更新
+            MessageContextGlobalConfig.ExpireMinutes = 199;
+            MessageContextGlobalConfig.MaxRecordCount = 188;
+
+            Assert.AreEqual(199, MessageContextGlobalConfig.ExpireMinutes);
+            Assert.AreEqual(188, MessageContextGlobalConfig.MaxRecordCount);
+            Assert.AreEqual(199, messageHandler.GlobalMessageContext.ExpireMinutes);
+            Assert.AreEqual(188, messageHandler.GlobalMessageContext.MaxRecordCount);
+
+            //重置参数
+            MessageContextGlobalConfig.Restore();
+            Assert.AreEqual(30, MessageContextGlobalConfig.ExpireMinutes);
+            Assert.AreEqual(20, MessageContextGlobalConfig.MaxRecordCount);
+
+            Assert.AreEqual(30, messageHandler.GlobalMessageContext.ExpireMinutes);
+            Assert.AreEqual(20, messageHandler.GlobalMessageContext.MaxRecordCount);
+
         }
     }
 }
