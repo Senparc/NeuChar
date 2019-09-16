@@ -35,6 +35,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 
 ----------------------------------------------------------------*/
 
+using Senparc.NeuChar.Entities;
 using System.Collections.Generic;
 
 namespace Senparc.NeuChar.Context
@@ -44,7 +45,7 @@ namespace Senparc.NeuChar.Context
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public class MessageContainer<T> : List<T>
-        //where T : IMessageBase
+        where T : IMessageBase
     {
         /// <summary>
         /// 最大记录条数（保留尾部），如果小于等于0则不限制
@@ -71,9 +72,12 @@ namespace Senparc.NeuChar.Context
         /// </summary>
         private void RemoveExpressItems()
         {
+            System.Console.WriteLine("RemoveExpressItems:"+base.Count+" / "+MaxRecordCount);
+            //说明：为了提高效率，这里不加锁
             if (MaxRecordCount > 0 && base.Count > MaxRecordCount)
             {
                 base.RemoveRange(0, base.Count - MaxRecordCount);
+                System.Console.WriteLine("Now:" + this.Count);
             }
         }
 

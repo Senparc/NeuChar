@@ -77,7 +77,7 @@ namespace Senparc.NeuChar.MessageHandlers
         /// 保存请求信息
         /// <para>测试时可开启此记录，帮助跟踪数据，使用前请确保App_Data文件夹存在，且有读写权限。</para>
         /// </summary>
-        /// <param name="logPath">保存日志目录，默认为 ~/App_Data/&lt;模块类型&gt;/<yyyy-MM-dd>/</param>
+        /// <param name="logPath">保存日志目录，默认为 ~/App_Data/&lt;模块类型&gt;/&lt;yyyy-MM-dd&gt;/</param>
         public void SaveRequestMessageLog(string logPath = null)
         {
             try
@@ -108,7 +108,7 @@ namespace Senparc.NeuChar.MessageHandlers
         /// 保存响应信息
         /// <para>测试时可开启此记录，帮助跟踪数据，使用前请确保App_Data文件夹存在，且有读写权限。</para>
         /// </summary>
-        /// <param name="logPath">保存日志目录，默认为 ~/App_Data/&lt;模块类型&gt;/<yyyy-MM-dd>/</param>
+        /// <param name="logPath">保存日志目录，默认为 ~/App_Data/&lt;模块类型&gt;/&lt;yyyy-MM-dd&gt;/</param>
         public void SaveResponseMessageLog(string logPath = null)
         {
             try

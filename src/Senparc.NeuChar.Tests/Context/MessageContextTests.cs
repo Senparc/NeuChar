@@ -49,7 +49,7 @@ namespace Senparc.NeuChar.Tests.Context
             var globalMessageContext = new GlobalMessageContext<CustomMessageContext, RequestMessageBase, ResponseMessageBase>();
             globalMessageContext.Restore();
 
-           
+
             //第一次请求
             var dt1 = SystemTime.Now;
             var doc = XDocument.Parse(textRequestXml.FormatWith("TNT2", CO2NET.Helpers.DateTimeHelper.GetUnixDateTime(SystemTime.Now.UtcDateTime), SystemTime.Now.Ticks));
@@ -107,17 +107,17 @@ namespace Senparc.NeuChar.Tests.Context
 
             //测试最大纪录储存
 
-            messageHandler.GlobalMessageContext.MaxRecordCount = 10;
             Console.WriteLine("==== 循环测试开始 ====");
             for (int i = 0; i < 15; i++)
             {
                 var dt4 = SystemTime.Now;
                 doc = XDocument.Parse(textRequestXml.FormatWith($"循环测试-{i}", CO2NET.Helpers.DateTimeHelper.GetUnixDateTime(SystemTime.Now.UtcDateTime), SystemTime.Now.Ticks));
                 messageHandler = new CustomMessageHandler(doc, postModel);//使用和上次同样的请求
+                messageHandler.GlobalMessageContext.MaxRecordCount = 10;
                 messageHandler.Execute();
 
-                Assert.AreEqual(i < 8 ? i + 3 : 11, messageHandler.CurrentMessageContext.RequestMessages.Count);
-                Assert.AreEqual(i < 8 ? i + 3 : 11, messageHandler.CurrentMessageContext.ResponseMessages.Count);
+                Assert.AreEqual(i < 7 ? i + 3 : 10, messageHandler.CurrentMessageContext.RequestMessages.Count);
+                Assert.AreEqual(i < 7 ? i + 3 : 10, messageHandler.CurrentMessageContext.ResponseMessages.Count);
 
                 Console.WriteLine($"第 {i + 1} 次循环测试请求耗时：{SystemTime.NowDiff(dt4).TotalMilliseconds} ms");
             }

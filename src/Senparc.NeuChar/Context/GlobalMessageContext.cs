@@ -352,6 +352,12 @@ namespace Senparc.NeuChar.Context
 
                 messageContext.LastActiveTime = messageContext.ThisActiveTime;//记录上一次请求时间
                 messageContext.ThisActiveTime = SystemTime.Now;//记录本次请求时间
+
+                //判断约束有没有修改
+                if (messageContext.MaxRecordCount != this.MaxRecordCount)
+                {
+                    messageContext.MaxRecordCount = this.MaxRecordCount;
+                }
                 messageContext.RequestMessages.Add(requestMessage);//录入消息（最大纪录限制会自动处理）
 
                 var cacheKey = GetCacheKey(userName);
@@ -378,10 +384,17 @@ namespace Senparc.NeuChar.Context
             using (cache.BeginCacheLock(MessageContextGlobalConfig.MESSAGE_CONTENT_ITEM_LOCK_NAME, $"InsertMessage-{userName}"))
             {
                 var messageContext = GetMessageContext(userName, true);
+
+                //判断约束有没有修改
+                if (messageContext.MaxRecordCount != this.MaxRecordCount)
+                {
+                    messageContext.MaxRecordCount = this.MaxRecordCount;
+                }
                 messageContext.ResponseMessages.Add(responseMessage);//录入消息（最大纪录限制会自动处理）
 
                 var cacheKey = GetCacheKey(userName);
                 var expireTime = GetExpireTimeSpan();
+
                 cache.Set(cacheKey, messageContext, expireTime);
             }
         }

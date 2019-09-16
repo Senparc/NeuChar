@@ -31,7 +31,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
     修改描述：整理接口
 ----------------------------------------------------------------*/
 
-
+/* v0.8 开始支持分布式缓存，MessageQueue 已经没有储存信息的价值 */
 
 using System.Collections.Generic;
 using Senparc.NeuChar.Entities;
