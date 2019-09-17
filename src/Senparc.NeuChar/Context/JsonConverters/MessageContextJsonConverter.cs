@@ -54,6 +54,9 @@ namespace Senparc.NeuChar.Context
 
 
                 var messageContext = new TMC();
+                try
+                {
+
                 messageContext.UserName = item["UserName"].Value<string>();
                 messageContext.LastActiveTime = GetDateTimeOffset(item["LastActiveTime"]);
                 messageContext.ThisActiveTime = GetDateTimeOffset(item["ThisActiveTime"]);
@@ -95,6 +98,11 @@ namespace Senparc.NeuChar.Context
                     }
                 }
 
+                }
+                catch (Exception ex)
+                {
+                    throw;
+                }
                 return messageContext;
             }
             else
