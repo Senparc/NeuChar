@@ -72,12 +72,10 @@ namespace Senparc.NeuChar.Context
         /// </summary>
         private void RemoveExpressItems()
         {
-            System.Console.WriteLine("RemoveExpressItems:"+base.Count+" / "+MaxRecordCount);
             //说明：为了提高效率，这里不加锁
             if (MaxRecordCount > 0 && base.Count > MaxRecordCount)
             {
                 base.RemoveRange(0, base.Count - MaxRecordCount);
-                System.Console.WriteLine("Now:" + this.Count);
             }
         }
 

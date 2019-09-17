@@ -37,6 +37,12 @@ namespace Senparc.NeuChar.Tests.Context
             Token = "Token"
         };
 
+        public MessageContextTests() {
+        
+}
+
+        #region DistributedCacheTest
+
 
         public void DistributedCacheTest(Func<IBaseObjectCacheStrategy> cacheStrategy)
         {
@@ -111,10 +117,14 @@ namespace Senparc.NeuChar.Tests.Context
             for (int i = 0; i < 15; i++)
             {
                 var dt4 = SystemTime.Now;
-                doc = XDocument.Parse(textRequestXml.FormatWith($"循环测试-{i}", CO2NET.Helpers.DateTimeHelper.GetUnixDateTime(SystemTime.Now.UtcDateTime), SystemTime.Now.Ticks));
-                messageHandler = new CustomMessageHandler(doc, postModel);//使用和上次同样的请求
-                messageHandler.GlobalMessageContext.MaxRecordCount = 10;
+                doc = XDocument.Parse(textRequestXml.FormatWith($"循环测试-{i}", CO2NET.Helpers.DateTimeHelper.GetUnixDateTime(SystemTime.Now.UtcDateTime) + i, SystemTime.Now.Ticks));
+                var maxRecordCount = 10;
+                messageHandler = new CustomMessageHandler(doc, postModel, maxRecordCount);//使用和上次同样的请求
+                //messageHandler.GlobalMessageContext.MaxRecordCount = 10;//在这里设置的话，Request已经插入了，无法及时触发删除多余消息的过程
                 messageHandler.Execute();
+
+                //TODO:Redis此处会超出
+                Console.WriteLine(messageHandler.CurrentMessageContext.RequestMessages.Count +"|" + messageHandler.CurrentMessageContext.ResponseMessages.Count);
 
                 Assert.AreEqual(i < 7 ? i + 3 : 10, messageHandler.CurrentMessageContext.RequestMessages.Count);
                 Assert.AreEqual(i < 7 ? i + 3 : 10, messageHandler.CurrentMessageContext.ResponseMessages.Count);
@@ -148,6 +158,7 @@ namespace Senparc.NeuChar.Tests.Context
 
             DistributedCacheTest(() => CO2NET.Cache.Redis.RedisObjectCacheStrategy.Instance);
         }
+        #endregion
 
         /// <summary>
         /// 全局参数设置
@@ -156,20 +167,20 @@ namespace Senparc.NeuChar.Tests.Context
         public void GlobalSettingTest()
         {
             var doc = XDocument.Parse(textRequestXml.FormatWith("GlobalSettingTest", CO2NET.Helpers.DateTimeHelper.GetUnixDateTime(SystemTime.Now.UtcDateTime), SystemTime.Now.Ticks));
-            var recordCount = 0;
+            var recordCount = MessageContextGlobalConfig.MaxRecordCount + 1;
             var messageHandler = new CustomMessageHandler(doc, postModel, recordCount);
 
             Assert.AreEqual(MessageContextGlobalConfig.ExpireMinutes, messageHandler.GlobalMessageContext.ExpireMinutes);
-            //Assert.AreEqual(MessageContextGlobalConfig.MaxRecordCount, messageHandler.GlobalMessageContext.MaxRecordCount);
+            Assert.AreEqual(MessageContextGlobalConfig.MaxRecordCount + 1, messageHandler.GlobalMessageContext.MaxRecordCount);
             Console.WriteLine($"MessageContextGlobalConfig.ExpireMinutes:{MessageContextGlobalConfig.ExpireMinutes}");
-            //Console.WriteLine($"MessageContextGlobalConfig.MaxRecordCount:{MessageContextGlobalConfig.MaxRecordCount}");
+            Console.WriteLine($"MessageContextGlobalConfig.MaxRecordCount:{MessageContextGlobalConfig.MaxRecordCount}");
 
             //小范围参数设置不影响全局参数
             messageHandler.GlobalMessageContext.ExpireMinutes = 99;
-            //messageHandler.GlobalMessageContext.MaxRecordCount = 88;
+            messageHandler.GlobalMessageContext.MaxRecordCount = 88;
 
             Assert.AreEqual(99, messageHandler.GlobalMessageContext.ExpireMinutes);
-            //Assert.AreEqual(88, messageHandler.GlobalMessageContext.MaxRecordCount);
+            Assert.AreEqual(88, messageHandler.GlobalMessageContext.MaxRecordCount);
 
             //全局参数修改后，所有对象都会被更新
             MessageContextGlobalConfig.ExpireMinutes = 199;

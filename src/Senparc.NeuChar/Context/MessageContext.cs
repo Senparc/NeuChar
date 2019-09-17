@@ -167,6 +167,7 @@ namespace Senparc.NeuChar.Context
             }
             set
             {
+                //消息列表中调整最大记录数
                 RequestMessages.MaxRecordCount = value;
                 ResponseMessages.MaxRecordCount = value;
 

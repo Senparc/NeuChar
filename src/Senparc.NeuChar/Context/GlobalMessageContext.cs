@@ -121,6 +121,9 @@ namespace Senparc.NeuChar.Context
         private int _lastGlobalMaxRecordCount;
         private int _maxRecordCount;
 
+        /* 注意：1、如果 GlobalMessageContext 对象生命周期很多（比如再一次 MessageHandler 内），那么这里临时调整的意义不大，如果设为全局变量将有意义 
+                 2、如果不用分布式缓存储存此结果，光使用静态变量，可能会导致线程间同步的问题
+             */
 
         /// <summary>
         /// 每一个MessageContext过期时间（分钟）
@@ -357,7 +360,9 @@ namespace Senparc.NeuChar.Context
                 if (messageContext.MaxRecordCount != this.MaxRecordCount)
                 {
                     messageContext.MaxRecordCount = this.MaxRecordCount;
+                    //messageContext.RequestMessages.MaxRecordCount = messageContext.MaxRecordCount;
                 }
+
                 messageContext.RequestMessages.Add(requestMessage);//录入消息（最大纪录限制会自动处理）
 
                 var cacheKey = GetCacheKey(userName);

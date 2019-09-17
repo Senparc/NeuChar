@@ -84,15 +84,30 @@ namespace Senparc.NeuChar.MessageHandlers
 
         #region 上下文 
 
+        static GlobalMessageContext<TMC, TRequest, TResponse> _globalMessageContext;
+
         /// <summary>
         /// 全局消息上下文
         /// </summary>
-        public abstract GlobalMessageContext<TMC, TRequest, TResponse> GlobalMessageContext { get; }
+        public virtual GlobalMessageContext<TMC, TRequest, TResponse> GlobalMessageContext
+        {
+            get
+            {
+                if (_globalMessageContext == null)
+                {
+                    _globalMessageContext = new GlobalMessageContext<TMC, TRequest, TResponse>();
+                }
+                return _globalMessageContext;
+            }
+        }
 
         /// <summary>
         /// 当前用户消息上下文（注意：为保持数据一致性，每次访问都将从缓存重新读取）
         /// </summary>
-        public virtual TMC CurrentMessageContext { get { return GlobalMessageContext.GetMessageContext(RequestMessage); } }
+        public virtual TMC CurrentMessageContext { get {
+                var result = GlobalMessageContext.GetMessageContext(RequestMessage);
+                return result;
+            } }
         //TODO：为了提高消息，需要做延迟加载
 
         /// <summary>
@@ -322,7 +337,7 @@ namespace Senparc.NeuChar.MessageHandlers
         public void CommonInitialize(XDocument postDataDocument, int maxRecordCount, IEncryptPostModel postModel)
         {
             OmitRepeatedMessage = true;//默认开启去重
-
+            
             GlobalMessageContext.MaxRecordCount = maxRecordCount;
 
             PostModel = postModel;//PostModel 在当前类初始化过程中必须赋值
