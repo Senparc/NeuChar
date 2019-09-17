@@ -15,13 +15,14 @@ namespace Senparc.NeuChar.Context
     /// <summary>
     /// Json 反序列化时用到的 JsonConverter
     /// </summary>
-    public class MessageContextJsonConverter<TMC,TRequest, TResponse> : JsonConverter
+    public class MessageContextJsonConverter<TMC, TRequest, TResponse> : JsonConverter
         where TMC : class, IMessageContext<TRequest, TResponse>, new() //TODO:TRequest, TResponse直接写明基类类型
         where TRequest : class, IRequestMessageBase
         where TResponse : class, IResponseMessageBase
     {
 
-        private DateTimeOffset? GetDateTimeOffset(JToken jToken) {
+        private DateTimeOffset? GetDateTimeOffset(JToken jToken)
+        {
             DateTime? dateTime = jToken.Value<DateTime?>();
             if (!dateTime.HasValue)
             {
@@ -43,9 +44,9 @@ namespace Senparc.NeuChar.Context
             if (reader.TokenType == JsonToken.StartObject)
             {
                 //Console.WriteLine("进入 JsonToken.StartObject");
-                
+
                 JObject item = JObject.Load(reader);
-                if (item.Count==0)
+                if (item.Count == 0)
                 {
                     //没有对象，返回空
                     return null;
@@ -56,20 +57,24 @@ namespace Senparc.NeuChar.Context
                 messageContext.UserName = item["UserName"].Value<string>();
                 messageContext.LastActiveTime = GetDateTimeOffset(item["LastActiveTime"]);
                 messageContext.ThisActiveTime = GetDateTimeOffset(item["ThisActiveTime"]);
-                messageContext.MaxRecordCount = item["MaxRecordCount"].Value<int>();
                 messageContext.StorageData = item["StorageData"].Value<object>();
                 messageContext.ExpireMinutes = item["ExpireMinutes"].Value<Double?>();
                 messageContext.AppStoreState = (AppStoreState)(item["AppStoreState"].Value<int>());
                 messageContext.CurrentAppDataItem = item["CurrentAppDataItem"].Value<AppDataItem>();
 
+                messageContext.RequestMessages = new MessageContainer<TRequest>();
+                messageContext.ResponseMessages = new MessageContainer<TResponse>();
+                //MaxRecordCount 设置之后，会自动设置 RequestMessages 和 ResponseMessages内的对应参数
+                messageContext.MaxRecordCount = item["MaxRecordCount"].Value<int>();
+
                 if (item["RequestMessages"] != null)
                 {
-                    messageContext.RequestMessages = new MessageContainer<TRequest>();
-                    foreach (var requestMessage in item["RequestMessages"].Children()) {
+                    foreach (var requestMessage in item["RequestMessages"].Children())
+                    {
                         var msgType = (RequestMsgType)requestMessage["MsgType"].Value<int>();
                         var emptyEntity = messageContext.GetRequestEntityMappingResult(msgType);//获取空对象
                         var filledEntity = requestMessage.ToObject(emptyEntity.GetType()) as TRequest;
-                        if (filledEntity!=null)
+                        if (filledEntity != null)
                         {
                             messageContext.RequestMessages.Add(filledEntity);
                         }
@@ -78,7 +83,6 @@ namespace Senparc.NeuChar.Context
 
                 if (item["ResponseMessages"] != null)
                 {
-                    messageContext.ResponseMessages = new MessageContainer<TResponse>();
                     foreach (var responseMessage in item["ResponseMessages"].Children())
                     {
                         var msgType = (ResponseMsgType)responseMessage["MsgType"].Value<int>();

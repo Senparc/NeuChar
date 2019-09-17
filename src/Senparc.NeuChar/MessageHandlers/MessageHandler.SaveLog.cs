@@ -1,7 +1,7 @@
 ﻿#region Apache License Version 2.0
 /*----------------------------------------------------------------
 
-Copyright 2018 Suzhou Senparc Network Technology Co.,Ltd.
+Copyright 2019 Suzhou Senparc Network Technology Co.,Ltd.
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
 except in compliance with the License. You may obtain a copy of the License at
@@ -19,7 +19,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 #endregion Apache License Version 2.0
 
 /*----------------------------------------------------------------
-    Copyright (C) 2018 Senparc
+    Copyright (C) 2019 Senparc
     
     文件名：MessageHandler.SaveLog.cs.cs
     文件功能描述：微信请求日志记录
@@ -77,7 +77,7 @@ namespace Senparc.NeuChar.MessageHandlers
         /// 保存请求信息
         /// <para>测试时可开启此记录，帮助跟踪数据，使用前请确保App_Data文件夹存在，且有读写权限。</para>
         /// </summary>
-        /// <param name="logPath">保存日志目录，默认为 ~/App_Data/&lt;模块类型&gt;/<yyyy-MM-dd>/</param>
+        /// <param name="logPath">保存日志目录，默认为 ~/App_Data/&lt;模块类型&gt;/&lt;yyyy-MM-dd&gt;/</param>
         public void SaveRequestMessageLog(string logPath = null)
         {
             try
@@ -108,7 +108,7 @@ namespace Senparc.NeuChar.MessageHandlers
         /// 保存响应信息
         /// <para>测试时可开启此记录，帮助跟踪数据，使用前请确保App_Data文件夹存在，且有读写权限。</para>
         /// </summary>
-        /// <param name="logPath">保存日志目录，默认为 ~/App_Data/&lt;模块类型&gt;/<yyyy-MM-dd>/</param>
+        /// <param name="logPath">保存日志目录，默认为 ~/App_Data/&lt;模块类型&gt;/&lt;yyyy-MM-dd&gt;/</param>
         public void SaveResponseMessageLog(string logPath = null)
         {
             try
