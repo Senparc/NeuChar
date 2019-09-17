@@ -103,5 +103,23 @@ namespace Senparc.NeuChar.Tests.Context
 
             return decryptDoc;
         }
+
+        public override void OnExecuting()
+        {
+            //Console.WriteLine(CurrentMessageContext.StorageData!=null);
+
+            if (CurrentMessageContext.StorageData == null || (CurrentMessageContext.StorageData is int))
+            {
+                //Console.WriteLine(CurrentMessageContext.StorageData.GetType());
+                CurrentMessageContext.StorageData = 0;
+            }
+            base.OnExecuting();
+        }
+
+        public override void OnExecuted()
+        {
+            base.OnExecuted();
+            CurrentMessageContext.StorageData = ((int)CurrentMessageContext.StorageData) + 1;
+        }
     }
 }

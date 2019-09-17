@@ -57,50 +57,54 @@ namespace Senparc.NeuChar.Context
                 try
                 {
 
-                messageContext.UserName = item["UserName"].Value<string>();
-                messageContext.LastActiveTime = GetDateTimeOffset(item["LastActiveTime"]);
-                messageContext.ThisActiveTime = GetDateTimeOffset(item["ThisActiveTime"]);
-                messageContext.StorageData = item["StorageData"].Value<object>();
-                messageContext.ExpireMinutes = item["ExpireMinutes"].Value<Double?>();
-                messageContext.AppStoreState = (AppStoreState)(item["AppStoreState"].Value<int>());
-                messageContext.CurrentAppDataItem = item["CurrentAppDataItem"].Value<AppDataItem>();
+                    messageContext.UserName = item["UserName"].Value<string>();
+                    messageContext.LastActiveTime = GetDateTimeOffset(item["LastActiveTime"]);
+                    messageContext.ThisActiveTime = GetDateTimeOffset(item["ThisActiveTime"]);
+                    messageContext.ExpireMinutes = item["ExpireMinutes"].Value<Double?>();
+                    messageContext.AppStoreState = (AppStoreState)(item["AppStoreState"].Value<int>());
+                    messageContext.CurrentAppDataItem = item["CurrentAppDataItem"].Value<AppDataItem>();
 
-                messageContext.RequestMessages = new MessageContainer<TRequest>();
-                messageContext.ResponseMessages = new MessageContainer<TResponse>();
-                //MaxRecordCount 设置之后，会自动设置 RequestMessages 和 ResponseMessages内的对应参数
-                messageContext.MaxRecordCount = item["MaxRecordCount"].Value<int>();
+                    messageContext.RequestMessages = new MessageContainer<TRequest>();
+                    messageContext.ResponseMessages = new MessageContainer<TResponse>();
+                    //MaxRecordCount 设置之后，会自动设置 RequestMessages 和 ResponseMessages内的对应参数
+                    messageContext.MaxRecordCount = item["MaxRecordCount"].Value<int>();
 
-                if (item["RequestMessages"] != null)
-                {
-                    foreach (var requestMessage in item["RequestMessages"].Children())
+                    //StorageData 是比较特殊的，可以储存任何类型的参数
+                    messageContext.StorageData = item["StorageData"].Value<object>();
+
+
+                    if (item["RequestMessages"] != null)
                     {
-                        var msgType = (RequestMsgType)requestMessage["MsgType"].Value<int>();
-                        var emptyEntity = messageContext.GetRequestEntityMappingResult(msgType);//获取空对象
-                        var filledEntity = requestMessage.ToObject(emptyEntity.GetType()) as TRequest;
-                        if (filledEntity != null)
+                        foreach (var requestMessage in item["RequestMessages"].Children())
                         {
-                            messageContext.RequestMessages.Add(filledEntity);
+                            var msgType = (RequestMsgType)requestMessage["MsgType"].Value<int>();
+                            var emptyEntity = messageContext.GetRequestEntityMappingResult(msgType);//获取空对象
+                            var filledEntity = requestMessage.ToObject(emptyEntity.GetType()) as TRequest;
+                            if (filledEntity != null)
+                            {
+                                messageContext.RequestMessages.Add(filledEntity);
+                            }
                         }
                     }
-                }
 
-                if (item["ResponseMessages"] != null)
-                {
-                    foreach (var responseMessage in item["ResponseMessages"].Children())
+                    if (item["ResponseMessages"] != null)
                     {
-                        var msgType = (ResponseMsgType)responseMessage["MsgType"].Value<int>();
-                        var emptyEntity = messageContext.GetResponseEntityMappingResult(msgType);//获取空对象
-                        var filledEntity = responseMessage.ToObject(emptyEntity.GetType()) as TResponse;
-                        if (filledEntity != null)
+                        foreach (var responseMessage in item["ResponseMessages"].Children())
                         {
-                            messageContext.ResponseMessages.Add(filledEntity);
+                            var msgType = (ResponseMsgType)responseMessage["MsgType"].Value<int>();
+                            var emptyEntity = messageContext.GetResponseEntityMappingResult(msgType);//获取空对象
+                            var filledEntity = responseMessage.ToObject(emptyEntity.GetType()) as TResponse;
+                            if (filledEntity != null)
+                            {
+                                messageContext.ResponseMessages.Add(filledEntity);
+                            }
                         }
                     }
-                }
 
                 }
                 catch (Exception ex)
                 {
+                    //此处可以进行调试跟踪
                     throw;
                 }
                 return messageContext;

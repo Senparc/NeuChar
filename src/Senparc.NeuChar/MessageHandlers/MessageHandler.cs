@@ -405,7 +405,7 @@ namespace Senparc.NeuChar.MessageHandlers
                     #endregion
 
                     //在消息没有被去重的情况下记录上下文
-                    if (!MessageIsRepeated)
+                    if (!MessageIsRepeated && RequestMessage.MsgType != RequestMsgType.Unknown)
                     {
                         GlobalMessageContext.InsertMessage(RequestMessage);
                     }
