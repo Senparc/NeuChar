@@ -1,7 +1,7 @@
 ﻿#region Apache License Version 2.0
 /*----------------------------------------------------------------
 
-Copyright 2018 Suzhou Senparc Network Technology Co.,Ltd.
+Copyright 2019 Suzhou Senparc Network Technology Co.,Ltd.
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
 except in compliance with the License. You may obtain a copy of the License at
@@ -19,7 +19,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 #endregion Apache License Version 2.0
 
 /*----------------------------------------------------------------
-    Copyright (C) 2018 Senparc
+    Copyright (C) 2019 Senparc
     
     文件名：MessageContainer.cs
     文件功能描述：微信消息容器
@@ -35,6 +35,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 
 ----------------------------------------------------------------*/
 
+using Senparc.NeuChar.Entities;
 using System.Collections.Generic;
 
 namespace Senparc.NeuChar.Context
@@ -44,7 +45,7 @@ namespace Senparc.NeuChar.Context
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public class MessageContainer<T> : List<T>
-        //where T : IMessageBase
+        where T : IMessageBase
     {
         /// <summary>
         /// 最大记录条数（保留尾部），如果小于等于0则不限制
@@ -71,6 +72,7 @@ namespace Senparc.NeuChar.Context
         /// </summary>
         private void RemoveExpressItems()
         {
+            //说明：为了提高效率，这里不加锁
             if (MaxRecordCount > 0 && base.Count > MaxRecordCount)
             {
                 base.RemoveRange(0, base.Count - MaxRecordCount);

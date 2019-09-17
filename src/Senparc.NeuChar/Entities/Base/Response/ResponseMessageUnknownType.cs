@@ -21,23 +21,37 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 /*----------------------------------------------------------------
     Copyright (C) 2019 Senparc
     
-    文件名：Voice.cs
-    文件功能描述：响应回复消息 语音类
+    文件名：ResponseMessageUnknownType.cs
+    文件功能描述：未知响应类型
     
     
-    创建标识：Senparc - 20150211
+    创建标识：Senparc - 20190916
     
-    修改标识：Senparc - 20150303
-    修改描述：整理接口
 ----------------------------------------------------------------*/
+
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Xml.Linq;
 
 namespace Senparc.NeuChar.Entities
 {
     /// <summary>
-    /// Voice
+    /// 未知响应类型
     /// </summary>
-    public class Voice
+    public class ResponseMessageUnknownType : ResponseMessageBase, IResponseMessageBase
     {
-        public string MediaId { get; set; }
+        public override ResponseMsgType MsgType
+        {
+            get { return ResponseMsgType.Unknown; }
+        }
+
+        /// <summary>
+        /// 响应消息的XML对象（明文）
+        /// </summary>
+        public XDocument ResponseDocument { get; set; }
+
     }
 }

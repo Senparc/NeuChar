@@ -1,7 +1,7 @@
 ﻿#region Apache License Version 2.0
 /*----------------------------------------------------------------
 
-Copyright 2018 Suzhou Senparc Network Technology Co.,Ltd.
+Copyright 2019 Suzhou Senparc Network Technology Co.,Ltd.
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
 except in compliance with the License. You may obtain a copy of the License at
@@ -19,7 +19,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 #endregion Apache License Version 2.0
 
 /*----------------------------------------------------------------
-    Copyright (C) 2018 Senparc
+    Copyright (C) 2019 Senparc
     
     文件名：MessageHandler.cs
     文件功能描述：微信请求的集中处理方法
@@ -68,6 +68,7 @@ using Senparc.NeuChar.NeuralSystems;
 using Senparc.NeuChar.Exceptions;
 using Senparc.CO2NET.APM;
 using System.Threading.Tasks;
+using Senparc.CO2NET.Cache;
 
 namespace Senparc.NeuChar.MessageHandlers
 {
@@ -83,16 +84,51 @@ namespace Senparc.NeuChar.MessageHandlers
 
         #region 上下文 
 
+        static GlobalMessageContext<TMC, TRequest, TResponse> _globalMessageContext;
+
         /// <summary>
         /// 全局消息上下文
         /// </summary>
-        public abstract GlobalMessageContext<TMC, TRequest, TResponse> GlobalMessageContext { get; }
+        public virtual GlobalMessageContext<TMC, TRequest, TResponse> GlobalMessageContext
+        {
+            get
+            {
+                if (_globalMessageContext == null)
+                {
+                    _globalMessageContext = new GlobalMessageContext<TMC, TRequest, TResponse>();
+                }
+                return _globalMessageContext;
+            }
+        }
+
+        private TMC _currentMessageContext;
+        /// <summary>
+        /// 当前用户消息上下文（注意：此数据第一次加载后会被缓存，不会实时从缓存读取（通常没有这个必要）。
+        /// 如果需要强制保持数据一致性，请使用 ReloadCurrentMessageContext() 方法刷新。
+        /// </summary>
+        public virtual TMC CurrentMessageContext
+        {
+            get
+            {
+                if (_currentMessageContext == null)
+                {
+                    ReloadCurrentMessageContext();
+                }
+                return _currentMessageContext;
+            }
+            private set
+            {
+                _currentMessageContext = value;
+            }
+        }
 
         /// <summary>
-        /// 当前用户消息上下文（注意：为保持数据一致性，每次访问都将从缓存重新读取）
+        /// 重新载入当前用户上下文
         /// </summary>
-        public virtual TMC CurrentMessageContext { get { return GlobalMessageContext.GetMessageContext(RequestMessage); } }
-        //TODO：为了提高消息，需要做延迟加载
+        protected void ReloadCurrentMessageContext()
+        {
+            CurrentMessageContext = GlobalMessageContext.GetMessageContext(RequestMessage);
+        }
 
         /// <summary>
         /// 忽略重复发送的同一条消息（通常因为微信服务器没有收到及时的响应）
@@ -287,6 +323,31 @@ namespace Senparc.NeuChar.MessageHandlers
 
         protected DateTimeOffset ExecuteStatTime { get; set; }
 
+
+        /// <summary>
+        /// 动态去重判断委托，仅当返回值为false时，不使用消息去重功能
+        /// </summary>
+        public Func<IRequestMessageBase, bool> OmitRepeatedMessageFunc { get; set; } = null;
+
+
+        #region 私有方法
+
+        /// <summary>
+        /// 标记为已重复消息
+        /// </summary>
+        protected void MarkRepeatedMessage()
+        {
+            CancelExcute = true;//重复消息，取消执行
+            MessageIsRepeated = true;
+        }
+
+        #endregion
+
+        /// <summary>
+        /// 每个具体框架内额外的去重条件。返回是否已经去重（true：需要去重，false：不需要去重）
+        /// </summary>
+        protected Func<IRequestMessageBase, MessageHandler<TMC, TRequest, TResponse>, bool> SpecialDeduplicationAction { get; set; } = null;
+
         /// <summary>
         /// 构造函数公用的初始化方法
         /// </summary>
@@ -296,9 +357,61 @@ namespace Senparc.NeuChar.MessageHandlers
         public void CommonInitialize(XDocument postDataDocument, int maxRecordCount, IEncryptPostModel postModel)
         {
             OmitRepeatedMessage = true;//默认开启去重
-            MessageContextGlobalConfig.MaxRecordCount = maxRecordCount;
+
+            GlobalMessageContext.MaxRecordCount = maxRecordCount;
+
             PostModel = postModel;//PostModel 在当前类初始化过程中必须赋值
             RequestDocument = Init(postDataDocument, postModel);
+
+            //消息去重
+            if (MessageContextGlobalConfig.UseMessageContext)
+            {
+                var omit = OmitRepeatedMessageFunc == null || OmitRepeatedMessageFunc(RequestMessage);
+
+                //使用分布式锁，已支持分布式上下文缓存
+                var cache = CacheStrategyFactory.GetObjectCacheStrategyInstance();
+                using (cache.BeginCacheLock(MessageContextGlobalConfig.MESSAGE_CONTENT_OMIT_REPEAT_LOCK_NAME, $"{typeof(TMC)}-{MessageEntityEnlightener.PlatformType}-{RequestMessage?.ToUserName}"))
+                {
+                    #region 消息去重
+
+                    if (omit &&
+                        OmitRepeatedMessage &&
+                        CurrentMessageContext.RequestMessages.Count > 0
+                         //&& !(RequestMessage is RequestMessageEvent_Merchant_Order)批量订单的MsgId可能会相同
+                         )
+                    {
+                        //lastMessage必定有值（除非极端小的过期时间条件下，几乎不可能发生）
+                        var lastMessage = CurrentMessageContext.RequestMessages[CurrentMessageContext.RequestMessages.Count - 1];
+
+                        if (
+                            //使用MsgId去重
+                            (lastMessage.MsgId != 0 && lastMessage.MsgId == RequestMessage.MsgId) ||
+                            //使用CreateTime去重（OpenId对象已经是同一个）
+                            (lastMessage.MsgId == RequestMessage.MsgId &&
+                                 lastMessage.CreateTime == RequestMessage.CreateTime &&
+                                 lastMessage.MsgType == RequestMessage.MsgType)
+                            )
+                        {
+                            MarkRepeatedMessage();//标记为已重复
+                        }
+
+                        //判断特殊事件
+                        if (!MessageIsRepeated && SpecialDeduplicationAction != null && SpecialDeduplicationAction(RequestMessage, this))
+                        {
+                            MarkRepeatedMessage();//标记为已重复
+                        }
+                    }
+
+                    #endregion
+
+                    //在消息没有被去重的情况下记录上下文
+                    if (!MessageIsRepeated)
+                    {
+                        GlobalMessageContext.InsertMessage(RequestMessage);
+                    }
+                }
+            }
+
         }
 
         /// <summary>
@@ -348,7 +461,7 @@ namespace Senparc.NeuChar.MessageHandlers
 
 
         /// <summary>
-        /// 初始化，获取RequestDocument。
+        /// 初始化，获取RequestDocument。（必须要完成 RequestMessage 数据赋值）.
         /// Init中需要对上下文添加当前消息（如果使用上下文）；以及判断消息的加密情况，对解密信息进行解密
         /// </summary>
         /// <param name="requestDocument"></param>

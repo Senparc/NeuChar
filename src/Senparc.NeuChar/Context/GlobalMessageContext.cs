@@ -1,7 +1,7 @@
 ﻿#region Apache License Version 2.0
 /*----------------------------------------------------------------
 
-Copyright 2018 Suzhou Senparc Network Technology Co.,Ltd.
+Copyright 2019 Suzhou Senparc Network Technology Co.,Ltd.
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
 except in compliance with the License. You may obtain a copy of the License at
@@ -19,7 +19,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 #endregion Apache License Version 2.0
 
 /*----------------------------------------------------------------
-    Copyright (C) 2018 Senparc
+    Copyright (C) 2019 Senparc
     
     文件名：WeixinContext.cs
     文件功能描述：微信消息上下文（全局）
@@ -83,17 +83,25 @@ namespace Senparc.NeuChar.Context
         /// </summary>
         public static bool UseMessageContext { get; set; } = true;
 
-
-
         /// <summary>
-        /// 每一个MessageContext过期时间（分钟）
+        /// 每一个MessageContext过期时间（分钟），默认 30
         /// </summary>
-        public static Double ExpireMinutes { get; set; }
-
+        public static int ExpireMinutes { get; set; }
         /// <summary>
-        /// 最大储存上下文数量（分别针对请求和响应信息）
+        /// 最大储存上下文数量（分别针对请求和响应信息），默认 20
         /// </summary>
         public static int MaxRecordCount { get; set; }
+
+        static MessageContextGlobalConfig()
+        {
+            Restore();
+        }
+
+        public static void Restore()
+        {
+            ExpireMinutes = 30;
+            MaxRecordCount = 20;
+        }
     }
 
 
@@ -107,42 +115,81 @@ namespace Senparc.NeuChar.Context
         where TResponse : class, IResponseMessageBase
     {
 
-        ///// <summary>
-        ///// 所有MessageContext集合，不要直接操作此对象
-        ///// </summary>
-        //public Dictionary<string, TM> MessageCollection { get; set; }
-        //TODO:换成整个数据库访问
+        private int _lastGlobalExpireMinutes;
+        private int _expireMinutes;
 
-        ///// <summary>
-        ///// MessageContext队列（LastActiveTime升序排列）,不要直接操作此对象
-        ///// </summary>
-        //public MessageQueue<TM, TRequest, TResponse> MessageQueue
-        //{
-        //    get
-        //    {
-        //        if (_messageQueue == null)
-        //        {
-        //            //载入
-        //            var cache = CacheStrategyFactory.GetObjectCacheStrategyInstance();
-        //            //TODO:获取命名空间下的所有对象
-        //            var messageQueue = (MessageQueue<TM, TRequest, TResponse>)null;
-        //            return messageQueue;
-        //        }
-        //        return null;
-        //    }
-        //}
+        private int _lastGlobalMaxRecordCount;
+        private int _maxRecordCount;
 
+        /* 注意：1、如果 GlobalMessageContext 对象生命周期很多（比如再一次 MessageHandler 内），那么这里临时调整的意义不大，如果设为全局变量将有意义 
+                 2、如果不用分布式缓存储存此结果，光使用静态变量，可能会导致线程间同步的问题
+             */
 
+        /// <summary>
+        /// 每一个MessageContext过期时间（分钟）
+        /// </summary>
+        public int ExpireMinutes
+        {
+            get
+            {
+                if (_lastGlobalExpireMinutes != MessageContextGlobalConfig.ExpireMinutes)
+                {
+                    _expireMinutes = MessageContextGlobalConfig.ExpireMinutes;//全局参数已更新，当前上下文参数联动更新
+                    _lastGlobalExpireMinutes = _expireMinutes;
+                }
+                return _expireMinutes;
+            }
+            set
+            {
+                _expireMinutes = value;
+            }
+        }
+
+        /// <summary>
+        /// 最大储存上下文数量（分别针对请求和响应信息）
+        /// </summary>
+        public int MaxRecordCount
+        {
+            get
+            {
+                if (_lastGlobalMaxRecordCount != MessageContextGlobalConfig.MaxRecordCount)
+                {
+                    _maxRecordCount = MessageContextGlobalConfig.MaxRecordCount;
+                    _lastGlobalMaxRecordCount = _maxRecordCount;
+                }
+                return _maxRecordCount;
+            }
+            set
+            {
+                _maxRecordCount = value;
+            }
+        }
 
 
         public GlobalMessageContext()
         {
-            //Restore();
+            ExpireMinutes = MessageContextGlobalConfig.ExpireMinutes;
+            _lastGlobalExpireMinutes = ExpireMinutes;
+
+            MaxRecordCount = MessageContextGlobalConfig.MaxRecordCount;
+            _lastGlobalMaxRecordCount = MaxRecordCount;
         }
 
         private string GetCacheKey(string userName)
         {
             return $"{MessageContextGlobalConfig.CACHE_KEY_PREFIX}{userName}";
+        }
+
+        /// <summary>
+        /// 获取过期时间 TimeSpan 对象
+        /// </summary>
+        /// <param name="expireMinutes"></param>
+        /// <returns></returns>
+        private TimeSpan? GetExpireTimeSpan(double? expireMinutes = null)
+        {
+            expireMinutes = expireMinutes ?? MessageContextGlobalConfig.ExpireMinutes;
+            TimeSpan? expireTimeSpan = expireMinutes > 0 ? TimeSpan.FromMinutes(expireMinutes.Value) : (TimeSpan?)null;
+            return expireTimeSpan;
         }
 
         /// <summary>
@@ -162,20 +209,10 @@ namespace Senparc.NeuChar.Context
                 cache.RemoveFromCache(item.Key, true);//移除
             }
 
-            MessageContextGlobalConfig.ExpireMinutes = 90;
+            ExpireMinutes = MessageContextGlobalConfig.ExpireMinutes;
+            MaxRecordCount = MessageContextGlobalConfig.MaxRecordCount;
         }
 
-        /// <summary>
-        /// 获取过期时间 TimeSpan 对象
-        /// </summary>
-        /// <param name="expireMinutes"></param>
-        /// <returns></returns>
-        private TimeSpan? GetExpireTimeSpan(double? expireMinutes = null)
-        {
-            expireMinutes = expireMinutes ?? MessageContextGlobalConfig.ExpireMinutes;
-            TimeSpan? expireTimeSpan = expireMinutes > 0 ? TimeSpan.FromMinutes(expireMinutes.Value) : (TimeSpan?)null;
-            return expireTimeSpan;
-        }
 
         /// <summary>
         /// 获取MessageContext，如果不存在，返回null
@@ -185,52 +222,6 @@ namespace Senparc.NeuChar.Context
         /// <returns></returns>
         private TMC GetMessageContext(string userName)
         {
-            //检查并移除过期记录，为了尽量节约资源，这里暂不使用独立线程轮询
-
-
-
-            //while (MessageQueue.Count > 0)
-            //{
-            //    var firstMessageContext = MessageQueue[0];
-            //    var timeSpan = SystemTime.Now - (firstMessageContext.LastActiveTime.HasValue ? firstMessageContext.LastActiveTime.Value : SystemTime.Now);
-            //    //确定对话过期时间
-            //    var expireMinutes = firstMessageContext.ExpireMinutes.HasValue
-            //        ? firstMessageContext.ExpireMinutes.Value //队列自定义事件
-            //        : this.ExpireMinutes;//全局统一默认时间
-
-            //    //TODO:这里假设按照队列顺序过期，实际再加入了自定义过期时间之后，可能不遵循这个规律   —— Jeffrey Su 2018.1.23
-            //    if (timeSpan.TotalMinutes >= expireMinutes)
-            //    {
-            //        MessageQueue.RemoveAt(0);//从队列中移除过期对象
-            //        MessageCollection.Remove(firstMessageContext.UserName);//从集合中删除过期对象
-
-            //        //添加事件回调
-            //        firstMessageContext.OnRemoved();//TODO:此处异步处理，或用户在自己操作的时候异步处理需要耗费时间比较长的操作。
-            //    }
-            //    else
-            //    {
-            //        break;
-            //    }
-            //}
-
-
-            //TODO:使用缓存过期后，OnRemoved() 将失效
-
-            /* 
-                * 全局只有在这里用到MessageCollection.ContainsKey
-                * 充分分离MessageCollection内部操作，
-                * 为以后变化或扩展MessageCollection留余地
-                */
-
-
-            //if (!MessageCollection.ContainsKey(userName))
-            //{
-            //    return null;
-            //}
-
-            //return MessageCollection[userName];
-
-
             //以下为新版本代码
             var cache = CacheStrategyFactory.GetObjectCacheStrategyInstance();
             var cacheKey = this.GetCacheKey(userName);
@@ -268,8 +259,6 @@ namespace Senparc.NeuChar.Context
 
                 return null;
             }
-
-            //return cache.Get<TMC>(cacheKey);
         }
 
         /// <summary>
@@ -341,6 +330,11 @@ namespace Senparc.NeuChar.Context
         /// <param name="requestMessage">请求信息</param>
         public void InsertMessage(TRequest requestMessage)
         {
+            if (requestMessage == null)
+            {
+                return;
+            }
+
             var userName = requestMessage.FromUserName;
             var cache = CacheStrategyFactory.GetObjectCacheStrategyInstance();
             using (cache.BeginCacheLock(MessageContextGlobalConfig.MESSAGE_CONTENT_ITEM_LOCK_NAME, $"InsertMessage-{userName}"))
@@ -361,7 +355,15 @@ namespace Senparc.NeuChar.Context
 
                 messageContext.LastActiveTime = messageContext.ThisActiveTime;//记录上一次请求时间
                 messageContext.ThisActiveTime = SystemTime.Now;//记录本次请求时间
-                messageContext.RequestMessages.Add(requestMessage);//录入消息
+
+                //判断约束有没有修改
+                if (messageContext.MaxRecordCount != this.MaxRecordCount)
+                {
+                    messageContext.MaxRecordCount = this.MaxRecordCount;
+                    //messageContext.RequestMessages.MaxRecordCount = messageContext.MaxRecordCount;
+                }
+
+                messageContext.RequestMessages.Add(requestMessage);//录入消息（最大纪录限制会自动处理）
 
                 var cacheKey = GetCacheKey(userName);
                 var expireTime = GetExpireTimeSpan();
@@ -377,15 +379,27 @@ namespace Senparc.NeuChar.Context
         /// <param name="responseMessage">响应信息</param>
         public void InsertMessage(TResponse responseMessage)
         {
+            if (responseMessage == null)
+            {
+                return;
+            }
+
             var userName = responseMessage.ToUserName;
             var cache = CacheStrategyFactory.GetObjectCacheStrategyInstance();
             using (cache.BeginCacheLock(MessageContextGlobalConfig.MESSAGE_CONTENT_ITEM_LOCK_NAME, $"InsertMessage-{userName}"))
             {
                 var messageContext = GetMessageContext(userName, true);
-                messageContext.ResponseMessages.Add(responseMessage);
+
+                //判断约束有没有修改
+                if (messageContext.MaxRecordCount != this.MaxRecordCount)
+                {
+                    messageContext.MaxRecordCount = this.MaxRecordCount;
+                }
+                messageContext.ResponseMessages.Add(responseMessage);//录入消息（最大纪录限制会自动处理）
 
                 var cacheKey = GetCacheKey(userName);
                 var expireTime = GetExpireTimeSpan();
+
                 cache.Set(cacheKey, messageContext, expireTime);
             }
         }
