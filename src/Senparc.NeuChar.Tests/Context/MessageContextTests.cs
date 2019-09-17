@@ -37,9 +37,13 @@ namespace Senparc.NeuChar.Tests.Context
             Token = "Token"
         };
 
-        public MessageContextTests() {
-        
-}
+        public MessageContextTests()
+        {
+            //注册
+            var redisConfigurationStr = "localhost:6379,defaultDatabase=3";
+            Senparc.CO2NET.Cache.Redis.Register.SetConfigurationOption(redisConfigurationStr);
+            Senparc.CO2NET.Cache.Redis.Register.UseKeyValueRedisNow();//键值对缓存策略（推荐）
+        }
 
         #region DistributedCacheTest
 
@@ -124,7 +128,7 @@ namespace Senparc.NeuChar.Tests.Context
                 messageHandler.Execute();
 
                 //TODO:Redis此处会超出
-                Console.WriteLine(messageHandler.CurrentMessageContext.RequestMessages.Count +"|" + messageHandler.CurrentMessageContext.ResponseMessages.Count);
+                Console.WriteLine(messageHandler.CurrentMessageContext.RequestMessages.Count + "|" + messageHandler.CurrentMessageContext.ResponseMessages.Count);
 
                 Assert.AreEqual(i < 7 ? i + 3 : 10, messageHandler.CurrentMessageContext.RequestMessages.Count);
                 Assert.AreEqual(i < 7 ? i + 3 : 10, messageHandler.CurrentMessageContext.ResponseMessages.Count);
@@ -151,11 +155,6 @@ namespace Senparc.NeuChar.Tests.Context
         [TestMethod]
         public void RedisCacheTest()
         {
-            //注册
-            var redisConfigurationStr = "localhost:6379,defaultDatabase=3";
-            Senparc.CO2NET.Cache.Redis.Register.SetConfigurationOption(redisConfigurationStr);
-            Senparc.CO2NET.Cache.Redis.Register.UseKeyValueRedisNow();//键值对缓存策略（推荐）
-
             DistributedCacheTest(() => CO2NET.Cache.Redis.RedisObjectCacheStrategy.Instance);
         }
         #endregion

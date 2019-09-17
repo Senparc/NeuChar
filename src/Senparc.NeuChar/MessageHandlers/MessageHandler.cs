@@ -101,14 +101,34 @@ namespace Senparc.NeuChar.MessageHandlers
             }
         }
 
+        private TMC _currentMessageContext;
         /// <summary>
-        /// 当前用户消息上下文（注意：为保持数据一致性，每次访问都将从缓存重新读取）
+        /// 当前用户消息上下文（注意：此数据第一次加载后会被缓存，不会实时从缓存读取（通常没有这个必要）。
+        /// 如果需要强制保持数据一致性，请使用 ReloadCurrentMessageContext() 方法刷新。
         /// </summary>
-        public virtual TMC CurrentMessageContext { get {
-                var result = GlobalMessageContext.GetMessageContext(RequestMessage);
-                return result;
-            } }
-        //TODO：为了提高消息，需要做延迟加载
+        public virtual TMC CurrentMessageContext
+        {
+            get
+            {
+                if (_currentMessageContext == null)
+                {
+                    ReloadCurrentMessageContext();
+                }
+                return _currentMessageContext;
+            }
+            private set
+            {
+                _currentMessageContext = value;
+            }
+        }
+
+        /// <summary>
+        /// 重新载入当前用户上下文
+        /// </summary>
+        protected void ReloadCurrentMessageContext()
+        {
+            CurrentMessageContext = GlobalMessageContext.GetMessageContext(RequestMessage);
+        }
 
         /// <summary>
         /// 忽略重复发送的同一条消息（通常因为微信服务器没有收到及时的响应）
@@ -337,7 +357,7 @@ namespace Senparc.NeuChar.MessageHandlers
         public void CommonInitialize(XDocument postDataDocument, int maxRecordCount, IEncryptPostModel postModel)
         {
             OmitRepeatedMessage = true;//默认开启去重
-            
+
             GlobalMessageContext.MaxRecordCount = maxRecordCount;
 
             PostModel = postModel;//PostModel 在当前类初始化过程中必须赋值

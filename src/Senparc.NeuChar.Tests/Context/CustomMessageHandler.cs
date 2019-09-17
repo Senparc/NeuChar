@@ -18,19 +18,6 @@ namespace Senparc.NeuChar.Tests.Context
 {
     public class CustomMessageHandler : MessageHandler<CustomMessageContext, RequestMessageBase, ResponseMessageBase>
     {
-        //private GlobalMessageContext<CustomMessageContext, RequestMessageBase, ResponseMessageBase> globalMessageContext;
-        //public override GlobalMessageContext<CustomMessageContext, RequestMessageBase, ResponseMessageBase> GlobalMessageContext
-        //{
-        //    get
-        //    {
-        //        if (globalMessageContext == null)
-        //        {
-        //            globalMessageContext = new GlobalMessageContext<CustomMessageContext, RequestMessageBase, ResponseMessageBase>();
-        //        }
-        //        return globalMessageContext;
-        //    }
-        //}
-
         public override MessageEntityEnlightener MessageEntityEnlightener => MpMessageEntityEnlightener.Instance;
 
         public override ApiEnlightener ApiEnlightener => MpApiEnlightener.Instance;
@@ -75,9 +62,6 @@ namespace Senparc.NeuChar.Tests.Context
 
         }
 
-        //TODO:独立添加去重过程，并且可扩展
-
-
         public override XDocument Init(XDocument requestDocument, IEncryptPostModel postModel)
         {
             XDocument decryptDoc = requestDocument;
@@ -114,6 +98,8 @@ namespace Senparc.NeuChar.Tests.Context
                  }
                  return false;
              };
+
+            //消息去重的基本方法已经在基类 CommonInitialize() 中实现
 
             return decryptDoc;
         }
