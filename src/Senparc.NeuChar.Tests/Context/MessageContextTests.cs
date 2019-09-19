@@ -64,7 +64,6 @@ namespace Senparc.NeuChar.Tests.Context
             var dt1 = SystemTime.Now;
             var doc = XDocument.Parse(textRequestXml.FormatWith("TNT2", CO2NET.Helpers.DateTimeHelper.GetUnixDateTime(SystemTime.Now.UtcDateTime), SystemTime.Now.Ticks));
             var messageHandler = new CustomMessageHandler(doc, postModel);
-
             Assert.AreEqual(1, messageHandler.CurrentMessageContext.RequestMessages.Count);//初始化之后，RequestMessage 已经被记录到上下文中
             Assert.AreEqual(0, messageHandler.CurrentMessageContext.ResponseMessages.Count);
 

@@ -110,8 +110,10 @@ namespace Senparc.NeuChar.Tests.Context
 
             if (CurrentMessageContext.StorageData == null || (CurrentMessageContext.StorageData is int))
             {
+                Console.WriteLine("CurrentMessageContext.StorageData is null");
                 //Console.WriteLine(CurrentMessageContext.StorageData.GetType());
                 CurrentMessageContext.StorageData = 0;
+                GlobalMessageContext.UpdateMessageContext(CurrentMessageContext);//储存到缓存
             }
             base.OnExecuting();
         }
@@ -119,7 +121,12 @@ namespace Senparc.NeuChar.Tests.Context
         public override void OnExecuted()
         {
             base.OnExecuted();
+            Console.WriteLine("CurrentMessageContext.StorageData: " + CurrentMessageContext.StorageData);
+
+            //此处获取会有问题：    System.InvalidCastException: Unable to cast object of type 'Newtonsoft.Json.Linq.JValue' to type 'System.Int32'.
+
             CurrentMessageContext.StorageData = ((int)CurrentMessageContext.StorageData) + 1;
+            GlobalMessageContext.UpdateMessageContext(CurrentMessageContext);//储存到缓存
         }
     }
 }
