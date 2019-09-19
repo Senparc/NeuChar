@@ -106,7 +106,14 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <summary>
         /// 当前用户消息上下文（注意：次数据不会被缓存，每次都会重新从缓存读取。
         /// </summary>
-        public virtual TMC CurrentMessageContext { get => GlobalMessageContext.GetMessageContext(RequestMessage); }
+        [Obsolete("请使用 GettCurrentMessageContext() 获取信息！")]
+        public virtual TMC CurrentMessageContext { get => GettMessageContext(); }
+
+        /// <summary>
+        /// 当前用户消息上下文（注意：次数据不会被缓存，每次都会重新从缓存读取。
+        /// </summary>
+        public virtual TMC GettCurrentMessageContext() { return  GlobalMessageContext.GetMessageContext(RequestMessage); }
+
         #endregion
 
         #region 方案二：虽然是用了缓存，但是如果在其他地方进行列表等更新，会造成数据不一致，暂时放弃此方法

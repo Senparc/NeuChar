@@ -29,6 +29,9 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 
     修改标识：Senparc - 20190914
     修改描述：（V5.0）v0.8.0 提供支持分布式缓存的消息上下文（MessageContext）
+    
+    修改标识：Senparc - 20190914
+    修改描述：添加 GettCurrentMessageContext() 方法，将 CurrentMessageContext 只读属性标记为过期
 
 ----------------------------------------------------------------*/
 
@@ -48,29 +51,27 @@ namespace Senparc.NeuChar.MessageHandlers
     /// <summary>
     /// 具有上下文的 MessageHandler 接口
     /// </summary>
-    /// <typeparam name="TC"></typeparam>
+    /// <typeparam name="TMC"></typeparam>
     /// <typeparam name="TRequest"></typeparam>
     /// <typeparam name="TResponse"></typeparam>
-    public interface IMessageHandlerWithContext<TC, TRequest, TResponse> : IMessageHandler<TRequest, TResponse>
-        where TC : class, IMessageContext<TRequest, TResponse>, new()
+    public interface IMessageHandlerWithContext<TMC, TRequest, TResponse> : IMessageHandler<TRequest, TResponse>
+        where TMC : class, IMessageContext<TRequest, TResponse>, new()
         where TRequest : class, IRequestMessageBase
         where TResponse : class, IResponseMessageBase
     {
         /// <summary>
         /// 全局消息上下文
         /// </summary>
-        GlobalMessageContext<TC, TRequest, TResponse> GlobalMessageContext { get; }
+        GlobalMessageContext<TMC, TRequest, TResponse> GlobalMessageContext { get; }
         /// <summary>
         /// 当前用户消息上下文
         /// </summary>
-        TC CurrentMessageContext { get; }
+        [Obsolete("请使用 GettMessageContext() 获取信息！")]
+        TMC CurrentMessageContext { get; }
         /// <summary>
-        /// 忽略重复发送的同一条消息（通常因为微信服务器没有收到及时的响应）
+        /// 当前用户消息上下文
         /// </summary>
-        bool OmitRepeatedMessage { get; set; }
-        /// <summary>
-        /// 消息是否已经被去重
-        /// </summary>
-        bool MessageIsRepeated { get; set; }
+        /// <returns></returns>
+        TMC GettCurrentMessageContext();
     }
 }
