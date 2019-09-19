@@ -101,34 +101,53 @@ namespace Senparc.NeuChar.MessageHandlers
             }
         }
 
-        private TMC _currentMessageContext;
-        /// <summary>
-        /// 当前用户消息上下文（注意：此数据第一次加载后会被缓存，不会实时从缓存读取（通常没有这个必要）。
-        /// 如果需要强制保持数据一致性，请使用 ReloadCurrentMessageContext() 方法刷新。
-        /// </summary>
-        public virtual TMC CurrentMessageContext
-        {
-            get
-            {
-                if (_currentMessageContext == null)
-                {
-                    ReloadCurrentMessageContext();
-                }
-                return _currentMessageContext;
-            }
-            private set
-            {
-                _currentMessageContext = value;
-            }
-        }
+        #region 方案一：每次都从缓存读取
 
         /// <summary>
-        /// 重新载入当前用户上下文
+        /// 当前用户消息上下文（注意：次数据不会被缓存，每次都会重新从缓存读取。
         /// </summary>
-        protected void ReloadCurrentMessageContext()
-        {
-            CurrentMessageContext = GlobalMessageContext.GetMessageContext(RequestMessage);
-        }
+        [Obsolete("请使用 GettCurrentMessageContext() 获取信息！")]
+        public virtual TMC CurrentMessageContext { get => GettCurrentMessageContext(); }
+
+        /// <summary>
+        /// 当前用户消息上下文（注意：次数据不会被缓存，每次都会重新从缓存读取。
+        /// </summary>
+        public virtual TMC GettCurrentMessageContext() { return  GlobalMessageContext.GetMessageContext(RequestMessage); }
+
+        #endregion
+
+        #region 方案二：虽然是用了缓存，但是如果在其他地方进行列表等更新，会造成数据不一致，暂时放弃此方法
+        /*
+       private TMC _currentMessageContext;
+       /// <summary>
+       /// 当前用户消息上下文（注意：此数据第一次加载后会被缓存，不会实时从缓存读取（通常没有这个必要）。
+       /// 如果需要强制保持数据一致性，请使用 ReloadCurrentMessageContext() 方法刷新。
+       /// </summary>
+       public virtual TMC CurrentMessageContext
+       {
+           get
+           {
+               if (_currentMessageContext == null)
+               {
+                   ReloadCurrentMessageContext();
+               }
+               return _currentMessageContext;
+           }
+           private set
+           {
+               _currentMessageContext = value;
+           }
+       }
+
+       /// <summary>
+       /// 重新载入当前用户上下文
+       /// </summary>
+       protected void ReloadCurrentMessageContext()
+       {
+           CurrentMessageContext = GlobalMessageContext.GetMessageContext(RequestMessage);
+       }
+       */
+        #endregion
 
         /// <summary>
         /// 忽略重复发送的同一条消息（通常因为微信服务器没有收到及时的响应）
@@ -405,7 +424,7 @@ namespace Senparc.NeuChar.MessageHandlers
                     #endregion
 
                     //在消息没有被去重的情况下记录上下文
-                    if (!MessageIsRepeated)
+                    if (!MessageIsRepeated && RequestMessage.MsgType != RequestMsgType.Unknown)
                     {
                         GlobalMessageContext.InsertMessage(RequestMessage);
                     }

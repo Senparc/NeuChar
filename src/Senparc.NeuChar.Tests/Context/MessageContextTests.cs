@@ -64,8 +64,7 @@ namespace Senparc.NeuChar.Tests.Context
             var dt1 = SystemTime.Now;
             var doc = XDocument.Parse(textRequestXml.FormatWith("TNT2", CO2NET.Helpers.DateTimeHelper.GetUnixDateTime(SystemTime.Now.UtcDateTime), SystemTime.Now.Ticks));
             var messageHandler = new CustomMessageHandler(doc, postModel);
-
-            Assert.AreEqual(1, messageHandler.CurrentMessageContext.RequestMessages.Count);
+            Assert.AreEqual(1, messageHandler.CurrentMessageContext.RequestMessages.Count);//初始化之后，RequestMessage 已经被记录到上下文中
             Assert.AreEqual(0, messageHandler.CurrentMessageContext.ResponseMessages.Count);
 
             messageHandler.Execute();
@@ -75,6 +74,9 @@ namespace Senparc.NeuChar.Tests.Context
             Assert.AreEqual(1, messageHandler.CurrentMessageContext.ResponseMessages.Count);
             Console.WriteLine(messageHandler.CurrentMessageContext.ResponseMessages.Last().GetType());
             Console.WriteLine(messageHandler.CurrentMessageContext.ResponseMessages.Last().ToJson());
+
+            //测试 StorageData
+            Assert.AreEqual(1, messageHandler.GettCurrentMessageContext().StorageData);
 
             var lastResponseMessage = messageHandler.CurrentMessageContext.ResponseMessages.Last() as ResponseMessageText;
             Assert.IsNotNull(lastResponseMessage);
@@ -126,9 +128,6 @@ namespace Senparc.NeuChar.Tests.Context
                 messageHandler = new CustomMessageHandler(doc, postModel, maxRecordCount);//使用和上次同样的请求
                 //messageHandler.GlobalMessageContext.MaxRecordCount = 10;//在这里设置的话，Request已经插入了，无法及时触发删除多余消息的过程
                 messageHandler.Execute();
-
-                //TODO:Redis此处会超出
-                Console.WriteLine(messageHandler.CurrentMessageContext.RequestMessages.Count + "|" + messageHandler.CurrentMessageContext.ResponseMessages.Count);
 
                 Assert.AreEqual(i < 7 ? i + 3 : 10, messageHandler.CurrentMessageContext.RequestMessages.Count);
                 Assert.AreEqual(i < 7 ? i + 3 : 10, messageHandler.CurrentMessageContext.ResponseMessages.Count);

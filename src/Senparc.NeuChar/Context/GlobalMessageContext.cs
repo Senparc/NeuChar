@@ -433,5 +433,21 @@ namespace Senparc.NeuChar.Context
                 return messageContext.ResponseMessages.LastOrDefault();
             }
         }
+
+        /// <summary>
+        /// 更新上下文
+        /// </summary>
+        /// <param name="messageContext"></param>
+        public void UpdateMessageContext(TMC messageContext)
+        {
+            var userName = messageContext.UserName;
+            var cache = CacheStrategyFactory.GetObjectCacheStrategyInstance();
+            using (cache.BeginCacheLock(MessageContextGlobalConfig.MESSAGE_CONTENT_ITEM_LOCK_NAME, $"UpdateMessageContext-{userName}"))
+            {
+                var cacheKey = GetCacheKey(userName);
+                var expireTime = GetExpireTimeSpan();
+                cache.Set(cacheKey, messageContext, expireTime);
+            }
+        }
     }
 }
