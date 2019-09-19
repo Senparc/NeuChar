@@ -70,13 +70,30 @@ namespace Senparc.NeuChar.Context
                     messageContext.MaxRecordCount = item["MaxRecordCount"].Value<int>();
 
                     //StorageData 是比较特殊的，可以储存任何类型的参数
-                    var storageData = item["StorageData"].Value<object>();
+                    object storageData;
+                    string storageDataType = item["StorageDataTypeName"].Value<string>();
+                    if (!string.IsNullOrEmpty(storageDataType))
+                    {
+                        //根据确定类型获取 StorageData
+                        try
+                        {
+                            Type dataType = Type.GetType(storageDataType, true, true);
+                            storageData = item["StorageData"].ToObject(dataType);
+                            messageContext.StorageDataType = dataType;
+                        }
+                        catch
+                        {
+                            storageData = item["StorageData"].Value<object>();
+                        }
+                    }
+                    else
+                    {
+                        storageData = item["StorageData"].Value<object>();
+                    }
+
                     if (storageData is JValue jv)
                     {
-                        Console.WriteLine("JV:"+jv.ToJson());
-                        Console.WriteLine("JV.Value:"+jv.Value);
-                        Console.WriteLine("JV.Value.Type():"+jv.Value?.GetType());
-                        messageContext.StorageData = jv.Value ;
+                        messageContext.StorageData = jv.Value;
                     }
                     else
                     {

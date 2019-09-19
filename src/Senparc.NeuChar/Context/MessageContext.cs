@@ -87,6 +87,15 @@ namespace Senparc.NeuChar.Context
         /// 最大储存容量（分别针对RequestMessages和ResponseMessages）
         /// </summary>
         int MaxRecordCount { get; set; }
+
+        /// <summary>
+        /// StorageData的类型名称
+        /// </summary>
+        string StorageDataTypeName { get; set; }
+        /// <summary>
+        /// StorageData的类型
+        /// </summary>
+        Type StorageDataType { get; set; }
         /// <summary>
         /// 临时储存数据，如用户状态等，出于保持.net 3.5版本，这里暂不使用dynamic
         /// </summary>
@@ -174,7 +183,38 @@ namespace Senparc.NeuChar.Context
                 _maxRecordCount = value;
             }
         }
-        public object StorageData { get; set; }
+
+        /// <summary>
+        /// StorageData的类型名称
+        /// </summary>
+        public string StorageDataTypeName { get; set; }
+
+        /// <summary>
+        /// StorageData的类型
+        /// </summary>
+        [JsonIgnore]
+        public Type StorageDataType { get; set; }
+
+        private object _storageData = null;
+        public object StorageData
+        {
+            get
+            {
+                return _storageData;
+            }
+            set
+            {
+                _storageData = value;
+                if (value != null)
+                {
+                    StorageDataTypeName = value.GetType().FullName;
+                }
+                else
+                {
+                    StorageDataTypeName = null;
+                }
+            }
+        }
 
         public Double? ExpireMinutes { get; set; }
 

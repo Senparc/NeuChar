@@ -107,7 +107,7 @@ namespace Senparc.NeuChar.MessageHandlers
         /// 当前用户消息上下文（注意：次数据不会被缓存，每次都会重新从缓存读取。
         /// </summary>
         [Obsolete("请使用 GettCurrentMessageContext() 获取信息！")]
-        public virtual TMC CurrentMessageContext { get => GettMessageContext(); }
+        public virtual TMC CurrentMessageContext { get => GettCurrentMessageContext(); }
 
         /// <summary>
         /// 当前用户消息上下文（注意：次数据不会被缓存，每次都会重新从缓存读取。

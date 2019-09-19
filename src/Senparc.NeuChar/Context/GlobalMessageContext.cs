@@ -446,7 +446,6 @@ namespace Senparc.NeuChar.Context
             {
                 var cacheKey = GetCacheKey(userName);
                 var expireTime = GetExpireTimeSpan();
-                Console.WriteLine("TR101: messageContext.StorageData" + messageContext.StorageData);
                 cache.Set(cacheKey, messageContext, expireTime);
             }
         }

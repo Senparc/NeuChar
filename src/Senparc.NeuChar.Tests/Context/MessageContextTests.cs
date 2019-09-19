@@ -75,6 +75,9 @@ namespace Senparc.NeuChar.Tests.Context
             Console.WriteLine(messageHandler.CurrentMessageContext.ResponseMessages.Last().GetType());
             Console.WriteLine(messageHandler.CurrentMessageContext.ResponseMessages.Last().ToJson());
 
+            //测试 StorageData
+            Assert.AreEqual(1, messageHandler.GettCurrentMessageContext().StorageData);
+
             var lastResponseMessage = messageHandler.CurrentMessageContext.ResponseMessages.Last() as ResponseMessageText;
             Assert.IsNotNull(lastResponseMessage);
             Assert.AreEqual("来自单元测试:TNT2", lastResponseMessage.Content);
