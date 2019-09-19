@@ -106,8 +106,6 @@ namespace Senparc.NeuChar.Tests.Context
 
         public override void OnExecuting()
         {
-            //Console.WriteLine(CurrentMessageContext.StorageData!=null);
-
             var currentMessageContext = base.GettCurrentMessageContext();
             if (currentMessageContext.StorageData == null || (currentMessageContext.StorageData is int))
             {
@@ -121,7 +119,6 @@ namespace Senparc.NeuChar.Tests.Context
         {
             base.OnExecuted();
 
-            //此处获取会有问题：    System.InvalidCastException: Unable to cast object of type 'Newtonsoft.Json.Linq.JValue' to type 'System.Int32'.
             var currentMessageContext = base.GettCurrentMessageContext();
             currentMessageContext.StorageData = ((int)currentMessageContext.StorageData) + 1;
             GlobalMessageContext.UpdateMessageContext(currentMessageContext);//储存到缓存
