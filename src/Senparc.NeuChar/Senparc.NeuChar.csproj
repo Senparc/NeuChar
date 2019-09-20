@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net45;netstandard2.0</TargetFrameworks>
-    <Version>0.8.0-preview4</Version>
+    <Version>0.8.0</Version>
     <AssemblyName>Senparc.NeuChar</AssemblyName>
     <RootNamespace>Senparc.NeuChar</RootNamespace>
     <FrameworkPathOverride Condition="'$(TargetFramework)' == 'net35'">$(Net35FrameworkPathOverride)</FrameworkPathOverride>
@@ -81,6 +81,11 @@
       v0.7.5 使用最新版本 CO2NET
       v0.7.6 使用最新版本 CO2NET
       v0.8.0 提供支持分布式缓存的消息上下文（MessageContext）
+      v0.8.1
+      1、提供支持分布式缓存的消息上下文（MessageContext）
+      2、将 IMessageContext 接口中 TRequest、TResponse 约束为 class
+			3、IMessageContext 接口添加 GetRequestEntityMappingResult() 和 GetResponseEntityMappingResult() 方法
+      4、 提供带符号的 nuget 包（.snupkg)
     </PackageReleaseNotes>
     <RepositoryUrl>https://github.com/JeffreySu/WeiXinMPSDK</RepositoryUrl>
     <Configurations>Debug;Release;Test</Configurations>
@@ -137,8 +142,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Senparc.CO2NET" Version="0.9.0" />
-    <PackageReference Include="Senparc.CO2NET.APM" Version="0.4.3" />
+    <PackageReference Include="Senparc.CO2NET" Version="0.9.1" />
+    <PackageReference Include="Senparc.CO2NET.APM" Version="0.4.4" />
   </ItemGroup>
 
 
