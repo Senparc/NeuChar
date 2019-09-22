@@ -383,6 +383,8 @@ namespace Senparc.NeuChar.MessageHandlers
             PostModel = postModel;//PostModel 在当前类初始化过程中必须赋值
             RequestDocument = Init(postDataDocument, postModel);
 
+            //TODO:提供异步的上下文及处理方法
+
             //消息去重
             if (MessageContextGlobalConfig.UseMessageContext)
             {
