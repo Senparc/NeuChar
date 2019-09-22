@@ -72,6 +72,6 @@ namespace Senparc.NeuChar.MessageHandlers
         /// 当前用户消息上下文
         /// </summary>
         /// <returns></returns>
-        TMC GettCurrentMessageContext();
+        TMC GetCurrentMessageContext();
     }
 }
