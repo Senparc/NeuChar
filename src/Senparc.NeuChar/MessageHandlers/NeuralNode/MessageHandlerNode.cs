@@ -1,4 +1,35 @@
-﻿using Senparc.CO2NET.Extensions;
+﻿#region Apache License Version 2.0
+/*----------------------------------------------------------------
+
+Copyright 2019 Suzhou Senparc Network Technology Co.,Ltd.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
+except in compliance with the License. You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under the
+License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+either express or implied. See the License for the specific language governing permissions
+and limitations under the License.
+
+Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
+
+----------------------------------------------------------------*/
+#endregion Apache License Version 2.0
+
+/*----------------------------------------------------------------
+    Copyright (C) 2019 Senparc
+    
+    文件名：MessageHandlerNode.cs
+    文件功能描述：MessageHandler 的神经节点 
+    
+    
+    创建标识：Senparc - 20181022
+
+----------------------------------------------------------------*/
+
+using Senparc.CO2NET.Extensions;
 using Senparc.CO2NET.Trace;
 using Senparc.NeuChar;
 using Senparc.NeuChar.Agents;
@@ -17,7 +48,6 @@ using System.Threading.Tasks;
 
 namespace Senparc.NeuChar.NeuralSystems
 {
-
     /// <summary>
     /// MessageHandler 的神经节点
     /// </summary>
@@ -60,6 +90,12 @@ namespace Senparc.NeuChar.NeuralSystems
             //{
             //    throw new ArgumentNullException(nameof(accessTokenOrApi));
             //}
+
+            if (messageHandler == null)
+            {
+                throw new ArgumentNullException(nameof(messageHandler));
+            }
+
             var messageHandlerEnlightener = messageHandler.MessageEntityEnlightener;
             var appDataNode = messageHandler.CurrentAppDataNode;
 
@@ -70,7 +106,7 @@ namespace Senparc.NeuChar.NeuralSystems
             //进行APP特殊处理
 
             //判断状态
-            var context = messageHandler.CurrentMessageContext;
+            var context = messageHandler.GetCurrentMessageContext();
             AppDataItem currentAppDataItem = null;
 
             switch (context.AppStoreState)
@@ -88,6 +124,7 @@ namespace Senparc.NeuChar.NeuralSystems
                             //没有上一条活动，或者对话已过期，则设置为退出状态
                             context.AppStoreState = AppStoreState.None;
                             context.CurrentAppDataItem = null;//退出清空
+                            messageHandler.GlobalMessageContext.UpdateMessageContext(context);//储存到缓存
                         }
                         else
                         {
@@ -102,7 +139,8 @@ namespace Senparc.NeuChar.NeuralSystems
                                     //执行退出命令
                                     context.AppStoreState = AppStoreState.None;
                                     context.CurrentAppDataItem = null;//退出清空
-                                    //currentAppDataItem = context.CurrentAppDataItem;//当前消息仍然转发（最后一条退出消息）
+                                                                      //currentAppDataItem = context.CurrentAppDataItem;//当前消息仍然转发（最后一条退出消息）
+                                    messageHandler.GlobalMessageContext.UpdateMessageContext(context);//储存到缓存
                                 }
                             }
                         }
@@ -111,6 +149,7 @@ namespace Senparc.NeuChar.NeuralSystems
                     {
                         //已经进入App状态，但是没有标记退出，此处强制退出
                         context.AppStoreState = AppStoreState.None;
+                        messageHandler.GlobalMessageContext.UpdateMessageContext(context);//储存到缓存
                     }
                     break;
                 default:
@@ -133,6 +172,7 @@ namespace Senparc.NeuChar.NeuralSystems
                         //初次进入应用
                         context.AppStoreState = AppStoreState.Enter;
                         context.CurrentAppDataItem = currentAppDataItem;
+                        messageHandler.GlobalMessageContext.UpdateMessageContext(context);//储存到缓存
                     }
                 }
             }
