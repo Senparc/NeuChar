@@ -69,6 +69,7 @@ using Senparc.NeuChar.Exceptions;
 using Senparc.CO2NET.APM;
 using System.Threading.Tasks;
 using Senparc.CO2NET.Cache;
+using System.Linq;
 
 namespace Senparc.NeuChar.MessageHandlers
 {
@@ -393,14 +394,15 @@ namespace Senparc.NeuChar.MessageHandlers
                 {
                     #region 消息去重
 
+                    var currentMessageContext = this.GetCurrentMessageContext();
                     if (omit &&
                         OmitRepeatedMessage &&
-                        CurrentMessageContext.RequestMessages.Count > 0
+                        currentMessageContext.RequestMessages.Count > 0
                          //&& !(RequestMessage is RequestMessageEvent_Merchant_Order)批量订单的MsgId可能会相同
                          )
                     {
                         //lastMessage必定有值（除非极端小的过期时间条件下，几乎不可能发生）
-                        var lastMessage = CurrentMessageContext.RequestMessages[CurrentMessageContext.RequestMessages.Count - 1];
+                        var lastMessage = currentMessageContext.RequestMessages.Last();
 
                         if (
                             //使用MsgId去重
