@@ -106,7 +106,7 @@ namespace Senparc.NeuChar.Tests.Context
 
         public override void OnExecuting()
         {
-            var currentMessageContext = base.GettCurrentMessageContext();
+            var currentMessageContext = base.GetCurrentMessageContext();
             if (currentMessageContext.StorageData == null || (currentMessageContext.StorageData is int))
             {
                 currentMessageContext.StorageData = (int)0;
@@ -119,7 +119,7 @@ namespace Senparc.NeuChar.Tests.Context
         {
             base.OnExecuted();
 
-            var currentMessageContext = base.GettCurrentMessageContext();
+            var currentMessageContext = base.GetCurrentMessageContext();
             currentMessageContext.StorageData = ((int)currentMessageContext.StorageData) + 1;
             GlobalMessageContext.UpdateMessageContext(currentMessageContext);//储存到缓存
         }

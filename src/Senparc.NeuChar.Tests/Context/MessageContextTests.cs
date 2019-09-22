@@ -76,7 +76,7 @@ namespace Senparc.NeuChar.Tests.Context
             Console.WriteLine(messageHandler.CurrentMessageContext.ResponseMessages.Last().ToJson());
 
             //测试 StorageData
-            Assert.AreEqual(1, messageHandler.GettCurrentMessageContext().StorageData);
+            Assert.AreEqual(1, messageHandler.GetCurrentMessageContext().StorageData);
 
             var lastResponseMessage = messageHandler.CurrentMessageContext.ResponseMessages.Last() as ResponseMessageText;
             Assert.IsNotNull(lastResponseMessage);
