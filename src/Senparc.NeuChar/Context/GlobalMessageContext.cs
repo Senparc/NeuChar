@@ -215,53 +215,6 @@ namespace Senparc.NeuChar.Context
 
 
         /// <summary>
-        /// 获取MessageContext，如果不存在，返回null
-        /// 这个方法的更重要意义在于操作TM队列，及时移除过期信息，并将最新活动的对象移到尾部
-        /// </summary>
-        /// <param name="userName">用户名（OpenId）</param>
-        /// <returns></returns>
-        private TMC GetMessageContext(string userName)
-        {
-            //以下为新版本代码
-            var cache = CacheStrategyFactory.GetObjectCacheStrategyInstance();
-            var cacheKey = this.GetCacheKey(userName);
-
-            //注意：这里日过直接反序列化成 TMC，将无法保存类型，需要使用JsonConverter
-
-            if (cache.CheckExisted(cacheKey))
-            {
-                var cacheResult = cache.Get(cacheKey);
-
-                if (cacheResult == null)
-                {
-                    return null;
-                }
-
-                if (cacheResult is TMC result)
-                {
-                    return result;//比如使用内存缓存，此处会是原始对象
-                }
-
-                //TODO: 这里强制绑定 Newtonsoft 弹性并不好，后期必须进行分离！！！
-                if (cacheResult is Newtonsoft.Json.Linq.JObject jsonObj)
-                {
-                    var jsonResult = JsonConvert.DeserializeObject<TMC>(jsonObj.ToString(), new MessageContextJsonConverter<TMC, TRequest, TResponse>());
-                    //Console.WriteLine("从缓存读取result：\r\n" + jsonResult.ToJson(true));
-                    return jsonResult;
-                }
-                else
-                {
-                    throw new Exception("未知缓存对象，或未经注册的缓存框架");
-                }
-            }
-            else
-            {
-
-                return null;
-            }
-        }
-
-        /// <summary>
         /// 获取MessageContext
         /// </summary>
         /// <param name="userName">用户名（OpenId）</param>
@@ -299,16 +252,61 @@ namespace Senparc.NeuChar.Context
         }
 
         /// <summary>
+        /// 获取MessageContext，如果不存在，返回null
+        /// 这个方法的更重要意义在于操作TM队列，及时移除过期信息，并将最新活动的对象移到尾部
+        /// </summary>
+        /// <param name="userName">用户名（OpenId）</param>
+        /// <returns></returns>
+        public TMC GetMessageContext(string userName)
+        {
+            //以下为新版本代码
+            var cache = CacheStrategyFactory.GetObjectCacheStrategyInstance();
+            using (cache.BeginCacheLock(MessageContextGlobalConfig.MESSAGE_CONTENT_ITEM_LOCK_NAME, $"GetMessageContext-{userName}"))
+            {
+                var cacheKey = this.GetCacheKey(userName);
+
+                //注意：这里如果直接反序列化成 TMC，将无法保存类型，需要使用JsonConverter
+
+                if (cache.CheckExisted(cacheKey))
+                {
+                    var cacheResult = cache.Get(cacheKey);
+
+                    if (cacheResult == null)
+                    {
+                        return null;
+                    }
+
+                    if (cacheResult is TMC result)
+                    {
+                        return result;//比如使用内存缓存，此处会是原始对象
+                    }
+
+                    //TODO: 这里强制绑定 Newtonsoft 弹性并不好，后期必须进行分离！！！
+                    if (cacheResult is Newtonsoft.Json.Linq.JObject jsonObj)
+                    {
+                        var jsonResult = JsonConvert.DeserializeObject<TMC>(jsonObj.ToString(), new MessageContextJsonConverter<TMC, TRequest, TResponse>());
+                        //Console.WriteLine("从缓存读取result：\r\n" + jsonResult.ToJson(true));
+                        return jsonResult;
+                    }
+                    else
+                    {
+                        throw new Exception("未知缓存对象，或未经注册的缓存框架");
+                    }
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+
+        /// <summary>
         /// 获取MessageContext，如果不存在，使用requestMessage信息初始化一个，并返回原始实例
         /// </summary>
         /// <returns></returns>
         public TMC GetMessageContext(TRequest requestMessage)
         {
-            var cache = CacheStrategyFactory.GetObjectCacheStrategyInstance();
-            using (cache.BeginCacheLock(MessageContextGlobalConfig.MESSAGE_CONTENT_ITEM_LOCK_NAME, $"GetMessageContext-{requestMessage.FromUserName}"))
-            {
-                return GetMessageContext(requestMessage.FromUserName, true);
-            }
+            return GetMessageContext(requestMessage.FromUserName, true);
         }
 
         /// <summary>
@@ -317,11 +315,7 @@ namespace Senparc.NeuChar.Context
         /// <returns></returns>
         public TMC GetMessageContext(TResponse responseMessage)
         {
-            var cache = CacheStrategyFactory.GetObjectCacheStrategyInstance();
-            using (cache.BeginCacheLock(MessageContextGlobalConfig.MESSAGE_CONTENT_ITEM_LOCK_NAME, $"GetMessageContext-{responseMessage.ToUserName}"))
-            {
-                return GetMessageContext(responseMessage.ToUserName, true);
-            }
+            return GetMessageContext(responseMessage.ToUserName, true);
         }
 
         /// <summary>
