@@ -106,6 +106,7 @@ namespace Senparc.NeuChar.MessageHandlers
 
         /// <summary>
         /// 当前用户消息上下文（注意：次数据不会被缓存，每次都会重新从缓存读取。
+        /// TODO：可创建一个临时缓存对象，但需要考虑同步问题
         /// </summary>
         [Obsolete("请使用 GettCurrentMessageContext() 获取信息！")]
         public virtual TMC CurrentMessageContext { get => GetCurrentMessageContext(); }
@@ -113,7 +114,7 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <summary>
         /// 当前用户消息上下文（注意：次数据不会被缓存，每次都会重新从缓存读取。
         /// </summary>
-        public virtual TMC GetCurrentMessageContext() { return  GlobalMessageContext.GetMessageContext(RequestMessage); }
+        public virtual TMC GetCurrentMessageContext() { return GlobalMessageContext.GetMessageContext(RequestMessage); }
 
         #endregion
 
@@ -192,10 +193,7 @@ namespace Senparc.NeuChar.MessageHandlers
                 }
                 return _currentMessageHandlerNode;
             }
-            set
-            {
-                _currentMessageHandlerNode = value;
-            }
+            set=> _currentMessageHandlerNode = value;
         }
 
         private AppDataNode _currentAppDataNode;
@@ -216,28 +214,25 @@ namespace Senparc.NeuChar.MessageHandlers
                 }
                 return _currentAppDataNode;
             }
-            set
-            {
-                _currentAppDataNode = value;
-            }
+            set =>  _currentAppDataNode = value;
         }
 
 
         /// <summary>
         /// 发送者用户名（OpenId）
         /// </summary>
-        public string OpenId { get { return RequestMessage != null ? RequestMessage.FromUserName : null; } }
+        public string OpenId => RequestMessage != null ? RequestMessage.FromUserName : null;
 
         /// <summary>
         /// 发送者用户名（OpenId）
         /// </summary>
-        [Obsolete("请使用OpenId")]
+        [Obsolete("请使用 OpenId")]
         public string WeixinOpenId { get { return OpenId; } }
 
         /// <summary>
         /// 
         /// </summary>
-        [Obsolete("UserName属性从v0.6起已过期，建议使用WeixinOpenId")]
+        [Obsolete("UserName属性从v0.6起已过期，建议使用 OpenId")]
         public string UserName { get { return OpenId; } }
 
         /// <summary>
@@ -333,10 +328,7 @@ namespace Senparc.NeuChar.MessageHandlers
                     return _textResponseMessage;
                 }
             }
-            set
-            {
-                _textResponseMessage = value;
-            }
+            set => _textResponseMessage = value;
         }
 
         public IEncryptPostModel PostModel { get; set; }
@@ -464,7 +456,7 @@ namespace Senparc.NeuChar.MessageHandlers
 
         /// <summary>
         /// <para>使用requestMessageBase的构造函数</para>
-        /// <para>此构造函数提供给具体的类库进行测试使用，例如Senparc.NeuChar.Work</para>
+        /// <para>此构造函数仅提供给具体的类库进行测试使用，例如Senparc.NeuChar.Work</para>
         /// </summary>
         /// <param name="requestMessageBase"></param>
         /// <param name="maxRecordCount"></param>
