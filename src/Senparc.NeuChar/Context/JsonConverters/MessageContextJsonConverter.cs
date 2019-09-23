@@ -62,7 +62,7 @@ namespace Senparc.NeuChar.Context
                     messageContext.ThisActiveTime = GetDateTimeOffset(item["ThisActiveTime"]);
                     messageContext.ExpireMinutes = item["ExpireMinutes"].Value<Double?>();
                     messageContext.AppStoreState = (AppStoreState)(item["AppStoreState"].Value<int>());
-                    messageContext.CurrentAppDataItem = item["CurrentAppDataItem"].Value<AppDataItem>();
+                    messageContext.CurrentAppDataItem = item["CurrentAppDataItem"].ToObject<AppDataItem>();
 
                     messageContext.RequestMessages = new MessageContainer<TRequest>();
                     messageContext.ResponseMessages = new MessageContainer<TResponse>();
