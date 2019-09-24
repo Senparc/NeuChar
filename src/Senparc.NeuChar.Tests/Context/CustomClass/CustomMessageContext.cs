@@ -21,10 +21,22 @@ namespace Senparc.NeuChar.Tests.Context
             switch (requestMsgType)
             {
                 case RequestMsgType.Text:
-                    requestMessage =  new RequestMessageText();//借用MP的对象，也可以在单元测试中新建类
+                    requestMessage = new RequestMessageText();//借用MP的对象，也可以在单元测试中新建类
+                    break;
+                case RequestMsgType.Event:
+                    //判断Event类型
+                    switch (doc.Root.Element("Event").Value.ToUpper())
+                    {
+                        case "SUBSCRIBE"://订阅（关注）
+                            requestMessage = new RequestMessageEvent_Subscribe();
+                            break;
+                        default:
+                            requestMessage = new RequestMessageUnknownType();
+                            break;
+                    }
                     break;
                 default:
-                    throw new Exception("未定义此类型："+ requestMsgType);
+                    throw new Exception("未定义此类型：" + requestMsgType);
             }
 
             return requestMessage;
@@ -36,7 +48,7 @@ namespace Senparc.NeuChar.Tests.Context
             switch (responseMsgType)
             {
                 case ResponseMsgType.Text:
-                    responseMessage =  new ResponseMessageText();
+                    responseMessage = new ResponseMessageText();
                     break;
                 default:
                     throw new Exception("未定义此类型：" + responseMsgType);

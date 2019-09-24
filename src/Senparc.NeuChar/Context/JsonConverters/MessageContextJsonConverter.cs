@@ -9,6 +9,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Senparc.NeuChar.Context
 {
@@ -105,7 +106,8 @@ namespace Senparc.NeuChar.Context
                         foreach (var requestMessage in item["RequestMessages"].Children())
                         {
                             var msgType = (RequestMsgType)requestMessage["MsgType"].Value<int>();
-                            var emptyEntity = messageContext.GetRequestEntityMappingResult(msgType);//获取空对象
+                            var doc = JsonConvert.DeserializeXNode(requestMessage.ToString(), "xml");
+                            var emptyEntity = messageContext.GetRequestEntityMappingResult(msgType, doc);//获取空对象
                             var filledEntity = requestMessage.ToObject(emptyEntity.GetType()) as TRequest;
                             if (filledEntity != null)
                             {
@@ -119,7 +121,8 @@ namespace Senparc.NeuChar.Context
                         foreach (var responseMessage in item["ResponseMessages"].Children())
                         {
                             var msgType = (ResponseMsgType)responseMessage["MsgType"].Value<int>();
-                            var emptyEntity = messageContext.GetResponseEntityMappingResult(msgType);//获取空对象
+                            var doc = JsonConvert.DeserializeXNode(responseMessage.ToString(), "xml");
+                            var emptyEntity = messageContext.GetResponseEntityMappingResult(msgType, doc);//获取空对象
                             var filledEntity = responseMessage.ToObject(emptyEntity.GetType()) as TResponse;
                             if (filledEntity != null)
                             {
