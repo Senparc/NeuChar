@@ -32,6 +32,16 @@ namespace Senparc.NeuChar.Tests.Context
 </xml>
 ";
 
+        //from: https://weixin.senparc.com/QA-14834
+        string subscribeEventRequestXml = @"<xml>
+ <ToUserName><![CDATA[gh_052ac245]]></ToUserName>
+ <FromUserName><![CDATA[o2QgnxJCl-TWay5]]></FromUserName>
+ <CreateTime>{0}</CreateTime>
+ <MsgType><![CDATA[event]]></MsgType>
+ <Event><![CDATA[subscribe]]></Event>
+ <EventKey><![CDATA[]]></EventKey>
+</xml>";
+
         PostModel postModel = new PostModel()
         {
             Token = "Token"
@@ -157,6 +167,14 @@ namespace Senparc.NeuChar.Tests.Context
             DistributedCacheTest(() => CO2NET.Cache.Redis.RedisObjectCacheStrategy.Instance);
         }
         #endregion
+
+
+        [TestMethod]
+        public void GetRequestEntityMappingResultTest()
+        {
+            var doc = XDocument.Parse(subscribeEventRequestXml.FormatWith(CO2NET.Helpers.DateTimeHelper.GetUnixDateTime(SystemTime.Now.UtcDateTime)));
+            var messageHandler = new CustomMessageHandler(doc, postModel);
+        }
 
         /// <summary>
         /// 全局参数设置

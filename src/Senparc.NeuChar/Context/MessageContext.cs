@@ -126,7 +126,7 @@ namespace Senparc.NeuChar.Context
         /// <param name="requestMsgType">RequestMsgType</param>
         /// <param name="doc">RequestMessage 的明文 XML</param>
         /// <returns></returns>
-        TRequest GetRequestEntityMappingResult(RequestMsgType requestMsgType, XDocument doc = null);
+        TRequest GetRequestEntityMappingResult(RequestMsgType requestMsgType, XDocument doc);
 
         /// <summary>
         /// 从 Xml 转换 RequestMessage 对象的处理（只是创建实例，不填充数据） 
@@ -134,7 +134,7 @@ namespace Senparc.NeuChar.Context
         /// <param name="responseMsgType">RequestMsgType</param>
         /// <param name="doc">ResponseMessage 的明文 XML</param>
         /// <returns></returns>
-        TResponse GetResponseEntityMappingResult(ResponseMsgType responseMsgType, XDocument doc = null);
+        TResponse GetResponseEntityMappingResult(ResponseMsgType responseMsgType, XDocument doc);
     }
 
     /// <summary>
@@ -273,7 +273,7 @@ namespace Senparc.NeuChar.Context
         /// <param name="requestMsgType">RequestMsgType</param>
         /// <param name="doc">RequestMessage 的明文 XML</param>
         /// <returns></returns>
-        public abstract TRequest GetRequestEntityMappingResult(RequestMsgType requestMsgType, XDocument doc = null);
+        public abstract TRequest GetRequestEntityMappingResult(RequestMsgType requestMsgType, XDocument doc);
 
         /// <summary>
         /// 从 Xml 转换 RequestMessage 对象的处理（只是创建实例，不填充数据） 
@@ -281,7 +281,7 @@ namespace Senparc.NeuChar.Context
         /// <param name="responseMsgType">RequestMsgType</param>
         /// <param name="doc">ResponseMessage 的明文 XML</param>
         /// <returns></returns>
-        public abstract TResponse GetResponseEntityMappingResult(ResponseMsgType responseMsgType, XDocument doc = null);
+        public abstract TResponse GetResponseEntityMappingResult(ResponseMsgType responseMsgType, XDocument doc);
 
         /// <summary>
         /// 此上下文被清除的时候触发
