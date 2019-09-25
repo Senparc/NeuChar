@@ -132,7 +132,7 @@ namespace Senparc.NeuChar.Context
                     }
 
                 }
-                catch (Exception ex)
+                catch/* (Exception ex)*/
                 {
                     //此处可以进行调试跟踪
                     throw;

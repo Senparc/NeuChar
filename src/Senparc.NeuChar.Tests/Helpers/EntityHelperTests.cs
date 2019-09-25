@@ -42,7 +42,7 @@ namespace Senparc.NeuChar.Tests.Helpers
 
 
         [TestMethod]
-        public void FillEntityWithXml()
+        public void FillEntityWithXmlTest()
         {
             string xml = @"<xml>
   <AppId><![CDATA[wxbbd3f07e2945cf2a]]></AppId>
@@ -59,6 +59,16 @@ namespace Senparc.NeuChar.Tests.Helpers
             Assert.AreEqual(RequestInfoType.component_verify_ticket, entity.InfoType);//只读
             Assert.AreEqual("ticket@@@oj3_KoMMnlH2SZbBs89CAzABbNF3Wfr12AFbIg19aKeLSgebFJXPE9tS60X38ab-kG5a08oskSWVdHEklNCAhA", entity.ComponentVerifyTicket);
 
+            try
+            {
+                entity = null;//测试 null 的情况
+                EntityHelper.FillEntityWithXml(entity, doc);
+                Assert.Fail();
+            }
+            catch (ArgumentNullException ex)
+            {
+                Console.WriteLine("抛出异常是正确的");
+            }
         }
     }
 }

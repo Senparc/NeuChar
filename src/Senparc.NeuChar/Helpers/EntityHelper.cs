@@ -68,12 +68,23 @@ namespace Senparc.NeuChar.Helpers
         /// <param name="doc">XML</param>
         public static void FillEntityWithXml<T>(this T entity, XDocument doc) where T : /*MessageBase*/ class, new()
         {
-            entity = entity ?? new T();
-            var root = doc.Root;
-            if (root == null)
+            if (doc == null)
             {
-                return;//无法处理
+                throw new ArgumentNullException(nameof(doc));
             }
+
+            var root = doc.Root;
+            if (doc.Root == null)
+            {
+                throw new ArgumentNullException(nameof(doc.Root));
+            }
+
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+            
+            //entity = entity ?? new T();
 
             var props = entity.GetType().GetProperties();
             foreach (var prop in props)

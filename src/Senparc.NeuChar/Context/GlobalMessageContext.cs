@@ -306,6 +306,10 @@ namespace Senparc.NeuChar.Context
         /// <returns></returns>
         public TMC GetMessageContext(TRequest requestMessage)
         {
+            if (requestMessage == null)
+            {
+                throw new NullReferenceException($"{nameof(requestMessage)} 不能为空");
+            }
             return GetMessageContext(requestMessage.FromUserName, true);
         }
 

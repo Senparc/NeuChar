@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net45;netstandard2.0</TargetFrameworks>
-    <Version>1.0.100</Version>
+    <Version>1.0.101</Version>
     <AssemblyName>Senparc.NeuChar</AssemblyName>
     <RootNamespace>Senparc.NeuChar</RootNamespace>
     <FrameworkPathOverride Condition="'$(TargetFramework)' == 'net35'">$(Net35FrameworkPathOverride)</FrameworkPathOverride>
@@ -89,6 +89,7 @@
       v1.0.100
       1、使用最新版本 CO2NET，支持 .NET Core 3.0
       2、修复 MessageContext.GetRequestEntityMappingResult() 方法可能出现的空值情况
+      v1.0.101 优化 EntityHelper.FillEntityWithXml&lt;T&gt;() 方法
     </PackageReleaseNotes>
     <RepositoryUrl>https://github.com/JeffreySu/WeiXinMPSDK</RepositoryUrl>
     <Configurations>Debug;Release;Test</Configurations>
