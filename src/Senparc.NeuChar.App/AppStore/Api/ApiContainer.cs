@@ -35,10 +35,20 @@ namespace Senparc.NeuChar.App.AppStore.Api
     /// </summary>
     public class ApiContainer
     {
+        /// <summary>
+        /// Passport
+        /// </summary>
         public Passport Passport { get; set; }
-
+        /// <summary>
+        /// MemberApi
+        /// </summary>
         public MemberApi MemberApi { get; set; }
-
+        /// <summary>
+        /// ApiContainer 构造函数
+        /// </summary>
+        /// <param name="appKey"></param>
+        /// <param name="appSecret"></param>
+        /// <param name="url"></param>
         public ApiContainer(string appKey, string appSecret, string url = AppStoreManager.DEFAULT_URL)
         {
             var passportBag = AppStoreManager.GetPassportBag(appKey);

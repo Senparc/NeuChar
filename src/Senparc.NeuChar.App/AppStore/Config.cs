@@ -30,8 +30,14 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 
 namespace Senparc.NeuChar.App.AppStore
 {
+    /// <summary>
+    /// AppStore 配置
+    /// </summary>
     public static class Config
     {
+        /// <summary>
+        /// 是否启用调试状态
+        /// </summary>
         public static bool IsDebug = false;
     }
 }

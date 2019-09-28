@@ -28,6 +28,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
     创建标识：Senparc - 20150319
 ----------------------------------------------------------------*/
 
+#pragma warning disable 1591
 namespace Senparc.NeuChar.App.AppStore
 {
     /// <summary>

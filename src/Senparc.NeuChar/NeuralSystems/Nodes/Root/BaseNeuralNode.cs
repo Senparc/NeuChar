@@ -10,6 +10,9 @@ namespace Senparc.NeuChar.NeuralSystems
         //TODO:使用命名空间以及唯一标识Guid来区分
         //public abstract string Namespace { get; set; }
 
+        /// <summary>
+        /// 版本号
+        /// </summary>
         public virtual string Version { get; set; }
 
         /// <summary>
@@ -38,11 +41,18 @@ namespace Senparc.NeuChar.NeuralSystems
         //public object ExtData { get; set; }
         //public object ExtDataKey { get; set; }
 
+        /// <summary>
+        /// BaseNeuralNode 构造函数
+        /// </summary>
         public BaseNeuralNode()
         {
             ChildrenNodes = new List<INeuralNode>();
         }
 
+        /// <summary>
+        /// 设置子节点
+        /// </summary>
+        /// <param name="childNode"></param>
         public virtual void SetChildNode(INeuralNode childNode)
         {
             //childNode.SetParentNode(this);

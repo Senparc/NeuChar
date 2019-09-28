@@ -33,6 +33,9 @@ using Senparc.CO2NET.HttpUtility;
 
 namespace Senparc.NeuChar.App.AppStore.Api
 {
+    /// <summary>
+    /// 用户信息 Api
+    /// </summary>
     public class MemberApi : BaseApi
     {
         public MemberApi(Passport passport)
@@ -40,6 +43,12 @@ namespace Senparc.NeuChar.App.AppStore.Api
         {
         }
 
+        /// <summary>
+        /// 获取用户信息
+        /// </summary>
+        /// <param name="weixinId"></param>
+        /// <param name="openId"></param>
+        /// <returns></returns>
         private GetMemberResult GetMemberFunc(int weixinId, string openId)
         {
             var url = _passport.ApiUrl + "GetMember";
