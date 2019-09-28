@@ -89,7 +89,9 @@
       v1.0.100
       1、使用最新版本 CO2NET，支持 .NET Core 3.0
       2、修复 MessageContext.GetRequestEntityMappingResult() 方法可能出现的空值情况
-      v1.0.101 优化 EntityHelper.FillEntityWithXml&lt;T&gt;() 方法
+      v1.0.101
+      1、优化 EntityHelper.FillEntityWithXml&lt;T&gt;() 方法
+      2、支持新版本 CO2NET
     </PackageReleaseNotes>
     <RepositoryUrl>https://github.com/JeffreySu/WeiXinMPSDK</RepositoryUrl>
     <Configurations>Debug;Release;Test</Configurations>
@@ -146,8 +148,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Senparc.CO2NET" Version="1.0.100" />
-    <PackageReference Include="Senparc.CO2NET.APM" Version="0.5.0" />
+    <PackageReference Include="Senparc.CO2NET" Version="1.0.101" />
+    <PackageReference Include="Senparc.CO2NET.APM" Version="0.5.101" />
   </ItemGroup>
 
 
