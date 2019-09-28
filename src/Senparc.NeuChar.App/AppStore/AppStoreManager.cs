@@ -34,8 +34,14 @@ using Senparc.NeuChar.App.Exceptions;
 
 namespace Senparc.NeuChar.App.AppStore
 {
+   /// <summary>
+   /// AppStore 管理类
+   /// </summary>
     public class AppStoreManager
     {
+        /// <summary>
+        /// 默认域名
+        /// </summary>
         public const string DEFAULT_URL = "https://www.neuchar.com"; //"https://api.weiweihi.com:8080";//默认Api Url地址
 
         //private static string _appKey;
@@ -55,6 +61,11 @@ namespace Senparc.NeuChar.App.AppStore
             set { _passportCollection = value; }
         }
 
+        /// <summary>
+        /// 获取 PassportBag
+        /// </summary>
+        /// <param name="appKey"></param>
+        /// <returns></returns>
         public static PassportBag GetPassportBag(string appKey)
         {
             if (PassportCollection.ContainsKey(appKey))
@@ -64,6 +75,9 @@ namespace Senparc.NeuChar.App.AppStore
             return null;
         }
 
+        /// <summary>
+        /// API 默认路径（紧跟域名）
+        /// </summary>
         public const string BasicApiPath = "/App/Api/";
 
         /// <summary>

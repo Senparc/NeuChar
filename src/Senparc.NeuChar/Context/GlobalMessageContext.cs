@@ -45,6 +45,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
  */
 
 
+#pragma warning disable 1591
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -306,6 +307,10 @@ namespace Senparc.NeuChar.Context
         /// <returns></returns>
         public TMC GetMessageContext(TRequest requestMessage)
         {
+            if (requestMessage == null)
+            {
+                throw new NullReferenceException($"{nameof(requestMessage)} 不能为空");
+            }
             return GetMessageContext(requestMessage.FromUserName, true);
         }
 

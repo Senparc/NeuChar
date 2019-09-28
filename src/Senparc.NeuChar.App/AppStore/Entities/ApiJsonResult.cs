@@ -33,6 +33,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 
 ----------------------------------------------------------------*/
 
+#pragma warning disable 1591
 namespace Senparc.NeuChar.App.AppStore
 {
     /// <summary>

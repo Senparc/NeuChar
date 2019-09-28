@@ -33,9 +33,17 @@ using System;
 
 namespace Senparc.NeuChar.App.AppStore.Api
 {
+    /// <summary>
+    /// API 连接器
+    /// </summary>
     public class ApiConnection
     {
         private Passport _passport;
+
+        /// <summary>
+        /// API 连接器构造函数
+        /// </summary>
+        /// <param name="passport"></param>
         public ApiConnection(Passport passport)
         {
             if (passport == null)

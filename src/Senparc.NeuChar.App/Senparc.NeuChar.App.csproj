@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net45;netstandard2.0</TargetFrameworks>
-    <Version>0.6.0</Version>
+    <TargetFrameworks>net45;netstandard2.0;netcoreapp3.0</TargetFrameworks>
+    <Version>0.6.101</Version>
     <AssemblyName>Senparc.NeuChar.App</AssemblyName>
     <RootNamespace>Senparc.NeuChar.App</RootNamespace>
     <GeneratePackageOnBuild Condition=" '$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
@@ -42,6 +42,7 @@
       v0.5.6 使用新版本 NeuChar
       v0.5.7 使用新版本 NeuChar，消息上下文支持分布式缓存
       v0.6.0 使用最新版本 NeuChar，支持 .NET Core 3.0
+      v0.6.101 使用最新版本 NeuChar，支持 .NET Core 3.0
     </PackageReleaseNotes>
     <RepositoryUrl>https://github.com/JeffreySu/WeiXinMPSDK</RepositoryUrl>
     <Configurations>Debug;Release;Test</Configurations>
@@ -71,23 +72,29 @@
     <OutputPath>..\..\BuildOutPut\</OutputPath>
     <DocumentationFile>..\..\BuildOutPut\netstandard2.0\Senparc.NeuChar.App.xml</DocumentationFile>
   </PropertyGroup>
+  
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netcoreapp3.0|AnyCPU'">
+    <OutputPath>..\..\BuildOutPut\</OutputPath>
+    <DocumentationFile>..\..\BuildOutPut\netcoreapp3.0\Senparc.NeuChar.App.xml</DocumentationFile>
+  </PropertyGroup>
 
+  
   <ItemGroup>
     <ProjectReference Include="..\Senparc.NeuChar\Senparc.NeuChar.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net45'">
-    <PackageReference Include="Microsoft.AspNet.Mvc">
+    <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.2.7">
       <Version>5.2.7</Version>
     </PackageReference>
   </ItemGroup>
 
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="Microsoft.AspNetCore.Mvc">
-      <Version>2.2.0</Version>
-    </PackageReference>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc" />
   </ItemGroup>
 
-
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.1' or '$(TargetFramework)' == 'netcoreapp3.0'">
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
 </Project>

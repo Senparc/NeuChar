@@ -327,6 +327,8 @@ namespace Senparc.NeuChar.NeuralSystems
         /// 执行NeuChar判断过程，获取响应消息
         /// </summary>
         /// <param name="requestMessage"></param>
+        /// <param name="messageHandler"></param>
+        /// <param name="accessTokenOrApi"></param>
         /// <returns></returns>
         public async Task<IResponseMessageBase> ExecuteAsync<TC, TRequest, TResponse>(IRequestMessageBase requestMessage, IMessageHandlerWithContext<TC, TRequest, TResponse> messageHandler,
             string accessTokenOrApi)

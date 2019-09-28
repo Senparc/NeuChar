@@ -35,9 +35,18 @@ namespace Senparc.NeuChar.App.AppStore.Api
     /// </summary>
     public class BaseApi
     {
+        /// <summary>
+        /// passport
+        /// </summary>
         protected Passport _passport;
+        /// <summary>
+        /// ApiConnection
+        /// </summary>
         protected ApiConnection ApiConnection { get; set; }
-
+        /// <summary>
+        /// BaseApi 构造函数
+        /// </summary>
+        /// <param name="passport"></param>
         public BaseApi(Passport passport)
         {
             _passport = passport;

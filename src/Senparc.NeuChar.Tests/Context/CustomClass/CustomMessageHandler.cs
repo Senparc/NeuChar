@@ -41,20 +41,11 @@ namespace Senparc.NeuChar.Tests.Context
             ResponseMessage = responseMessge;
         }
 
-        /// <summary>
-        /// 动态去重判断委托，仅当返回值为false时，不使用消息去重功能
-        /// </summary>
-        public Func<IRequestMessageBase, bool> OmitRepeatedMessageFunc { get; set; } = null;
+        ///// <summary>
+        ///// 动态去重判断委托，仅当返回值为false时，不使用消息去重功能
+        ///// </summary>
+        //public Func<IRequestMessageBase, bool> OmitRepeatedMessageFunc { get; set; } = null;
 
-
-        /// <summary>
-        /// 标记为已重复消息
-        /// </summary>
-        public virtual void MarkRepeatedMessage()
-        {
-            CancelExcute = true;//重复消息，取消执行
-            MessageIsRepeated = true;
-        }
 
         public CustomMessageHandler(XDocument postDataDocument, IEncryptPostModel postModel, int maxRecordCount = 0)
             : base(postDataDocument, postModel, maxRecordCount)

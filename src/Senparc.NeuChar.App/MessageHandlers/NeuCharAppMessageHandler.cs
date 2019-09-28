@@ -29,8 +29,12 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 
     修改标识：Senparc - 20190914
     修改描述：v0.8.0 提供支持分布式缓存的消息上下文（MessageContext）
+    
+    修改标识：Senparc - 20190928
+    修改描述：v0.6.101 NeuCharAppMessageHandler 改用基类的上下文处理能力
 ----------------------------------------------------------------*/
 
+#pragma warning disable 1591
 using Senparc.CO2NET.Cache;
 using Senparc.CO2NET.Helpers;
 using Senparc.NeuChar.ApiHandlers;
@@ -133,50 +137,10 @@ namespace Senparc.NeuChar.App.MessageHandlers
             {
                 RequestMessage.Encrypt = postDataDocument.Root.Element("Encrypt").Value;
             }
-
-            //TODO:分布式系统中本地的上下文会有同步问题，需要同步使用远程的储存
-            if (MessageContextGlobalConfig.UseMessageContext)
-            {
-                //var omit = OmitRepeatedMessageFunc == null || OmitRepeatedMessageFunc(RequestMessage);
-
-                var cache = CacheStrategyFactory.GetObjectCacheStrategyInstance();
-                using (cache.BeginCacheLock(MessageContextGlobalConfig.MESSAGE_CONTENT_OMIT_REPEAT_LOCK_NAME, "NeuCharAppMessageHandler"))//使用分布式缓存
-                {
-                    #region 消息去重
-
-                    if (/*omit &&*/
-                        OmitRepeatedMessage &&
-                        CurrentMessageContext.RequestMessages.Count > 0
-                         //&& !(RequestMessage is RequestMessageEvent_Merchant_Order)批量订单的MsgId可能会相同
-                         )
-                    {
-                        //lastMessage必定有值（除非极端小的过期时间条件下，几乎不可能发生）
-                        var lastMessage = CurrentMessageContext.RequestMessages[CurrentMessageContext.RequestMessages.Count - 1];
-
-                        if (
-                            //使用MsgId去重
-                            (lastMessage.MsgId != 0 && lastMessage.MsgId == RequestMessage.MsgId) ||
-                            //使用CreateTime去重（OpenId对象已经是同一个）
-                            (lastMessage.MsgId == RequestMessage.MsgId &&
-                                 lastMessage.CreateTime == RequestMessage.CreateTime &&
-                                 lastMessage.MsgType == RequestMessage.MsgType)
-                            )
-                        {
-                            MarkRepeatedMessage();//标记为已重复
-                        }
-                    }
-
-                    #endregion
-
-                    //在消息没有被去重的情况下记录上下文
-                    if (!MessageIsRepeated)
-                    {
-                        GlobalMessageContext.InsertMessage(RequestMessage);
-                    }
-                }
-            }
-
+            
             return decryptDoc;
+
+            //消息上下文记录将在 base.CommonInitialize() 中根据去重等条件判断后进行添加
         }
     }
 }

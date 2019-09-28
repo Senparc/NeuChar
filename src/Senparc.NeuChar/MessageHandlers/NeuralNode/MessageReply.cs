@@ -32,6 +32,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 
 ----------------------------------------------------------------*/
 
+#pragma warning disable 1591
 using Senparc.NeuChar;
 using System;
 using System.Collections.Generic;

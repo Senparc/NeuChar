@@ -37,8 +37,17 @@ namespace Senparc.NeuChar.App.AppStore
     /// </summary>
     public class GetMemberResult : AppResult<NormalAppData>
     {
+        /// <summary>
+        /// OpenId
+        /// </summary>
         public string OpenId { get; set; }
+        /// <summary>
+        /// 昵称
+        /// </summary>
         public string NickName { get; set; }
+        /// <summary>
+        /// 性别
+        /// </summary>
         public Sex Sex { get; set; }
         /// <summary>
         /// Base64格式的头像信息，当提供HeadImageUrl时不再提供HeadImageBase64

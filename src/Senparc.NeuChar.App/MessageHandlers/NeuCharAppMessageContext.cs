@@ -1,4 +1,5 @@
-﻿using Senparc.NeuChar.Context;
+﻿#pragma warning disable 1591
+using Senparc.NeuChar.Context;
 using Senparc.NeuChar.Entities;
 using Senparc.NeuChar.Exceptions;
 using System;
