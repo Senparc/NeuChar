@@ -11,6 +11,7 @@ namespace Senparc.NeuChar.App.Entities
     /// </summary>
     public class PostModel : EncryptPostModel
     {
+        //TODO:类名重命名
         public override string DomainId { get => AppId; set => AppId = value; }
 
         /// <summary>
