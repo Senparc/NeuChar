@@ -95,4 +95,8 @@
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.1' or '$(TargetFramework)' == 'netcoreapp3.0'">
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Middlewares\" />
+  </ItemGroup>
 </Project>
