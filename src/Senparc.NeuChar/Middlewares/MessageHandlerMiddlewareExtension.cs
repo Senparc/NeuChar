@@ -58,7 +58,7 @@ namespace Senparc.NeuChar.Middlewares
         /// <param name="messageHandler">MessageHandler</param>
         /// <param name="options">设置选项</param>
         /// <returns></returns>
-        public static IApplicationBuilder UseMpMessageHandler<TMC, TPM, TS>(this IApplicationBuilder builder, PathString pathMatch,
+        public static IApplicationBuilder UseMessageHandler<TMC, TPM, TS>(this IApplicationBuilder builder, PathString pathMatch,
             Func<Stream, EncryptPostModel, int, MessageHandler<TMC, IRequestMessageBase, IResponseMessageBase>> messageHandler, Action<MessageHandlerMiddlewareOptions<TS>> options)
                 where TMC : class, IMessageContext<IRequestMessageBase, IResponseMessageBase>, new()
                 where TPM : IEncryptPostModel
