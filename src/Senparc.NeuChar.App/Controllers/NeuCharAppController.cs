@@ -28,7 +28,7 @@ namespace Senparc.NeuChar.App.Controllers
         /// </summary>
         [HttpGet]
         [ActionName("NeuCharApp")]
-        public virtual ActionResult Get(PostModel postModel, string echostr, string neucharAppId)
+        public virtual ActionResult Get(NeuCharAppPostModel postModel, string echostr, string neucharAppId)
         {
             postModel.Token = Token;
             postModel.AppId = neucharAppId;//加密暂时用不到
@@ -49,7 +49,7 @@ namespace Senparc.NeuChar.App.Controllers
         /// </summary>
         [HttpPost]
         [ActionName("NeuCharApp")]
-        public virtual ActionResult Post(PostModel postModel, string neucharAppId)
+        public virtual ActionResult Post(NeuCharAppPostModel postModel, string neucharAppId)
         {
             postModel.Token = Token;
             postModel.AppId = neucharAppId;// $"NeuCharApp:AppId:{neucharAppId}";
