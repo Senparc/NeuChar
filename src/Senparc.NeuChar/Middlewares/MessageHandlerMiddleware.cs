@@ -1,4 +1,35 @@
-﻿#if NETSTANDARD2_0 || NETCOREAPP2_0 || NETCOREAPP2_1 || NETCOREAPP2_2 || NETCOREAPP3_0
+﻿#region Apache License Version 2.0
+/*----------------------------------------------------------------
+
+Copyright 2019 Suzhou Senparc Network Technology Co.,Ltd.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
+except in compliance with the License. You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under the
+License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+either express or implied. See the License for the specific language governing permissions
+and limitations under the License.
+
+Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
+
+----------------------------------------------------------------*/
+#endregion Apache License Version 2.0
+
+/*----------------------------------------------------------------
+    Copyright (C) 2019 Senparc
+    
+    文件名：MessageHandlerMiddleware.cs
+    文件功能描述：MessageHandler 中间件基类
+    
+    
+    创建标识：Senparc - 20191003
+    
+----------------------------------------------------------------*/
+
+#if NETSTANDARD2_0 || NETCOREAPP2_0 || NETCOREAPP2_1 || NETCOREAPP2_2 || NETCOREAPP3_0
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Senparc.CO2NET.Extensions;
@@ -21,18 +52,18 @@ namespace Senparc.NeuChar.Middlewares
     /// <summary>
     /// MessageHandler 中间件基类
     /// </summary>
-    /// <typeparam name="TMC"></typeparam>
-    /// <typeparam name="TPM"></typeparam>
-    /// <typeparam name="TS"></typeparam>
+    /// <typeparam name="TMC">上下文</typeparam>
+    /// <typeparam name="TPM">PostModel</typeparam>
+    /// <typeparam name="TS">Setting 类，如 SenparcWeixinSetting</typeparam>
     public abstract class MessageHandlerMiddleware<TMC, TPM, TS>
         where TMC : class, IMessageContext<IRequestMessageBase, IResponseMessageBase>, new()
         where TPM : IEncryptPostModel
         where TS : class
     {
-        private readonly RequestDelegate _next;
-        private readonly Func<Stream, TPM, int, MessageHandler<TMC, IRequestMessageBase, IResponseMessageBase>> _messageHandlerFunc;
-        private readonly Func<HttpContext, TS> _senparcWeixinSettingFunc;
-        private readonly MessageHandlerMiddlewareOptions<TS> _options;
+        protected readonly RequestDelegate _next;
+        protected readonly Func<Stream, TPM, int, MessageHandler<TMC, IRequestMessageBase, IResponseMessageBase>> _messageHandlerFunc;
+        protected readonly Func<HttpContext, TS> _accountSettingFunc;
+        protected readonly MessageHandlerMiddlewareOptions<TS> _options;
 
         /// <summary>
         /// EnableRequestRewindMiddleware
@@ -52,12 +83,12 @@ namespace Senparc.NeuChar.Middlewares
             _options = new MessageHandlerMiddlewareOptions<TS>();//生成一个新的 Option 对象
             options(_options);//设置 Opetion
 
-            if (_options.SettingFunc == null)
+            if (_options.AccountSettingFunc == null)
             {
                 throw new MessageHandlerException($"{nameof(options)} 中必须对 SenparcWeixinSetting 进行配置！");
             }
 
-            _senparcWeixinSettingFunc = _options.SettingFunc;
+            _accountSettingFunc = _options.AccountSettingFunc;
         }
 
         /// <summary>
@@ -85,7 +116,7 @@ namespace Senparc.NeuChar.Middlewares
         /// <returns></returns>
         public async Task Invoke(HttpContext context)
         {
-            var senparcWeixinSetting = _senparcWeixinSettingFunc(context);
+            var senparcWeixinSetting = _accountSettingFunc(context);
 
             TPM postModel = GetPostModel(context);
             string echostr = GetEchostr(context);
@@ -93,10 +124,8 @@ namespace Senparc.NeuChar.Middlewares
             // GET 验证
             if (context.Request.Method.ToUpper() == "GET")
             {
-                if (!await GetCheckSignature(context).ConfigureAwait(false))
-                {
-                    return;
-                }
+                await GetCheckSignature(context).ConfigureAwait(false);
+                return;
             }
             // POST 消息请求
             else if (context.Request.Method.ToUpper() == "POST")
@@ -161,7 +190,7 @@ namespace Senparc.NeuChar.Middlewares
                             //throw new Senparc.Weixin.MP.WeixinException("FinalResponseDocument不能为Null！", null);
                         }
                     }
-                                   }
+                }
                 else
                 {
                     throw new MiddlewareException("IMessageHandlerDocument 类型的 MessageHandler 不能为 Null！", null);
@@ -169,7 +198,7 @@ namespace Senparc.NeuChar.Middlewares
 
                 returnResult = returnResult ?? "";
 
-                context.Response.ContentType = $"text/{(isXml ? "xml":"plain")};charset=utf-8";
+                context.Response.ContentType = $"text/{(isXml ? "xml" : "plain")};charset=utf-8";
                 await context.Response.WriteAsync(returnResult);
             }
 

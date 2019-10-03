@@ -21,8 +21,8 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 /*----------------------------------------------------------------
     Copyright (C) 2019 Senparc
     
-    文件名：MessageHandlerMiddlewareOptions.cs
-    文件功能描述：MessageHandler 中间件选项设置类配置信息
+    文件名：MessageHandlerMiddlewareExtension.cs
+    文件功能描述：MessageHandler 中间件基类
     
     
     创建标识：Senparc - 20191003
@@ -31,10 +31,14 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 
 #if NETSTANDARD2_0 || NETCOREAPP2_0 || NETCOREAPP2_1 || NETCOREAPP2_2 || NETCOREAPP3_0
 
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Senparc.NeuChar.Context;
+using Senparc.NeuChar.Entities;
 using Senparc.NeuChar.MessageHandlers;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -42,41 +46,29 @@ using System.Threading.Tasks;
 namespace Senparc.NeuChar.Middlewares
 {
     /// <summary>
-    /// MessageHandlerMiddleware 配置信息
+    /// MessageHandlerMiddleware 扩展类
     /// </summary>
-    /// <typeparam name="T">AccountSetting 类型，如公众号的 SenparcWeixinSetting</typeparam>
-    public class MessageHandlerMiddlewareOptions<T>
-       where T : class
+    public static class MessageHandlerMiddlewareExtension
     {
         /// <summary>
-        /// 启用 RequestMessage 的日志记录
+        /// 使用 MessageHandler 配置。注意：会默认使用异步方法 messageHandler.ExecuteAsync()。
         /// </summary>
-        public bool EnableRequestLog { get; set; } = true;
-
-        /// <summary>
-        /// 启用 ResponseMessage 的日志记录
-        /// </summary>
-        public bool EnbleResponseLog { get; set; } = true;
-
-        /// <summary>
-        /// 在没有 override 的情况下，MessageHandler 事件异步方法的默认调用方法
-        /// </summary>
-        public DefaultMessageHandlerAsyncEvent DefaultMessageHandlerAsyncEvent { get; set; } = DefaultMessageHandlerAsyncEvent.DefaultResponseMessageAsync;
-
-        /// <summary>
-        /// 上下文最大纪录数量（默认为 10)
-        /// </summary>
-        public int MaxRecordCount { get; set; } = 10;
-
-        /// <summary>
-        /// 是否去重（默认为 true）
-        /// </summary>
-        public bool OmitRepeatedMessage { get; set; } = true;
-
-        /// <summary>
-        /// 如公众号的 SenparcWeixinSetting 信息，必须包含 Token、AppId，以及 EncodingAESKey（如果有）
-        /// </summary>
-        public Func<HttpContext, T> AccountSettingFunc { get; set; }
+        /// <param name="builder"></param>
+        /// <param name="pathMatch">路径规则（路径开头，可带参数）</param>
+        /// <param name="messageHandler">MessageHandler</param>
+        /// <param name="options">设置选项</param>
+        /// <returns></returns>
+        public static IApplicationBuilder UseMpMessageHandler<TMC, TPM, TS>(this IApplicationBuilder builder, PathString pathMatch,
+            Func<Stream, EncryptPostModel, int, MessageHandler<TMC, IRequestMessageBase, IResponseMessageBase>> messageHandler, Action<MessageHandlerMiddlewareOptions<TS>> options)
+                where TMC : class, IMessageContext<IRequestMessageBase, IResponseMessageBase>, new()
+                where TPM : IEncryptPostModel
+                where TS : class
+        {
+            return builder.Map(pathMatch, app =>
+            {
+                app.UseMiddleware<MessageHandlerMiddleware<TMC, TPM, TS>>(messageHandler, options);
+            });
+        }
     }
 }
 
