@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net45;netstandard2.0</TargetFrameworks>
-    <Version>1.0.102-preview3</Version>
+    <Version>1.0.102-preview4</Version>
     <AssemblyName>Senparc.NeuChar</AssemblyName>
     <RootNamespace>Senparc.NeuChar</RootNamespace>
     <FrameworkPathOverride Condition="'$(TargetFramework)' == 'net35'">$(Net35FrameworkPathOverride)</FrameworkPathOverride>
@@ -92,6 +92,7 @@
       v1.0.101
       1、优化 EntityHelper.FillEntityWithXml&lt;T&gt;() 方法
       2、支持新版本 CO2NET
+      3、提供 MessageHandler 中间件
     </PackageReleaseNotes>
     <RepositoryUrl>https://github.com/JeffreySu/WeiXinMPSDK</RepositoryUrl>
     <Configurations>Debug;Release;Test</Configurations>
@@ -143,6 +144,7 @@
     <Folder Include="Entities\WeChat\Work\" />
     <Folder Include="Entities\WeChat\MiniProgram\" />
     <Folder Include="Entities\WeChat\Open\" />
+    <Folder Include="Exceptions\Middleware\" />
     <Folder Include="NeuralSystems\Nodes\Config\" />
     <Folder Include="Properties\" />
   </ItemGroup>
