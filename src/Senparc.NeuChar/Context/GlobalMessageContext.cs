@@ -50,6 +50,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Senparc.CO2NET.Cache;
 using Senparc.CO2NET.Extensions;
@@ -193,6 +194,8 @@ namespace Senparc.NeuChar.Context
             return expireTimeSpan;
         }
 
+        #region 同步方法
+
         /// <summary>
         /// 重置所有上下文参数，所有记录将被清空（如果缓存数据比较多，性能开销将会比较大，请谨慎操作）
         /// </summary>
@@ -206,7 +209,7 @@ namespace Senparc.NeuChar.Context
             var messageContextObjects = allObjects.Where(z => z.Key.StartsWith(finalKeyPrefix, StringComparison.Ordinal)).ToList();
             foreach (var item in messageContextObjects)
             {
-                Console.WriteLine($"{item.Key}");
+                //Console.WriteLine($"{item.Key}");
                 cache.RemoveFromCache(item.Key, true);//移除
             }
 
@@ -448,5 +451,267 @@ namespace Senparc.NeuChar.Context
                 cache.Set(cacheKey, messageContext, expireTime);
             }
         }
+
+        #endregion
+
+        #region 异步方法
+
+        /// <summary>
+        /// 重置所有上下文参数，所有记录将被清空（如果缓存数据比较多，性能开销将会比较大，请谨慎操作）
+        /// </summary>
+        public async Task RestoreAsync()
+        {
+            var cache = CacheStrategyFactory.GetObjectCacheStrategyInstance();
+
+            //删除所有键
+            var finalKeyPrefix = cache.GetFinalKey(GetCacheKey(""));
+            var allObjects = await cache.GetAllAsync().ConfigureAwait(false);
+            var messageContextObjects = allObjects.Where(z => z.Key.StartsWith(finalKeyPrefix, StringComparison.Ordinal)).ToList();
+            foreach (var item in messageContextObjects)
+            {
+                //Console.WriteLine($"{item.Key}");
+                await cache.RemoveFromCacheAsync(item.Key, true).ConfigureAwait(false);//移除
+            }
+
+            ExpireMinutes = MessageContextGlobalConfig.ExpireMinutes;
+            MaxRecordCount = MessageContextGlobalConfig.MaxRecordCount;
+        }
+
+
+        /// <summary>
+        /// 获取MessageContext
+        /// </summary>
+        /// <param name="userName">用户名（OpenId）</param>
+        /// <param name="createIfNotExists">true：如果用户不存在，则创建一个实例，并返回这个最新的实例
+        /// false：如用户不存在，则返回null</param>
+        /// <returns></returns>
+        private async Task<TMC> GetMessageContextAsync(string userName, bool createIfNotExists)
+        {
+            var messageContext = await GetMessageContextAsync(userName).ConfigureAwait(false);
+
+            if (messageContext == null)
+            {
+                if (createIfNotExists)
+                {
+                    //全局只在这一个地方使用写入单用户上下文的原始对象
+                    var newMessageContext = new TMC()
+                    {
+                        UserName = userName,
+                        MaxRecordCount = MessageContextGlobalConfig.MaxRecordCount
+                    };
+
+                    var cache = CacheStrategyFactory.GetObjectCacheStrategyInstance();
+                    var cacheKey = this.GetCacheKey(userName);
+                    var expireTime = GetExpireTimeSpan();
+                    await cache.SetAsync(cacheKey, newMessageContext, expireTime).ConfigureAwait(false);//插入单用户上下文的原始缓存对象
+                    //messageContext = GetMessageContext(userName);//注意！！这里如果使用Redis等分布式缓存立即从缓存读取，可能会因为还没有存入，发生为null的情况
+                    messageContext = newMessageContext;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            return messageContext;
+        }
+
+        /// <summary>
+        /// 获取MessageContext，如果不存在，返回null
+        /// 这个方法的更重要意义在于操作TM队列，及时移除过期信息，并将最新活动的对象移到尾部
+        /// </summary>
+        /// <param name="userName">用户名（OpenId）</param>
+        /// <returns></returns>
+        public async Task<TMC> GetMessageContextAsync(string userName)
+        {
+            //以下为新版本代码
+            var cache = CacheStrategyFactory.GetObjectCacheStrategyInstance();
+            using (await cache.BeginCacheLockAsync(MessageContextGlobalConfig.MESSAGE_CONTENT_ITEM_LOCK_NAME, $"GetMessageContext-{userName}"))
+            {
+                var cacheKey = this.GetCacheKey(userName);
+
+                //注意：这里如果直接反序列化成 TMC，将无法保存类型，需要使用JsonConverter
+
+                if (await cache.CheckExistedAsync(cacheKey).ConfigureAwait(false))
+                {
+                    var cacheResult = await cache.GetAsync(cacheKey).ConfigureAwait(false);
+
+                    if (cacheResult == null)
+                    {
+                        return null;
+                    }
+
+                    if (cacheResult is TMC result)
+                    {
+                        return result;//比如使用内存缓存，此处会是原始对象
+                    }
+
+                    //TODO: 这里强制绑定 Newtonsoft 弹性并不好，后期必须进行分离！！！
+                    if (cacheResult is Newtonsoft.Json.Linq.JObject jsonObj)
+                    {
+                        var jsonResult = JsonConvert.DeserializeObject<TMC>(jsonObj.ToString(), new MessageContextJsonConverter<TMC, TRequest, TResponse>());
+                        //Console.WriteLine("从缓存读取result：\r\n" + jsonResult.ToJson(true));
+                        return jsonResult;
+                    }
+                    else
+                    {
+                        throw new Exception("未知缓存对象，或未经注册的缓存框架");
+                    }
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 获取MessageContext，如果不存在，使用requestMessage信息初始化一个，并返回原始实例
+        /// </summary>
+        /// <returns></returns>
+        public async Task<TMC> GetMessageContextAsync(TRequest requestMessage)
+        {
+            if (requestMessage == null)
+            {
+                throw new NullReferenceException($"{nameof(requestMessage)} 不能为空");
+            }
+            return await GetMessageContextAsync(requestMessage.FromUserName, true).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// 获取MessageContext，如果不存在，使用responseMessage信息初始化一个，并返回原始实例
+        /// </summary>
+        /// <returns></returns>
+        public async Task<TMC> GetMessageContextAsync(TResponse responseMessage)
+        {
+            return await GetMessageContextAsync(responseMessage.ToUserName, true).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// 记录请求信息
+        /// </summary>
+        /// <param name="requestMessage">请求信息</param>
+        public async Task InsertMessageAsync(TRequest requestMessage)
+        {
+            if (requestMessage == null)
+            {
+                return;
+            }
+
+            var userName = requestMessage.FromUserName;
+            var cache = CacheStrategyFactory.GetObjectCacheStrategyInstance();
+            using (await cache.BeginCacheLockAsync(MessageContextGlobalConfig.MESSAGE_CONTENT_ITEM_LOCK_NAME, $"InsertMessage-{userName}").ConfigureAwait(false))
+            {
+                var messageContext = await GetMessageContextAsync(userName, true).ConfigureAwait(false);
+                //if (messageContext.RequestMessages.Count > 0)
+                //{
+                //    //如果不是新建的对象，把当前对象移到队列尾部（新对象已经在底部）
+                //    var messageContextInQueue =
+                //        MessageQueue.FindIndex(z => z.UserName == userName);
+
+                //    if (messageContextInQueue >= 0)
+                //    {
+                //        MessageQueue.RemoveAt(messageContextInQueue); //移除当前对象
+                //        MessageQueue.Add(messageContext); //插入到末尾
+                //    }
+                //}
+
+                messageContext.LastActiveTime = messageContext.ThisActiveTime;//记录上一次请求时间
+                messageContext.ThisActiveTime = SystemTime.Now;//记录本次请求时间
+
+                //判断约束有没有修改
+                if (messageContext.MaxRecordCount != this.MaxRecordCount)
+                {
+                    messageContext.MaxRecordCount = this.MaxRecordCount;
+                    //messageContext.RequestMessages.MaxRecordCount = messageContext.MaxRecordCount;
+                }
+
+                messageContext.RequestMessages.Add(requestMessage);//录入消息（最大纪录限制会自动处理）
+
+                var cacheKey = GetCacheKey(userName);
+                var expireTime = GetExpireTimeSpan();
+                await cache.SetAsync(cacheKey, messageContext, expireTime).ConfigureAwait(false);
+
+                //Console.WriteLine("Insert RequestMessage:\r\n"+ messageContext.ToJson(true));
+            }
+        }
+
+        /// <summary>
+        /// 记录响应信息
+        /// </summary>
+        /// <param name="responseMessage">响应信息</param>
+        public async Task InsertMessageAsync(TResponse responseMessage)
+        {
+            if (responseMessage == null)
+            {
+                return;
+            }
+
+            var userName = responseMessage.ToUserName;
+            var cache = CacheStrategyFactory.GetObjectCacheStrategyInstance();
+            using (await cache.BeginCacheLockAsync(MessageContextGlobalConfig.MESSAGE_CONTENT_ITEM_LOCK_NAME, $"InsertMessage-{userName}").ConfigureAwait(false))
+            {
+                var messageContext = await GetMessageContextAsync(userName, true).ConfigureAwait(false);
+
+                //判断约束有没有修改
+                if (messageContext.MaxRecordCount != this.MaxRecordCount)
+                {
+                    messageContext.MaxRecordCount = this.MaxRecordCount;
+                }
+                messageContext.ResponseMessages.Add(responseMessage);//录入消息（最大纪录限制会自动处理）
+
+                var cacheKey = GetCacheKey(userName);
+                var expireTime = GetExpireTimeSpan();
+
+                await cache.SetAsync(cacheKey, messageContext, expireTime).ConfigureAwait(false);
+            }
+        }
+
+        /// <summary>
+        /// 获取最新一条请求数据，如果不存在，则返回null
+        /// </summary>
+        /// <param name="userName">用户名（OpenId）</param>
+        /// <returns></returns>
+        public async Task<TRequest> GetLastRequestMessageAsync(string userName)
+        {
+            var cache = CacheStrategyFactory.GetObjectCacheStrategyInstance();
+            using (await cache.BeginCacheLockAsync(MessageContextGlobalConfig.MESSAGE_CONTENT_ITEM_LOCK_NAME, $"GetMessageContext-{userName}").ConfigureAwait(false))
+            {
+                var messageContext = await GetMessageContextAsync(userName, true).ConfigureAwait(false);
+                return messageContext.RequestMessages.LastOrDefault();
+            }
+        }
+
+        /// <summary>
+        /// 获取最新一条响应数据，如果不存在，则返回null
+        /// </summary>
+        /// <param name="userName">用户名（OpenId）</param>
+        /// <returns></returns>
+        public async Task<TResponse> GetLastResponseMessageAsync(string userName)
+        {
+            var cache = CacheStrategyFactory.GetObjectCacheStrategyInstance();
+            using (await cache.BeginCacheLock(MessageContextGlobalConfig.MESSAGE_CONTENT_ITEM_LOCK_NAME, $"GetMessageContext-{userName}").ConfigureAwait(false))
+            {
+                var messageContext = await GetMessageContextAsync(userName, true);
+                return messageContext.ResponseMessages.LastOrDefault();
+            }
+        }
+
+        /// <summary>
+        /// 更新上下文
+        /// </summary>
+        /// <param name="messageContext"></param>
+        public async Task UpdateMessageContextAsync(TMC messageContext)
+        {
+            var userName = messageContext.UserName;
+            var cache = CacheStrategyFactory.GetObjectCacheStrategyInstance();
+            using (await cache.BeginCacheLockAsync(MessageContextGlobalConfig.MESSAGE_CONTENT_ITEM_LOCK_NAME, $"UpdateMessageContext-{userName}").ConfigureAwait(false))
+            {
+                var cacheKey = GetCacheKey(userName);
+                var expireTime = GetExpireTimeSpan();
+                await cache.SetAsync(cacheKey, messageContext, expireTime).ConfigureAwait(false);
+            }
+        }
+
+        #endregion
     }
 }

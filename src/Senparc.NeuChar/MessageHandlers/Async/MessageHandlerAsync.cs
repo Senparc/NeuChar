@@ -112,7 +112,7 @@ namespace Senparc.NeuChar.MessageHandlers
                 //此处修改
                 if (MessageContextGlobalConfig.UseMessageContext && ResponseMessage != null && !string.IsNullOrEmpty(ResponseMessage.FromUserName))
                 {
-                    GlobalMessageContext.InsertMessage(ResponseMessage);
+                   await GlobalMessageContext.InsertMessageAsync(ResponseMessage);
                 }
                 await apm.SetAsync(NeuCharApmKind.Message_SuccessResponse.ToString(), 1, tempStorage: OpenId).ConfigureAwait(false);
             }
