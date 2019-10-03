@@ -38,7 +38,7 @@ using System.Threading.Tasks;
 namespace Senparc.NeuChar.MessageHandlers
 {
     /// <summary>
-    /// MessageHandler事件异步方法的默认调用方法（在没有override的情况下）
+    /// 在没有 override 的情况下，MessageHandler 事件异步方法的默认调用方法
     /// </summary>
     public enum DefaultMessageHandlerAsyncEvent
     {
