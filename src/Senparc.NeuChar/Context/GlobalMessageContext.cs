@@ -689,7 +689,7 @@ namespace Senparc.NeuChar.Context
         public async Task<TResponse> GetLastResponseMessageAsync(string userName)
         {
             var cache = CacheStrategyFactory.GetObjectCacheStrategyInstance();
-            using (await cache.BeginCacheLock(MessageContextGlobalConfig.MESSAGE_CONTENT_ITEM_LOCK_NAME, $"GetMessageContext-{userName}").ConfigureAwait(false))
+            using (await cache.BeginCacheLockAsync(MessageContextGlobalConfig.MESSAGE_CONTENT_ITEM_LOCK_NAME, $"GetMessageContext-{userName}").ConfigureAwait(false))
             {
                 var messageContext = await GetMessageContextAsync(userName, true);
                 return messageContext.ResponseMessages.LastOrDefault();
