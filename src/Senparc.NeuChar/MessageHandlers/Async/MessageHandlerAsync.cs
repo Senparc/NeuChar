@@ -31,7 +31,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 
 /*
  * V4.0 添加异步方法
- * V4.1 转为以异步方法为主
+ * V6.0 转为以异步方法为主
  */
 
 using System;
