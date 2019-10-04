@@ -325,20 +325,25 @@ namespace Senparc.NeuChar.Middlewares
 
             var isLocal = context.Request.IsLocal();
             string signature = isLocal
-                        ? $"提供签名：{postModel.Signature}<br />正确签名：{currectSignature}<br />PostModel：{postModel.ToJson(true)}"
+                        ? $@"提供签名：{postModel.Signature}<br />
+正确签名：{currectSignature}<br />
+<br />
+PostModel：{postModel.ToJson(true)}"
                         : "出于安全考虑，系统不能远程传输签名信息，请在服务器本地打开此页面，查看信息！";
             string seeDetail = isLocal ? "https://www.cnblogs.com/szw/p/token-error.html" : banMsg;
             string openSimulateTool = isLocal ? "https://sdk.weixin.senparc.com/SimulateTool" : banMsg;
             string targetBlank = isLocal ? @"target=""_balank""" : "";
 
             return $@"<div style=""width:600px; margin:50px auto; padding:30px 50px 50px 50px; border:#9ed900 3px solid; background:#f0fcff; border-radius:15px;"">
-<h1>服务器 token 签名校验失败！<h1>
+<h1>此 Url 可用于服务器 token 签名校验，但当前参数验证失败！<h1>
 <h2>签名信息</h2>
 {signature}<br /><br />
 <h2>提示</h2>
-如果你在浏览器中打开并看到这句话，那么看到这条消息<span style=""color:#f00"">并不能说明</span>你的程序有问题，
-而是意味着此地址可以被作为微信公众账号后台的 Url，并开始进行官方的对接校验，请注意保持 Token 设置的一致。<br /><br />
-
+<ol>
+<li>如果你在浏览器中打开并看到此提示，那么意味着此地址可以被作为微信公众账号后台的 Url，并可以开始进行官方的对接校验，请注意保持 Token 设置的一致。</li>
+<li>看到此提示，证明本系统对微信消息进行了符合官方要求的安全验证。</li>
+<li>特别说明：以上签名错误信息只对当前提供的参数进行签名安全检验，<span style=""color:#f00"">无法</span>用于验证系统其他功能正常与否。</li>
+</ol>
 <a href=""{seeDetail}"" {targetBlank}>查看详情</a> | <a href=""{openSimulateTool}"" {targetBlank}>使用消息模拟器测试</a>
 </div>";
         }
