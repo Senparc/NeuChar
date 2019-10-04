@@ -325,8 +325,8 @@ namespace Senparc.NeuChar.Middlewares
             string seeDetail = isLocal ? "https://www.cnblogs.com/szw/p/token-error.html" : banMsg;
             string openSimulateTool = isLocal ? "https://sdk.weixin.senparc.com/SimulateTool" : banMsg;
 
-            return $@"<div style=""width:600px; margin:auto 20px; padding:50px; border:#9ed900 3px solid; background:#f0fcff; border-radius:20px;"">
-服务器 token 签名校验失败！<br>
+            return $@"<div style=""width:600px; margin:20px auto; padding:50px; border:#9ed900 3px solid; background:#f0fcff; border-radius:20px;"">
+<h1>服务器 token 签名校验失败！<h1>
 <h2>签名信息</h2>
 {signature}<br /><br />
 <h2>提示</h2>
