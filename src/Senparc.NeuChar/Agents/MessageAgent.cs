@@ -163,28 +163,30 @@ namespace Senparc.NeuChar.Agents
         /// 获取ResponseMessge结果
         /// </summary>
         /// <param name="messageHandler"></param>
+        /// <param name="autoFillUrlParameters">是否自动填充Url中缺少的参数（signature、timestamp、nonce），默认为 true</param>
         /// <param name="url"></param>
         /// <param name="token"></param>
         /// <param name="stream"></param>
         /// <param name="timeOut">代理请求超时时间（毫秒）</param>
         /// <returns></returns>
-        public static IResponseMessageBase RequestResponseMessage(this IMessageHandlerBase messageHandler, string url, string token, Stream stream, int timeOut = AGENT_TIME_OUT)
+        public static IResponseMessageBase RequestResponseMessage(this IMessageHandlerBase messageHandler, string url, string token, Stream stream, bool autoFillUrlParameters = true, int timeOut = AGENT_TIME_OUT)
         {
-            return messageHandler.RequestXml(url, token, stream, timeOut: timeOut).CreateResponseMessage(messageHandler.MessageEntityEnlightener);
+            return messageHandler.RequestXml(url, token, stream, autoFillUrlParameters: autoFillUrlParameters, timeOut: timeOut).CreateResponseMessage(messageHandler.MessageEntityEnlightener);
         }
 
         /// <summary>
         /// 获取ResponseMessge结果
         /// </summary>
         /// <param name="messageHandler"></param>
+        /// <param name="autoFillUrlParameters">是否自动填充Url中缺少的参数（signature、timestamp、nonce），默认为 true</param>
         /// <param name="url"></param>
         /// <param name="token"></param>
         /// <param name="xml"></param>
         /// <param name="timeOut">代理请求超时时间（毫秒）</param>
         /// <returns></returns>
-        public static IResponseMessageBase RequestResponseMessage(this IMessageHandlerBase messageHandler, string url, string token, string xml, int timeOut = AGENT_TIME_OUT)
+        public static IResponseMessageBase RequestResponseMessage(this IMessageHandlerBase messageHandler, string url, string token, string xml, bool autoFillUrlParameters = true, int timeOut = AGENT_TIME_OUT)
         {
-            return messageHandler.RequestXml(url, token, xml, timeOut).CreateResponseMessage(messageHandler.MessageEntityEnlightener);
+            return messageHandler.RequestXml(url, token, xml, autoFillUrlParameters, timeOut).CreateResponseMessage(messageHandler.MessageEntityEnlightener);
         }
 
         /// <summary>
