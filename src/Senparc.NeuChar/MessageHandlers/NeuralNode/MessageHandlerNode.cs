@@ -26,6 +26,9 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
     
     
     创建标识：Senparc - 20181022
+    
+    修改标识：Senparc - 20191004
+    修改描述：改为以异步方法为主
 
 ----------------------------------------------------------------*/
 
@@ -86,6 +89,24 @@ namespace Senparc.NeuChar.NeuralSystems
         where TRequest : class, IRequestMessageBase
         where TResponse : class, IResponseMessageBase
         {
+            return ExecuteAsync(requestMessage, messageHandler, accessTokenOrApi).ConfigureAwait(false).GetAwaiter().GetResult();
+        }
+
+#if !NET35 && !NET40
+        /// <summary>
+        /// 执行NeuChar判断过程，获取响应消息
+        /// </summary>
+        /// <param name="requestMessage"></param>
+        /// <param name="messageHandler"></param>
+        /// <param name="accessTokenOrApi"></param>
+        /// <returns></returns>
+        public async Task<IResponseMessageBase> ExecuteAsync<TC, TRequest, TResponse>(IRequestMessageBase requestMessage, IMessageHandlerWithContext<TC, TRequest, TResponse> messageHandler,
+            string accessTokenOrApi)
+        where TC : class, IMessageContext<TRequest, TResponse>, new()
+        where TRequest : class, IRequestMessageBase
+        where TResponse : class, IResponseMessageBase
+        {
+            //SenparcTrace.SendCustomLog("neuchar trace","1");
             //if (accessTokenOrApi == null)
             //{
             //    throw new ArgumentNullException(nameof(accessTokenOrApi));
@@ -106,7 +127,7 @@ namespace Senparc.NeuChar.NeuralSystems
             //进行APP特殊处理
 
             //判断状态
-            var context = messageHandler.GetCurrentMessageContext();
+            var context = await messageHandler.GetCurrentMessageContext();
             AppDataItem currentAppDataItem = null;
 
             switch (context.AppStoreState)
@@ -124,7 +145,7 @@ namespace Senparc.NeuChar.NeuralSystems
                             //没有上一条活动，或者对话已过期，则设置为退出状态
                             context.AppStoreState = AppStoreState.None;
                             context.CurrentAppDataItem = null;//退出清空
-                            messageHandler.GlobalMessageContext.UpdateMessageContext(context);//储存到缓存
+                            await messageHandler.GlobalMessageContext.UpdateMessageContextAsync(context);//储存到缓存
                         }
                         else
                         {
@@ -140,7 +161,7 @@ namespace Senparc.NeuChar.NeuralSystems
                                     context.AppStoreState = AppStoreState.None;
                                     context.CurrentAppDataItem = null;//退出清空
                                                                       //currentAppDataItem = context.CurrentAppDataItem;//当前消息仍然转发（最后一条退出消息）
-                                    messageHandler.GlobalMessageContext.UpdateMessageContext(context);//储存到缓存
+                                    await messageHandler.GlobalMessageContext.UpdateMessageContextAsync(context);//储存到缓存
                                 }
                             }
                         }
@@ -149,7 +170,7 @@ namespace Senparc.NeuChar.NeuralSystems
                     {
                         //已经进入App状态，但是没有标记退出，此处强制退出
                         context.AppStoreState = AppStoreState.None;
-                        messageHandler.GlobalMessageContext.UpdateMessageContext(context);//储存到缓存
+                        await messageHandler.GlobalMessageContext.UpdateMessageContextAsync(context);//储存到缓存
                     }
                     break;
                 default:
@@ -172,7 +193,7 @@ namespace Senparc.NeuChar.NeuralSystems
                         //初次进入应用
                         context.AppStoreState = AppStoreState.Enter;
                         context.CurrentAppDataItem = currentAppDataItem;
-                        messageHandler.GlobalMessageContext.UpdateMessageContext(context);//储存到缓存
+                        await messageHandler.GlobalMessageContext.UpdateMessageContextAsync(context);//储存到缓存
                     }
                 }
             }
@@ -320,24 +341,6 @@ namespace Senparc.NeuChar.NeuralSystems
             //SenparcTrace.SendCustomLog("neuchar trace", "4");
 
             return responseMessage;
-        }
-
-#if !NET35 && !NET40
-        /// <summary>
-        /// 执行NeuChar判断过程，获取响应消息
-        /// </summary>
-        /// <param name="requestMessage"></param>
-        /// <param name="messageHandler"></param>
-        /// <param name="accessTokenOrApi"></param>
-        /// <returns></returns>
-        public async Task<IResponseMessageBase> ExecuteAsync<TC, TRequest, TResponse>(IRequestMessageBase requestMessage, IMessageHandlerWithContext<TC, TRequest, TResponse> messageHandler,
-            string accessTokenOrApi)
-        where TC : class, IMessageContext<TRequest, TResponse>, new()
-        where TRequest : class, IRequestMessageBase
-        where TResponse : class, IResponseMessageBase
-        {
-            //SenparcTrace.SendCustomLog("neuchar trace","1");
-            return await Task.Run(() => Execute(requestMessage, messageHandler, accessTokenOrApi)).ConfigureAwait(false);
         }
 #endif
     }

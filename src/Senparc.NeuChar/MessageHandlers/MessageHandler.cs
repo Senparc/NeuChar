@@ -109,12 +109,12 @@ namespace Senparc.NeuChar.MessageHandlers
         /// TODO：可创建一个临时缓存对象，但需要考虑同步问题
         /// </summary>
         [Obsolete("请使用 GettCurrentMessageContext() 获取信息！")]
-        public virtual TMC CurrentMessageContext { get => GetCurrentMessageContext(); }
+        public virtual TMC CurrentMessageContext { get => GetCurrentMessageContext().ConfigureAwait(false).GetAwaiter().GetResult(); }
 
         /// <summary>
         /// 当前用户消息上下文（注意：次数据不会被缓存，每次都会重新从缓存读取。
         /// </summary>
-        public virtual TMC GetCurrentMessageContext() { return GlobalMessageContext.GetMessageContext(RequestMessage); }
+        public virtual async Task<TMC> GetCurrentMessageContext() => await GlobalMessageContext.GetMessageContextAsync(RequestMessage).ConfigureAwait(false);
 
         #endregion
 
@@ -193,7 +193,7 @@ namespace Senparc.NeuChar.MessageHandlers
                 }
                 return _currentMessageHandlerNode;
             }
-            set=> _currentMessageHandlerNode = value;
+            set => _currentMessageHandlerNode = value;
         }
 
         private AppDataNode _currentAppDataNode;
@@ -214,7 +214,7 @@ namespace Senparc.NeuChar.MessageHandlers
                 }
                 return _currentAppDataNode;
             }
-            set =>  _currentAppDataNode = value;
+            set => _currentAppDataNode = value;
         }
 
 
@@ -388,7 +388,7 @@ namespace Senparc.NeuChar.MessageHandlers
                 {
                     #region 消息去重
 
-                    var currentMessageContext = this.GetCurrentMessageContext();
+                    var currentMessageContext = this.GetCurrentMessageContext().ConfigureAwait(false).GetAwaiter().GetResult();
                     if (omit &&
                         OmitRepeatedMessage &&
                         currentMessageContext.RequestMessages.Count > 0

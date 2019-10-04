@@ -45,6 +45,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 using Senparc.NeuChar.Context;
 using Senparc.NeuChar.Entities;
 using System;
+using System.Threading.Tasks;
 
 namespace Senparc.NeuChar.MessageHandlers
 {
@@ -72,7 +73,7 @@ namespace Senparc.NeuChar.MessageHandlers
         /// 当前用户消息上下文
         /// </summary>
         /// <returns></returns>
-        TMC GetCurrentMessageContext();
+        Task<TMC> GetCurrentMessageContext();
 
 
     }
