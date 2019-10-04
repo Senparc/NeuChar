@@ -50,20 +50,52 @@ using System.Threading.Tasks;
 namespace Senparc.NeuChar.Middlewares
 {
     /// <summary>
-    /// MessageHandler 中间件基类
+    /// MessageHandler 中间件基类接口 TODO：独立到文件
     /// </summary>
-    /// <typeparam name="TMC">上下文</typeparam>
-    /// <typeparam name="TPM">PostModel</typeparam>
-    /// <typeparam name="TS">Setting 类，如 SenparcWeixinSetting</typeparam>
-    public abstract class MessageHandlerMiddleware<TMC, TPM, TS>
-        where TMC : class, IMessageContext<IRequestMessageBase, IResponseMessageBase>, new()
+    /// <typeparam name="TMC"></typeparam>
+    /// <typeparam name="TRequest"></typeparam>
+    /// <typeparam name="TResponse"></typeparam>
+    /// <typeparam name="TPM"></typeparam>
+    /// <typeparam name="TS"></typeparam>
+    public interface IMessageHandlerMiddleware<TMC, TRequest, TResponse, TPM, TS>
+        where TMC : class, IMessageContext<TRequest, TResponse>, new()
+        where TRequest : class, IRequestMessageBase
+        where TResponse : class, IResponseMessageBase
         where TPM : IEncryptPostModel
-        where TS : class
     {
-        protected readonly RequestDelegate _next;
-        protected readonly Func<Stream, TPM, int, MessageHandler<TMC, IRequestMessageBase, IResponseMessageBase>> _messageHandlerFunc;
-        protected readonly Func<HttpContext, TS> _accountSettingFunc;
-        protected readonly MessageHandlerMiddlewareOptions<TS> _options;
+        /// <summary>
+        /// 生成 PostModel
+        /// </summary>
+        /// <returns></returns>
+        abstract TPM GetPostModel(HttpContext context);
+
+        /// <summary>
+        /// 获取 echostr（如果有）
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        abstract string GetEchostr(HttpContext context);
+
+        /// <summary>
+        /// GET 请求下的签名验证
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        abstract Task<bool> GetCheckSignature(HttpContext context);
+
+        /// <summary>
+        /// POST 请求下的签名验证
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        abstract Task<bool> PostCheckSignature(HttpContext context);
+
+        /// <summary>
+        /// Invoke
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        Task Invoke(HttpContext context);
 
         /// <summary>
         /// 获取 GET 请求时错误响应信息
@@ -71,34 +103,63 @@ namespace Senparc.NeuChar.Middlewares
         /// <param name="context"></param>
         /// <param name="currectSignature"></param>
         /// <returns></returns>
-        public string GetGetCheckFaildMessage(HttpContext context, string currectSignature)
+        string GetGetCheckFaildMessage(HttpContext context, string currectSignature);
+    }
+
+    /// <summary>
+    /// MessageHandlerMiddleware 扩展类
+    /// </summary>
+    public static class MessageHandlerMiddlewareExtension
+    {
+        /// <summary>
+        /// 使用 MessageHandler 配置。注意：会默认使用异步方法 messageHandler.ExecuteAsync()。
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="pathMatch">路径规则（路径开头，可带参数）</param>
+        /// <param name="messageHandler">MessageHandler</param>
+        /// <param name="options">设置选项</param>
+        /// <returns></returns>
+        public static IApplicationBuilder UseMessageHandler<TMHM, TMC, TRequest, TResponse, TPM, TS>(this IApplicationBuilder builder,
+            PathString pathMatch, Func<Stream, TPM, int, MessageHandler<TMC, TRequest, TResponse>> messageHandler, Action<MessageHandlerMiddlewareOptions<TS>> options)
+                where TMHM : IMessageHandlerMiddleware<TMC, TRequest, TResponse, TPM, TS>
+                where TMC : class, IMessageContext<TRequest, TResponse>, new()
+                where TRequest : class, IRequestMessageBase
+                where TResponse : class, IResponseMessageBase
+                where TPM : IEncryptPostModel
+                where TS : class
         {
-            var postModel = GetPostModel(context);
-
-            string signature = context.Request.IsLocal()
-                        ? $"提供签名：{postModel.Signature}<br />正确签名：{currectSignature}"
-                        : "";
-            string seeDetail = context.Request.IsLocal()
-                        ? "https://www.cnblogs.com/szw/p/token-error.html"
-                        : "javascript:alert('出于安全考虑，请在服务器本地打开此页面，查看链接')";
-
-            return $@"<div style=""width:600px; margin:auto 20px; padding:50px; border:#9ed900 3px solid; background:#f0fcff; border:border-radius:5px;"">
-服务器 token 签名校验失败！<br>
-<h2>签名信息</h2>
-{signature}<br /><br />
-<h2>提示</h2>
-如果你在浏览器中打开并看到这句话，那么看到这条消息<span style=""color:#f00"">并不能说明</span>你的程序有问题，
-而是意味着此地址可以被作为微信公众账号后台的 Url，并开始进行官方的对接校验，请注意保持 Token 设置的一致。<br /><br />
-
-<a href=""{seeDetail}"" target=""_balank"">查看详情</a>
-</div>";
+            return builder.Map(pathMatch, app =>
+            {
+                app.UseMiddleware<TMHM>(messageHandler, options);
+            });
         }
+    }
+
+
+    /// <summary>
+    /// MessageHandler 中间件基类
+    /// </summary>
+    /// <typeparam name="TMC">上下文</typeparam>
+    /// <typeparam name="TPM">PostModel</typeparam>
+    /// <typeparam name="TS">Setting 类，如 SenparcWeixinSetting</typeparam>
+    public abstract class MessageHandlerMiddleware<TMC, TRequest, TResponse, TPM, TS> : IMessageHandlerMiddleware<TMC, TRequest, TResponse, TPM, TS>
+        where TMC : class, IMessageContext<TRequest, TResponse>, new()
+        where TRequest : class, IRequestMessageBase
+        where TResponse : class, IResponseMessageBase
+        where TPM : IEncryptPostModel
+    {
+        protected readonly RequestDelegate _next;
+        protected readonly Func<Stream, TPM, int, IMessageHandlerWithContext<TMC, TRequest, TResponse>> _messageHandlerFunc;
+        protected readonly Func<HttpContext, TS> _accountSettingFunc;
+        protected readonly MessageHandlerMiddlewareOptions<TS> _options;
+
 
         /// <summary>
         /// EnableRequestRewindMiddleware
         /// </summary>
         /// <param name="next"></param>
-        public MessageHandlerMiddleware(RequestDelegate next, Func<Stream, TPM, int, MessageHandler<TMC, IRequestMessageBase, IResponseMessageBase>> messageHandler,
+        public MessageHandlerMiddleware(RequestDelegate next,
+            Func<Stream, TPM, int, IMessageHandlerWithContext<TMC, TRequest, TResponse>> messageHandler,
             Action<MessageHandlerMiddlewareOptions<TS>> options)
         {
             _next = next;
@@ -133,8 +194,18 @@ namespace Senparc.NeuChar.Middlewares
         /// <returns></returns>
         public abstract string GetEchostr(HttpContext context);
 
+        /// <summary>
+        /// GET 请求下的签名验证
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
         public abstract Task<bool> GetCheckSignature(HttpContext context);
 
+        /// <summary>
+        /// POST 请求下的签名验证
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
         public abstract Task<bool> PostCheckSignature(HttpContext context);
 
 
@@ -173,7 +244,7 @@ namespace Senparc.NeuChar.Middlewares
 
                 /* 使用 SelfSynicMethod 的好处是可以让异步、同步方法共享同一套（同步）代码，无需写两次，
                  * 当然，这并不一定适用于所有场景，所以是否选用需要根据实际情况而定，这里只是演示，并不盲目推荐。*/
-                messageHandler.DefaultMessageHandlerAsyncEvent = _options.DefaultMessageHandlerAsyncEvent;
+                //messageHandler.DefaultMessageHandlerAsyncEvent = _options.DefaultMessageHandlerAsyncEvent;
 
                 #endregion
 
@@ -187,14 +258,14 @@ namespace Senparc.NeuChar.Middlewares
 
                 if (_options.EnableRequestLog)
                 {
-                    messageHandler.SaveRequestMessageLog();//记录 Request 日志（可选）
+                    //messageHandler.SaveRequestMessageLog();//记录 Request 日志（可选）
                 }
 
                 await messageHandler.ExecuteAsync(cancellationToken); //执行微信处理过程（关键）
 
                 if (_options.EnbleResponseLog)
                 {
-                    messageHandler.SaveResponseMessageLog();//记录 Response 日志（可选）
+                    //messageHandler.SaveResponseMessageLog();//记录 Response 日志（可选）
                 }
 
                 string returnResult = null;
@@ -233,6 +304,36 @@ namespace Senparc.NeuChar.Middlewares
 
             //不再继续向下执行
             //await _next(context).ConfigureAwait(false);
+        }
+
+
+        /// <summary>
+        /// 获取 GET 请求时错误响应信息
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="currectSignature"></param>
+        /// <returns></returns>
+        public string GetGetCheckFaildMessage(HttpContext context, string currectSignature)
+        {
+            var postModel = GetPostModel(context);
+
+            string signature = context.Request.IsLocal()
+                        ? $"提供签名：{postModel.Signature}<br />正确签名：{currectSignature}"
+                        : "";
+            string seeDetail = context.Request.IsLocal()
+                        ? "https://www.cnblogs.com/szw/p/token-error.html"
+                        : "javascript:alert('出于安全考虑，请在服务器本地打开此页面，查看链接')";
+
+            return $@"<div style=""width:600px; margin:auto 20px; padding:50px; border:#9ed900 3px solid; background:#f0fcff; border:border-radius:5px;"">
+服务器 token 签名校验失败！<br>
+<h2>签名信息</h2>
+{signature}<br /><br />
+<h2>提示</h2>
+如果你在浏览器中打开并看到这句话，那么看到这条消息<span style=""color:#f00"">并不能说明</span>你的程序有问题，
+而是意味着此地址可以被作为微信公众账号后台的 Url，并开始进行官方的对接校验，请注意保持 Token 设置的一致。<br /><br />
+
+<a href=""{seeDetail}"" target=""_balank"">查看详情</a>
+</div>";
         }
 
     }

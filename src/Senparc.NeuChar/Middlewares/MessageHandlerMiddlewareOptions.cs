@@ -46,7 +46,7 @@ namespace Senparc.NeuChar.Middlewares
     /// </summary>
     /// <typeparam name="T">AccountSetting 类型，如公众号的 SenparcWeixinSetting</typeparam>
     public class MessageHandlerMiddlewareOptions<T>
-       where T : class
+       //where T : class
     {
         /// <summary>
         /// 启用 RequestMessage 的日志记录
