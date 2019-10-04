@@ -98,13 +98,10 @@ namespace Senparc.NeuChar.Tests.Context
                 currentMessageContext.StorageData = (int)0;
                 GlobalMessageContext.UpdateMessageContext(currentMessageContext);//储存到缓存
             }
-            base.OnExecuting();
         }
 
         public override void OnExecuted()
         {
-            base.OnExecuted();
-
             var currentMessageContext = base.GetCurrentMessageContext().ConfigureAwait(false).GetAwaiter().GetResult();
             currentMessageContext.StorageData = ((int)currentMessageContext.StorageData) + 1;
             GlobalMessageContext.UpdateMessageContext(currentMessageContext);//储存到缓存

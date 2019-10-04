@@ -49,14 +49,16 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
     修改描述：（V5.0）v0.8.0 提供支持分布式缓存的消息上下文（MessageContext）
 
     修改标识：Senparc - 20191004
-    修改描述：改为以异步方法为主
+    修改描述：MessageHandler V6.0：改为以异步方法为主；禁用 OnExecuting、OnExecuted 两个同步方法
 ----------------------------------------------------------------*/
 
 
 /*
  * V3.2
  * V4.0 添加异步方法
- * v5.0 支持分布式缓存
+ * V5.0 支持分布式缓存
+ * V6.0 转为以异步方法为主
+ * 
  */
 
 using Senparc.CO2NET.Cache;
@@ -506,10 +508,10 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <summary>
         /// 在 Execute() 之前运行，可以使用 CancelExcute=true 中断后续 Execute() 和 OnExecuted() 方法的执行
         /// </summary>
-        [Obsolete("请使用异步方法 OnExecutingAsync()")]
+        [Obsolete("请使用异步方法 OnExecutingAsync()", true)]
         public virtual void OnExecuting()
         {
-
+            throw new MessageHandlerException("请使用异步方法 OnExecutingAsync()");
         }
 
         /// <summary>
@@ -525,9 +527,10 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <summary>
         /// 在 Execute() 之后运行（如果没有被 CancelExcute=true 中断）
         /// </summary>
-        [Obsolete("请使用异步方法 OnExecutedAsync()")]
+        [Obsolete("请使用异步方法 OnExecutedAsync()", true)]
         public virtual void OnExecuted()
         {
+            throw new MessageHandlerException("请使用异步方法 OnExecutedAsync()");
         }
 
 

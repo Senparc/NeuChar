@@ -76,7 +76,7 @@ namespace Senparc.NeuChar.MessageHandlers
 
         public virtual async Task OnExecutingAsync(CancellationToken cancellationToken)
         {
-            OnExecuting();
+            
         }
 
         public virtual async Task ExecuteAsync(CancellationToken cancellationToken)
@@ -136,7 +136,7 @@ namespace Senparc.NeuChar.MessageHandlers
 
         public virtual async Task OnExecutedAsync(CancellationToken cancellationToken)
         {
-            OnExecuted();
+            
         }
 
         #endregion
