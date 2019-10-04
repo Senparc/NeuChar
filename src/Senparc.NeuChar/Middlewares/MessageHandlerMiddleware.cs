@@ -66,6 +66,35 @@ namespace Senparc.NeuChar.Middlewares
         protected readonly MessageHandlerMiddlewareOptions<TS> _options;
 
         /// <summary>
+        /// 获取 GET 请求时错误响应信息
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="currectSignature"></param>
+        /// <returns></returns>
+        public string GetGetCheckFaildMessage(HttpContext context, string currectSignature)
+        {
+            var postModel = GetPostModel(context);
+
+            string signature = context.Request.IsLocal()
+                        ? $"提供签名：{postModel.Signature}<br />正确签名：{currectSignature}"
+                        : "";
+            string seeDetail = context.Request.IsLocal()
+                        ? "https://www.cnblogs.com/szw/p/token-error.html"
+                        : "javascript:alert('出于安全考虑，请在服务器本地打开此页面，查看链接')";
+
+            return $@"<div style=""width:600px; margin:auto 20px; padding:50px; border:#9ed900 3px solid; background:#f0fcff; border:border-radius:5px;"">
+服务器 token 签名校验失败！<br>
+<h2>签名信息</h2>
+{signature}<br /><br />
+<h2>提示</h2>
+如果你在浏览器中打开并看到这句话，那么看到这条消息<span style=""color:#f00"">并不能说明</span>你的程序有问题，
+而是意味着此地址可以被作为微信公众账号后台的 Url，并开始进行官方的对接校验，请注意保持 Token 设置的一致。<br /><br />
+
+<a href=""{seeDetail}"" target=""_balank"">查看详情</a>
+</div>";
+        }
+
+        /// <summary>
         /// EnableRequestRewindMiddleware
         /// </summary>
         /// <param name="next"></param>
