@@ -328,14 +328,16 @@ namespace Senparc.NeuChar.Middlewares
                         ? $@"提供签名：{postModel.Signature}<br />
 正确签名：{currectSignature}<br />
 <br />
+<!--校验结果：<strong style=""color:red"">{(postModel.Signature==currectSignature?"成功":"失败")}</strong><br />
+<br />-->
 PostModel：{postModel.ToJson(true)}"
                         : "出于安全考虑，系统不能远程传输签名信息，请在服务器本地打开此页面，查看信息！";
             string seeDetail = isLocal ? "https://www.cnblogs.com/szw/p/token-error.html" : banMsg;
             string openSimulateTool = isLocal ? "https://sdk.weixin.senparc.com/SimulateTool" : banMsg;
             string targetBlank = isLocal ? @"target=""_balank""" : "";
 
-            return $@"<div style=""width:600px; margin:50px auto; padding:30px 50px 50px 50px; border:#9ed900 3px solid; background:#f0fcff; border-radius:15px;"">
-<h1>此 Url 可用于服务器 token 签名校验，但当前参数验证失败！<h1>
+            return $@"<div style=""width:600px; margin:50px auto; padding:30px 50px 50px 50px; border:#9ed900 3px solid; background:#f0fcff;border-radius:15px; box-shadow: 0 25.6px 57.6px rgba(0,0,0,.22), 0px 7px 14.4px rgba(96, 134, 93, 0.97);"">
+<h1>此 Url 可用于服务器 token 签名校验<h1>
 <h2>签名信息</h2>
 {signature}<br /><br />
 <h2>提示</h2>
