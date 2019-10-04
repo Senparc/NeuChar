@@ -252,7 +252,7 @@ namespace Senparc.NeuChar.Entities.Request
         /// <param name="handler"></param>
         /// <param name="func"></param>
         /// <returns></returns>
-        public static async Task<RequestMessageTextKeywordHandler> Default(this RequestMessageTextKeywordHandler handler, Task<Func<IResponseMessageBase>> func)
+        public static async Task<RequestMessageTextKeywordHandler> Default(this RequestMessageTextKeywordHandler handler, Func<Task<IResponseMessageBase>> func)
         {
             if (!handler.MatchSuccessed)
             {
@@ -261,5 +261,4 @@ namespace Senparc.NeuChar.Entities.Request
             return handler;
         }
     }
-}
 }
