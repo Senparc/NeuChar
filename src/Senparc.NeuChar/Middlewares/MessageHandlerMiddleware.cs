@@ -57,8 +57,10 @@ namespace Senparc.NeuChar.Middlewares
     /// <typeparam name="TResponse"></typeparam>
     /// <typeparam name="TPM"></typeparam>
     /// <typeparam name="TS"></typeparam>
-    public interface IMessageHandlerMiddleware<TMC, TPM, TS>
-        where TMC : class, IMessageContext<IRequestMessageBase, IResponseMessageBase>, new()
+    public interface IMessageHandlerMiddleware<TMC, TRequest, TResponse, TPM, TS>
+        where TMC : class, IMessageContext<TRequest, TResponse>, new()
+        where TRequest : class, IRequestMessageBase
+        where TResponse : class, IResponseMessageBase
         where TPM : IEncryptPostModel
     {
         /// <summary>
@@ -111,12 +113,15 @@ namespace Senparc.NeuChar.Middlewares
     /// <typeparam name="TMC">上下文</typeparam>
     /// <typeparam name="TPM">PostModel</typeparam>
     /// <typeparam name="TS">Setting 类，如 SenparcWeixinSetting</typeparam>
-    public abstract class MessageHandlerMiddleware<TMC, TPM, TS> : IMessageHandlerMiddleware<TMC, TPM, TS>
-        where TMC : class, IMessageContext<IRequestMessageBase, IResponseMessageBase>, new()
+    public abstract class MessageHandlerMiddleware<TMC, TRequest, TResponse, TPM, TS>
+        : IMessageHandlerMiddleware<TMC, TRequest, TResponse, TPM, TS>
+        where TMC : class, IMessageContext<TRequest, TResponse>, new()
+        where TRequest : class, IRequestMessageBase
+        where TResponse : class, IResponseMessageBase
         where TPM : IEncryptPostModel
     {
         protected readonly RequestDelegate _next;
-        protected readonly Func<Stream, TPM, int, MessageHandler<TMC, IRequestMessageBase, IResponseMessageBase>> _messageHandlerFunc;
+        protected readonly Func<Stream, TPM, int, MessageHandler<TMC, TRequest, TResponse>> _messageHandlerFunc;
         protected readonly Func<HttpContext, TS> _accountSettingFunc;
         protected readonly MessageHandlerMiddlewareOptions<TS> _options;
 
@@ -126,7 +131,7 @@ namespace Senparc.NeuChar.Middlewares
         /// </summary>
         /// <param name="next"></param>
         public MessageHandlerMiddleware(RequestDelegate next,
-            Func<Stream, TPM, int, MessageHandler<TMC, IRequestMessageBase, IResponseMessageBase>> messageHandler,
+            Func<Stream, TPM, int, MessageHandler<TMC, TRequest, TResponse>> messageHandler,
             Action<MessageHandlerMiddlewareOptions<TS>> options)
         {
             _next = next;
@@ -305,6 +310,36 @@ namespace Senparc.NeuChar.Middlewares
 </div>";
         }
 
+    }
+
+
+    /// <summary>
+    /// MessageHandlerMiddleware 扩展类
+    /// </summary>
+    public static class MessageHandlerMiddlewareExtension
+    {
+        /// <summary>
+        /// 使用 MessageHandler 配置。注意：会默认使用异步方法 messageHandler.ExecuteAsync()。
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="pathMatch">路径规则（路径开头，可带参数）</param>
+        /// <param name="messageHandler">MessageHandler</param>
+        /// <param name="options">设置选项</param>
+        /// <returns></returns>
+        public static IApplicationBuilder UseMessageHandler<TMHM, TRequest, TResponse, TMC, TPM, TS>(this IApplicationBuilder builder,
+            PathString pathMatch, Func<Stream, TPM, int, MessageHandler<TMC, TRequest, TResponse>> messageHandler, Action<MessageHandlerMiddlewareOptions<TS>> options)
+                where TMHM : IMessageHandlerMiddleware<TMC, TRequest, TResponse, TPM, TS>
+                where TRequest : class, IRequestMessageBase
+                where TResponse : class, IResponseMessageBase
+                where TMC : class, IMessageContext<TRequest, TResponse>, new()
+                where TPM : IEncryptPostModel
+            //where TS : class
+        {
+            return builder.Map(pathMatch, app =>
+            {
+                app.UseMiddleware<TMHM>(messageHandler, options);
+            });
+        }
     }
 }
 
