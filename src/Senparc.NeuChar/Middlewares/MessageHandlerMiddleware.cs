@@ -49,6 +49,19 @@ using System.Threading.Tasks;
 
 namespace Senparc.NeuChar.Middlewares
 {
+    #region 接口
+
+    /// <summary>
+    /// MessageHandler 中间件基类接口 TODO：独立到文件
+    /// </summary>
+    /// <typeparam name="TMC"></typeparam>
+    /// <typeparam name="TPM"></typeparam>
+    /// <typeparam name="TS"></typeparam>
+    public interface IMessageHandlerMiddleware<TMC, TPM, TS> : IMessageHandlerMiddleware<TMC, IRequestMessageBase, IResponseMessageBase, TPM, TS>
+         where TMC : class, IMessageContext<IRequestMessageBase, IResponseMessageBase>, new()
+        where TPM : IEncryptPostModel
+    { }
+
     /// <summary>
     /// MessageHandler 中间件基类接口 TODO：独立到文件
     /// </summary>
@@ -106,6 +119,26 @@ namespace Senparc.NeuChar.Middlewares
         string GetGetCheckFaildMessage(HttpContext context, string currectSignature);
     }
 
+    #endregion
+
+    #region 实现
+
+    /// <summary>
+    /// MessageHandler 中间件基类
+    /// </summary>
+    /// <typeparam name="TMC">上下文</typeparam>
+    /// <typeparam name="TPM">PostModel</typeparam>
+    /// <typeparam name="TS">Setting 类，如 SenparcWeixinSetting</typeparam>
+    public abstract class MessageHandlerMiddleware<TMC, TPM, TS> : MessageHandlerMiddleware<TMC, IRequestMessageBase, IResponseMessageBase, TPM, TS>
+        , IMessageHandlerMiddleware<TMC, TPM, TS>
+        where TMC : class, IMessageContext<IRequestMessageBase, IResponseMessageBase>, new()
+        where TPM : IEncryptPostModel
+    {
+        public MessageHandlerMiddleware(RequestDelegate next, Func<Stream, TPM, int, MessageHandler<TMC, IRequestMessageBase, IResponseMessageBase>> messageHandler, Action<MessageHandlerMiddlewareOptions<TS>> options)
+            : base(next, messageHandler, options)
+        {
+        }
+    }
 
     /// <summary>
     /// MessageHandler 中间件基类
@@ -312,12 +345,33 @@ namespace Senparc.NeuChar.Middlewares
 
     }
 
+    #endregion
+
+    #region 扩展方法
 
     /// <summary>
     /// MessageHandlerMiddleware 扩展类
     /// </summary>
     public static class MessageHandlerMiddlewareExtension
     {
+        /// <summary>
+        /// 使用 MessageHandler 配置。注意：会默认使用异步方法 messageHandler.ExecuteAsync()。
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="pathMatch">路径规则（路径开头，可带参数）</param>
+        /// <param name="messageHandler">MessageHandler</param>
+        /// <param name="options">设置选项</param>
+        /// <returns></returns>
+        public static IApplicationBuilder UseMessageHandler<TMHM, TMC, TPM, TS>(this IApplicationBuilder builder,
+            PathString pathMatch, Func<Stream, TPM, int, MessageHandler<TMC, IRequestMessageBase, IResponseMessageBase>> messageHandler, Action<MessageHandlerMiddlewareOptions<TS>> options)
+                where TMHM : IMessageHandlerMiddleware<TMC, IRequestMessageBase, IResponseMessageBase, TPM, TS>
+                where TMC : class, IMessageContext<IRequestMessageBase, IResponseMessageBase>, new()
+                where TPM : IEncryptPostModel
+            //where TS : class
+        {
+            return UseMessageHandler<TMHM, IRequestMessageBase, IResponseMessageBase, TMC, TPM, TS>(builder, pathMatch, messageHandler, options);
+        }
+
         /// <summary>
         /// 使用 MessageHandler 配置。注意：会默认使用异步方法 messageHandler.ExecuteAsync()。
         /// </summary>
@@ -341,6 +395,9 @@ namespace Senparc.NeuChar.Middlewares
             });
         }
     }
+
+
+    #endregion
 }
 
 #endif
