@@ -104,33 +104,6 @@ namespace Senparc.NeuChar.Middlewares
         string GetGetCheckFaildMessage(HttpContext context, string currectSignature);
     }
 
-    /// <summary>
-    /// MessageHandlerMiddleware 扩展类
-    /// </summary>
-    public static class MessageHandlerMiddlewareExtension
-    {
-        /// <summary>
-        /// 使用 MessageHandler 配置。注意：会默认使用异步方法 messageHandler.ExecuteAsync()。
-        /// </summary>
-        /// <param name="builder"></param>
-        /// <param name="pathMatch">路径规则（路径开头，可带参数）</param>
-        /// <param name="messageHandler">MessageHandler</param>
-        /// <param name="options">设置选项</param>
-        /// <returns></returns>
-        public static IApplicationBuilder UseMessageHandler<TMHM, TMC, TPM, TS>(this IApplicationBuilder builder,
-            PathString pathMatch, Func<Stream, TPM, int, MessageHandler<TMC, IRequestMessageBase, IResponseMessageBase>> messageHandler, Action<MessageHandlerMiddlewareOptions<TS>> options)
-                where TMHM : IMessageHandlerMiddleware<TMC, TPM, TS>
-                where TMC : class, IMessageContext<IRequestMessageBase, IResponseMessageBase>, new()
-                where TPM : IEncryptPostModel
-                //where TS : class
-        {
-            return builder.Map(pathMatch, app =>
-            {
-                app.UseMiddleware<TMHM>(messageHandler, options);
-            });
-        }
-    }
-
 
     /// <summary>
     /// MessageHandler 中间件基类
@@ -314,10 +287,11 @@ namespace Senparc.NeuChar.Middlewares
 
             var isLocal = context.Request.IsLocal();
             string signature = isLocal
-                        ? $"提供签名：{postModel.Signature}<br />正确签名：{currectSignature}"
-                        : "";
+                        ? $"提供签名：{postModel.Signature}<br />正确签名：{currectSignature}<br />PostModel：{postModel.ToJson(true)}"
+                        : "出于安全考虑，系统不能远程传输签名信息，请在服务器本地打开此页面，查看信息！";
             string seeDetail = isLocal ? "https://www.cnblogs.com/szw/p/token-error.html" : banMsg;
             string openSimulateTool = isLocal ? "https://sdk.weixin.senparc.com/SimulateTool" : banMsg;
+            string targetBlank = isLocal ? @"target=""_balank""" : "";
 
             return $@"<div style=""width:600px; margin:50px auto; padding:30px 50px 50px 50px; border:#9ed900 3px solid; background:#f0fcff; border-radius:15px;"">
 <h1>服务器 token 签名校验失败！<h1>
@@ -327,7 +301,7 @@ namespace Senparc.NeuChar.Middlewares
 如果你在浏览器中打开并看到这句话，那么看到这条消息<span style=""color:#f00"">并不能说明</span>你的程序有问题，
 而是意味着此地址可以被作为微信公众账号后台的 Url，并开始进行官方的对接校验，请注意保持 Token 设置的一致。<br /><br />
 
-<a href=""{seeDetail}"" target=""_balank"">查看详情</a> | <a href=""{openSimulateTool}"" target=""_balank"">使用消息模拟器测试</a>
+<a href=""{seeDetail}"" {targetBlank}>查看详情</a> | <a href=""{openSimulateTool}"" {targetBlank}>使用消息模拟器测试</a>
 </div>";
         }
 

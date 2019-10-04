@@ -46,6 +46,32 @@ using System.Threading.Tasks;
 namespace Senparc.NeuChar.Middlewares
 {
 
+    /// <summary>
+    /// MessageHandlerMiddleware 扩展类
+    /// </summary>
+    public static class MessageHandlerMiddlewareExtension
+    {
+        /// <summary>
+        /// 使用 MessageHandler 配置。注意：会默认使用异步方法 messageHandler.ExecuteAsync()。
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="pathMatch">路径规则（路径开头，可带参数）</param>
+        /// <param name="messageHandler">MessageHandler</param>
+        /// <param name="options">设置选项</param>
+        /// <returns></returns>
+        public static IApplicationBuilder UseMessageHandler<TMHM, TMC, TPM, TS>(this IApplicationBuilder builder,
+            PathString pathMatch, Func<Stream, TPM, int, MessageHandler<TMC, IRequestMessageBase, IResponseMessageBase>> messageHandler, Action<MessageHandlerMiddlewareOptions<TS>> options)
+                where TMHM : IMessageHandlerMiddleware<TMC, TPM, TS>
+                where TMC : class, IMessageContext<IRequestMessageBase, IResponseMessageBase>, new()
+                where TPM : IEncryptPostModel
+            //where TS : class
+        {
+            return builder.Map(pathMatch, app =>
+            {
+                app.UseMiddleware<TMHM>(messageHandler, options);
+            });
+        }
+    }
 }
 
 #endif
