@@ -31,6 +31,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 
 /*
  * V4.0 添加异步方法
+ * V4.1 转为以异步方法为主
  */
 
 using System;
@@ -75,7 +76,7 @@ namespace Senparc.NeuChar.MessageHandlers
 
         public virtual async Task OnExecutingAsync(CancellationToken cancellationToken)
         {
-            await Task.Run(() => this.OnExecuting(), cancellationToken).ConfigureAwait(false);
+            OnExecuting();
         }
 
         public virtual async Task ExecuteAsync(CancellationToken cancellationToken)
@@ -112,7 +113,7 @@ namespace Senparc.NeuChar.MessageHandlers
                 //此处修改
                 if (MessageContextGlobalConfig.UseMessageContext && ResponseMessage != null && !string.IsNullOrEmpty(ResponseMessage.FromUserName))
                 {
-                   await GlobalMessageContext.InsertMessageAsync(ResponseMessage);
+                    await GlobalMessageContext.InsertMessageAsync(ResponseMessage);
                 }
                 await apm.SetAsync(NeuCharApmKind.Message_SuccessResponse.ToString(), 1, tempStorage: OpenId).ConfigureAwait(false);
             }
@@ -130,14 +131,12 @@ namespace Senparc.NeuChar.MessageHandlers
             //await Task.Run(() => this.Execute()).ConfigureAwait(false);
         }
 
-        public virtual async Task BuildResponseMessageAsync(CancellationToken cancellationToken)
-        {
-            await Task.Run(() => this.BuildResponseMessage(), cancellationToken).ConfigureAwait(false);
-        }
+        public abstract Task BuildResponseMessageAsync(CancellationToken cancellationToken);
+
 
         public virtual async Task OnExecutedAsync(CancellationToken cancellationToken)
         {
-            await Task.Run(() => this.OnExecuted(), cancellationToken).ConfigureAwait(false);
+            OnExecuted();
         }
 
         #endregion

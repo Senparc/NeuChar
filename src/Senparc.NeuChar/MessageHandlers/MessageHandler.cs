@@ -47,6 +47,9 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 
     修改标识：Senparc - 20190914
     修改描述：（V5.0）v0.8.0 提供支持分布式缓存的消息上下文（MessageContext）
+
+    修改标识：Senparc - 20191004
+    修改描述：改为以异步方法为主
 ----------------------------------------------------------------*/
 
 
@@ -56,20 +59,20 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
  * v5.0 支持分布式缓存
  */
 
-using System;
-using System.IO;
-using System.Xml.Linq;
+using Senparc.CO2NET.Cache;
 using Senparc.CO2NET.Utilities;
 using Senparc.NeuChar.ApiHandlers;
 using Senparc.NeuChar.Context;
 using Senparc.NeuChar.Entities;
+using Senparc.NeuChar.Exceptions;
 using Senparc.NeuChar.Helpers;
 using Senparc.NeuChar.NeuralSystems;
-using Senparc.NeuChar.Exceptions;
-using Senparc.CO2NET.APM;
-using System.Threading.Tasks;
-using Senparc.CO2NET.Cache;
+using System;
+using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Senparc.NeuChar.MessageHandlers
 {
@@ -503,72 +506,29 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <summary>
         /// 在 Execute() 之前运行，可以使用 CancelExcute=true 中断后续 Execute() 和 OnExecuted() 方法的执行
         /// </summary>
+        [Obsolete("请使用异步方法 OnExecutingAsync()")]
         public virtual void OnExecuting()
         {
+
         }
 
         /// <summary>
         /// 执行微信请求（如果没有被 CancelExcute=true 中断）
         /// </summary>
+        [Obsolete("请使用异步方法 ExecuteAsync()")]
         public void Execute()
         {
-            //进行 APM 记录
-            ExecuteStatTime = SystemTime.Now;
-
-            DataOperation apm = new DataOperation(PostModel?.DomainId);
-
-            Task.Factory.StartNew(async () => await apm.SetAsync(NeuCharApmKind.Message_Request.ToString(), 1, tempStorage: OpenId).ConfigureAwait(true)).ConfigureAwait(false);
-
-            if (CancelExcute)
-            {
-                return;
-            }
-
-            OnExecuting();
-
-            if (CancelExcute)
-            {
-                return;
-            }
-
-            try
-            {
-                if (RequestMessage == null)
-                {
-                    return;
-                }
-
-                BuildResponseMessage();
-
-                //记录上下文
-                //此处修改
-                if (MessageContextGlobalConfig.UseMessageContext && ResponseMessage != null && !string.IsNullOrEmpty(ResponseMessage.FromUserName))
-                {
-                    GlobalMessageContext.InsertMessage(ResponseMessage);
-                }
-                Task.Factory.StartNew(async () => await apm.SetAsync(NeuCharApmKind.Message_SuccessResponse.ToString(), 1, tempStorage: OpenId)).ConfigureAwait(false);
-            }
-            catch (Exception ex)
-            {
-                Task.Factory.StartNew(async () => await apm.SetAsync(NeuCharApmKind.Message_Exception.ToString(), 1, tempStorage: OpenId)).ConfigureAwait(false);
-                throw new MessageHandlerException("MessageHandler中Execute()过程发生错误：" + ex.Message, ex);
-            }
-            finally
-            {
-                OnExecuted();
-                Task.Factory.StartNew(async () => await apm.SetAsync(NeuCharApmKind.Message_ResponseMillisecond.ToString(), (SystemTime.Now - this.ExecuteStatTime).TotalMilliseconds, tempStorage: OpenId)).ConfigureAwait(false);
-            }
+            CancellationToken cancellationToken = new CancellationToken();
+            ExecuteAsync(cancellationToken).ConfigureAwait(false).GetAwaiter().GetResult();
         }
-
-        public abstract void BuildResponseMessage();
 
         /// <summary>
         /// 在 Execute() 之后运行（如果没有被 CancelExcute=true 中断）
         /// </summary>
+        [Obsolete("请使用异步方法 OnExecutedAsync()")]
         public virtual void OnExecuted()
         {
         }
-
 
 
         ///// <summary>

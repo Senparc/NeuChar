@@ -35,6 +35,9 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
     修改标识：Senparc - 20181022
     修改描述：添加 IMessageHandlerExtensionProperties 接口
 
+    修改标识：Senparc - 2019104
+    修改描述：改为以异步方法为主，删除 BuildResponseMessage() 同步方法
+
 ----------------------------------------------------------------*/
 
 /*
@@ -111,11 +114,6 @@ namespace Senparc.NeuChar.MessageHandlers
         /// 执行请求
         /// </summary>
         void Execute();
-
-        /// <summary>
-        /// 执行请求内部的消息整理逻辑
-        /// </summary>
-        void BuildResponseMessage();
 
         /// <summary>
         /// 执行微信请求后触发
