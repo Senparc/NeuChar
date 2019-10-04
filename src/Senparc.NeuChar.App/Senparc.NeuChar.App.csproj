@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net45;netstandard2.0;netcoreapp3.0</TargetFrameworks>
-    <Version>0.6.102-preview5</Version>
+    <Version>0.6.102-preview6</Version>
     <AssemblyName>Senparc.NeuChar.App</AssemblyName>
     <RootNamespace>Senparc.NeuChar.App</RootNamespace>
     <GeneratePackageOnBuild Condition=" '$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
@@ -43,6 +43,7 @@
       v0.5.7 使用新版本 NeuChar，消息上下文支持分布式缓存
       v0.6.0 使用最新版本 NeuChar，支持 .NET Core 3.0
       v0.6.101 使用最新版本 NeuChar，支持 .NET Core 3.0
+      v0.6.102 NeuCharAppMessageHandler 改用基类的上下文处理能力
     </PackageReleaseNotes>
     <RepositoryUrl>https://github.com/JeffreySu/WeiXinMPSDK</RepositoryUrl>
     <Configurations>Debug;Release;Test</Configurations>
