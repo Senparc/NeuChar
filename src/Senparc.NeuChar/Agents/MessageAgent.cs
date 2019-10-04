@@ -79,7 +79,7 @@ namespace Senparc.NeuChar.Agents
         /// <param name="useNeuCharKey">是否使用WeiWeiHiKey，如果使用，则token为WeiWeiHiKey</param>
         /// <param name="timeOut">代理请求超时时间（毫秒）</param>
         /// <returns></returns>
-        public static string RequestXml(this IMessageHandlerBase messageHandler, string url,  string token, Stream stream, bool autoFillUrlParameters = true, bool useNeuCharKey = false, int timeOut = AGENT_TIME_OUT)
+        public static string RequestXml(this IMessageHandlerBase messageHandler, string url, string token, Stream stream, bool autoFillUrlParameters = true, bool useNeuCharKey = false, int timeOut = AGENT_TIME_OUT)
         {
             if (messageHandler != null)
             {
@@ -107,9 +107,10 @@ namespace Senparc.NeuChar.Agents
         /// <param name="url"></param>
         /// <param name="token"></param>
         /// <param name="xml"></param>
+        /// <param name="autoFillUrlParameters">是否自动填充Url中缺少的参数（signature、timestamp、nonce），默认为 true</param>
         /// <param name="timeOut">代理请求超时时间（毫秒）</param>
         /// <returns></returns>
-        public static string RequestXml(this IMessageHandlerBase messageHandler, string url, string token, string xml, int timeOut = AGENT_TIME_OUT)
+        public static string RequestXml(this IMessageHandlerBase messageHandler, string url, string token, string xml, bool autoFillUrlParameters = true, int timeOut = AGENT_TIME_OUT)
         {
             if (messageHandler != null)
             {
@@ -123,7 +124,7 @@ namespace Senparc.NeuChar.Agents
                     sw.Write(xml);
                     sw.Flush();
                     sw.BaseStream.Position = 0;
-                    return messageHandler.RequestXml(url, token, sw.BaseStream, timeOut: timeOut);
+                    return messageHandler.RequestXml(url, token, sw.BaseStream, autoFillUrlParameters: autoFillUrlParameters, timeOut: timeOut);
                 }
             }
         }
