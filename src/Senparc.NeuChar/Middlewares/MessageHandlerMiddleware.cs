@@ -330,13 +330,15 @@ namespace Senparc.NeuChar.Middlewares
 <br />
 <!--校验结果：<strong style=""color:red"">{(postModel.Signature==currectSignature?"成功":"失败")}</strong><br />
 <br />-->
-PostModel：{postModel.ToJson(true)}"
+PostModel：{postModel.ToJson(true)}<br />
+<br />
+Url：{context.Request.PathAndQuery()}<br />"
                         : "出于安全考虑，系统不能远程传输签名信息，请在服务器本地打开此页面，查看信息！";
             string seeDetail = isLocal ? "https://www.cnblogs.com/szw/p/token-error.html" : banMsg;
             string openSimulateTool = isLocal ? "https://sdk.weixin.senparc.com/SimulateTool" : banMsg;
             string targetBlank = isLocal ? @"target=""_balank""" : "";
 
-            return $@"<div style=""width:600px; margin:50px auto; padding:30px 50px 50px 50px; border:#9ed900 3px solid; background:#f0fcff;border-radius:15px; box-shadow: 0 25.6px 57.6px rgba(0,0,0,.22), 0px 7px 14.4px rgba(96, 134, 93, 0.97);"">
+            return $@"<div style=""width:600px; margin:50px auto; padding:20px 50px 20px 50px; border:#9ed900 3px solid; background:#f0fcff;border-radius:15px; box-shadow: 0 25.6px 57.6px rgba(0,0,0,.22), 0px 7px 14.4px rgba(96, 134, 93, 0.97);"">
 <h1>此 Url 可用于服务器 token 签名校验<h1>
 <h2>签名信息</h2>
 {signature}<br /><br />
@@ -346,7 +348,8 @@ PostModel：{postModel.ToJson(true)}"
 <li>看到此提示，证明本系统对微信消息进行了符合官方要求的安全验证。</li>
 <li>特别说明：以上签名错误信息只对当前提供的参数进行签名安全检验，<span style=""color:#f00"">无法</span>用于验证系统其他功能正常与否。</li>
 </ol>
-<a href=""{seeDetail}"" {targetBlank}>查看详情</a> | <a href=""{openSimulateTool}"" {targetBlank}>使用消息模拟器测试</a>
+<p><a href=""{seeDetail}"" {targetBlank}>查看详情</a> | <a href=""{openSimulateTool}"" {targetBlank}>使用消息模拟器测试</a></p>
+<p style=""text-align: right; color: #aaaa;"">{SystemTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}</p>
 </div>";
         }
 
