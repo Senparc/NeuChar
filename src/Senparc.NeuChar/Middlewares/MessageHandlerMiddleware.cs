@@ -57,10 +57,8 @@ namespace Senparc.NeuChar.Middlewares
     /// <typeparam name="TResponse"></typeparam>
     /// <typeparam name="TPM"></typeparam>
     /// <typeparam name="TS"></typeparam>
-    public interface IMessageHandlerMiddleware<TMC, TRequest, TResponse, TPM, TS>
-        where TMC : class, IMessageContext<TRequest, TResponse>, new()
-        where TRequest : class, IRequestMessageBase
-        where TResponse : class, IResponseMessageBase
+    public interface IMessageHandlerMiddleware<TMC, TPM, TS>
+        where TMC : class, IMessageContext<IRequestMessageBase, IResponseMessageBase>, new()
         where TPM : IEncryptPostModel
     {
         /// <summary>
@@ -119,14 +117,12 @@ namespace Senparc.NeuChar.Middlewares
         /// <param name="messageHandler">MessageHandler</param>
         /// <param name="options">设置选项</param>
         /// <returns></returns>
-        public static IApplicationBuilder UseMessageHandler<TMHM, TMC, TRequest, TResponse, TPM, TS>(this IApplicationBuilder builder,
-            PathString pathMatch, Func<Stream, TPM, int, MessageHandler<TMC, TRequest, TResponse>> messageHandler, Action<MessageHandlerMiddlewareOptions<TS>> options)
-                where TMHM : IMessageHandlerMiddleware<TMC, TRequest, TResponse, TPM, TS>
-                where TMC : class, IMessageContext<TRequest, TResponse>, new()
-                where TRequest : class, IRequestMessageBase
-                where TResponse : class, IResponseMessageBase
+        public static IApplicationBuilder UseMessageHandler<TMHM, TMC, TPM, TS>(this IApplicationBuilder builder,
+            PathString pathMatch, Func<Stream, TPM, int, MessageHandler<TMC, IRequestMessageBase, IResponseMessageBase>> messageHandler, Action<MessageHandlerMiddlewareOptions<TS>> options)
+                where TMHM : IMessageHandlerMiddleware<TMC, TPM, TS>
+                where TMC : class, IMessageContext<IRequestMessageBase, IResponseMessageBase>, new()
                 where TPM : IEncryptPostModel
-                where TS : class
+                //where TS : class
         {
             return builder.Map(pathMatch, app =>
             {
@@ -142,14 +138,12 @@ namespace Senparc.NeuChar.Middlewares
     /// <typeparam name="TMC">上下文</typeparam>
     /// <typeparam name="TPM">PostModel</typeparam>
     /// <typeparam name="TS">Setting 类，如 SenparcWeixinSetting</typeparam>
-    public abstract class MessageHandlerMiddleware<TMC, TRequest, TResponse, TPM, TS> : IMessageHandlerMiddleware<TMC, TRequest, TResponse, TPM, TS>
-        where TMC : class, IMessageContext<TRequest, TResponse>, new()
-        where TRequest : class, IRequestMessageBase
-        where TResponse : class, IResponseMessageBase
+    public abstract class MessageHandlerMiddleware<TMC, TPM, TS> : IMessageHandlerMiddleware<TMC, TPM, TS>
+        where TMC : class, IMessageContext<IRequestMessageBase, IResponseMessageBase>, new()
         where TPM : IEncryptPostModel
     {
         protected readonly RequestDelegate _next;
-        protected readonly Func<Stream, TPM, int, IMessageHandlerWithContext<TMC, TRequest, TResponse>> _messageHandlerFunc;
+        protected readonly Func<Stream, TPM, int, MessageHandler<TMC, IRequestMessageBase, IResponseMessageBase>> _messageHandlerFunc;
         protected readonly Func<HttpContext, TS> _accountSettingFunc;
         protected readonly MessageHandlerMiddlewareOptions<TS> _options;
 
@@ -159,7 +153,7 @@ namespace Senparc.NeuChar.Middlewares
         /// </summary>
         /// <param name="next"></param>
         public MessageHandlerMiddleware(RequestDelegate next,
-            Func<Stream, TPM, int, IMessageHandlerWithContext<TMC, TRequest, TResponse>> messageHandler,
+            Func<Stream, TPM, int, MessageHandler<TMC, IRequestMessageBase, IResponseMessageBase>> messageHandler,
             Action<MessageHandlerMiddlewareOptions<TS>> options)
         {
             _next = next;
@@ -244,7 +238,7 @@ namespace Senparc.NeuChar.Middlewares
 
                 /* 使用 SelfSynicMethod 的好处是可以让异步、同步方法共享同一套（同步）代码，无需写两次，
                  * 当然，这并不一定适用于所有场景，所以是否选用需要根据实际情况而定，这里只是演示，并不盲目推荐。*/
-                //messageHandler.DefaultMessageHandlerAsyncEvent = _options.DefaultMessageHandlerAsyncEvent;
+                messageHandler.DefaultMessageHandlerAsyncEvent = _options.DefaultMessageHandlerAsyncEvent;
 
                 #endregion
 
@@ -258,14 +252,14 @@ namespace Senparc.NeuChar.Middlewares
 
                 if (_options.EnableRequestLog)
                 {
-                    //messageHandler.SaveRequestMessageLog();//记录 Request 日志（可选）
+                    messageHandler.SaveRequestMessageLog();//记录 Request 日志（可选）
                 }
 
                 await messageHandler.ExecuteAsync(cancellationToken); //执行微信处理过程（关键）
 
                 if (_options.EnbleResponseLog)
                 {
-                    //messageHandler.SaveResponseMessageLog();//记录 Response 日志（可选）
+                    messageHandler.SaveResponseMessageLog();//记录 Response 日志（可选）
                 }
 
                 string returnResult = null;
@@ -325,7 +319,7 @@ namespace Senparc.NeuChar.Middlewares
             string seeDetail = isLocal ? "https://www.cnblogs.com/szw/p/token-error.html" : banMsg;
             string openSimulateTool = isLocal ? "https://sdk.weixin.senparc.com/SimulateTool" : banMsg;
 
-            return $@"<div style=""width:600px; margin:20px auto; padding:50px; border:#9ed900 3px solid; background:#f0fcff; border-radius:20px;"">
+            return $@"<div style=""width:600px; margin:50px auto; padding:30px 50px 50px 50px; border:#9ed900 3px solid; background:#f0fcff; border-radius:15px;"">
 <h1>服务器 token 签名校验失败！<h1>
 <h2>签名信息</h2>
 {signature}<br /><br />

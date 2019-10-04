@@ -73,5 +73,7 @@ namespace Senparc.NeuChar.MessageHandlers
         /// </summary>
         /// <returns></returns>
         TMC GetCurrentMessageContext();
+
+
     }
 }
