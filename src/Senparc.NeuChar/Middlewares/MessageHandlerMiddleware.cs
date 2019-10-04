@@ -1,4 +1,35 @@
-﻿#if NETSTANDARD2_0 || NETCOREAPP2_0 || NETCOREAPP2_1 || NETCOREAPP2_2 || NETCOREAPP3_0
+﻿#region Apache License Version 2.0
+/*----------------------------------------------------------------
+
+Copyright 2019 Suzhou Senparc Network Technology Co.,Ltd.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
+except in compliance with the License. You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under the
+License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+either express or implied. See the License for the specific language governing permissions
+and limitations under the License.
+
+Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
+
+----------------------------------------------------------------*/
+#endregion Apache License Version 2.0
+
+/*----------------------------------------------------------------
+    Copyright (C) 2019 Senparc
+    
+    文件名：MessageHandlerMiddleware.cs
+    文件功能描述：MessageHandler 中间件基类
+    
+    
+    创建标识：Senparc - 20191003
+    
+----------------------------------------------------------------*/
+
+#if NETSTANDARD2_0 || NETCOREAPP2_0 || NETCOREAPP2_1 || NETCOREAPP2_2 || NETCOREAPP3_0
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Senparc.CO2NET.Extensions;
@@ -19,26 +50,110 @@ using System.Threading.Tasks;
 namespace Senparc.NeuChar.Middlewares
 {
     /// <summary>
-    /// MessageHandler 中间件基类
+    /// MessageHandler 中间件基类接口 TODO：独立到文件
     /// </summary>
     /// <typeparam name="TMC"></typeparam>
+    /// <typeparam name="TRequest"></typeparam>
+    /// <typeparam name="TResponse"></typeparam>
     /// <typeparam name="TPM"></typeparam>
     /// <typeparam name="TS"></typeparam>
-    public abstract class MessageHandlerMiddleware<TMC, TPM, TS>
+    public interface IMessageHandlerMiddleware<TMC, TPM, TS>
         where TMC : class, IMessageContext<IRequestMessageBase, IResponseMessageBase>, new()
         where TPM : IEncryptPostModel
-        where TS : class
     {
-        private readonly RequestDelegate _next;
-        private readonly Func<Stream, TPM, int, MessageHandler<TMC, IRequestMessageBase, IResponseMessageBase>> _messageHandlerFunc;
-        private readonly Func<HttpContext, TS> _senparcWeixinSettingFunc;
-        private readonly MessageHandlerMiddlewareOptions<TS> _options;
+        /// <summary>
+        /// 生成 PostModel
+        /// </summary>
+        /// <returns></returns>
+        abstract TPM GetPostModel(HttpContext context);
+
+        /// <summary>
+        /// 获取 echostr（如果有）
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        abstract string GetEchostr(HttpContext context);
+
+        /// <summary>
+        /// GET 请求下的签名验证
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        abstract Task<bool> GetCheckSignature(HttpContext context);
+
+        /// <summary>
+        /// POST 请求下的签名验证
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        abstract Task<bool> PostCheckSignature(HttpContext context);
+
+        /// <summary>
+        /// Invoke
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        Task Invoke(HttpContext context);
+
+        /// <summary>
+        /// 获取 GET 请求时错误响应信息
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="currectSignature"></param>
+        /// <returns></returns>
+        string GetGetCheckFaildMessage(HttpContext context, string currectSignature);
+    }
+
+    /// <summary>
+    /// MessageHandlerMiddleware 扩展类
+    /// </summary>
+    public static class MessageHandlerMiddlewareExtension
+    {
+        /// <summary>
+        /// 使用 MessageHandler 配置。注意：会默认使用异步方法 messageHandler.ExecuteAsync()。
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="pathMatch">路径规则（路径开头，可带参数）</param>
+        /// <param name="messageHandler">MessageHandler</param>
+        /// <param name="options">设置选项</param>
+        /// <returns></returns>
+        public static IApplicationBuilder UseMessageHandler<TMHM, TMC, TPM, TS>(this IApplicationBuilder builder,
+            PathString pathMatch, Func<Stream, TPM, int, MessageHandler<TMC, IRequestMessageBase, IResponseMessageBase>> messageHandler, Action<MessageHandlerMiddlewareOptions<TS>> options)
+                where TMHM : IMessageHandlerMiddleware<TMC, TPM, TS>
+                where TMC : class, IMessageContext<IRequestMessageBase, IResponseMessageBase>, new()
+                where TPM : IEncryptPostModel
+                //where TS : class
+        {
+            return builder.Map(pathMatch, app =>
+            {
+                app.UseMiddleware<TMHM>(messageHandler, options);
+            });
+        }
+    }
+
+
+    /// <summary>
+    /// MessageHandler 中间件基类
+    /// </summary>
+    /// <typeparam name="TMC">上下文</typeparam>
+    /// <typeparam name="TPM">PostModel</typeparam>
+    /// <typeparam name="TS">Setting 类，如 SenparcWeixinSetting</typeparam>
+    public abstract class MessageHandlerMiddleware<TMC, TPM, TS> : IMessageHandlerMiddleware<TMC, TPM, TS>
+        where TMC : class, IMessageContext<IRequestMessageBase, IResponseMessageBase>, new()
+        where TPM : IEncryptPostModel
+    {
+        protected readonly RequestDelegate _next;
+        protected readonly Func<Stream, TPM, int, MessageHandler<TMC, IRequestMessageBase, IResponseMessageBase>> _messageHandlerFunc;
+        protected readonly Func<HttpContext, TS> _accountSettingFunc;
+        protected readonly MessageHandlerMiddlewareOptions<TS> _options;
+
 
         /// <summary>
         /// EnableRequestRewindMiddleware
         /// </summary>
         /// <param name="next"></param>
-        public MessageHandlerMiddleware(RequestDelegate next, Func<Stream, TPM, int, MessageHandler<TMC, IRequestMessageBase, IResponseMessageBase>> messageHandler,
+        public MessageHandlerMiddleware(RequestDelegate next,
+            Func<Stream, TPM, int, MessageHandler<TMC, IRequestMessageBase, IResponseMessageBase>> messageHandler,
             Action<MessageHandlerMiddlewareOptions<TS>> options)
         {
             _next = next;
@@ -52,12 +167,12 @@ namespace Senparc.NeuChar.Middlewares
             _options = new MessageHandlerMiddlewareOptions<TS>();//生成一个新的 Option 对象
             options(_options);//设置 Opetion
 
-            if (_options.SettingFunc == null)
+            if (_options.AccountSettingFunc == null)
             {
                 throw new MessageHandlerException($"{nameof(options)} 中必须对 SenparcWeixinSetting 进行配置！");
             }
 
-            _senparcWeixinSettingFunc = _options.SettingFunc;
+            _accountSettingFunc = _options.AccountSettingFunc;
         }
 
         /// <summary>
@@ -73,8 +188,18 @@ namespace Senparc.NeuChar.Middlewares
         /// <returns></returns>
         public abstract string GetEchostr(HttpContext context);
 
+        /// <summary>
+        /// GET 请求下的签名验证
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
         public abstract Task<bool> GetCheckSignature(HttpContext context);
 
+        /// <summary>
+        /// POST 请求下的签名验证
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
         public abstract Task<bool> PostCheckSignature(HttpContext context);
 
 
@@ -85,7 +210,7 @@ namespace Senparc.NeuChar.Middlewares
         /// <returns></returns>
         public async Task Invoke(HttpContext context)
         {
-            var senparcWeixinSetting = _senparcWeixinSettingFunc(context);
+            var senparcWeixinSetting = _accountSettingFunc(context);
 
             TPM postModel = GetPostModel(context);
             string echostr = GetEchostr(context);
@@ -93,10 +218,8 @@ namespace Senparc.NeuChar.Middlewares
             // GET 验证
             if (context.Request.Method.ToUpper() == "GET")
             {
-                if (!await GetCheckSignature(context).ConfigureAwait(false))
-                {
-                    return;
-                }
+                await GetCheckSignature(context).ConfigureAwait(false);
+                return;
             }
             // POST 消息请求
             else if (context.Request.Method.ToUpper() == "POST")
@@ -161,7 +284,7 @@ namespace Senparc.NeuChar.Middlewares
                             //throw new Senparc.Weixin.MP.WeixinException("FinalResponseDocument不能为Null！", null);
                         }
                     }
-                                   }
+                }
                 else
                 {
                     throw new MiddlewareException("IMessageHandlerDocument 类型的 MessageHandler 不能为 Null！", null);
@@ -169,12 +292,43 @@ namespace Senparc.NeuChar.Middlewares
 
                 returnResult = returnResult ?? "";
 
-                context.Response.ContentType = $"text/{(isXml ? "xml":"plain")};charset=utf-8";
+                context.Response.ContentType = $"text/{(isXml ? "xml" : "plain")};charset=utf-8";
                 await context.Response.WriteAsync(returnResult);
             }
 
             //不再继续向下执行
             //await _next(context).ConfigureAwait(false);
+        }
+
+
+        /// <summary>
+        /// 获取 GET 请求时错误响应信息
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="currectSignature"></param>
+        /// <returns></returns>
+        public string GetGetCheckFaildMessage(HttpContext context, string currectSignature)
+        {
+            var postModel = GetPostModel(context);
+            var banMsg = "javascript:alert('出于安全考虑，请在服务器本地打开此页面，查看链接')";
+
+            var isLocal = context.Request.IsLocal();
+            string signature = isLocal
+                        ? $"提供签名：{postModel.Signature}<br />正确签名：{currectSignature}"
+                        : "";
+            string seeDetail = isLocal ? "https://www.cnblogs.com/szw/p/token-error.html" : banMsg;
+            string openSimulateTool = isLocal ? "https://sdk.weixin.senparc.com/SimulateTool" : banMsg;
+
+            return $@"<div style=""width:600px; margin:50px auto; padding:30px 50px 50px 50px; border:#9ed900 3px solid; background:#f0fcff; border-radius:15px;"">
+<h1>服务器 token 签名校验失败！<h1>
+<h2>签名信息</h2>
+{signature}<br /><br />
+<h2>提示</h2>
+如果你在浏览器中打开并看到这句话，那么看到这条消息<span style=""color:#f00"">并不能说明</span>你的程序有问题，
+而是意味着此地址可以被作为微信公众账号后台的 Url，并开始进行官方的对接校验，请注意保持 Token 设置的一致。<br /><br />
+
+<a href=""{seeDetail}"" target=""_balank"">查看详情</a> | <a href=""{openSimulateTool}"" target=""_balank"">使用消息模拟器测试</a>
+</div>";
         }
 
     }

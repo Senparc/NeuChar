@@ -21,7 +21,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 /*----------------------------------------------------------------
     Copyright (C) 2019 Senparc
     
-    文件名：MessageHandler.SaveLog.cs.cs
+    文件名：MessageHandler.SaveLog.cs
     文件功能描述：微信请求日志记录
     
     
