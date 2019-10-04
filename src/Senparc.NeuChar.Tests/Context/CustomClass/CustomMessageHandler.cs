@@ -12,6 +12,8 @@ using Senparc.Weixin.Tencent;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 
 namespace Senparc.NeuChar.Tests.Context
@@ -33,13 +35,6 @@ namespace Senparc.NeuChar.Tests.Context
             }
         }
 
-        public override void BuildResponseMessage()
-        {
-            var requestMessage = RequestMessage as RequestMessageText;
-            var responseMessge = this.CreateResponseMessage<ResponseMessageText>();
-            responseMessge.Content = $"来自单元测试:{requestMessage.Content}";
-            ResponseMessage = responseMessge;
-        }
 
         ///// <summary>
         ///// 动态去重判断委托，仅当返回值为false时，不使用消息去重功能
@@ -113,6 +108,15 @@ namespace Senparc.NeuChar.Tests.Context
             var currentMessageContext = base.GetCurrentMessageContext().ConfigureAwait(false).GetAwaiter().GetResult();
             currentMessageContext.StorageData = ((int)currentMessageContext.StorageData) + 1;
             GlobalMessageContext.UpdateMessageContext(currentMessageContext);//储存到缓存
+        }
+
+        public override Task BuildResponseMessageAsync(CancellationToken cancellationToken)
+        {
+            var requestMessage = RequestMessage as RequestMessageText;
+            var responseMessge = this.CreateResponseMessage<ResponseMessageText>();
+            responseMessge.Content = $"来自单元测试:{requestMessage.Content}";
+            ResponseMessage = responseMessge;
+            return Task.CompletedTask;
         }
     }
 }

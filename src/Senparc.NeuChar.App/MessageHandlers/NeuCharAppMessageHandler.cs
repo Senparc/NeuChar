@@ -45,6 +45,8 @@ using Senparc.NeuChar.Helpers;
 using Senparc.NeuChar.MessageHandlers;
 using System;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 
 namespace Senparc.NeuChar.App.MessageHandlers
@@ -86,11 +88,6 @@ namespace Senparc.NeuChar.App.MessageHandlers
 
 
         public override XDocument FinalResponseDocument => null;
-
-        public override void BuildResponseMessage()
-        {
-            //不做处理
-        }
 
         public override XDocument Init(XDocument postDataDocument, IEncryptPostModel postModel)
         {
@@ -137,10 +134,20 @@ namespace Senparc.NeuChar.App.MessageHandlers
             {
                 RequestMessage.Encrypt = postDataDocument.Root.Element("Encrypt").Value;
             }
-            
+
             return decryptDoc;
 
             //消息上下文记录将在 base.CommonInitialize() 中根据去重等条件判断后进行添加
+        }
+
+        public override Task BuildResponseMessageAsync(CancellationToken cancellationToken)
+        {
+            //不作处理
+#if NET45
+            return Task.Delay(0);
+#else
+           return Task.CompletedTask;
+#endif
         }
     }
 }

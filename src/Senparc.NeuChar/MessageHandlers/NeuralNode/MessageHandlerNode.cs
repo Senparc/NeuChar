@@ -250,7 +250,7 @@ namespace Senparc.NeuChar.NeuralSystems
                                 var pairSuccess = messagePair.Request.Keywords.Exists(keyword => keyword.Equals(textRequestMessage.Content, StringComparison.OrdinalIgnoreCase));
                                 if (pairSuccess)
                                 {
-                                    responseMessage = GetResponseMessage(requestMessage, messagePair.Responses, messageHandler, accessTokenOrApi);
+                                    responseMessage = await GetResponseMessage(requestMessage, messagePair.Responses, messageHandler, accessTokenOrApi);
                                 }
 
                                 if (responseMessage != null)
@@ -273,7 +273,7 @@ namespace Senparc.NeuChar.NeuralSystems
 
                         foreach (var messagePair in Config.MessagePair.Where(z => z.Request.Type == RequestMsgType.Image))
                         {
-                            responseMessage = GetResponseMessage(requestMessage, messagePair.Responses, messageHandler, accessTokenOrApi);
+                            responseMessage = await GetResponseMessage(requestMessage, messagePair.Responses, messageHandler, accessTokenOrApi);
 
                             if (responseMessage != null)
                             {
@@ -305,7 +305,7 @@ namespace Senparc.NeuChar.NeuralSystems
                                             {
                                                 try
                                                 {
-                                                    responseMessage = GetResponseMessage(requestMessage, messagePair.Responses, messageHandler, accessTokenOrApi);
+                                                    responseMessage = await GetResponseMessage(requestMessage, messagePair.Responses, messageHandler, accessTokenOrApi);
 
                                                 }
                                                 catch (Exception ex)
