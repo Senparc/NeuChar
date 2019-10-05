@@ -246,6 +246,7 @@ namespace Senparc.NeuChar.Middlewares
         /// <returns></returns>
         public async Task Invoke(HttpContext context)
         {
+            MessageHandler<TMC, TRequest, TResponse> messageHandler = null;
             try
             {
                 var senparcWeixinSetting = _accountSettingFunc(context);
@@ -268,7 +269,7 @@ namespace Senparc.NeuChar.Middlewares
                     }
 
 
-                    var messageHandler = _messageHandlerFunc(context.Request.GetRequestMemoryStream(), postModel, _options.MaxRecordCount);
+                    messageHandler = _messageHandlerFunc(context.Request.GetRequestMemoryStream(), postModel, _options.MaxRecordCount);
 
 
                     #region 没有重写的异步方法将默认尝试调用同步方法中的代码（为了偷懒）
@@ -336,7 +337,11 @@ namespace Senparc.NeuChar.Middlewares
             }
             catch (Exception ex)
             {
-                SenparcTrace.SendCustomLog("MessageHandlerware 异常", ex.ToString());
+                var msg = $@"中间件类型：{this.GetType().Name}
+MessageHandler 类型：{(messageHandler == null ? "尚未生成" : messageHandler.GetType().Name)}
+异常信息：{ex.ToString()}";
+
+                SenparcTrace.SendCustomLog($"MessageHandlerware 过程发证异常", msg);
 
                 //使用外部的委托对异常过程进行处理
                 if (_options.AggregateExceptionCatch != null)
@@ -373,8 +378,6 @@ namespace Senparc.NeuChar.Middlewares
 <br />
 <!--校验结果：<strong style=""color:red"">{(postModel.Signature == correctSignature ? "成功" : "失败")}</strong><br />
 <br />-->
-PostModel：{postModel.ToJson(true)}<br />
-<br />
 <span style=""word-wrap:break-word"">Url：{context.Request.PathAndQuery().HtmlEncode()}</span>"
                         : "出于安全考虑，系统不能远程传输签名信息，请在服务器本地打开此页面，查看信息！";
             string seeDetail = isLocal ? "https://www.cnblogs.com/szw/p/token-error.html" : banMsg;
