@@ -26,7 +26,10 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
     
     
     创建标识：Senparc - 20191003
-    
+   
+    修改标识：Senparc - 20191005
+    修改描述：提供 ExecuteCancellationTokenSource 属性
+   
 ----------------------------------------------------------------*/
 
 #if NETSTANDARD2_0 || NETCOREAPP2_0 || NETCOREAPP2_1 || NETCOREAPP2_2 || NETCOREAPP3_0
@@ -76,6 +79,11 @@ namespace Senparc.NeuChar.Middlewares
         where TResponse : class, IResponseMessageBase
         where TPM : IEncryptPostModel
     {
+        /// <summary>
+        /// 执行 MessageHandler.ExecuteAsync() 时提供 CancellationTokenSource.CancellationToken
+        /// </summary>
+        abstract CancellationTokenSource ExecuteCancellationTokenSource { get; }
+
         /// <summary>
         /// 生成 PostModel
         /// </summary>
@@ -158,7 +166,23 @@ namespace Senparc.NeuChar.Middlewares
         protected readonly Func<Stream, TPM, int, MessageHandler<TMC, TRequest, TResponse>> _messageHandlerFunc;
         protected readonly Func<HttpContext, TS> _accountSettingFunc;
         protected readonly MessageHandlerMiddlewareOptions<TS> _options;
+        protected CancellationTokenSource _executeCancellationTokenSource;
 
+
+        /// <summary>
+        /// 执行 MessageHandler.ExecuteAsync() 时提供 CancellationTokenSource.CancellationToken
+        /// </summary>
+        public CancellationTokenSource ExecuteCancellationTokenSource
+        {
+            get
+            {
+                if (_executeCancellationTokenSource == null)
+                {
+                    _executeCancellationTokenSource = new CancellationTokenSource();
+                }
+                return _executeCancellationTokenSource;
+            }
+        }
 
         /// <summary>
         /// EnableRequestRewindMiddleware
@@ -222,29 +246,28 @@ namespace Senparc.NeuChar.Middlewares
         /// <returns></returns>
         public async Task Invoke(HttpContext context)
         {
-            var senparcWeixinSetting = _accountSettingFunc(context);
-
-            TPM postModel = GetPostModel(context);
-            string echostr = GetEchostr(context);
-
-            // GET 验证
-            if (context.Request.Method.ToUpper() == "GET")
+            try
             {
-                await GetCheckSignature(context).ConfigureAwait(false);
-                return;
-            }
-            // POST 消息请求
-            else if (context.Request.Method.ToUpper() == "POST")
-            {
-                if (!await PostCheckSignature(context).ConfigureAwait(false))
+                var senparcWeixinSetting = _accountSettingFunc(context);
+
+                TPM postModel = GetPostModel(context);
+                string echostr = GetEchostr(context);
+
+                // GET 验证
+                if (context.Request.Method.ToUpper() == "GET")
                 {
+                    await GetCheckSignature(context).ConfigureAwait(false);
                     return;
                 }
-
-                var cancellationToken = new CancellationToken();//给异步方法使用
-
-                try
+                // POST 消息请求
+                else if (context.Request.Method.ToUpper() == "POST")
                 {
+                    if (!await PostCheckSignature(context).ConfigureAwait(false))
+                    {
+                        return;
+                    }
+
+
                     var messageHandler = _messageHandlerFunc(context.Request.GetRequestMemoryStream(), postModel, _options.MaxRecordCount);
 
 
@@ -269,7 +292,7 @@ namespace Senparc.NeuChar.Middlewares
                         messageHandler.SaveRequestMessageLog();//记录 Request 日志（可选）
                     }
 
-                    await messageHandler.ExecuteAsync(cancellationToken); //执行微信处理过程（关键）
+                    await messageHandler.ExecuteAsync(ExecuteCancellationTokenSource.Token); //执行微信处理过程（关键）
 
                     if (_options.EnbleResponseLog)
                     {
@@ -308,14 +331,24 @@ namespace Senparc.NeuChar.Middlewares
 
                     context.Response.ContentType = $"text/{(isXml ? "xml" : "plain")};charset=utf-8";
                     await context.Response.WriteAsync(returnResult);
-                }
-                catch (Exception ex)
-                {
-                    SenparcTrace.SendCustomLog("MessageHandlerware 异常", ex.ToString());
-                    throw;
+
                 }
             }
+            catch (Exception ex)
+            {
+                SenparcTrace.SendCustomLog("MessageHandlerware 异常", ex.ToString());
 
+                //使用外部的委托对异常过程进行处理
+                if (_options.AggregateExceptionCatch != null)
+                {
+                    var aggregateException = new AggregateException(ex);
+                    var continueRun = _options.AggregateExceptionCatch(aggregateException);
+                    if (!continueRun)
+                    {
+                        throw;
+                    }
+                }
+            }
             //不再继续向下执行
             //await _next(context).ConfigureAwait(false);
         }
