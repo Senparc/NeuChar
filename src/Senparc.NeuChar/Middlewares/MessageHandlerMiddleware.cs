@@ -325,14 +325,14 @@ namespace Senparc.NeuChar.Middlewares
 
             var isLocal = context.Request.IsLocal();
             string signature = isLocal
-                        ? $@"提供签名：{postModel.Signature}<br />
+                        ? $@"提供签名：{postModel.Signature.HtmlEncode()}<br />
 正确签名：{currectSignature}<br />
 <br />
 <!--校验结果：<strong style=""color:red"">{(postModel.Signature==currectSignature?"成功":"失败")}</strong><br />
 <br />-->
 PostModel：{postModel.ToJson(true)}<br />
 <br />
-Url：{context.Request.PathAndQuery()}<br />"
+<span style=""word-wrap:break-word"">Url：{context.Request.PathAndQuery().HtmlEncode()}</span><br />"
                         : "出于安全考虑，系统不能远程传输签名信息，请在服务器本地打开此页面，查看信息！";
             string seeDetail = isLocal ? "https://www.cnblogs.com/szw/p/token-error.html" : banMsg;
             string openSimulateTool = isLocal ? "https://sdk.weixin.senparc.com/SimulateTool" : banMsg;
