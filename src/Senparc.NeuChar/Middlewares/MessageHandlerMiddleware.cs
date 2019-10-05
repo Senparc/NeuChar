@@ -332,7 +332,7 @@ namespace Senparc.NeuChar.Middlewares
 <br />-->
 PostModel：{postModel.ToJson(true)}<br />
 <br />
-<span style=""word-wrap:break-word"">Url：{context.Request.PathAndQuery().HtmlEncode()}</span><br />"
+<span style=""word-wrap:break-word"">Url：{context.Request.PathAndQuery().HtmlEncode()}</span>"
                         : "出于安全考虑，系统不能远程传输签名信息，请在服务器本地打开此页面，查看信息！";
             string seeDetail = isLocal ? "https://www.cnblogs.com/szw/p/token-error.html" : banMsg;
             string openSimulateTool = isLocal ? "https://sdk.weixin.senparc.com/SimulateTool" : banMsg;
