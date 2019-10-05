@@ -35,6 +35,7 @@ using Senparc.NeuChar.Helpers;
 using Senparc.NeuChar.MessageHandlers;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Senparc.NeuChar.NeuralSystems
 {
@@ -52,7 +53,7 @@ namespace Senparc.NeuChar.NeuralSystems
         /// <param name="messageHandler"></param>
         /// <param name="accessTokenOrApi"></param>
         /// <returns></returns>
-        private IResponseMessageBase GetResponseMessage(IRequestMessageBase requestMessage, List<Response> responseConfigs, IMessageHandlerEnlightener messageHandler, string accessTokenOrApi)
+        private async Task<IResponseMessageBase> GetResponseMessage(IRequestMessageBase requestMessage, List<Response> responseConfigs, IMessageHandlerEnlightener messageHandler, string accessTokenOrApi)
         {
             IResponseMessageBase responseMessage = null;
             responseConfigs = responseConfigs ?? new List<Response>();
@@ -118,7 +119,7 @@ namespace Senparc.NeuChar.NeuralSystems
             }
 
             //使用客服接口（高级接口）发送最后一项之前的所有信息
-            ExecuteApi(extendReponses, requestMessage, messageHandler, accessTokenOrApi, requestMessage.FromUserName);
+            await ExecuteApi(extendReponses, requestMessage, messageHandler, accessTokenOrApi, requestMessage.FromUserName);
 
             return responseMessage;
         }
@@ -132,7 +133,7 @@ namespace Senparc.NeuChar.NeuralSystems
         /// <param name="accessTokenOrApi"></param>
         /// <param name="openId"></param>
         /// <returns></returns>
-        private List<ApiResult> ExecuteApi(List<Response> responses, IRequestMessageBase requestMessage, IMessageHandlerEnlightener enlightener, string accessTokenOrApi, string openId)
+        private async Task<List<ApiResult>> ExecuteApi(List<Response> responses, IRequestMessageBase requestMessage, IMessageHandlerEnlightener enlightener, string accessTokenOrApi, string openId)
         {
             List<ApiResult> results = new List<ApiResult>();
 
@@ -144,7 +145,7 @@ namespace Senparc.NeuChar.NeuralSystems
             ApiHandler apiHandler = new ApiHandler(enlightener.ApiEnlightener);
             foreach (var response in responses)
             {
-                ApiResult apiResult = apiHandler.ExecuteApi(response, MaterialData, requestMessage, accessTokenOrApi, openId, enlightener);
+                ApiResult apiResult = await apiHandler.ExecuteApi(response, MaterialData, requestMessage, accessTokenOrApi, openId, enlightener);
                 results.Add(apiResult);
             }
             return results;

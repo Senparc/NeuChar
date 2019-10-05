@@ -38,6 +38,9 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
      
     修改标识：Senparc - 20190329
     修改描述：v0.6.4 方法中添加对 SelectMenuId 是否为空的判断
+
+    修改标识：Senparc - 20191004
+    修改描述：添加 Default 异步方法
      
 ----------------------------------------------------------------*/
 
@@ -48,6 +51,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace Senparc.NeuChar.Entities.Request
 {
@@ -238,6 +242,21 @@ namespace Senparc.NeuChar.Entities.Request
             if (!handler.MatchSuccessed)
             {
                 handler.ResponseMessage = func();
+            }
+            return handler;
+        }
+
+        /// <summary>
+        /// 【异步方法】默认消息
+        /// </summary>
+        /// <param name="handler"></param>
+        /// <param name="func"></param>
+        /// <returns></returns>
+        public static async Task<RequestMessageTextKeywordHandler> Default(this RequestMessageTextKeywordHandler handler, Func<Task<IResponseMessageBase>> func)
+        {
+            if (!handler.MatchSuccessed)
+            {
+                handler.ResponseMessage = await func();
             }
             return handler;
         }

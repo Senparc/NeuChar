@@ -1,5 +1,37 @@
-﻿using Senparc.CO2NET.Helpers;
-using Senparc.CO2NET.Trace;
+﻿#region Apache License Version 2.0
+/*----------------------------------------------------------------
+
+Copyright 2019 Suzhou Senparc Network Technology Co.,Ltd.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
+except in compliance with the License. You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under the
+License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+either express or implied. See the License for the specific language governing permissions
+and limitations under the License.
+
+Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
+
+----------------------------------------------------------------*/
+#endregion Apache License Version 2.0
+
+/*----------------------------------------------------------------
+    Copyright (C) 2019 Senparc
+    
+    文件名：ApiEnlightener.cs
+    文件功能描述：API信息初始化
+    
+    
+    创建标识：Senparc - 20180905
+
+    修改标识：Senparc - 20191004
+    修改描述：改为以异步方法为主
+----------------------------------------------------------------*/
+
+using Senparc.CO2NET.Helpers;
 using Senparc.NeuChar.ApiBind;
 using Senparc.NeuChar.Enlightener;
 using Senparc.NeuChar.Entities;
@@ -8,8 +40,7 @@ using Senparc.NeuChar.Helpers;
 using Senparc.NeuChar.NeuralSystems;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Threading.Tasks;
 
 namespace Senparc.NeuChar.ApiHandlers
 {
@@ -30,7 +61,7 @@ namespace Senparc.NeuChar.ApiHandlers
         /// <param name="openId"></param>
         /// <param name="content"></param>
         /// <returns></returns>
-        public abstract ApiResult SendText(string accessTokenOrAppId, string openId, string content);
+        public abstract Task<ApiResult> SendText(string accessTokenOrAppId, string openId, string content);
         /// <summary>
         /// 发送多图文信息
         /// </summary>
@@ -39,7 +70,7 @@ namespace Senparc.NeuChar.ApiHandlers
         /// <param name="articleList"></param>
         /// <returns></returns>
 
-        public abstract ApiResult SendNews(string accessTokenOrAppId, string openId, List<Article> articleList);
+        public abstract Task<ApiResult> SendNews(string accessTokenOrAppId, string openId, List<Article> articleList);
 
         /// <summary>
         /// 发送图片消息
@@ -48,7 +79,7 @@ namespace Senparc.NeuChar.ApiHandlers
         /// <param name="openId"></param>
         /// <param name="mediaId"></param>
         /// <returns></returns>
-        public abstract ApiResult SendImage(string accessTokenOrAppId, string openId, string mediaId);
+        public abstract Task<ApiResult> SendImage(string accessTokenOrAppId, string openId, string mediaId);
 
 
         /// <summary>
@@ -58,7 +89,7 @@ namespace Senparc.NeuChar.ApiHandlers
         /// <param name="materialData"></param>
         /// <param name="openId"></param>
         /// <returns></returns>
-        public virtual ApiResult CustomApi(Response response, MaterialData materialData, string openId)
+        public virtual async Task<ApiResult> CustomApi(Response response, MaterialData materialData, string openId)
         {
             if (openId == null)
             {

@@ -45,6 +45,7 @@ using System.Threading.Tasks;
 
 namespace Senparc.NeuChar.Middlewares
 {
+    //为了方便维护，已经合并到 MessageHandlerMiddleware.cs 中
 
 }
 

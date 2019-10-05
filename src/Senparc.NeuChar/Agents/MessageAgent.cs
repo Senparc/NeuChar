@@ -1,4 +1,43 @@
-﻿using Senparc.CO2NET.Extensions;
+﻿#region Apache License Version 2.0
+/*----------------------------------------------------------------
+
+Copyright 2019 Suzhou Senparc Network Technology Co.,Ltd.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
+except in compliance with the License. You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under the
+License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+either express or implied. See the License for the specific language governing permissions
+and limitations under the License.
+
+Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
+
+----------------------------------------------------------------*/
+#endregion Apache License Version 2.0
+
+/*----------------------------------------------------------------
+    Copyright (C) 2019 Senparc
+    
+    文件名：MessageAgent.cs
+    文件功能描述：代理请求
+    
+    
+    创建标识：Senparc - 20181022
+    
+    -- NeuChar --
+
+    修改标识：Senparc - 20181022
+    修改描述：从 Senparc.Weixin.MP 迁移至 NeuChar
+
+    修改标识：Senparc - 20190914
+    修改描述：MessageAgent.RequestXml() 方法增加 autoFillUrlParameters 参数
+----------------------------------------------------------------*/
+
+
+using Senparc.CO2NET.Extensions;
 using Senparc.CO2NET.HttpUtility;
 using Senparc.NeuChar.Entities;
 using Senparc.NeuChar.Helpers;
@@ -34,12 +73,13 @@ namespace Senparc.NeuChar.Agents
         /// </summary>
         /// <param name="messageHandler"></param>
         /// <param name="url"></param>
+        /// <param name="autoFillUrlParameters">是否自动填充Url中缺少的参数（signature、timestamp、nonce），默认为 true</param>
         /// <param name="token"></param>
         /// <param name="stream"></param>
         /// <param name="useNeuCharKey">是否使用WeiWeiHiKey，如果使用，则token为WeiWeiHiKey</param>
         /// <param name="timeOut">代理请求超时时间（毫秒）</param>
         /// <returns></returns>
-        public static string RequestXml(this IMessageHandlerBase messageHandler, string url, string token, Stream stream, bool useNeuCharKey = false, int timeOut = AGENT_TIME_OUT)
+        public static string RequestXml(this IMessageHandlerBase messageHandler, string url, string token, Stream stream, bool autoFillUrlParameters = true, bool useNeuCharKey = false, int timeOut = AGENT_TIME_OUT)
         {
             if (messageHandler != null)
             {
@@ -48,8 +88,11 @@ namespace Senparc.NeuChar.Agents
             string timestamp = SystemTime.Now.Ticks.ToString();
             string nonce = "GodBlessYou";
             string signature = CheckSignatureWeChat.GetSignature(timestamp, nonce, token);
-            url += string.Format("{0}signature={1}&timestamp={2}&nonce={3}",
+            if (autoFillUrlParameters)
+            {
+                url += string.Format("{0}signature={1}&timestamp={2}&nonce={3}",
                     url.Contains("?") ? "&" : "?", signature.AsUrlData(), timestamp.AsUrlData(), nonce.AsUrlData());
+            }
 
             stream.Seek(0, SeekOrigin.Begin);
             var responseXml = RequestUtility.HttpPost(url, null, stream, timeOut: timeOut);
@@ -64,9 +107,10 @@ namespace Senparc.NeuChar.Agents
         /// <param name="url"></param>
         /// <param name="token"></param>
         /// <param name="xml"></param>
+        /// <param name="autoFillUrlParameters">是否自动填充Url中缺少的参数（signature、timestamp、nonce），默认为 true</param>
         /// <param name="timeOut">代理请求超时时间（毫秒）</param>
         /// <returns></returns>
-        public static string RequestXml(this IMessageHandlerBase messageHandler, string url, string token, string xml, int timeOut = AGENT_TIME_OUT)
+        public static string RequestXml(this IMessageHandlerBase messageHandler, string url, string token, string xml, bool autoFillUrlParameters = true, int timeOut = AGENT_TIME_OUT)
         {
             if (messageHandler != null)
             {
@@ -80,7 +124,7 @@ namespace Senparc.NeuChar.Agents
                     sw.Write(xml);
                     sw.Flush();
                     sw.BaseStream.Position = 0;
-                    return messageHandler.RequestXml(url, token, sw.BaseStream, timeOut: timeOut);
+                    return messageHandler.RequestXml(url, token, sw.BaseStream, autoFillUrlParameters: autoFillUrlParameters, timeOut: timeOut);
                 }
             }
         }
@@ -119,28 +163,30 @@ namespace Senparc.NeuChar.Agents
         /// 获取ResponseMessge结果
         /// </summary>
         /// <param name="messageHandler"></param>
+        /// <param name="autoFillUrlParameters">是否自动填充Url中缺少的参数（signature、timestamp、nonce），默认为 true</param>
         /// <param name="url"></param>
         /// <param name="token"></param>
         /// <param name="stream"></param>
         /// <param name="timeOut">代理请求超时时间（毫秒）</param>
         /// <returns></returns>
-        public static IResponseMessageBase RequestResponseMessage(this IMessageHandlerBase messageHandler, string url, string token, Stream stream, int timeOut = AGENT_TIME_OUT)
+        public static IResponseMessageBase RequestResponseMessage(this IMessageHandlerBase messageHandler, string url, string token, Stream stream, bool autoFillUrlParameters = true, int timeOut = AGENT_TIME_OUT)
         {
-            return messageHandler.RequestXml(url, token, stream, timeOut: timeOut).CreateResponseMessage(messageHandler.MessageEntityEnlightener);
+            return messageHandler.RequestXml(url, token, stream, autoFillUrlParameters: autoFillUrlParameters, timeOut: timeOut).CreateResponseMessage(messageHandler.MessageEntityEnlightener);
         }
 
         /// <summary>
         /// 获取ResponseMessge结果
         /// </summary>
         /// <param name="messageHandler"></param>
+        /// <param name="autoFillUrlParameters">是否自动填充Url中缺少的参数（signature、timestamp、nonce），默认为 true</param>
         /// <param name="url"></param>
         /// <param name="token"></param>
         /// <param name="xml"></param>
         /// <param name="timeOut">代理请求超时时间（毫秒）</param>
         /// <returns></returns>
-        public static IResponseMessageBase RequestResponseMessage(this IMessageHandlerBase messageHandler, string url, string token, string xml, int timeOut = AGENT_TIME_OUT)
+        public static IResponseMessageBase RequestResponseMessage(this IMessageHandlerBase messageHandler, string url, string token, string xml, bool autoFillUrlParameters = true, int timeOut = AGENT_TIME_OUT)
         {
-            return messageHandler.RequestXml(url, token, xml, timeOut).CreateResponseMessage(messageHandler.MessageEntityEnlightener);
+            return messageHandler.RequestXml(url, token, xml, autoFillUrlParameters, timeOut).CreateResponseMessage(messageHandler.MessageEntityEnlightener);
         }
 
         /// <summary>

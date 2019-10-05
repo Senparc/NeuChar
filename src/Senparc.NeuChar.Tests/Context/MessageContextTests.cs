@@ -74,21 +74,23 @@ namespace Senparc.NeuChar.Tests.Context
             var dt1 = SystemTime.Now;
             var doc = XDocument.Parse(textRequestXml.FormatWith("TNT2", CO2NET.Helpers.DateTimeHelper.GetUnixDateTime(SystemTime.Now.UtcDateTime), SystemTime.Now.Ticks));
             var messageHandler = new CustomMessageHandler(doc, postModel);
-            Assert.AreEqual(1, messageHandler.GetCurrentMessageContext().RequestMessages.Count);//初始化之后，RequestMessage 已经被记录到上下文中
-            Assert.AreEqual(0, messageHandler.GetCurrentMessageContext().ResponseMessages.Count);
+            var currentMessageContext = messageHandler.GetCurrentMessageContext().GetAwaiter().GetResult();
+            Assert.AreEqual(1, currentMessageContext.RequestMessages.Count);//初始化之后，RequestMessage 已经被记录到上下文中
+            Assert.AreEqual(0, currentMessageContext.ResponseMessages.Count);
 
             messageHandler.Execute();
             Console.WriteLine($"第 1 次请求耗时：{SystemTime.NowDiff(dt1).TotalMilliseconds} ms");
 
-            Assert.AreEqual(1, messageHandler.GetCurrentMessageContext().RequestMessages.Count);
-            Assert.AreEqual(1, messageHandler.GetCurrentMessageContext().ResponseMessages.Count);
-            Console.WriteLine(messageHandler.GetCurrentMessageContext().ResponseMessages.Last().GetType());
-            Console.WriteLine(messageHandler.GetCurrentMessageContext().ResponseMessages.Last().ToJson());
+            currentMessageContext = messageHandler.GetCurrentMessageContext().GetAwaiter().GetResult();
+            Assert.AreEqual(1, currentMessageContext.RequestMessages.Count);
+            Assert.AreEqual(1, currentMessageContext.ResponseMessages.Count);
+            Console.WriteLine( currentMessageContext.ResponseMessages.Last().GetType());
+            Console.WriteLine(currentMessageContext.ResponseMessages.Last().ToJson());
 
             //测试 StorageData
-            Assert.AreEqual(1, messageHandler.GetCurrentMessageContext().StorageData);
+            Assert.AreEqual(1, currentMessageContext.StorageData);
 
-            var lastResponseMessage = messageHandler.GetCurrentMessageContext().ResponseMessages.Last() as ResponseMessageText;
+            var lastResponseMessage = currentMessageContext.ResponseMessages.Last() as ResponseMessageText;
             Assert.IsNotNull(lastResponseMessage);
             Assert.AreEqual("来自单元测试:TNT2", lastResponseMessage.Content);
 
@@ -97,16 +99,19 @@ namespace Senparc.NeuChar.Tests.Context
             var dt2 = SystemTime.Now;
             doc = XDocument.Parse(textRequestXml.FormatWith("TNT3", CO2NET.Helpers.DateTimeHelper.GetUnixDateTime(SystemTime.Now.UtcDateTime), SystemTime.Now.Ticks));
             messageHandler = new CustomMessageHandler(doc, postModel);
-            Assert.AreEqual(2, messageHandler.GetCurrentMessageContext().RequestMessages.Count);
-            Assert.AreEqual(1, messageHandler.GetCurrentMessageContext().ResponseMessages.Count);
+           
+            currentMessageContext = messageHandler.GetCurrentMessageContext().GetAwaiter().GetResult();
+            Assert.AreEqual(2, currentMessageContext.RequestMessages.Count);
+            Assert.AreEqual(1, currentMessageContext.ResponseMessages.Count);
 
             messageHandler.Execute();
             Console.WriteLine($"第 2 次请求耗时：{SystemTime.NowDiff(dt2).TotalMilliseconds} ms");
 
-            Assert.AreEqual(2, messageHandler.GetCurrentMessageContext().RequestMessages.Count);
-            Assert.AreEqual(2, messageHandler.GetCurrentMessageContext().ResponseMessages.Count);
+            currentMessageContext = messageHandler.GetCurrentMessageContext().GetAwaiter().GetResult();
+            Assert.AreEqual(2, currentMessageContext.RequestMessages.Count);
+            Assert.AreEqual(2, currentMessageContext.ResponseMessages.Count);
 
-            lastResponseMessage = messageHandler.GetCurrentMessageContext().ResponseMessages.Last() as ResponseMessageText;
+            lastResponseMessage = currentMessageContext.ResponseMessages.Last() as ResponseMessageText;
             Assert.IsNotNull(lastResponseMessage);
             Assert.AreEqual("来自单元测试:TNT3", lastResponseMessage.Content);
 
@@ -114,15 +119,18 @@ namespace Senparc.NeuChar.Tests.Context
             //测试去重
             var dt3 = SystemTime.Now;
             messageHandler = new CustomMessageHandler(doc, postModel);//使用和上次同样的请求
-            Assert.AreEqual(2, messageHandler.GetCurrentMessageContext().RequestMessages.Count);
-            Assert.AreEqual(2, messageHandler.GetCurrentMessageContext().ResponseMessages.Count);
+
+            currentMessageContext = messageHandler.GetCurrentMessageContext().GetAwaiter().GetResult();
+            Assert.AreEqual(2, currentMessageContext.RequestMessages.Count);
+            Assert.AreEqual(2, currentMessageContext.ResponseMessages.Count);
 
             messageHandler.Execute();
             Console.WriteLine($"第 3 次请求耗时：{SystemTime.NowDiff(dt3).TotalMilliseconds} ms");
             //没有变化
-            Assert.AreEqual(2, messageHandler.GetCurrentMessageContext().RequestMessages.Count);
-            Assert.AreEqual(2, messageHandler.GetCurrentMessageContext().ResponseMessages.Count);
-            lastResponseMessage = messageHandler.GetCurrentMessageContext().ResponseMessages.Last() as ResponseMessageText;
+            currentMessageContext = messageHandler.GetCurrentMessageContext().GetAwaiter().GetResult();
+            Assert.AreEqual(2, currentMessageContext.RequestMessages.Count);
+            Assert.AreEqual(2, currentMessageContext.ResponseMessages.Count);
+            lastResponseMessage = currentMessageContext.ResponseMessages.Last() as ResponseMessageText;
             Assert.IsNotNull(lastResponseMessage);
             Assert.AreEqual("来自单元测试:TNT3", lastResponseMessage.Content);
 
@@ -139,8 +147,9 @@ namespace Senparc.NeuChar.Tests.Context
                 //messageHandler.GlobalMessageContext.MaxRecordCount = 10;//在这里设置的话，Request已经插入了，无法及时触发删除多余消息的过程
                 messageHandler.Execute();
 
-                Assert.AreEqual(i < 7 ? i + 3 : 10, messageHandler.GetCurrentMessageContext().RequestMessages.Count);
-                Assert.AreEqual(i < 7 ? i + 3 : 10, messageHandler.GetCurrentMessageContext().ResponseMessages.Count);
+            currentMessageContext = messageHandler.GetCurrentMessageContext().GetAwaiter().GetResult();
+                Assert.AreEqual(i < 7 ? i + 3 : 10, currentMessageContext.RequestMessages.Count);
+                Assert.AreEqual(i < 7 ? i + 3 : 10, currentMessageContext.ResponseMessages.Count);
 
                 Console.WriteLine($"第 {i + 1} 次循环测试请求耗时：{SystemTime.NowDiff(dt4).TotalMilliseconds} ms");
             }
@@ -149,8 +158,9 @@ namespace Senparc.NeuChar.Tests.Context
 
             //清空
             messageHandler.GlobalMessageContext.Restore();
-            Assert.AreEqual(0, messageHandler.GetCurrentMessageContext().RequestMessages.Count);
-            Assert.AreEqual(0, messageHandler.GetCurrentMessageContext().ResponseMessages.Count);
+            currentMessageContext = messageHandler.GetCurrentMessageContext().GetAwaiter().GetResult();
+            Assert.AreEqual(0, currentMessageContext.RequestMessages.Count);
+            Assert.AreEqual(0, currentMessageContext.ResponseMessages.Count);
 
             Console.WriteLine();
         }

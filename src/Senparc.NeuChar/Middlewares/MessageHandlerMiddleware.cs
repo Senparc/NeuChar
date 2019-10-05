@@ -49,6 +49,19 @@ using System.Threading.Tasks;
 
 namespace Senparc.NeuChar.Middlewares
 {
+    #region 接口
+
+    /// <summary>
+    /// MessageHandler 中间件基类接口 TODO：独立到文件
+    /// </summary>
+    /// <typeparam name="TMC"></typeparam>
+    /// <typeparam name="TPM"></typeparam>
+    /// <typeparam name="TS"></typeparam>
+    public interface IMessageHandlerMiddleware<TMC, TPM, TS> : IMessageHandlerMiddleware<TMC, IRequestMessageBase, IResponseMessageBase, TPM, TS>
+         where TMC : class, IMessageContext<IRequestMessageBase, IResponseMessageBase>, new()
+        where TPM : IEncryptPostModel
+    { }
+
     /// <summary>
     /// MessageHandler 中间件基类接口 TODO：独立到文件
     /// </summary>
@@ -57,8 +70,10 @@ namespace Senparc.NeuChar.Middlewares
     /// <typeparam name="TResponse"></typeparam>
     /// <typeparam name="TPM"></typeparam>
     /// <typeparam name="TS"></typeparam>
-    public interface IMessageHandlerMiddleware<TMC, TPM, TS>
-        where TMC : class, IMessageContext<IRequestMessageBase, IResponseMessageBase>, new()
+    public interface IMessageHandlerMiddleware<TMC, TRequest, TResponse, TPM, TS>
+        where TMC : class, IMessageContext<TRequest, TResponse>, new()
+        where TRequest : class, IRequestMessageBase
+        where TResponse : class, IResponseMessageBase
         where TPM : IEncryptPostModel
     {
         /// <summary>
@@ -104,33 +119,9 @@ namespace Senparc.NeuChar.Middlewares
         string GetGetCheckFaildMessage(HttpContext context, string currectSignature);
     }
 
-    /// <summary>
-    /// MessageHandlerMiddleware 扩展类
-    /// </summary>
-    public static class MessageHandlerMiddlewareExtension
-    {
-        /// <summary>
-        /// 使用 MessageHandler 配置。注意：会默认使用异步方法 messageHandler.ExecuteAsync()。
-        /// </summary>
-        /// <param name="builder"></param>
-        /// <param name="pathMatch">路径规则（路径开头，可带参数）</param>
-        /// <param name="messageHandler">MessageHandler</param>
-        /// <param name="options">设置选项</param>
-        /// <returns></returns>
-        public static IApplicationBuilder UseMessageHandler<TMHM, TMC, TPM, TS>(this IApplicationBuilder builder,
-            PathString pathMatch, Func<Stream, TPM, int, MessageHandler<TMC, IRequestMessageBase, IResponseMessageBase>> messageHandler, Action<MessageHandlerMiddlewareOptions<TS>> options)
-                where TMHM : IMessageHandlerMiddleware<TMC, TPM, TS>
-                where TMC : class, IMessageContext<IRequestMessageBase, IResponseMessageBase>, new()
-                where TPM : IEncryptPostModel
-                //where TS : class
-        {
-            return builder.Map(pathMatch, app =>
-            {
-                app.UseMiddleware<TMHM>(messageHandler, options);
-            });
-        }
-    }
+    #endregion
 
+    #region 实现
 
     /// <summary>
     /// MessageHandler 中间件基类
@@ -138,12 +129,32 @@ namespace Senparc.NeuChar.Middlewares
     /// <typeparam name="TMC">上下文</typeparam>
     /// <typeparam name="TPM">PostModel</typeparam>
     /// <typeparam name="TS">Setting 类，如 SenparcWeixinSetting</typeparam>
-    public abstract class MessageHandlerMiddleware<TMC, TPM, TS> : IMessageHandlerMiddleware<TMC, TPM, TS>
+    public abstract class MessageHandlerMiddleware<TMC, TPM, TS> : MessageHandlerMiddleware<TMC, IRequestMessageBase, IResponseMessageBase, TPM, TS>
+        , IMessageHandlerMiddleware<TMC, TPM, TS>
         where TMC : class, IMessageContext<IRequestMessageBase, IResponseMessageBase>, new()
         where TPM : IEncryptPostModel
     {
+        public MessageHandlerMiddleware(RequestDelegate next, Func<Stream, TPM, int, MessageHandler<TMC, IRequestMessageBase, IResponseMessageBase>> messageHandler, Action<MessageHandlerMiddlewareOptions<TS>> options)
+            : base(next, messageHandler, options)
+        {
+        }
+    }
+
+    /// <summary>
+    /// MessageHandler 中间件基类
+    /// </summary>
+    /// <typeparam name="TMC">上下文</typeparam>
+    /// <typeparam name="TPM">PostModel</typeparam>
+    /// <typeparam name="TS">Setting 类，如 SenparcWeixinSetting</typeparam>
+    public abstract class MessageHandlerMiddleware<TMC, TRequest, TResponse, TPM, TS>
+        : IMessageHandlerMiddleware<TMC, TRequest, TResponse, TPM, TS>
+        where TMC : class, IMessageContext<TRequest, TResponse>, new()
+        where TRequest : class, IRequestMessageBase
+        where TResponse : class, IResponseMessageBase
+        where TPM : IEncryptPostModel
+    {
         protected readonly RequestDelegate _next;
-        protected readonly Func<Stream, TPM, int, MessageHandler<TMC, IRequestMessageBase, IResponseMessageBase>> _messageHandlerFunc;
+        protected readonly Func<Stream, TPM, int, MessageHandler<TMC, TRequest, TResponse>> _messageHandlerFunc;
         protected readonly Func<HttpContext, TS> _accountSettingFunc;
         protected readonly MessageHandlerMiddlewareOptions<TS> _options;
 
@@ -153,7 +164,7 @@ namespace Senparc.NeuChar.Middlewares
         /// </summary>
         /// <param name="next"></param>
         public MessageHandlerMiddleware(RequestDelegate next,
-            Func<Stream, TPM, int, MessageHandler<TMC, IRequestMessageBase, IResponseMessageBase>> messageHandler,
+            Func<Stream, TPM, int, MessageHandler<TMC, TRequest, TResponse>> messageHandler,
             Action<MessageHandlerMiddlewareOptions<TS>> options)
         {
             _next = next;
@@ -314,24 +325,89 @@ namespace Senparc.NeuChar.Middlewares
 
             var isLocal = context.Request.IsLocal();
             string signature = isLocal
-                        ? $"提供签名：{postModel.Signature}<br />正确签名：{currectSignature}"
-                        : "";
+                        ? $@"提供签名：{postModel.Signature.HtmlEncode()}<br />
+正确签名：{currectSignature}<br />
+<br />
+<!--校验结果：<strong style=""color:red"">{(postModel.Signature==currectSignature?"成功":"失败")}</strong><br />
+<br />-->
+PostModel：{postModel.ToJson(true)}<br />
+<br />
+<span style=""word-wrap:break-word"">Url：{context.Request.PathAndQuery().HtmlEncode()}</span>"
+                        : "出于安全考虑，系统不能远程传输签名信息，请在服务器本地打开此页面，查看信息！";
             string seeDetail = isLocal ? "https://www.cnblogs.com/szw/p/token-error.html" : banMsg;
             string openSimulateTool = isLocal ? "https://sdk.weixin.senparc.com/SimulateTool" : banMsg;
+            string targetBlank = isLocal ? @"target=""_balank""" : "";
 
-            return $@"<div style=""width:600px; margin:50px auto; padding:30px 50px 50px 50px; border:#9ed900 3px solid; background:#f0fcff; border-radius:15px;"">
-<h1>服务器 token 签名校验失败！<h1>
+            return $@"<div style=""width:600px; margin:50px auto; padding:20px 50px 20px 50px; border:#9ed900 3px solid; background:#f0fcff;border-radius:15px; box-shadow: 0 25.6px 57.6px rgba(0,0,0,.22), 0px 7px 14.4px rgba(96, 134, 93, 0.97);"">
+<h1>此 Url 可用于服务器 token 签名校验<h1>
 <h2>签名信息</h2>
 {signature}<br /><br />
 <h2>提示</h2>
-如果你在浏览器中打开并看到这句话，那么看到这条消息<span style=""color:#f00"">并不能说明</span>你的程序有问题，
-而是意味着此地址可以被作为微信公众账号后台的 Url，并开始进行官方的对接校验，请注意保持 Token 设置的一致。<br /><br />
-
-<a href=""{seeDetail}"" target=""_balank"">查看详情</a> | <a href=""{openSimulateTool}"" target=""_balank"">使用消息模拟器测试</a>
+<ol>
+<li>如果你在浏览器中打开并看到此提示，那么意味着此地址可以被作为微信公众账号后台的 Url，并可以开始进行官方的对接校验，请注意保持 Token 设置的一致。</li>
+<li>看到此提示，证明本系统对微信消息进行了符合官方要求的安全验证。</li>
+<li>特别说明：以上签名错误信息只对当前提供的参数进行签名安全检验，<span style=""color:#f00"">无法</span>用于验证系统其他功能正常与否。</li>
+</ol>
+<p><a href=""{seeDetail}"" {targetBlank}>查看详情</a> | <a href=""{openSimulateTool}"" {targetBlank}>使用消息模拟器测试</a></p>
+<p style=""text-align: right; color: #aaaa;"">{SystemTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}</p>
 </div>";
         }
 
     }
+
+    #endregion
+
+    #region 扩展方法
+
+    /// <summary>
+    /// MessageHandlerMiddleware 扩展类
+    /// </summary>
+    public static class MessageHandlerMiddlewareExtension
+    {
+        /// <summary>
+        /// 使用 MessageHandler 配置。注意：会默认使用异步方法 messageHandler.ExecuteAsync()。
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="pathMatch">路径规则（路径开头，可带参数）</param>
+        /// <param name="messageHandler">MessageHandler</param>
+        /// <param name="options">设置选项</param>
+        /// <returns></returns>
+        public static IApplicationBuilder UseMessageHandler<TMHM, TMC, TPM, TS>(this IApplicationBuilder builder,
+            PathString pathMatch, Func<Stream, TPM, int, MessageHandler<TMC, IRequestMessageBase, IResponseMessageBase>> messageHandler, Action<MessageHandlerMiddlewareOptions<TS>> options)
+                where TMHM : IMessageHandlerMiddleware<TMC, IRequestMessageBase, IResponseMessageBase, TPM, TS>
+                where TMC : class, IMessageContext<IRequestMessageBase, IResponseMessageBase>, new()
+                where TPM : IEncryptPostModel
+            //where TS : class
+        {
+            return UseMessageHandler<TMHM, IRequestMessageBase, IResponseMessageBase, TMC, TPM, TS>(builder, pathMatch, messageHandler, options);
+        }
+
+        /// <summary>
+        /// 使用 MessageHandler 配置。注意：会默认使用异步方法 messageHandler.ExecuteAsync()。
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="pathMatch">路径规则（路径开头，可带参数）</param>
+        /// <param name="messageHandler">MessageHandler</param>
+        /// <param name="options">设置选项</param>
+        /// <returns></returns>
+        public static IApplicationBuilder UseMessageHandler<TMHM, TRequest, TResponse, TMC, TPM, TS>(this IApplicationBuilder builder,
+            PathString pathMatch, Func<Stream, TPM, int, MessageHandler<TMC, TRequest, TResponse>> messageHandler, Action<MessageHandlerMiddlewareOptions<TS>> options)
+                where TMHM : IMessageHandlerMiddleware<TMC, TRequest, TResponse, TPM, TS>
+                where TRequest : class, IRequestMessageBase
+                where TResponse : class, IResponseMessageBase
+                where TMC : class, IMessageContext<TRequest, TResponse>, new()
+                where TPM : IEncryptPostModel
+            //where TS : class
+        {
+            return builder.Map(pathMatch, app =>
+            {
+                app.UseMiddleware<TMHM>(messageHandler, options);
+            });
+        }
+    }
+
+
+    #endregion
 }
 
 #endif
