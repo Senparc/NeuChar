@@ -114,9 +114,10 @@ namespace Senparc.NeuChar.Middlewares
         /// 获取 GET 请求时错误响应信息
         /// </summary>
         /// <param name="context"></param>
-        /// <param name="currectSignature"></param>
+        /// <param name="supportSignature">提供的签名</param>
+        /// <param name="correctSignature">正确的签名</param>
         /// <returns></returns>
-        string GetGetCheckFaildMessage(HttpContext context, string currectSignature);
+        string GetGetCheckFaildMessage(HttpContext context, string supportSignature, string correctSignature);
     }
 
     #endregion
@@ -242,69 +243,77 @@ namespace Senparc.NeuChar.Middlewares
 
                 var cancellationToken = new CancellationToken();//给异步方法使用
 
-                var messageHandler = _messageHandlerFunc(context.Request.GetRequestMemoryStream(), postModel, _options.MaxRecordCount);
-
-
-                #region 没有重写的异步方法将默认尝试调用同步方法中的代码（为了偷懒）
-
-                /* 使用 SelfSynicMethod 的好处是可以让异步、同步方法共享同一套（同步）代码，无需写两次，
-                 * 当然，这并不一定适用于所有场景，所以是否选用需要根据实际情况而定，这里只是演示，并不盲目推荐。*/
-                messageHandler.DefaultMessageHandlerAsyncEvent = _options.DefaultMessageHandlerAsyncEvent;
-
-                #endregion
-
-                #region 设置消息去重 设置
-
-                /* 如果需要添加消息去重功能，只需打开OmitRepeatedMessage功能，SDK会自动处理。
-                 * 收到重复消息通常是因为微信服务器没有及时收到响应，会持续发送2-5条不等的相同内容的RequestMessage*/
-                messageHandler.OmitRepeatedMessage = _options.OmitRepeatedMessage;//默认已经开启，此处仅作为演示，也可以设置为false在本次请求中停用此功能
-
-                #endregion
-
-                if (_options.EnableRequestLog)
+                try
                 {
-                    messageHandler.SaveRequestMessageLog();//记录 Request 日志（可选）
-                }
+                    var messageHandler = _messageHandlerFunc(context.Request.GetRequestMemoryStream(), postModel, _options.MaxRecordCount);
 
-                await messageHandler.ExecuteAsync(cancellationToken); //执行微信处理过程（关键）
 
-                if (_options.EnbleResponseLog)
-                {
-                    messageHandler.SaveResponseMessageLog();//记录 Response 日志（可选）
-                }
+                    #region 没有重写的异步方法将默认尝试调用同步方法中的代码（为了偷懒）
 
-                string returnResult = null;
-                bool isXml = false;
-                //使用IMessageHandler输出
-                if (messageHandler is IMessageHandlerDocument messageHandlerDocument)
-                {
-                    //先从 messageHandlerDocument.TextResponseMessage 中取值
-                    returnResult = messageHandlerDocument.TextResponseMessage?.Replace("\r\n", "\n");
+                    /* 使用 SelfSynicMethod 的好处是可以让异步、同步方法共享同一套（同步）代码，无需写两次，
+                     * 当然，这并不一定适用于所有场景，所以是否选用需要根据实际情况而定，这里只是演示，并不盲目推荐。*/
+                    messageHandler.DefaultMessageHandlerAsyncEvent = _options.DefaultMessageHandlerAsyncEvent;
 
-                    if (returnResult == null)
+                    #endregion
+
+                    #region 设置消息去重 设置
+
+                    /* 如果需要添加消息去重功能，只需打开OmitRepeatedMessage功能，SDK会自动处理。
+                     * 收到重复消息通常是因为微信服务器没有及时收到响应，会持续发送2-5条不等的相同内容的RequestMessage*/
+                    messageHandler.OmitRepeatedMessage = _options.OmitRepeatedMessage;//默认已经开启，此处仅作为演示，也可以设置为false在本次请求中停用此功能
+
+                    #endregion
+
+                    if (_options.EnableRequestLog)
                     {
-                        var finalResponseDocument = messageHandlerDocument.FinalResponseDocument;
+                        messageHandler.SaveRequestMessageLog();//记录 Request 日志（可选）
+                    }
 
-                        if (finalResponseDocument != null)
+                    await messageHandler.ExecuteAsync(cancellationToken); //执行微信处理过程（关键）
+
+                    if (_options.EnbleResponseLog)
+                    {
+                        messageHandler.SaveResponseMessageLog();//记录 Response 日志（可选）
+                    }
+
+                    string returnResult = null;
+                    bool isXml = false;
+                    //使用IMessageHandler输出
+                    if (messageHandler is IMessageHandlerDocument messageHandlerDocument)
+                    {
+                        //先从 messageHandlerDocument.TextResponseMessage 中取值
+                        returnResult = messageHandlerDocument.TextResponseMessage?.Replace("\r\n", "\n");
+
+                        if (returnResult == null)
                         {
-                            returnResult = finalResponseDocument.ToString()?.Replace("\r\n", "\n");
-                            isXml = true;
-                        }
-                        else
-                        {
-                            //throw new Senparc.Weixin.MP.WeixinException("FinalResponseDocument不能为Null！", null);
+                            var finalResponseDocument = messageHandlerDocument.FinalResponseDocument;
+
+                            if (finalResponseDocument != null)
+                            {
+                                returnResult = finalResponseDocument.ToString()?.Replace("\r\n", "\n");
+                                isXml = true;
+                            }
+                            else
+                            {
+                                //throw new Senparc.Weixin.MP.WeixinException("FinalResponseDocument不能为Null！", null);
+                            }
                         }
                     }
+                    else
+                    {
+                        throw new MiddlewareException("IMessageHandlerDocument 类型的 MessageHandler 不能为 Null！", null);
+                    }
+
+                    returnResult = returnResult ?? "";
+
+                    context.Response.ContentType = $"text/{(isXml ? "xml" : "plain")};charset=utf-8";
+                    await context.Response.WriteAsync(returnResult);
                 }
-                else
+                catch (Exception ex)
                 {
-                    throw new MiddlewareException("IMessageHandlerDocument 类型的 MessageHandler 不能为 Null！", null);
+                    SenparcTrace.SendCustomLog("MessageHandlerware 异常", ex.ToString());
+                    throw;
                 }
-
-                returnResult = returnResult ?? "";
-
-                context.Response.ContentType = $"text/{(isXml ? "xml" : "plain")};charset=utf-8";
-                await context.Response.WriteAsync(returnResult);
             }
 
             //不再继续向下执行
@@ -316,19 +325,20 @@ namespace Senparc.NeuChar.Middlewares
         /// 获取 GET 请求时错误响应信息
         /// </summary>
         /// <param name="context"></param>
-        /// <param name="currectSignature"></param>
+        /// <param name="supportSignature">提供的签名</param>
+        /// <param name="correctSignature">正确的签名</param>
         /// <returns></returns>
-        public string GetGetCheckFaildMessage(HttpContext context, string currectSignature)
+        public string GetGetCheckFaildMessage(HttpContext context, string supportSignature, string correctSignature)
         {
             var postModel = GetPostModel(context);
             var banMsg = "javascript:alert('出于安全考虑，请在服务器本地打开此页面，查看链接')";
 
             var isLocal = context.Request.IsLocal();
             string signature = isLocal
-                        ? $@"提供签名：{postModel.Signature.HtmlEncode()}<br />
-正确签名：{currectSignature}<br />
+                        ? $@"提供签名：{supportSignature.HtmlEncode()}<br />
+正确签名：{correctSignature.HtmlEncode()}<br />
 <br />
-<!--校验结果：<strong style=""color:red"">{(postModel.Signature==currectSignature?"成功":"失败")}</strong><br />
+<!--校验结果：<strong style=""color:red"">{(postModel.Signature == correctSignature ? "成功" : "失败")}</strong><br />
 <br />-->
 PostModel：{postModel.ToJson(true)}<br />
 <br />
