@@ -114,9 +114,10 @@ namespace Senparc.NeuChar.Middlewares
         /// 获取 GET 请求时错误响应信息
         /// </summary>
         /// <param name="context"></param>
-        /// <param name="currectSignature"></param>
+        /// <param name="supportSignature">提供的签名</param>
+        /// <param name="correctSignature">正确的签名</param>
         /// <returns></returns>
-        string GetGetCheckFaildMessage(HttpContext context, string currectSignature);
+        string GetGetCheckFaildMessage(HttpContext context, string supportSignature, string correctSignature);
     }
 
     #endregion
@@ -316,19 +317,20 @@ namespace Senparc.NeuChar.Middlewares
         /// 获取 GET 请求时错误响应信息
         /// </summary>
         /// <param name="context"></param>
-        /// <param name="currectSignature"></param>
+        /// <param name="supportSignature">提供的签名</param>
+        /// <param name="correctSignature">正确的签名</param>
         /// <returns></returns>
-        public string GetGetCheckFaildMessage(HttpContext context, string currectSignature)
+        public string GetGetCheckFaildMessage(HttpContext context, string supportSignature, string correctSignature)
         {
             var postModel = GetPostModel(context);
             var banMsg = "javascript:alert('出于安全考虑，请在服务器本地打开此页面，查看链接')";
 
             var isLocal = context.Request.IsLocal();
             string signature = isLocal
-                        ? $@"提供签名：{postModel.Signature.HtmlEncode()}<br />
-正确签名：{currectSignature}<br />
+                        ? $@"提供签名：{supportSignature.HtmlEncode()}<br />
+正确签名：{correctSignature.HtmlEncode()}<br />
 <br />
-<!--校验结果：<strong style=""color:red"">{(postModel.Signature==currectSignature?"成功":"失败")}</strong><br />
+<!--校验结果：<strong style=""color:red"">{(postModel.Signature == correctSignature ? "成功" : "失败")}</strong><br />
 <br />-->
 PostModel：{postModel.ToJson(true)}<br />
 <br />
