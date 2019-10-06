@@ -85,8 +85,8 @@ namespace Senparc.NeuChar.MessageHandlers
 
             DataOperation apm = new DataOperation(PostModel?.DomainId);
 
-            Task<DataItem> t1 = apm.SetAsync(NeuCharApmKind.Message_Request.ToString(), 1, tempStorage: OpenId);//.ConfigureAwait(false);
-            Task<DataItem> t2 = null;
+            await apm.SetAsync(NeuCharApmKind.Message_Request.ToString(), 1, tempStorage: OpenId).ConfigureAwait(false);
+
             if (CancelExcute)
             {
                 return;
@@ -114,28 +114,18 @@ namespace Senparc.NeuChar.MessageHandlers
                 {
                     await GlobalMessageContext.InsertMessageAsync(ResponseMessage);
                 }
-                t2 = apm.SetAsync(NeuCharApmKind.Message_SuccessResponse.ToString(), 1, tempStorage: OpenId);//.ConfigureAwait(false);
+                await apm.SetAsync(NeuCharApmKind.Message_SuccessResponse.ToString(), 1, tempStorage: OpenId).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
-                t2 = apm.SetAsync(NeuCharApmKind.Message_Exception.ToString(), 1, tempStorage: OpenId);//.ConfigureAwait(false);
+                await apm.SetAsync(NeuCharApmKind.Message_Exception.ToString(), 1, tempStorage: OpenId).ConfigureAwait(false);
                 throw new MessageHandlerException("MessageHandler中Execute()过程发生错误：" + ex.Message, ex);
             }
             finally
             {
                 await OnExecutedAsync(cancellationToken).ConfigureAwait(false);
-                var t3 = apm.SetAsync(NeuCharApmKind.Message_ResponseMillisecond.ToString(), 
-                    (SystemTime.Now - this.ExecuteStatTime).TotalMilliseconds, tempStorage: OpenId);//.ConfigureAwait(false);
-                
-                //等待任务刚完成
-                await Task.WhenAll(new[] { t1,
-                    t2 ??
-#if NET45
-                    Task.Delay(0),
-#else
-                    Task.CompletedTask,
-#endif
-                    t3 });
+                await apm.SetAsync(NeuCharApmKind.Message_ResponseMillisecond.ToString(), 
+                    (SystemTime.Now - this.ExecuteStatTime).TotalMilliseconds, tempStorage: OpenId).ConfigureAwait(false);
             }
 
             //await Task.Run(() => this.Execute()).ConfigureAwait(false);
