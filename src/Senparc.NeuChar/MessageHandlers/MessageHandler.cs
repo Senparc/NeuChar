@@ -58,6 +58,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
  * V4.0 添加异步方法
  * V5.0 支持分布式缓存
  * V6.0 转为以异步方法为主
+ * V6.1 添加 OnlyAllowEcryptMessage 属性
  * 
  */
 
@@ -299,6 +300,11 @@ namespace Senparc.NeuChar.MessageHandlers
         /// </summary>
         public bool UsingCompatibilityModelEcryptMessage { get; set; }
 
+        /// <summary>
+        /// 当平台同时兼容明文消息和加密消息时，只允许处理加密消息（不允许处理明文消息），默认为 False
+        /// </summary>
+        public bool OnlyAllowEcryptMessage { get; set; }
+
 
         private string _textResponseMessage = null;
 
@@ -538,6 +544,5 @@ namespace Senparc.NeuChar.MessageHandlers
         ///// 默认返回消息（当任何OnXX消息没有被重写，都将自动返回此默认消息）
         ///// </summary>
         //public abstract IResponseMessageBase DefaultResponseMessage(IRequestMessageBase requestMessage);
-
     }
 }
