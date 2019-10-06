@@ -385,11 +385,11 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <param name="maxRecordCount"></param>
         /// <param name="postModel">需要传入到Init的参数</param>
         /// <param name="onlyAllowEcryptMessage">当平台同时兼容明文消息和加密消息时，只允许处理加密消息（不允许处理明文消息），默认为 False</param>
-        public MessageHandler(Stream inputStream, IEncryptPostModel postModel, int maxRecordCount = 0,bool onlyAllowEcryptMessage=false)
+        public MessageHandler(Stream inputStream, IEncryptPostModel postModel, int maxRecordCount = 0, bool onlyAllowEcryptMessage = false)
         {
             var postDataDocument = XmlUtility.Convert(inputStream);
             //PostModel = postModel;//PostModel 在当前类初始化过程中必须赋值
-            CommonInitialize(postDataDocument, maxRecordCount, postModel,onlyAllowEcryptMessage);
+            CommonInitialize(postDataDocument, maxRecordCount, postModel, onlyAllowEcryptMessage);
         }
 
         /// <summary>
@@ -402,7 +402,7 @@ namespace Senparc.NeuChar.MessageHandlers
         public MessageHandler(XDocument postDataDocument, IEncryptPostModel postModel, int maxRecordCount = 0, bool onlyAllowEcryptMessage = false)
         {
             //PostModel = postModel;//PostModel 在当前类初始化过程中必须赋值
-            CommonInitialize(postDataDocument, maxRecordCount, postModel,onlyAllowEcryptMessage);
+            CommonInitialize(postDataDocument, maxRecordCount, postModel, onlyAllowEcryptMessage);
         }
 
         /// <summary>
@@ -417,7 +417,7 @@ namespace Senparc.NeuChar.MessageHandlers
         {
             OnlyAllowEcryptMessage = onlyAllowEcryptMessage;
             GlobalMessageContext.MaxRecordCount = maxRecordCount;
-           
+
             ////将requestMessageBase生成XML格式。
             //var xmlStr = XmlUtility.XmlUtility.Serializer(requestMessageBase);
             //var postDataDocument = XDocument.Parse(xmlStr);
@@ -447,7 +447,12 @@ namespace Senparc.NeuChar.MessageHandlers
             PostModel = postModel;//PostModel 在当前类初始化过程中必须赋值
             RequestDocument = Init(postDataDocument, postModel);
 
-            //TODO:提供异步的上下文及处理方法
+            if (CancelExcute)
+            {
+                return;
+            }
+
+            //TODO:提供异步的上下文及处理方法——构造函数中暂时无法直接使用异步方法
 
             //消息去重
             if (MessageContextGlobalConfig.UseMessageContext)

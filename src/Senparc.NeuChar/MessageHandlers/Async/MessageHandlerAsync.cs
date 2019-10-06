@@ -55,7 +55,6 @@ namespace Senparc.NeuChar.MessageHandlers
         where TRequest : class, IRequestMessageBase
         where TResponse : class, IResponseMessageBase
     {
-#if !NET35 && !NET40
         #region 异步方法
 
         /// <summary>
@@ -76,7 +75,7 @@ namespace Senparc.NeuChar.MessageHandlers
 
         public virtual async Task OnExecutingAsync(CancellationToken cancellationToken)
         {
-            
+
         }
 
         public virtual async Task ExecuteAsync(CancellationToken cancellationToken)
@@ -86,8 +85,8 @@ namespace Senparc.NeuChar.MessageHandlers
 
             DataOperation apm = new DataOperation(PostModel?.DomainId);
 
-            await apm.SetAsync(NeuCharApmKind.Message_Request.ToString(), 1, tempStorage: OpenId).ConfigureAwait(false);
-
+            Task<DataItem> t1 = apm.SetAsync(NeuCharApmKind.Message_Request.ToString(), 1, tempStorage: OpenId);//.ConfigureAwait(false);
+            Task<DataItem> t2 = null;
             if (CancelExcute)
             {
                 return;
@@ -115,17 +114,28 @@ namespace Senparc.NeuChar.MessageHandlers
                 {
                     await GlobalMessageContext.InsertMessageAsync(ResponseMessage);
                 }
-                await apm.SetAsync(NeuCharApmKind.Message_SuccessResponse.ToString(), 1, tempStorage: OpenId).ConfigureAwait(false);
+                t2 = apm.SetAsync(NeuCharApmKind.Message_SuccessResponse.ToString(), 1, tempStorage: OpenId);//.ConfigureAwait(false);
             }
             catch (Exception ex)
             {
-                apm.SetAsync(NeuCharApmKind.Message_Exception.ToString(), 1, tempStorage: OpenId).ConfigureAwait(false).GetAwaiter().GetResult();
+                t2 = apm.SetAsync(NeuCharApmKind.Message_Exception.ToString(), 1, tempStorage: OpenId);//.ConfigureAwait(false);
                 throw new MessageHandlerException("MessageHandler中Execute()过程发生错误：" + ex.Message, ex);
             }
             finally
             {
                 await OnExecutedAsync(cancellationToken).ConfigureAwait(false);
-                await apm.SetAsync(NeuCharApmKind.Message_ResponseMillisecond.ToString(), (SystemTime.Now - this.ExecuteStatTime).TotalMilliseconds, tempStorage: OpenId).ConfigureAwait(false);
+                var t3 = apm.SetAsync(NeuCharApmKind.Message_ResponseMillisecond.ToString(), 
+                    (SystemTime.Now - this.ExecuteStatTime).TotalMilliseconds, tempStorage: OpenId);//.ConfigureAwait(false);
+                
+                //等待任务刚完成
+                await Task.WhenAll(new[] { t1,
+                    t2 ??
+#if NET45
+                    Task.Delay(0),
+#else
+                    Task.CompletedTask,
+#endif
+                    t3 });
             }
 
             //await Task.Run(() => this.Execute()).ConfigureAwait(false);
@@ -136,11 +146,9 @@ namespace Senparc.NeuChar.MessageHandlers
 
         public virtual async Task OnExecutedAsync(CancellationToken cancellationToken)
         {
-            
+
         }
 
         #endregion
-#endif
-
     }
 }
