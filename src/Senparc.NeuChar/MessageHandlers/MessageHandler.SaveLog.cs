@@ -87,9 +87,22 @@ namespace Senparc.NeuChar.MessageHandlers
                 var key = Guid.NewGuid().ToString();
                 queue.Add(key, () =>
                 {
-                    this.RequestDocument.Save(Path.Combine(logPath, string.Format("{0}_Request_{1}_{2}.txt", _getRandomFileName(),
+                    if (this.RequestDocument!=null && this.RequestMessage!=null)
+                    {
+                        this.RequestDocument.Save(Path.Combine(logPath, string.Format("{0}_Request_{1}_{2}.txt", _getRandomFileName(),
                                               this.RequestMessage.FromUserName,
                                               this.RequestMessage.MsgType)));
+                    }
+                    else
+                    {
+                        System.IO.File.WriteAllText(Path.Combine(logPath, string.Format("{0}_UntreatedRequest.txt", _getRandomFileName())),
+                                              this.TextResponseMessage);
+
+                        this.RequestDocument.Save(Path.Combine(logPath, string.Format("{0}_Request_{1}_{2}.txt", _getRandomFileName(),
+                                              this.RequestMessage.FromUserName,
+                                              this.RequestMessage.MsgType)));
+                    }
+                    
                     if (this.UsingEcryptMessage && this.EcryptRequestDocument != null)
                     {
                         this.EcryptRequestDocument.Save(Path.Combine(logPath, string.Format("{0}_Request_Ecrypt_{1}_{2}.txt", _getRandomFileName(),

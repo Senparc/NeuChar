@@ -80,6 +80,11 @@ namespace Senparc.NeuChar.MessageHandlers
 
         public virtual async Task ExecuteAsync(CancellationToken cancellationToken)
         {
+            if (CancelExcute)
+            {
+                return;
+            }
+
             //进行 APM 记录
             ExecuteStatTime = SystemTime.Now;
 
@@ -87,10 +92,10 @@ namespace Senparc.NeuChar.MessageHandlers
 
             await apm.SetAsync(NeuCharApmKind.Message_Request.ToString(), 1, tempStorage: OpenId).ConfigureAwait(false);
 
-            if (CancelExcute)
-            {
-                return;
-            }
+            //if (CancelExcute)
+            //{
+            //    return;
+            //}
 
             await OnExecutingAsync(cancellationToken).ConfigureAwait(false);
 

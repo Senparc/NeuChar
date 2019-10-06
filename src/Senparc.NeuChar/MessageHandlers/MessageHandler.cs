@@ -449,7 +449,7 @@ namespace Senparc.NeuChar.MessageHandlers
 
             if (CancelExcute)
             {
-                return;
+                return;//Init 内可能会设置 CancelExcute 的值
             }
 
             //TODO:提供异步的上下文及处理方法——构造函数中暂时无法直接使用异步方法
