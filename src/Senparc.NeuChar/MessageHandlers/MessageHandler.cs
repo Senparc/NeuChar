@@ -123,7 +123,6 @@ namespace Senparc.NeuChar.MessageHandlers
         /// 当前用户消息上下文（注意：次数据不会被缓存，每次都会重新从缓存读取。
         /// </summary>
         public virtual async Task<TMC> GetCurrentMessageContext() => await GlobalMessageContext.GetMessageContextAsync(RequestMessage).ConfigureAwait(false);
-
         #endregion
 
         #region 方案二：虽然是用了缓存，但是如果在其他地方进行列表等更新，会造成数据不一致，暂时放弃此方法
@@ -159,6 +158,8 @@ namespace Senparc.NeuChar.MessageHandlers
        */
         #endregion
 
+        #endregion
+
         #region 属性设置
 
         /// <summary>
@@ -172,7 +173,6 @@ namespace Senparc.NeuChar.MessageHandlers
         public bool MessageIsRepeated { get; set; }
 
 
-        #endregion
 
         /// <summary>
         /// 请求和响应消息有差别化的定义
@@ -406,15 +406,18 @@ namespace Senparc.NeuChar.MessageHandlers
         }
 
         /// <summary>
-        /// <para>使用requestMessageBase的构造函数</para>
-        /// <para>此构造函数仅提供给具体的类库进行测试使用，例如Senparc.NeuChar.Work</para>
+        /// <para>使用 requestMessageBase 的构造函数</para>
+        /// <para>此构造函数仅提供给具体的类库进行测试使用，例如 Senparc.NeuChar.Work</para>
         /// </summary>
         /// <param name="requestMessageBase"></param>
         /// <param name="maxRecordCount"></param>
         /// <param name="postModel">需要传入到Init的参数</param>
+        /// <param name="onlyAllowEcryptMessage">当平台同时兼容明文消息和加密消息时，只允许处理加密消息（不允许处理明文消息），默认为 False</param>
         public MessageHandler(RequestMessageBase requestMessageBase, IEncryptPostModel postModel, int maxRecordCount = 0, bool onlyAllowEcryptMessage = false)
         {
             OnlyAllowEcryptMessage = onlyAllowEcryptMessage;
+            GlobalMessageContext.MaxRecordCount = maxRecordCount;
+           
             ////将requestMessageBase生成XML格式。
             //var xmlStr = XmlUtility.XmlUtility.Serializer(requestMessageBase);
             //var postDataDocument = XDocument.Parse(xmlStr);
