@@ -34,6 +34,9 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 
     修改标识：Senparc - 20190914
     修改描述：MessageAgent.RequestXml() 方法增加 autoFillUrlParameters 参数
+
+    修改标识：Senparc - 20191007
+    修改描述：MessageAgent 提供全系配套列异步方法
 ----------------------------------------------------------------*/
 
 
@@ -48,6 +51,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 
 namespace Senparc.NeuChar.Agents
@@ -67,6 +71,8 @@ namespace Senparc.NeuChar.Agents
         /// 默认代理请求超时时间（毫秒）
         /// </summary>
         private const int AGENT_TIME_OUT = 2500;
+
+        #region 同步方法
 
         /// <summary>
         /// 获取Xml结果。
@@ -198,7 +204,7 @@ namespace Senparc.NeuChar.Agents
         /// <param name="neuCharDomainName"></param>
         /// <param name="timeOut">代理请求超时时间（毫秒）</param>
         /// <returns></returns>
-        public static IResponseMessageBase RequestWeiweihiResponseMessage(this IMessageHandlerBase messageHandler, string weiweihiKey, string xml, string neuCharDomainName = "www.neuchar.com", int timeOut = AGENT_TIME_OUT)
+        public static IResponseMessageBase RequestNeuCharResponseMessage(this IMessageHandlerBase messageHandler, string weiweihiKey, string xml, string neuCharDomainName = "www.neuchar.com", int timeOut = AGENT_TIME_OUT)
         {
             return messageHandler.RequestNeuCharXml(weiweihiKey, xml, neuCharDomainName, timeOut).CreateResponseMessage(messageHandler.MessageEntityEnlightener);
         }
@@ -257,5 +263,207 @@ namespace Senparc.NeuChar.Agents
                 return false;
             }
         }
+
+
+        #endregion
+
+        #region 异步方法
+
+        /// <summary>
+        /// 【异步方法】获取Xml结果。
+        /// </summary>
+        /// <param name="messageHandler"></param>
+        /// <param name="url"></param>
+        /// <param name="autoFillUrlParameters">是否自动填充Url中缺少的参数（signature、timestamp、nonce），默认为 true</param>
+        /// <param name="token"></param>
+        /// <param name="stream"></param>
+        /// <param name="useNeuCharKey">是否使用WeiWeiHiKey，如果使用，则token为WeiWeiHiKey</param>
+        /// <param name="timeOut">代理请求超时时间（毫秒）</param>
+        /// <returns></returns>
+        public static async Task<string> RequestXmlAsync(this IMessageHandlerBase messageHandler, string url, string token, Stream stream, bool autoFillUrlParameters = true, bool useNeuCharKey = false, int timeOut = AGENT_TIME_OUT)
+        {
+            if (messageHandler != null)
+            {
+                messageHandler.UsedMessageAgent = true;
+            }
+            string timestamp = SystemTime.Now.Ticks.ToString();
+            string nonce = "GodBlessYou";
+            string signature = CheckSignatureWeChat.GetSignature(timestamp, nonce, token);
+            if (autoFillUrlParameters)
+            {
+                url += string.Format("{0}signature={1}&timestamp={2}&nonce={3}",
+                    url.Contains("?") ? "&" : "?", signature.AsUrlData(), timestamp.AsUrlData(), nonce.AsUrlData());
+            }
+
+            stream.Seek(0, SeekOrigin.Begin);
+            var responseXml = await RequestUtility.HttpPostAsync(url, null, stream, timeOut: timeOut);
+            //WeixinTrace.SendApiLog("RequestXmlUrl：" + url, responseXml);
+            return responseXml;
+        }
+
+        /// <summary>
+        /// 【异步方法】获取Xml结果
+        /// </summary>
+        /// <param name="messageHandler"></param>
+        /// <param name="url"></param>
+        /// <param name="token"></param>
+        /// <param name="xml"></param>
+        /// <param name="autoFillUrlParameters">是否自动填充Url中缺少的参数（signature、timestamp、nonce），默认为 true</param>
+        /// <param name="timeOut">代理请求超时时间（毫秒）</param>
+        /// <returns></returns>
+        public static async Task<string> RequestXmlAsync(this IMessageHandlerBase messageHandler, string url, string token, string xml, bool autoFillUrlParameters = true, int timeOut = AGENT_TIME_OUT)
+        {
+            if (messageHandler != null)
+            {
+                messageHandler.UsedMessageAgent = true;
+            }
+            using (MemoryStream ms = new MemoryStream())
+            {
+                //这里用ms模拟Request.InputStream
+                using (StreamWriter sw = new StreamWriter(ms))
+                {
+                    await sw.WriteAsync(xml);
+                    await sw.FlushAsync();
+                    sw.BaseStream.Position = 0;
+                    return await messageHandler.RequestXmlAsync(url, token, sw.BaseStream, autoFillUrlParameters: autoFillUrlParameters, timeOut: timeOut);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 【异步方法】对接 NeuChar 平台，获取Xml结果，使用WeiWeiHiKey对接
+        /// WeiWeiHiKey的获取方式请看：
+        /// </summary>
+        /// <param name="messageHandler"></param>
+        /// <param name="weiweihiKey"></param>
+        /// <param name="xml"></param>
+        /// <param name="neucharDomainName"></param>
+        /// <param name="timeOut">代理请求超时时间（毫秒）</param>
+        /// <returns></returns>
+        public static async Task<string> RequestNeuCharXmlAsync(this IMessageHandlerBase messageHandler, string weiweihiKey, string xml, string neucharDomainName = "www.neuchar.com", int timeOut = AGENT_TIME_OUT)
+        {
+            if (messageHandler != null)
+            {
+                messageHandler.UsedMessageAgent = true;
+            }
+            var url = "https://" + neucharDomainName + "/App/Weixin?neuCharKey=" + weiweihiKey;//官方地址
+            using (MemoryStream ms = new MemoryStream())
+            {
+                //这里用ms模拟Request.InputStream
+                using (StreamWriter sw = new StreamWriter(ms))
+                {
+                    await sw.WriteAsync(xml);
+                    await sw.FlushAsync();
+                    sw.BaseStream.Position = 0;
+                    return await messageHandler.RequestXmlAsync(url, weiweihiKey, sw.BaseStream, timeOut: timeOut);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 【异步方法】获取ResponseMessge结果
+        /// </summary>
+        /// <param name="messageHandler"></param>
+        /// <param name="autoFillUrlParameters">是否自动填充Url中缺少的参数（signature、timestamp、nonce），默认为 true</param>
+        /// <param name="url"></param>
+        /// <param name="token"></param>
+        /// <param name="stream"></param>
+        /// <param name="timeOut">代理请求超时时间（毫秒）</param>
+        /// <returns></returns>
+        public static async Task<IResponseMessageBase> RequestResponseMessageAsync(this IMessageHandlerBase messageHandler, string url, string token, Stream stream, bool autoFillUrlParameters = true, int timeOut = AGENT_TIME_OUT)
+        {
+            return (await messageHandler.RequestXmlAsync(url, token, stream, autoFillUrlParameters: autoFillUrlParameters, timeOut: timeOut))
+                    .CreateResponseMessage(messageHandler.MessageEntityEnlightener);
+        }
+
+        /// <summary>
+        /// 【异步方法】获取ResponseMessge结果
+        /// </summary>
+        /// <param name="messageHandler"></param>
+        /// <param name="autoFillUrlParameters">是否自动填充Url中缺少的参数（signature、timestamp、nonce），默认为 true</param>
+        /// <param name="url"></param>
+        /// <param name="token"></param>
+        /// <param name="xml"></param>
+        /// <param name="timeOut">代理请求超时时间（毫秒）</param>
+        /// <returns></returns>
+        public static async Task<IResponseMessageBase> RequestResponseMessageAsync(this IMessageHandlerBase messageHandler, string url, string token, string xml, bool autoFillUrlParameters = true, int timeOut = AGENT_TIME_OUT)
+        {
+            return (await messageHandler.RequestXmlAsync(url, token, xml, autoFillUrlParameters, timeOut))
+                    .CreateResponseMessage(messageHandler.MessageEntityEnlightener);
+        }
+
+        /// <summary>
+        /// 【异步方法】获取 NeuChar 开放平台的ResponseMessge结果
+        /// </summary>
+        /// <param name="messageHandler"></param>
+        /// <param name="weiweihiKey"></param>
+        /// <param name="xml"></param>
+        /// <param name="neuCharDomainName"></param>
+        /// <param name="timeOut">代理请求超时时间（毫秒）</param>
+        /// <returns></returns>
+        public static async Task<IResponseMessageBase> RequestNeucharResponseMessageAsync(this IMessageHandlerBase messageHandler, string weiweihiKey, string xml, string neuCharDomainName = "www.neuchar.com", int timeOut = AGENT_TIME_OUT)
+        {
+            return (await messageHandler.RequestNeuCharXmlAsync(weiweihiKey, xml, neuCharDomainName, timeOut))
+                    .CreateResponseMessage(messageHandler.MessageEntityEnlightener);
+        }
+
+        /// <summary>
+        /// 【异步方法】获取 NeuChar 开放平台的ResponseMessge结果
+        /// </summary>
+        /// <param name="messageHandler"></param>
+        /// <param name="weiweihiKey"></param>
+        /// <param name="neuCharDomainName"></param>
+        /// <param name="document"></param>
+        /// <param name="timeOut">代理请求超时时间（毫秒）</param>
+        /// <returns></returns>
+        public static async Task<IResponseMessageBase> RequestNeucharResponseMessage(this IMessageHandlerBase messageHandler, string weiweihiKey, XDocument document, string neuCharDomainName = "www.neuchar.com", int timeOut = AGENT_TIME_OUT)
+        {
+            return (await messageHandler.RequestNeuCharXmlAsync(weiweihiKey, document.ToString(), neuCharDomainName, timeOut))
+                    .CreateResponseMessage(messageHandler.MessageEntityEnlightener);
+        }
+
+        /// <summary>
+        /// 【异步方法】获取 NeuChar 开放平台的ResponseMessge结果
+        /// </summary>
+        /// <param name="messageHandler"></param>
+        /// <param name="weiweihiKey"></param>
+        /// <param name="requestMessage"></param>
+        /// <param name="neuCharDomainName"></param>
+        /// <param name="timeOut">代理请求超时时间（毫秒）</param>
+        /// <returns></returns>
+        public static async Task<IResponseMessageBase> RequestNeuCharResponseMessageAsync(this IMessageHandlerBase messageHandler, string weiweihiKey, RequestMessageBase requestMessage, string neuCharDomainName = "www.neuchar.com", int timeOut = AGENT_TIME_OUT)
+        {
+            return (await messageHandler.RequestNeuCharXmlAsync(weiweihiKey, requestMessage.ConvertEntityToXmlString(), neuCharDomainName, timeOut))
+                    .CreateResponseMessage(messageHandler.MessageEntityEnlightener);
+        }
+
+        /// <summary>
+        /// 【异步方法】使用GET请求测试URL和TOKEN是否可用
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="token"></param>
+        /// <param name="timeOut">代理请求超时时间（毫秒）</param>
+        /// <returns></returns>
+        public static async Task<bool> CheckUrlAndTokenAsync(string url, string token, int timeOut = 2000)
+        {
+            try
+            {
+                string timestamp = SystemTime.Now.Ticks.ToString();
+                string nonce = "GodBlessYou";
+                string echostr = Guid.NewGuid().ToString("n");
+                string signature = CheckSignatureWeChat.GetSignature(timestamp, nonce, token);
+                url += string.Format("{0}signature={1}&timestamp={2}&nonce={3}&echostr={4}",
+                        url.Contains("?") ? "&" : "?", signature.AsUrlData(), timestamp.AsUrlData(), nonce.AsUrlData(), echostr.AsUrlData());
+
+                var responseStr = await RequestUtility.HttpGetAsync(url, encoding: null, timeOut: timeOut);
+                return echostr == responseStr;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        #endregion
     }
 }
