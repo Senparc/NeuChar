@@ -87,9 +87,18 @@ namespace Senparc.NeuChar.MessageHandlers
                 var key = Guid.NewGuid().ToString();
                 queue.Add(key, () =>
                 {
-                    this.RequestDocument.Save(Path.Combine(logPath, string.Format("{0}_Request_{1}_{2}.txt", _getRandomFileName(),
-                                              this.RequestMessage.FromUserName,
-                                              this.RequestMessage.MsgType)));
+                    if (this.RequestDocument!=null)
+                    {
+                        this.RequestDocument.Save(Path.Combine(logPath, string.Format("{0}_Request_{1}_{2}.txt", _getRandomFileName(),
+                                              this.RequestMessage?.FromUserName,
+                                              this.RequestMessage?.MsgType)));
+                    }
+                    else
+                    {
+                        System.IO.File.WriteAllText(Path.Combine(logPath, string.Format("{0}_UntreatedRequest.txt", _getRandomFileName())),
+                                              this.TextResponseMessage);
+                    }
+                    
                     if (this.UsingEcryptMessage && this.EcryptRequestDocument != null)
                     {
                         this.EcryptRequestDocument.Save(Path.Combine(logPath, string.Format("{0}_Request_Ecrypt_{1}_{2}.txt", _getRandomFileName(),
@@ -123,8 +132,8 @@ namespace Senparc.NeuChar.MessageHandlers
                     if (this.ResponseDocument != null && this.ResponseDocument.Root != null)
                     {
                         this.ResponseDocument.Save(Path.Combine(logPath, string.Format("{0}_Response_{1}_{2}.txt", _getRandomFileName(),
-                            this.ResponseMessage.ToUserName,
-                            this.ResponseMessage.MsgType)));
+                            this.ResponseMessage?.ToUserName,
+                            this.ResponseMessage?.MsgType)));
                     }
 
                     if (this.UsingEcryptMessage &&
@@ -132,15 +141,15 @@ namespace Senparc.NeuChar.MessageHandlers
                     {
                         //记录加密后的响应信息
                         this.FinalResponseDocument.Save(Path.Combine(logPath, string.Format("{0}_Response_Final_{1}_{2}.txt", _getRandomFileName(),
-                            this.ResponseMessage.ToUserName,
-                            this.ResponseMessage.MsgType)));
+                            this.ResponseMessage?.ToUserName,
+                            this.ResponseMessage?.MsgType)));
                     }
 
                     if (this.ResponseDocument == null && this.TextResponseMessage != null)
                     {
                         System.IO.File.WriteAllText(Path.Combine(logPath, string.Format("{0}_TextResponse_{1}_{2}.txt", _getRandomFileName(),
-                            this.RequestMessage.ToUserName,
-                            this.RequestMessage.MsgType)), this.TextResponseMessage);
+                            this.RequestMessage?.ToUserName,
+                            this.RequestMessage?.MsgType)), this.TextResponseMessage);
                     }
                 });
             }

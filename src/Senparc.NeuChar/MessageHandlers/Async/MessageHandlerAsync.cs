@@ -55,7 +55,6 @@ namespace Senparc.NeuChar.MessageHandlers
         where TRequest : class, IRequestMessageBase
         where TResponse : class, IResponseMessageBase
     {
-#if !NET35 && !NET40
         #region 异步方法
 
         /// <summary>
@@ -76,11 +75,16 @@ namespace Senparc.NeuChar.MessageHandlers
 
         public virtual async Task OnExecutingAsync(CancellationToken cancellationToken)
         {
-            
+
         }
 
         public virtual async Task ExecuteAsync(CancellationToken cancellationToken)
         {
+            if (CancelExcute)
+            {
+                return;
+            }
+
             //进行 APM 记录
             ExecuteStatTime = SystemTime.Now;
 
@@ -88,10 +92,10 @@ namespace Senparc.NeuChar.MessageHandlers
 
             await apm.SetAsync(NeuCharApmKind.Message_Request.ToString(), 1, tempStorage: OpenId).ConfigureAwait(false);
 
-            if (CancelExcute)
-            {
-                return;
-            }
+            //if (CancelExcute)
+            //{
+            //    return;
+            //}
 
             await OnExecutingAsync(cancellationToken).ConfigureAwait(false);
 
@@ -119,13 +123,14 @@ namespace Senparc.NeuChar.MessageHandlers
             }
             catch (Exception ex)
             {
-                apm.SetAsync(NeuCharApmKind.Message_Exception.ToString(), 1, tempStorage: OpenId).ConfigureAwait(false).GetAwaiter().GetResult();
+                await apm.SetAsync(NeuCharApmKind.Message_Exception.ToString(), 1, tempStorage: OpenId).ConfigureAwait(false);
                 throw new MessageHandlerException("MessageHandler中Execute()过程发生错误：" + ex.Message, ex);
             }
             finally
             {
                 await OnExecutedAsync(cancellationToken).ConfigureAwait(false);
-                await apm.SetAsync(NeuCharApmKind.Message_ResponseMillisecond.ToString(), (SystemTime.Now - this.ExecuteStatTime).TotalMilliseconds, tempStorage: OpenId).ConfigureAwait(false);
+                await apm.SetAsync(NeuCharApmKind.Message_ResponseMillisecond.ToString(), 
+                    (SystemTime.Now - this.ExecuteStatTime).TotalMilliseconds, tempStorage: OpenId).ConfigureAwait(false);
             }
 
             //await Task.Run(() => this.Execute()).ConfigureAwait(false);
@@ -136,11 +141,9 @@ namespace Senparc.NeuChar.MessageHandlers
 
         public virtual async Task OnExecutedAsync(CancellationToken cancellationToken)
         {
-            
+
         }
 
         #endregion
-#endif
-
     }
 }

@@ -50,6 +50,9 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 
     修改标识：Senparc - 20191004
     修改描述：MessageHandler V6.0：改为以异步方法为主；禁用 OnExecuting、OnExecuted 两个同步方法
+
+    修改标识：Senparc - 20191006
+    修改描述：MessageHandler.CommonInitialize() 方法添加 onlyAllowEcryptMessage 参数
 ----------------------------------------------------------------*/
 
 
@@ -58,6 +61,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
  * V4.0 添加异步方法
  * V5.0 支持分布式缓存
  * V6.0 转为以异步方法为主
+ * V6.1 添加 OnlyAllowEcryptMessage 属性
  * 
  */
 
@@ -87,7 +91,6 @@ namespace Senparc.NeuChar.MessageHandlers
         where TRequest : class, IRequestMessageBase
         where TResponse : class, IResponseMessageBase
     {
-
         #region 上下文 
 
         static GlobalMessageContext<TMC, TRequest, TResponse> _globalMessageContext;
@@ -120,7 +123,6 @@ namespace Senparc.NeuChar.MessageHandlers
         /// 当前用户消息上下文（注意：次数据不会被缓存，每次都会重新从缓存读取。
         /// </summary>
         public virtual async Task<TMC> GetCurrentMessageContext() => await GlobalMessageContext.GetMessageContextAsync(RequestMessage).ConfigureAwait(false);
-
         #endregion
 
         #region 方案二：虽然是用了缓存，但是如果在其他地方进行列表等更新，会造成数据不一致，暂时放弃此方法
@@ -156,6 +158,10 @@ namespace Senparc.NeuChar.MessageHandlers
        */
         #endregion
 
+        #endregion
+
+        #region 属性设置
+
         /// <summary>
         /// 忽略重复发送的同一条消息（通常因为微信服务器没有收到及时的响应）
         /// </summary>
@@ -167,7 +173,6 @@ namespace Senparc.NeuChar.MessageHandlers
         public bool MessageIsRepeated { get; set; }
 
 
-        #endregion
 
         /// <summary>
         /// 请求和响应消息有差别化的定义
@@ -299,6 +304,11 @@ namespace Senparc.NeuChar.MessageHandlers
         /// </summary>
         public bool UsingCompatibilityModelEcryptMessage { get; set; }
 
+        /// <summary>
+        /// 当平台同时兼容明文消息和加密消息时，只允许处理加密消息（不允许处理明文消息），默认为 False
+        /// </summary>
+        public bool OnlyAllowEcryptMessage { get; set; }
+
 
         private string _textResponseMessage = null;
 
@@ -346,6 +356,12 @@ namespace Senparc.NeuChar.MessageHandlers
         /// </summary>
         public Func<IRequestMessageBase, bool> OmitRepeatedMessageFunc { get; set; } = null;
 
+        /// <summary>
+        /// 每个具体框架内额外的去重条件。返回是否已经去重（true：需要去重，false：不需要去重）
+        /// </summary>
+        protected Func<IRequestMessageBase, MessageHandler<TMC, TRequest, TResponse>, bool> SpecialDeduplicationAction { get; set; } = null;
+
+        #endregion
 
         #region 私有方法
 
@@ -360,10 +376,59 @@ namespace Senparc.NeuChar.MessageHandlers
 
         #endregion
 
+        #region 构造函数 / 初始化相关
+
         /// <summary>
-        /// 每个具体框架内额外的去重条件。返回是否已经去重（true：需要去重，false：不需要去重）
+        /// 
         /// </summary>
-        protected Func<IRequestMessageBase, MessageHandler<TMC, TRequest, TResponse>, bool> SpecialDeduplicationAction { get; set; } = null;
+        /// <param name="inputStream"></param>
+        /// <param name="maxRecordCount"></param>
+        /// <param name="postModel">需要传入到Init的参数</param>
+        /// <param name="onlyAllowEcryptMessage">当平台同时兼容明文消息和加密消息时，只允许处理加密消息（不允许处理明文消息），默认为 False</param>
+        public MessageHandler(Stream inputStream, IEncryptPostModel postModel, int maxRecordCount = 0, bool onlyAllowEcryptMessage = false)
+        {
+            var postDataDocument = XmlUtility.Convert(inputStream);
+            //PostModel = postModel;//PostModel 在当前类初始化过程中必须赋值
+            CommonInitialize(postDataDocument, maxRecordCount, postModel, onlyAllowEcryptMessage);
+        }
+
+        /// <summary>
+        /// 使用postDataDocument的构造函数
+        /// </summary>
+        /// <param name="postDataDocument"></param>
+        /// <param name="maxRecordCount"></param>
+        /// <param name="postModel">需要传入到Init的参数</param>
+        /// <param name="onlyAllowEcryptMessage">当平台同时兼容明文消息和加密消息时，只允许处理加密消息（不允许处理明文消息），默认为 False</param>
+        public MessageHandler(XDocument postDataDocument, IEncryptPostModel postModel, int maxRecordCount = 0, bool onlyAllowEcryptMessage = false)
+        {
+            //PostModel = postModel;//PostModel 在当前类初始化过程中必须赋值
+            CommonInitialize(postDataDocument, maxRecordCount, postModel, onlyAllowEcryptMessage);
+        }
+
+        /// <summary>
+        /// <para>使用 requestMessageBase 的构造函数</para>
+        /// <para>此构造函数仅提供给具体的类库进行测试使用，例如 Senparc.NeuChar.Work</para>
+        /// </summary>
+        /// <param name="requestMessageBase"></param>
+        /// <param name="maxRecordCount"></param>
+        /// <param name="postModel">需要传入到Init的参数</param>
+        /// <param name="onlyAllowEcryptMessage">当平台同时兼容明文消息和加密消息时，只允许处理加密消息（不允许处理明文消息），默认为 False</param>
+        public MessageHandler(RequestMessageBase requestMessageBase, IEncryptPostModel postModel, int maxRecordCount = 0, bool onlyAllowEcryptMessage = false)
+        {
+            OnlyAllowEcryptMessage = onlyAllowEcryptMessage;
+            GlobalMessageContext.MaxRecordCount = maxRecordCount;
+
+            ////将requestMessageBase生成XML格式。
+            //var xmlStr = XmlUtility.XmlUtility.Serializer(requestMessageBase);
+            //var postDataDocument = XDocument.Parse(xmlStr);
+
+            //CommonInitialize(postDataDocument, maxRecordCount, postData);
+
+            //此方法不执行任何方法，提供给具体的类库进行测试使用，例如Senparc.NeuChar.Work
+
+            PostModel = postModel;//PostModel 在当前类初始化过程中必须赋值
+        }
+
 
         /// <summary>
         /// 构造函数公用的初始化方法
@@ -371,8 +436,10 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <param name="postDataDocument"></param>
         /// <param name="maxRecordCount"></param>
         /// <param name="postModel"></param>
-        public void CommonInitialize(XDocument postDataDocument, int maxRecordCount, IEncryptPostModel postModel)
+        /// <param name="onlyAllowEcryptMessage">当平台同时兼容明文消息和加密消息时，只允许处理加密消息（不允许处理明文消息），默认为 False</param>
+        public void CommonInitialize(XDocument postDataDocument, int maxRecordCount, IEncryptPostModel postModel, bool onlyAllowEcryptMessage)
         {
+            OnlyAllowEcryptMessage = onlyAllowEcryptMessage;
             OmitRepeatedMessage = true;//默认开启去重
 
             GlobalMessageContext.MaxRecordCount = maxRecordCount;
@@ -380,7 +447,12 @@ namespace Senparc.NeuChar.MessageHandlers
             PostModel = postModel;//PostModel 在当前类初始化过程中必须赋值
             RequestDocument = Init(postDataDocument, postModel);
 
-            //TODO:提供异步的上下文及处理方法
+            if (CancelExcute)
+            {
+                return;//Init 内可能会设置 CancelExcute 的值
+            }
+
+            //TODO:提供异步的上下文及处理方法——构造函数中暂时无法直接使用异步方法
 
             //消息去重
             if (MessageContextGlobalConfig.UseMessageContext)
@@ -435,52 +507,6 @@ namespace Senparc.NeuChar.MessageHandlers
         }
 
         /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="inputStream"></param>
-        /// <param name="maxRecordCount"></param>
-        /// <param name="postModel">需要传入到Init的参数</param>
-        public MessageHandler(Stream inputStream, IEncryptPostModel postModel, int maxRecordCount = 0)
-        {
-            var postDataDocument = XmlUtility.Convert(inputStream);
-            //PostModel = postModel;//PostModel 在当前类初始化过程中必须赋值
-            CommonInitialize(postDataDocument, maxRecordCount, postModel);
-        }
-
-        /// <summary>
-        /// 使用postDataDocument的构造函数
-        /// </summary>
-        /// <param name="postDataDocument"></param>
-        /// <param name="maxRecordCount"></param>
-        /// <param name="postModel">需要传入到Init的参数</param>
-        public MessageHandler(XDocument postDataDocument, IEncryptPostModel postModel, int maxRecordCount = 0)
-        {
-            //PostModel = postModel;//PostModel 在当前类初始化过程中必须赋值
-            CommonInitialize(postDataDocument, maxRecordCount, postModel);
-        }
-
-        /// <summary>
-        /// <para>使用requestMessageBase的构造函数</para>
-        /// <para>此构造函数仅提供给具体的类库进行测试使用，例如Senparc.NeuChar.Work</para>
-        /// </summary>
-        /// <param name="requestMessageBase"></param>
-        /// <param name="maxRecordCount"></param>
-        /// <param name="postModel">需要传入到Init的参数</param>
-        public MessageHandler(RequestMessageBase requestMessageBase, IEncryptPostModel postModel, int maxRecordCount = 0)
-        {
-            ////将requestMessageBase生成XML格式。
-            //var xmlStr = XmlUtility.XmlUtility.Serializer(requestMessageBase);
-            //var postDataDocument = XDocument.Parse(xmlStr);
-
-            //CommonInitialize(postDataDocument, maxRecordCount, postData);
-
-            //此方法不执行任何方法，提供给具体的类库进行测试使用，例如Senparc.NeuChar.Work
-
-            PostModel = postModel;//PostModel 在当前类初始化过程中必须赋值
-        }
-
-
-        /// <summary>
         /// 初始化，获取RequestDocument。（必须要完成 RequestMessage 数据赋值）.
         /// Init中需要对上下文添加当前消息（如果使用上下文）；以及判断消息的加密情况，对解密信息进行解密
         /// </summary>
@@ -488,8 +514,9 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <param name="postModel"></param>
         public abstract XDocument Init(XDocument requestDocument, IEncryptPostModel postModel);
 
-        //public abstract TR CreateResponseMessage<TR>() where TR : ResponseMessageBase;
+        #endregion
 
+        #region 消息处理
         /// <summary>
         /// 根据当前的 RequestMessage 创建指定类型（RT）的 ResponseMessage
         /// </summary>
@@ -539,5 +566,6 @@ namespace Senparc.NeuChar.MessageHandlers
         ///// </summary>
         //public abstract IResponseMessageBase DefaultResponseMessage(IRequestMessageBase requestMessage);
 
+        #endregion
     }
 }
