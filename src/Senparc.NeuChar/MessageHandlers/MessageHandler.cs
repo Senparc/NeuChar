@@ -53,6 +53,9 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 
     修改标识：Senparc - 20191006
     修改描述：MessageHandler.CommonInitialize() 方法添加 onlyAllowEcryptMessage 参数
+
+    修改标识：Senparc - 20191009
+    修改描述：增加 UnsafeMessageContext 属性
 ----------------------------------------------------------------*/
 
 
@@ -91,6 +94,12 @@ namespace Senparc.NeuChar.MessageHandlers
         where TRequest : class, IRequestMessageBase
         where TResponse : class, IResponseMessageBase
     {
+
+        /// <summary>
+        /// 消息执行专用锁（针对同一个用户）
+        /// </summary>
+        public const string MESSAGE_EXECUTE_LOCK_NAME = "MESSAGE_EXECUTE_LOCK_NAME";
+
         #region 上下文 
 
         static GlobalMessageContext<TMC, TRequest, TResponse> _globalMessageContext;
@@ -123,6 +132,22 @@ namespace Senparc.NeuChar.MessageHandlers
         /// 当前用户消息上下文（注意：次数据不会被缓存，每次都会重新从缓存读取。
         /// </summary>
         public virtual async Task<TMC> GetCurrentMessageContext() => await GlobalMessageContext.GetMessageContextAsync(RequestMessage).ConfigureAwait(false);
+
+
+        /// <summary>
+        /// 延迟载入的上下文对象，存放在内存中。注意：使用本地内存缓存时，会每次都花心，等效于 GetCurrentMessageContext()；使用分布式缓存时，不能保证此对象是实时的，如需获取实时对象，请使用 GetCurrentMessageContext() 方法
+        /// </summary>
+        public async Task<TMC> GetUnsafeMessageContext()
+        {
+            var cache = CacheStrategyFactory.GetObjectCacheStrategyInstance();
+            if (_unsafeMessageContext == null || (cache is LocalObjectCacheStrategy)/* 本地缓存可以每次都刷新 */)
+            {
+                _unsafeMessageContext = await GetCurrentMessageContext();
+            }
+            return _unsafeMessageContext;
+        }
+        private TMC _unsafeMessageContext;
+
         #endregion
 
         #region 方案二：虽然是用了缓存，但是如果在其他地方进行列表等更新，会造成数据不一致，暂时放弃此方法
@@ -465,15 +490,15 @@ namespace Senparc.NeuChar.MessageHandlers
                 {
                     #region 消息去重
 
-                    var currentMessageContext = this.GetCurrentMessageContext().ConfigureAwait(false).GetAwaiter().GetResult();
+                    var messageContext = GetUnsafeMessageContext().ConfigureAwait(false).GetAwaiter().GetResult();
                     if (omit &&
                         OmitRepeatedMessage &&
-                        currentMessageContext.RequestMessages.Count > 0
+                        messageContext.RequestMessages.Count > 0
                          //&& !(RequestMessage is RequestMessageEvent_Merchant_Order)批量订单的MsgId可能会相同
                          )
                     {
                         //lastMessage必定有值（除非极端小的过期时间条件下，几乎不可能发生）
-                        var lastMessage = currentMessageContext.RequestMessages.Last();
+                        var lastMessage = messageContext.RequestMessages.Last();
 
                         if (
                             //使用MsgId去重
@@ -499,7 +524,7 @@ namespace Senparc.NeuChar.MessageHandlers
                     //在消息没有被去重的情况下记录上下文
                     if (!MessageIsRepeated && RequestMessage.MsgType != RequestMsgType.Unknown)
                     {
-                        GlobalMessageContext.InsertMessage(RequestMessage);
+                        GlobalMessageContext.InsertMessage(RequestMessage, messageContext);
                     }
                 }
             }

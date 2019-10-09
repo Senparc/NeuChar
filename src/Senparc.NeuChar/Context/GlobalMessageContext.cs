@@ -75,6 +75,7 @@ namespace Senparc.NeuChar.Context
         //public static object OmitRepeatLock = new object();//TODO:转为同步锁
         public const string MESSAGE_CONTENT_OMIT_REPEAT_LOCK_NAME = "MESSAGE_CONTENT_OMIT_REPEAT_LOCK_NAME";
 
+
         /// <summary>
         /// 缓存键前缀
         /// </summary>
@@ -330,7 +331,8 @@ namespace Senparc.NeuChar.Context
         /// 记录请求信息
         /// </summary>
         /// <param name="requestMessage">请求信息</param>
-        public void InsertMessage(TRequest requestMessage)
+        /// <param name="messageContext">上下文消息列表，如果为空，测自动从缓存中获取</param>
+        public void InsertMessage(TRequest requestMessage, TMC messageContext = null)
         {
             if (requestMessage == null)
             {
@@ -341,7 +343,7 @@ namespace Senparc.NeuChar.Context
             var cache = CacheStrategyFactory.GetObjectCacheStrategyInstance();
             using (cache.BeginCacheLock(MessageContextGlobalConfig.MESSAGE_CONTENT_ITEM_LOCK_NAME, $"InsertMessage-{userName}"))
             {
-                var messageContext = GetMessageContext(userName, true);
+                messageContext = messageContext ?? GetMessageContext(userName, true);
                 //if (messageContext.RequestMessages.Count > 0)
                 //{
                 //    //如果不是新建的对象，把当前对象移到队列尾部（新对象已经在底部）
@@ -379,7 +381,9 @@ namespace Senparc.NeuChar.Context
         /// 记录响应信息
         /// </summary>
         /// <param name="responseMessage">响应信息</param>
-        public void InsertMessage(TResponse responseMessage)
+        /// <param name="messageContext"></param>
+        /// <param name="messageContext">上下文消息列表，如果为空，测自动从缓存中获取</param>
+        public void InsertMessage(TResponse responseMessage, TMC messageContext = null)
         {
             if (responseMessage == null)
             {
@@ -390,7 +394,7 @@ namespace Senparc.NeuChar.Context
             var cache = CacheStrategyFactory.GetObjectCacheStrategyInstance();
             using (cache.BeginCacheLock(MessageContextGlobalConfig.MESSAGE_CONTENT_ITEM_LOCK_NAME, $"InsertMessage-{userName}"))
             {
-                var messageContext = GetMessageContext(userName, true);
+                messageContext = messageContext ?? GetMessageContext(userName, true);
 
                 //判断约束有没有修改
                 if (messageContext.MaxRecordCount != this.MaxRecordCount)
@@ -590,7 +594,8 @@ namespace Senparc.NeuChar.Context
         /// 记录请求信息
         /// </summary>
         /// <param name="requestMessage">请求信息</param>
-        public async Task InsertMessageAsync(TRequest requestMessage)
+        /// <param name="messageContext">上下文消息列表，如果为空，测自动从缓存中获取</param>
+        public async Task InsertMessageAsync(TRequest requestMessage, TMC messageContext = null)
         {
             if (requestMessage == null)
             {
@@ -601,7 +606,7 @@ namespace Senparc.NeuChar.Context
             var cache = CacheStrategyFactory.GetObjectCacheStrategyInstance();
             using (await cache.BeginCacheLockAsync(MessageContextGlobalConfig.MESSAGE_CONTENT_ITEM_LOCK_NAME, $"InsertMessage-{userName}").ConfigureAwait(false))
             {
-                var messageContext = await GetMessageContextAsync(userName, true).ConfigureAwait(false);
+                messageContext = messageContext ?? await GetMessageContextAsync(userName, true).ConfigureAwait(false);
                 //if (messageContext.RequestMessages.Count > 0)
                 //{
                 //    //如果不是新建的对象，把当前对象移到队列尾部（新对象已经在底部）
@@ -639,7 +644,8 @@ namespace Senparc.NeuChar.Context
         /// 记录响应信息
         /// </summary>
         /// <param name="responseMessage">响应信息</param>
-        public async Task InsertMessageAsync(TResponse responseMessage)
+        /// <param name="messageContext">上下文消息列表，如果为空，测自动从缓存中获取</param>
+        public async Task InsertMessageAsync(TResponse responseMessage, TMC messageContext = null)
         {
             if (responseMessage == null)
             {
@@ -650,7 +656,7 @@ namespace Senparc.NeuChar.Context
             var cache = CacheStrategyFactory.GetObjectCacheStrategyInstance();
             using (await cache.BeginCacheLockAsync(MessageContextGlobalConfig.MESSAGE_CONTENT_ITEM_LOCK_NAME, $"InsertMessage-{userName}").ConfigureAwait(false))
             {
-                var messageContext = await GetMessageContextAsync(userName, true).ConfigureAwait(false);
+                messageContext = messageContext?? await GetMessageContextAsync(userName, true).ConfigureAwait(false);
 
                 //判断约束有没有修改
                 if (messageContext.MaxRecordCount != this.MaxRecordCount)
