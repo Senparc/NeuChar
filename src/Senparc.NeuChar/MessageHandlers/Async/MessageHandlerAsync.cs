@@ -45,6 +45,7 @@ using Senparc.CO2NET.APM;
 using System.Threading;
 using Senparc.CO2NET.Trace;
 using Senparc.CO2NET.Cache;
+using Senparc.CO2NET.MessageQueue;
 
 namespace Senparc.NeuChar.MessageHandlers
 {
@@ -86,59 +87,70 @@ namespace Senparc.NeuChar.MessageHandlers
             {
                 return;
             }
-            var cache = CacheStrategyFactory.GetObjectCacheStrategyInstance();
-            using (await cache.BeginCacheLockAsync(MESSAGE_EXECUTE_LOCK_NAME, $"{typeof(TMC)}-{MessageEntityEnlightener.PlatformType}-{RequestMessage?.ToUserName}"))
+
+
+            //进行 APM 记录
+            ExecuteStatTime = SystemTime.Now;
+
+            DataOperation apm = new DataOperation(PostModel?.DomainId);
+
+            await apm.SetAsync(NeuCharApmKind.Message_Request.ToString(), 1, tempStorage: OpenId).ConfigureAwait(false);//Redis延迟：<1ms（约，测试数据，下同）
+
+            await OnExecutingAsync(cancellationToken).ConfigureAwait(false);//Redis延迟：130ms（Demo示例中有需要使用缓存的逻辑代码）
+
+            if (CancelExcute)
             {
-                //进行 APM 记录
-                ExecuteStatTime = SystemTime.Now;
+                return;
+            }
 
-                DataOperation apm = new DataOperation(PostModel?.DomainId);
-
-                await apm.SetAsync(NeuCharApmKind.Message_Request.ToString(), 1, tempStorage: OpenId).ConfigureAwait(false);//Redis延迟：<1ms（约，测试数据，下同）
-
-                await OnExecutingAsync(cancellationToken).ConfigureAwait(false);//Redis延迟：130ms
-
-                if (CancelExcute)
+            try
+            {
+                if (RequestMessage == null)
                 {
                     return;
                 }
 
-                try
+                //处理并设置 ResponseMessage
+                await BuildResponseMessageAsync(cancellationToken).ConfigureAwait(false);//Redis延迟：230ms
+
+                //记录上下文
+                //此处修改
+                if (MessageContextGlobalConfig.UseMessageContext && ResponseMessage != null && !string.IsNullOrEmpty(ResponseMessage.FromUserName))
                 {
-                    if (RequestMessage == null)
-                    {
-                        return;
-                    }
-
-                    await BuildResponseMessageAsync(cancellationToken).ConfigureAwait(false);//Redis延迟：230ms
-
-                    //记录上下文
-                    //此处修改
-                    if (MessageContextGlobalConfig.UseMessageContext && ResponseMessage != null && !string.IsNullOrEmpty(ResponseMessage.FromUserName))
+                    //回复消息记录可以使用队列，对时间不敏感
+                    SenparcMessageQueue queue = new SenparcMessageQueue();
+                    var lockKey = this.GetInsertMessageKey();
+                    queue.Add($"{lockKey}{SystemTime.NowTicks}", async () =>
                     {
                         //这里为了提高分布式缓存的速度，使用 Unsafe 方法，可能出现不同步的情况是：同一个用户高频次访问（且不满足去重条件），
                         //第二个请求在构造函数中获得锁并且插入了新的 RequestMessage，但是此时第一个请求的 UnSafe 信息中还没有第二个请求的信息。
-                        //由于概率较低，因此为了效率暂时忽略此情况，如果此情况极易发生，此处应改用 GetCurrentMessageContext()！
-                        var messageContext = await GetUnsafeMessageContext();
-                        await GlobalMessageContext.InsertMessageAsync(ResponseMessage, messageContext);//Redis延迟：100ms
-                    }
+                        //由于概率较低，因此为了效率暂时忽略此情况，如果此情况极易发生，此处应改用 GetCurrentMessageContext()！    
 
-                    await apm.SetAsync(NeuCharApmKind.Message_SuccessResponse.ToString(), 1, tempStorage: OpenId).ConfigureAwait(false);//Redis延迟：1ms
+                        //加同步锁
+                        var cache = CacheStrategyFactory.GetObjectCacheStrategyInstance();
+                        using (await cache.BeginCacheLockAsync(MessageContextGlobalConfig.MESSAGE_INSERT_LOCK_NAME, lockKey
+                                   /*, 25, TimeSpan.FromMilliseconds(200)*/ /* 最多等待 5 秒钟*/))
+                        {
+                            await GlobalMessageContext.InsertMessageAsync(ResponseMessage);//耗时约：100ms（使用队列不占用当前线程时间）
+                        }
+                    });
+                }
 
-                }
-                catch (Exception ex)
-                {
-                    await apm.SetAsync(NeuCharApmKind.Message_Exception.ToString(), 1, tempStorage: OpenId).ConfigureAwait(false);
-                    throw new MessageHandlerException("MessageHandler中Execute()过程发生错误：" + ex.Message, ex);
-                }
-                finally
-                {
-                    await OnExecutedAsync(cancellationToken).ConfigureAwait(false);//Redis延迟：3ms
-
-                    await apm.SetAsync(NeuCharApmKind.Message_ResponseMillisecond.ToString(),
-                        (SystemTime.Now - this.ExecuteStatTime).TotalMilliseconds, tempStorage: OpenId).ConfigureAwait(false);//Redis延迟：<1ms
-                }
+                await apm.SetAsync(NeuCharApmKind.Message_SuccessResponse.ToString(), 1, tempStorage: OpenId).ConfigureAwait(false);//Redis延迟：1ms
             }
+            catch (Exception ex)
+            {
+                await apm.SetAsync(NeuCharApmKind.Message_Exception.ToString(), 1, tempStorage: OpenId).ConfigureAwait(false);
+                throw new MessageHandlerException("MessageHandler中Execute()过程发生错误：" + ex.Message, ex);
+            }
+            finally
+            {
+                await OnExecutedAsync(cancellationToken).ConfigureAwait(false);//Redis延迟：3ms（Demo示例中有需要使用缓存的逻辑代码，已使用）
+
+                await apm.SetAsync(NeuCharApmKind.Message_ResponseMillisecond.ToString(),
+                    (SystemTime.Now - this.ExecuteStatTime).TotalMilliseconds, tempStorage: OpenId).ConfigureAwait(false);//Redis延迟：<1ms
+            }
+
         }
 
         public abstract Task BuildResponseMessageAsync(CancellationToken cancellationToken);

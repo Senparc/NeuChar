@@ -271,14 +271,7 @@ namespace Senparc.NeuChar.Middlewares
 
                     messageHandler = _messageHandlerFunc(context.Request.GetRequestMemoryStream(), postModel, _options.MaxRecordCount);
 
-
-                    #region 没有重写的异步方法将默认尝试调用同步方法中的代码（为了偷懒）
-
-                    /* 使用 SelfSynicMethod 的好处是可以让异步、同步方法共享同一套（同步）代码，无需写两次，
-                     * 当然，这并不一定适用于所有场景，所以是否选用需要根据实际情况而定，这里只是演示，并不盲目推荐。*/
                     messageHandler.DefaultMessageHandlerAsyncEvent = _options.DefaultMessageHandlerAsyncEvent;
-
-                    #endregion
 
                     #region 设置消息去重 设置
 

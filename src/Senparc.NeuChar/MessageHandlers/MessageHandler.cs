@@ -94,12 +94,6 @@ namespace Senparc.NeuChar.MessageHandlers
         where TRequest : class, IRequestMessageBase
         where TResponse : class, IResponseMessageBase
     {
-
-        /// <summary>
-        /// 消息执行专用锁（针对同一个用户）
-        /// </summary>
-        public const string MESSAGE_EXECUTE_LOCK_NAME = "MESSAGE_EXECUTE_LOCK_NAME";
-
         #region 上下文 
 
         static GlobalMessageContext<TMC, TRequest, TResponse> _globalMessageContext;
@@ -399,6 +393,18 @@ namespace Senparc.NeuChar.MessageHandlers
             MessageIsRepeated = true;
         }
 
+        /// <summary>
+        /// 获取执行 InsertMessage（不管是 Request 还是 Response）时候的同步锁的key
+        /// </summary>
+        /// <returns></returns>
+        private string GetInsertMessageKey()
+        {
+            var toUserName = (RequestMessage?.ToUserName) ?? SystemTime.NowTicks.ToString();//尽量获取真实数据，如果获取不到，可能是特殊消息，随机生成
+            var openId = OpenId ?? SystemTime.NowTicks.ToString();//尽量获取真实数据，如果获取不到，可能是特殊消息，随机生成
+            var lockKey = $"{typeof(TMC)}-{MessageEntityEnlightener.PlatformType}-{toUserName}-{openId}";
+            return lockKey;
+        }
+
         #endregion
 
         #region 构造函数 / 初始化相关
@@ -485,12 +491,13 @@ namespace Senparc.NeuChar.MessageHandlers
                 var omit = OmitRepeatedMessageFunc == null || OmitRepeatedMessageFunc(RequestMessage);
 
                 //使用分布式锁，已支持分布式上下文缓存
+                var lockKey = this.GetInsertMessageKey();
                 var cache = CacheStrategyFactory.GetObjectCacheStrategyInstance();
-                using (cache.BeginCacheLock(MessageContextGlobalConfig.MESSAGE_CONTENT_OMIT_REPEAT_LOCK_NAME, $"{typeof(TMC)}-{MessageEntityEnlightener.PlatformType}-{RequestMessage?.ToUserName}"))
+                using (cache.BeginCacheLock(MessageContextGlobalConfig.MESSAGE_INSERT_LOCK_NAME, lockKey))
                 {
                     #region 消息去重
 
-                    var messageContext = GetUnsafeMessageContext().ConfigureAwait(false).GetAwaiter().GetResult();
+                    var messageContext = GetCurrentMessageContext().ConfigureAwait(false).GetAwaiter().GetResult();
                     if (omit &&
                         OmitRepeatedMessage &&
                         messageContext.RequestMessages.Count > 0
@@ -524,7 +531,8 @@ namespace Senparc.NeuChar.MessageHandlers
                     //在消息没有被去重的情况下记录上下文
                     if (!MessageIsRepeated && RequestMessage.MsgType != RequestMsgType.Unknown)
                     {
-                        GlobalMessageContext.InsertMessage(RequestMessage, messageContext);
+                        //这里不能用队列，因为需要确保解锁之前缓存已经录入信息
+                        GlobalMessageContext.InsertMessage(RequestMessage);
                     }
                 }
             }
