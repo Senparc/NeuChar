@@ -66,14 +66,12 @@ namespace Senparc.NeuChar.Context
         ///// <summary>
         ///// 上下文操作使用的同步锁
         ///// </summary>
-        //public static object Lock = new object();//TODO:转为同步锁
         public const string MESSAGE_CONTENT_ITEM_LOCK_NAME = "MESSAGE_CONTENT_ITEM_LOCK_NAME";
 
         ///// <summary>
         ///// 去重专用锁
         ///// </summary>
-        //public static object OmitRepeatLock = new object();//TODO:转为同步锁
-        public const string MESSAGE_CONTENT_OMIT_REPEAT_LOCK_NAME = "MESSAGE_CONTENT_OMIT_REPEAT_LOCK_NAME";
+        public const string MESSAGE_INSERT_LOCK_NAME = "MESSAGE_INSERT_LOCK_NAME";
 
 
         /// <summary>
@@ -381,7 +379,6 @@ namespace Senparc.NeuChar.Context
         /// 记录响应信息
         /// </summary>
         /// <param name="responseMessage">响应信息</param>
-        /// <param name="messageContext"></param>
         /// <param name="messageContext">上下文消息列表，如果为空，测自动从缓存中获取</param>
         public void InsertMessage(TResponse responseMessage, TMC messageContext = null)
         {
