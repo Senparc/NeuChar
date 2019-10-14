@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net45;netstandard2.0</TargetFrameworks>
-    <Version>1.0.102-preview7.8.4</Version>
+    <Version>1.0.102</Version>
     <AssemblyName>Senparc.NeuChar</AssemblyName>
     <RootNamespace>Senparc.NeuChar</RootNamespace>
     <FrameworkPathOverride Condition="'$(TargetFramework)' == 'net35'">$(Net35FrameworkPathOverride)</FrameworkPathOverride>
@@ -151,8 +151,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Senparc.CO2NET" Version="1.0.102-preview7" />
-    <PackageReference Include="Senparc.CO2NET.APM" Version="0.5.102-preview2" />
+    <PackageReference Include="Senparc.CO2NET" Version="1.0.102" />
+    <PackageReference Include="Senparc.CO2NET.APM" Version="0.6.102" />
   </ItemGroup>
 
 
