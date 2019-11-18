@@ -95,7 +95,7 @@ namespace Senparc.NeuChar.MessageHandlers
             DataOperation apm = new DataOperation(PostModel?.DomainId);
 
             await apm.SetAsync(NeuCharApmKind.Message_Request.ToString(), 1, tempStorage: OpenId).ConfigureAwait(false);//Redis延迟：<1ms（约，测试数据，下同）
-
+           
             await OnExecutingAsync(cancellationToken).ConfigureAwait(false);//Redis延迟：130ms（Demo示例中有需要使用缓存的逻辑代码）
 
             if (CancelExcute)
