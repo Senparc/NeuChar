@@ -46,15 +46,12 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 
 
 #pragma warning disable 1591
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Senparc.CO2NET.Cache;
-using Senparc.CO2NET.Extensions;
 using Senparc.NeuChar.Entities;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Senparc.NeuChar.Context
 {
@@ -526,7 +523,8 @@ namespace Senparc.NeuChar.Context
         {
             //以下为新版本代码
             var cache = CacheStrategyFactory.GetObjectCacheStrategyInstance();
-            using (await cache.BeginCacheLockAsync(MessageContextGlobalConfig.MESSAGE_CONTENT_ITEM_LOCK_NAME, $"GetMessageContext-{userName}"))
+
+            using (await cache.BeginCacheLockAsync(MessageContextGlobalConfig.MESSAGE_CONTENT_ITEM_LOCK_NAME, $"GetMessageContext-{userName}").ConfigureAwait(false))
             {
                 var cacheKey = this.GetCacheKey(userName);
 
@@ -653,7 +651,7 @@ namespace Senparc.NeuChar.Context
             var cache = CacheStrategyFactory.GetObjectCacheStrategyInstance();
             using (await cache.BeginCacheLockAsync(MessageContextGlobalConfig.MESSAGE_CONTENT_ITEM_LOCK_NAME, $"InsertMessage-{userName}").ConfigureAwait(false))
             {
-                messageContext = messageContext?? await GetMessageContextAsync(userName, true).ConfigureAwait(false);
+                messageContext = messageContext ?? await GetMessageContextAsync(userName, true).ConfigureAwait(false);
 
                 //判断约束有没有修改
                 if (messageContext.MaxRecordCount != this.MaxRecordCount)
