@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net45;netstandard2.0</TargetFrameworks>
-    <Version>1.0.103</Version>
+    <Version>1.0.104</Version>
     <AssemblyName>Senparc.NeuChar</AssemblyName>
     <RootNamespace>Senparc.NeuChar</RootNamespace>
     <FrameworkPathOverride Condition="'$(TargetFramework)' == 'net35'">$(Net35FrameworkPathOverride)</FrameworkPathOverride>
@@ -95,6 +95,7 @@
       3、提供 MessageHandler 中间件
       4、MessageAgent.RequestXml() 方法增加 autoFillUrlParameters 参数
       v1.0.103 支持新版本 CO2NET
+      v1.0.104 优化 MessageHandler 同步方法兼容策略
     </PackageReleaseNotes>
     <RepositoryUrl>https://github.com/JeffreySu/WeiXinMPSDK</RepositoryUrl>
     <Configurations>Debug;Release;Test</Configurations>
