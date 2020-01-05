@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net45;netstandard2.0;netcoreapp3.0</TargetFrameworks>
-    <Version>0.7.100-preview</Version>
+    <TargetFrameworks>net45;netstandard2.0;netstandard2.1</TargetFrameworks>
+    <Version>0.7.100-preview1.1</Version>
     <AssemblyName>Senparc.NeuChar.App</AssemblyName>
     <RootNamespace>Senparc.NeuChar.App</RootNamespace>
     <GeneratePackageOnBuild Condition=" '$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
@@ -75,9 +75,9 @@
     <DocumentationFile>..\..\BuildOutPut\netstandard2.0\Senparc.NeuChar.App.xml</DocumentationFile>
   </PropertyGroup>
   
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netcoreapp3.0|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard2.1|AnyCPU'">
     <OutputPath>..\..\BuildOutPut\</OutputPath>
-    <DocumentationFile>..\..\BuildOutPut\netcoreapp3.0\Senparc.NeuChar.App.xml</DocumentationFile>
+    <DocumentationFile>..\..\BuildOutPut\netstandard2.0\Senparc.NeuChar.App.xml</DocumentationFile>
   </PropertyGroup>
 
   
@@ -91,10 +91,10 @@
 
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
+    <!--<PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />-->
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.1' or '$(TargetFramework)' == 'netcoreapp3.0'">
-    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.1'">
+    <!--<FrameworkReference Include="Microsoft.AspNetCore.App" />-->
   </ItemGroup>
 </Project>
