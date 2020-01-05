@@ -56,6 +56,10 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 
     修改标识：Senparc - 20191009
     修改描述：增加 UnsafeMessageContext 属性
+
+    修改标识：Senparc - 20191203
+    修改描述：v1.0.104 优化 MessageHandler 同步方法兼容策略
+
 ----------------------------------------------------------------*/
 
 
@@ -575,11 +579,15 @@ namespace Senparc.NeuChar.MessageHandlers
         }
 
         /// <summary>
-        /// 执行微信请求（如果没有被 CancelExcute=true 中断）
+        /// <para>执行微信请求（如果没有被 CancelExcute=true 中断）</para>
+        /// <para>注意：此方法仍然会优先执行异步重写方法（如：OnTextRequest()），只在未重写对应事件的异步方法时（如： OnTextRequestAsync()），尝试查找同步重写方法</para>
         /// </summary>
         [Obsolete("请使用异步方法 ExecuteAsync()")]
         public void Execute()
         {
+            //同步方法强制调整
+            DefaultMessageHandlerAsyncEvent = DefaultMessageHandlerAsyncEvent.SelfSynicMethod;
+
             CancellationToken cancellationToken = new CancellationToken();
             ExecuteAsync(cancellationToken).ConfigureAwait(false).GetAwaiter().GetResult();
         }

@@ -27,6 +27,10 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
     
     创建标识：Senparc - 20160122
 
+    
+    修改标识：Senparc - 20191203
+    修改描述：v1.0.104 修改备注。优化 MessageHandler 同步方法兼容策略。
+
 ----------------------------------------------------------------*/
 
 /*
@@ -66,7 +70,8 @@ namespace Senparc.NeuChar.MessageHandlers
         private DefaultMessageHandlerAsyncEvent _defaultMessageHandlerAsyncEvent = DefaultMessageHandlerAsyncEvent.DefaultResponseMessageAsync;
 
         /// <summary>
-        /// <para>MessageHandler事件异步方法的默认调用方法（在没有override的情况下）。默认值：DefaultDefaultResponseMessageAsync。</para>
+        /// <para>注意：当调用同步方法 Execute() 时，此参数会被强制设置为：SelfSynicMethod！</para>
+        /// <para>MessageHandler 事件异步方法的默认调用方法（在没有override的情况下）。默认值：DefaultDefaultResponseMessageAsync。</para>
         /// <para>默认参数设置为 DefaultResponseMessageAsync，目的是为了确保默认状态下不会执行意料以外的代码，
         /// 因此，如果需要在异步方法中调用同名的同步方法，请手动将此参数设置为SelfSynicMethod。</para>
         /// </summary>
