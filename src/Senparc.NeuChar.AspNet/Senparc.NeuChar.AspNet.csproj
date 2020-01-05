@@ -32,6 +32,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Senparc.CO2NET.AspNet" Version="0.1.0-preview1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Senparc.NeuChar\Senparc.NeuChar.csproj" />
   </ItemGroup>
 </Project>
