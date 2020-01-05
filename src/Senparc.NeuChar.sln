@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Senparc.NeuChar.App", "Senp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Senparc.NeuChar.Tests", "Senparc.NeuChar.Tests\Senparc.NeuChar.Tests.csproj", "{4F2EE047-FE72-4A6D-B741-5B374728072E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Senparc.NeuChar.AspNet", "Senparc.NeuChar.AspNet\Senparc.NeuChar.AspNet.csproj", "{FEA00F7D-EB32-45A8-A846-888ACADCEC14}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -34,6 +36,12 @@ Global
 		{4F2EE047-FE72-4A6D-B741-5B374728072E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4F2EE047-FE72-4A6D-B741-5B374728072E}.Test|Any CPU.ActiveCfg = Debug|Any CPU
 		{4F2EE047-FE72-4A6D-B741-5B374728072E}.Test|Any CPU.Build.0 = Debug|Any CPU
+		{FEA00F7D-EB32-45A8-A846-888ACADCEC14}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FEA00F7D-EB32-45A8-A846-888ACADCEC14}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FEA00F7D-EB32-45A8-A846-888ACADCEC14}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FEA00F7D-EB32-45A8-A846-888ACADCEC14}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FEA00F7D-EB32-45A8-A846-888ACADCEC14}.Test|Any CPU.ActiveCfg = Debug|Any CPU
+		{FEA00F7D-EB32-45A8-A846-888ACADCEC14}.Test|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
