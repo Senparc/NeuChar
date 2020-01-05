@@ -39,9 +39,9 @@ namespace Senparc.NeuChar.Tests
         public static void RegisterServiceStart(bool autoScanExtensionCacheStrategies = false)
         {
             //注册
-            var mockEnv = new Mock<IHostingEnvironment>();
+            var mockEnv = new Mock<Microsoft.Extensions.Hosting.IHostEnvironment/*IHostingEnvironment*/>();
             mockEnv.Setup(z => z.ContentRootPath).Returns(() => UnitTestHelper.RootPath);
-            registerService =  RegisterService.Start(mockEnv.Object, new SenparcSetting() { IsDebug = true })
+            registerService = Senparc.CO2NET.AspNet.RegisterServices.RegisterService.Start(mockEnv.Object, new SenparcSetting() { IsDebug = true })
                 .UseSenparcGlobal(autoScanExtensionCacheStrategies);
         }
     }

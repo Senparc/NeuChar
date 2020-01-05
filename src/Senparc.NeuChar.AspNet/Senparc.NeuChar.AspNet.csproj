@@ -36,6 +36,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Senparc.NeuChar.App\Senparc.NeuChar.App.csproj" />
     <ProjectReference Include="..\Senparc.NeuChar\Senparc.NeuChar.csproj" />
   </ItemGroup>
 </Project>
