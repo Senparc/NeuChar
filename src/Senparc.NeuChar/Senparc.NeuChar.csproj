@@ -17,12 +17,12 @@
 
     <Authors>Jeffrey Su</Authors>
     <Owners>Senparc</Owners>
-    <PackageLicenseUrl>https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md</PackageLicenseUrl>
-    <ProjectUrl>https://github.com/JeffreySu/WeiXinMPSDK</ProjectUrl>
+    <PackageLicenseUrl>https://github.com/Senparc/NeuChar/blob/master/LICENSE</PackageLicenseUrl>
+    <ProjectUrl>https://github.com/Senparc/NeuChar</ProjectUrl>
     <Title>Senparc.NeuChar.dll</Title>
 
     <Summary>NeuChar 跨平台信息交互标准 for C#</Summary>
-    <PackageProjectUrl>https://github.com/JeffreySu/WeiXinMPSDK</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/Senparc/NeuChar</PackageProjectUrl>
     <PackageIconUrl>http://sdk.weixin.senparc.com/Images/Logo.jpg</PackageIconUrl>
     <PackageReleaseNotes>
       v0.0.1 完成和微信公众号平台消息接口对接
@@ -96,7 +96,7 @@
       4、MessageAgent.RequestXml() 方法增加 autoFillUrlParameters 参数
       v1.0.103 支持新版本 CO2NET
     </PackageReleaseNotes>
-    <RepositoryUrl>https://github.com/JeffreySu/WeiXinMPSDK</RepositoryUrl>
+    <RepositoryUrl>https://github.com/Senparc/NeuChar</RepositoryUrl>
     <Configurations>Debug;Release;Test</Configurations>
   </PropertyGroup>
 
@@ -153,7 +153,7 @@
 
   <ItemGroup>
     <PackageReference Include="Senparc.CO2NET" Version="1.1.100-preview1" />
-    <PackageReference Include="Senparc.CO2NET.APM" Version="0.6.102" />
+    <PackageReference Include="Senparc.CO2NET.APM" Version="0.7.100-preview1" />
   </ItemGroup>
 
 
