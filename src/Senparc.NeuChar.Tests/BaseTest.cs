@@ -41,7 +41,7 @@ namespace Senparc.NeuChar.Tests
             //注册
             var mockEnv = new Mock<IHostingEnvironment>();
             mockEnv.Setup(z => z.ContentRootPath).Returns(() => UnitTestHelper.RootPath);
-            registerService = RegisterService.Start(mockEnv.Object, new SenparcSetting() { IsDebug = true })
+            registerService =  RegisterService.Start(mockEnv.Object, new SenparcSetting() { IsDebug = true })
                 .UseSenparcGlobal(autoScanExtensionCacheStrategies);
         }
     }
