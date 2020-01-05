@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net45;netstandard2.0</TargetFrameworks>
+    <Version>0.1.100-preview1</Version>
+    <AssemblyName>Senparc.NeuChar.AspNet</AssemblyName>
+    <RootNamespace>Senparc.NeuChar.AspNet</RootNamespace>
+    <FrameworkPathOverride Condition="'$(TargetFramework)' == 'net35'">$(Net35FrameworkPathOverride)</FrameworkPathOverride>
+    <GeneratePackageOnBuild Condition=" '$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
+
+    <Description>
+      NeuChar SDK 跨平台信息交互标准
+
+    </Description>
+    <Copyright>Senparc Copyright © 2004~2019</Copyright>
+    <PackageTags>NeuChar,Standard,json,yaml,xml,AspNet,AspNetCore</PackageTags>
+
+    <Authors>Jeffrey Su</Authors>
+    <Owners>Senparc</Owners>
+    <PackageLicenseUrl>https://github.com/Senparc/NeuChar/blob/master/LICENSE</PackageLicenseUrl>
+    <ProjectUrl>https://github.com/Senparc/NeuChar</ProjectUrl>
+    <Title>Senparc.NeuChar.AspNet.dll</Title>
+
+    <Summary>NeuChar 跨平台信息交互标准 for C#</Summary>
+    <PackageProjectUrl>https://github.com/Senparc/NeuChar</PackageProjectUrl>
+    <PackageIconUrl>http://sdk.weixin.senparc.com/Images/Logo.jpg</PackageIconUrl>
+    <PackageReleaseNotes>
+      v0.1.100 创建 Senparc.NeuChar.AspNet，分离 ASP.NET Core 相关依赖
+    </PackageReleaseNotes>
+    <RepositoryUrl>https://github.com/Senparc/NeuChar</RepositoryUrl>
+    <Configurations>Debug;Release;Test</Configurations>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Senparc.NeuChar\Senparc.NeuChar.csproj" />
+  </ItemGroup>
+</Project>
