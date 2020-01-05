@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net45;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net45;netstandard2.0;netstandard2.1</TargetFrameworks>
     <Version>1.1.100-preview1</Version>
     <AssemblyName>Senparc.NeuChar</AssemblyName>
     <RootNamespace>Senparc.NeuChar</RootNamespace>
@@ -125,6 +125,13 @@
     <OutputPath>..\..\BuildOutPut\</OutputPath>
     <DocumentationFile>..\..\BuildOutPut\netstandard2.0\Senparc.NeuChar.xml</DocumentationFile>
   </PropertyGroup>
+
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard2.1|AnyCPU'">
+    <OutputPath>..\..\BuildOutPut\</OutputPath>
+    <DocumentationFile>..\..\BuildOutPut\netstandard2.1\Senparc.NeuChar.xml</DocumentationFile>
+  </PropertyGroup>
+
 
   <ItemGroup>
     <Compile Remove="BaseModel.cs" />
