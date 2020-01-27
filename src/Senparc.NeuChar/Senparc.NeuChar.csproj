@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net45;netstandard2.0</TargetFrameworks>
-    <Version>1.0.104</Version>
+    <TargetFrameworks>net45;netstandard2.0;netstandard2.1</TargetFrameworks>
+    <Version>1.1.100-preview1.1</Version>
     <AssemblyName>Senparc.NeuChar</AssemblyName>
     <RootNamespace>Senparc.NeuChar</RootNamespace>
     <FrameworkPathOverride Condition="'$(TargetFramework)' == 'net35'">$(Net35FrameworkPathOverride)</FrameworkPathOverride>
@@ -12,17 +12,17 @@
       NeuChar SDK 跨平台信息交互标准
 
     </Description>
-    <Copyright>Senparc Copyright © 2004~2019</Copyright>
+    <Copyright>Senparc Copyright © 2004~2020</Copyright>
     <PackageTags>NeuChar,Standard,json,yaml,xml</PackageTags>
 
     <Authors>Jeffrey Su</Authors>
     <Owners>Senparc</Owners>
-    <PackageLicenseUrl>https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md</PackageLicenseUrl>
-    <ProjectUrl>https://github.com/JeffreySu/WeiXinMPSDK</ProjectUrl>
+    <PackageLicenseUrl>https://github.com/Senparc/NeuChar/blob/master/LICENSE</PackageLicenseUrl>
+    <ProjectUrl>https://github.com/Senparc/NeuChar</ProjectUrl>
     <Title>Senparc.NeuChar.dll</Title>
 
     <Summary>NeuChar 跨平台信息交互标准 for C#</Summary>
-    <PackageProjectUrl>https://github.com/JeffreySu/WeiXinMPSDK</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/Senparc/NeuChar</PackageProjectUrl>
     <PackageIconUrl>http://sdk.weixin.senparc.com/Images/Logo.jpg</PackageIconUrl>
     <PackageReleaseNotes>
       v0.0.1 完成和微信公众号平台消息接口对接
@@ -97,7 +97,7 @@
       v1.0.103 支持新版本 CO2NET
       v1.0.104 优化 MessageHandler 同步方法兼容策略
     </PackageReleaseNotes>
-    <RepositoryUrl>https://github.com/JeffreySu/WeiXinMPSDK</RepositoryUrl>
+    <RepositoryUrl>https://github.com/Senparc/NeuChar</RepositoryUrl>
     <Configurations>Debug;Release;Test</Configurations>
   </PropertyGroup>
 
@@ -127,6 +127,13 @@
     <DocumentationFile>..\..\BuildOutPut\netstandard2.0\Senparc.NeuChar.xml</DocumentationFile>
   </PropertyGroup>
 
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard2.1|AnyCPU'">
+    <OutputPath>..\..\BuildOutPut\</OutputPath>
+    <DocumentationFile>..\..\BuildOutPut\netstandard2.1\Senparc.NeuChar.xml</DocumentationFile>
+  </PropertyGroup>
+
+
   <ItemGroup>
     <Compile Remove="BaseModel.cs" />
     <Compile Remove="DataEngine.cs" />
@@ -153,8 +160,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Senparc.CO2NET" Version="1.0.103" />
-    <PackageReference Include="Senparc.CO2NET.APM" Version="0.6.102" />
+    <PackageReference Include="Senparc.CO2NET" Version="1.1.100-preview1" />
+    <PackageReference Include="Senparc.CO2NET.APM" Version="0.7.100-preview1" />
   </ItemGroup>
 
 
