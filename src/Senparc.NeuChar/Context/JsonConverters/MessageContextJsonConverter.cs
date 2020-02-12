@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using Senparc.CO2NET.Extensions;
 using Senparc.NeuChar.Entities;
+using Senparc.NeuChar.Extensions;
 using Senparc.NeuChar.NeuralSystems;
 using System;
 using System.Collections.Generic;
@@ -59,7 +60,9 @@ namespace Senparc.NeuChar.Context
                 {
                     //TODO: 由于某些系统的全局设置，为 null 的参数可能会被忽略，因此需要对每一个参数进行存在性判断。
 
-                    messageContext.UserName = item["UserName"].Value<string>();
+                    //messageContext.UserName = item["UserName"].Value<string>();
+              
+                    messageContext.UserName = item.TryGetValue<string>("UserName");
                     messageContext.LastActiveTime = GetDateTimeOffset(item["LastActiveTime"]);
                     messageContext.ThisActiveTime = GetDateTimeOffset(item["ThisActiveTime"]);
                     messageContext.ExpireMinutes = item["ExpireMinutes"].Value<Double?>();
