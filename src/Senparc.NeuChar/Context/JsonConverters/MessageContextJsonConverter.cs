@@ -57,6 +57,7 @@ namespace Senparc.NeuChar.Context
                 var messageContext = new TMC();
                 try
                 {
+                    //TODO: 由于某些系统的全局设置，为 null 的参数可能会被忽略，因此需要对每一个参数进行存在性判断。
 
                     messageContext.UserName = item["UserName"].Value<string>();
                     messageContext.LastActiveTime = GetDateTimeOffset(item["LastActiveTime"]);
