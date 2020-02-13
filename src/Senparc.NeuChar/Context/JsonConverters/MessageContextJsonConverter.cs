@@ -1,16 +1,42 @@
-﻿using Newtonsoft.Json;
+﻿#region Apache License Version 2.0
+/*----------------------------------------------------------------
+
+Copyright 2019 Suzhou Senparc Network Technology Co.,Ltd.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
+except in compliance with the License. You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under the
+License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+either express or implied. See the License for the specific language governing permissions
+and limitations under the License.
+
+Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
+
+----------------------------------------------------------------*/
+#endregion Apache License Version 2.0
+
+/*----------------------------------------------------------------
+    Copyright (C) 2020 Senparc
+    
+    文件名：MessageContextJsonConverter.cs
+    文件功能描述：Json 反序列化时用到的 JsonConverter
+    
+    
+    创建标识：Senparc - 20190915
+    
+
+----------------------------------------------------------------*/
+
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Senparc.CO2NET.Extensions;
 using Senparc.NeuChar.Entities;
 using Senparc.NeuChar.Extensions;
 using Senparc.NeuChar.NeuralSystems;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace Senparc.NeuChar.Context
 {
@@ -61,39 +87,38 @@ namespace Senparc.NeuChar.Context
                     //TODO: 由于某些系统的全局设置，为 null 的参数可能会被忽略，因此需要对每一个参数进行存在性判断。
 
                     //messageContext.UserName = item["UserName"].Value<string>();
-              
-                    messageContext.UserName = item.TryGetValue<string>("UserName");
+                    messageContext.UserName = item.TryGetValue<string>("UserName");//新方法，避免出现 null 异常
                     messageContext.LastActiveTime = GetDateTimeOffset(item["LastActiveTime"]);
                     messageContext.ThisActiveTime = GetDateTimeOffset(item["ThisActiveTime"]);
-                    messageContext.ExpireMinutes = item["ExpireMinutes"].Value<Double?>();
-                    messageContext.AppStoreState = (AppStoreState)(item["AppStoreState"].Value<int>());
-                    messageContext.CurrentAppDataItem = item["CurrentAppDataItem"].ToObject<AppDataItem>();
+                    messageContext.ExpireMinutes = item.TryGetValue<Double?>("ExpireMinutes");
+                    messageContext.AppStoreState = (AppStoreState)item.TryGetValue<int>("AppStoreState");
+                    messageContext.CurrentAppDataItem = item.TryGetValue<AppDataItem>("CurrentAppDataItem");
 
                     messageContext.RequestMessages = new MessageContainer<TRequest>();
                     messageContext.ResponseMessages = new MessageContainer<TResponse>();
                     //MaxRecordCount 设置之后，会自动设置 RequestMessages 和 ResponseMessages内的对应参数
-                    messageContext.MaxRecordCount = item["MaxRecordCount"].Value<int>();
+                    messageContext.MaxRecordCount = item.TryGetValue<int>("MaxRecordCount");
 
                     //StorageData 是比较特殊的，可以储存任何类型的参数
                     object storageData;
-                    string storageDataType = item["StorageDataTypeName"].Value<string>();
+                    string storageDataType = item.TryGetValue<string>("StorageDataTypeName");
                     if (!string.IsNullOrEmpty(storageDataType))
                     {
                         //根据确定类型获取 StorageData
                         try
                         {
                             Type dataType = Type.GetType(storageDataType, true, true);
-                            storageData = item["StorageData"].ToObject(dataType);
+                            storageData = item.TryGetValue("StorageData", dataType);
                             messageContext.StorageDataType = dataType;
                         }
                         catch
                         {
-                            storageData = item["StorageData"].Value<object>();
+                            storageData = item.TryGetValue<object>("StorageData");
                         }
                     }
                     else
                     {
-                        storageData = item["StorageData"].Value<object>();
+                        storageData = item.TryGetValue<object>("StorageData");
                     }
 
                     if (storageData is JValue jv)
@@ -105,6 +130,7 @@ namespace Senparc.NeuChar.Context
                         messageContext.StorageData = storageData;
                     }
 
+                    //RequestMessages 和 ResponseMessages 节点内容比较稳定，暂不使用 JObject.TryGetValue<T>() 方法
                     if (item["RequestMessages"] != null)
                     {
                         foreach (var requestMessage in item["RequestMessages"].Children())
@@ -151,7 +177,7 @@ namespace Senparc.NeuChar.Context
 
                 //return new PagedList<User>(users);
 
-                Console.WriteLine("进入 非 JsonToken.StartObject");
+                Console.WriteLine("进入非 JsonToken.StartObject");
                 var messageContext = new TMC();
                 messageContext.UserName = "ELSE";
                 return messageContext;
