@@ -1,37 +1,31 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFrameworks>net45;netstandard2.0;netstandard2.1</TargetFrameworks>
-    <Version>0.1.100-preview1.1</Version>
+    <Version>0.1.100.1-preview2</Version>
     <AssemblyName>Senparc.NeuChar.AspNet</AssemblyName>
     <RootNamespace>Senparc.NeuChar.AspNet</RootNamespace>
     <FrameworkPathOverride Condition="'$(TargetFramework)' == 'net35'">$(Net35FrameworkPathOverride)</FrameworkPathOverride>
     <GeneratePackageOnBuild Condition=" '$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
-
     <Description>
       NeuChar SDK 跨平台信息交互标准
 
     </Description>
     <Copyright>Senparc Copyright © 2004~2020</Copyright>
     <PackageTags>NeuChar,Standard,json,yaml,xml,AspNet,AspNetCore</PackageTags>
-
     <Authors>Jeffrey Su</Authors>
     <Owners>Senparc</Owners>
     <PackageLicenseUrl>https://github.com/Senparc/NeuChar/blob/master/LICENSE</PackageLicenseUrl>
     <ProjectUrl>https://github.com/Senparc/NeuChar</ProjectUrl>
     <Title>Senparc.NeuChar.AspNet.dll</Title>
-
     <Summary>NeuChar 跨平台信息交互标准 for C#</Summary>
     <PackageProjectUrl>https://github.com/Senparc/NeuChar</PackageProjectUrl>
     <PackageIconUrl>http://sdk.weixin.senparc.com/Images/Logo.jpg</PackageIconUrl>
     <PackageReleaseNotes>
       v0.1.100 创建 Senparc.NeuChar.AspNet，分离 ASP.NET Core 相关依赖
-    </PackageReleaseNotes>
+</PackageReleaseNotes>
     <RepositoryUrl>https://github.com/Senparc/NeuChar</RepositoryUrl>
     <Configurations>Debug;Release;Test</Configurations>
   </PropertyGroup>
-
-
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <OutputPath>..\..\BuildOutPut</OutputPath>
     <DefineConstants>TRACE;RELEASE</DefineConstants>
@@ -45,42 +39,31 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net45|AnyCPU'">
     <OutputPath>..\..\BuildOutPut\</OutputPath>
     <DocumentationFile>..\..\BuildOutPut\net45\Senparc.NeuChar.AspNet.xml</DocumentationFile>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard2.0|AnyCPU'">
     <OutputPath>..\..\BuildOutPut\</OutputPath>
     <DocumentationFile>..\..\BuildOutPut\netstandard2.0\Senparc.NeuChar.AspNet.xml</DocumentationFile>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard2.1|AnyCPU'">
     <OutputPath>..\..\BuildOutPut\</OutputPath>
     <DocumentationFile>..\..\BuildOutPut\netstandard2.1\Senparc.NeuChar.AspNet.xml</DocumentationFile>
   </PropertyGroup>
-
-  
-
   <ItemGroup>
-    <PackageReference Include="Senparc.CO2NET.AspNet" Version="0.1.0-preview1" />
+    <PackageReference Include="Senparc.CO2NET.AspNet" Version="0.1.0-preview2" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\Senparc.NeuChar.App\Senparc.NeuChar.App.csproj" />
     <ProjectReference Include="..\Senparc.NeuChar\Senparc.NeuChar.csproj" />
   </ItemGroup>
-
   <ItemGroup Condition="'$(TargetFramework)' == 'net45'">
     <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.2.7" />
   </ItemGroup>
-
-
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
   </ItemGroup>
-
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.1'">
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
     <!--<PackageReference Include="Microsoft.AspNetCore.Mvc" Version="3.1.0" />-->
