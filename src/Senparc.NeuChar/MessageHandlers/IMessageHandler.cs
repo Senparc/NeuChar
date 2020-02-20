@@ -51,6 +51,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 using Senparc.NeuChar.ApiHandlers;
 using Senparc.NeuChar.Entities;
 using Senparc.NeuChar.NeuralSystems;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -111,6 +112,11 @@ namespace Senparc.NeuChar.MessageHandlers
         /// PostModel
         /// </summary>
         IEncryptPostModel PostModel { get; set; }
+
+        /// <summary>
+        /// ServiceProvide
+        /// </summary>
+        IServiceProvider ServiceProvider { get; set; }
 
         #region 同步方法
 

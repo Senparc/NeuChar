@@ -28,6 +28,8 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
     创建标识：Senparc - 20150319
 ----------------------------------------------------------------*/
 
+using System;
+
 namespace Senparc.NeuChar.App.AppStore.Api
 {
     /// <summary>
@@ -43,14 +45,18 @@ namespace Senparc.NeuChar.App.AppStore.Api
         /// ApiConnection
         /// </summary>
         protected ApiConnection ApiConnection { get; set; }
+
+        protected readonly IServiceProvider _serviceProvider;
+
         /// <summary>
         /// BaseApi 构造函数
         /// </summary>
         /// <param name="passport"></param>
-        public BaseApi(Passport passport)
+        public BaseApi(Passport passport, IServiceProvider serviceProvider)
         {
             _passport = passport;
-            ApiConnection = new ApiConnection(passport);
+            _serviceProvider = serviceProvider;
+            ApiConnection = new ApiConnection(passport, _serviceProvider);
         }
     }
 }

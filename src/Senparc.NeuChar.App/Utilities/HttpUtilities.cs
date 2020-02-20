@@ -71,7 +71,7 @@ namespace Senparc.NeuChar.App.Utilities
         /// <param name="checkValidationResult">验证服务器证书回调自动验证</param>
         /// <param name="jsonSetting">JSON字符串生成设置</param>
         /// <returns></returns>
-        public static async Task<T> SendAsync<T>(string accessToken, string urlFormat, object data,
+        public static async Task<T> SendAsync<T>(IServiceProvider serviceProvider, string accessToken, string urlFormat, object data,
             HttpRequestType sendType = HttpRequestType.POST, int timeOut = CO2NET.Config.TIME_OUT,
             bool checkValidationResult = false, JsonSetting jsonSetting = null)
         {
@@ -82,7 +82,7 @@ namespace Senparc.NeuChar.App.Utilities
                 switch (sendType)
                 {
                     case HttpRequestType.GET:
-                        return await CO2NET.HttpUtility.Get.GetJsonAsync<T>(url, afterReturnText: getFailAction).ConfigureAwait(false);
+                        return await CO2NET.HttpUtility.Get.GetJsonAsync<T>(serviceProvider, url, afterReturnText: getFailAction).ConfigureAwait(false);
                     case HttpRequestType.POST:
                         var jsonString = SerializerHelper.GetJsonString(data, jsonSetting);
                         using (MemoryStream ms = new MemoryStream())
@@ -95,7 +95,7 @@ namespace Senparc.NeuChar.App.Utilities
                             SenparcTrace.SendApiLog(url, jsonString);//记录Post的Json数据   TODO:为  API 提供 NeuChar 层面的日志记录
 
                             //PostGetJson方法中将使用WeixinTrace记录结果
-                            return await CO2NET.HttpUtility.Post.PostGetJsonAsync<T>(url, null, ms,
+                            return await CO2NET.HttpUtility.Post.PostGetJsonAsync<T>(serviceProvider, url, null, ms,
                                 timeOut: timeOut,
                                 afterReturnText: postFailAction,
                                 checkValidationResult: checkValidationResult).ConfigureAwait(false);

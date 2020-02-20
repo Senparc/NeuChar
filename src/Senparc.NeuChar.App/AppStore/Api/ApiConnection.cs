@@ -39,18 +39,19 @@ namespace Senparc.NeuChar.App.AppStore.Api
     public class ApiConnection
     {
         private Passport _passport;
-
+        private IServiceProvider _serviceProvider;
         /// <summary>
         /// API 连接器构造函数
         /// </summary>
         /// <param name="passport"></param>
-        public ApiConnection(Passport passport)
+        public ApiConnection(Passport passport, IServiceProvider serviceProvider)
         {
             if (passport == null)
             {
                 throw new NeuCharAppException("Passport不可以为NULL！");
             }
             _passport = passport;
+            _serviceProvider = serviceProvider;
         }
 
         /// <summary>
@@ -64,7 +65,7 @@ namespace Senparc.NeuChar.App.AppStore.Api
             if (result.Result == AppResultKind.账户验证失败)
             {
                 //更新Passport
-                AppStoreManager.ApplyPassport(_passport.AppKey, _passport.Secret, _passport.ApiUrl);
+                AppStoreManager.ApplyPassport(_serviceProvider, _passport.AppKey, _passport.Secret, _passport.ApiUrl);
                 result = apiFunc();
             }
             return result;

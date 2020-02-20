@@ -101,7 +101,7 @@ namespace Senparc.NeuChar.Agents
             }
 
             stream.Seek(0, SeekOrigin.Begin);
-            var responseXml = RequestUtility.HttpPost(url, null, stream, timeOut: timeOut);
+            var responseXml = RequestUtility.HttpPost(messageHandler.ServiceProvider, url, null, stream, timeOut: timeOut);
             //WeixinTrace.SendApiLog("RequestXmlUrl：" + url, responseXml);
             return responseXml;
         }
@@ -244,7 +244,7 @@ namespace Senparc.NeuChar.Agents
         /// <param name="token"></param>
         /// <param name="timeOut">代理请求超时时间（毫秒）</param>
         /// <returns></returns>
-        public static bool CheckUrlAndToken(string url, string token, int timeOut = 2000)
+        public static bool CheckUrlAndToken(IServiceProvider serviceProvider, string url, string token, int timeOut = 2000)
         {
             try
             {
@@ -255,7 +255,7 @@ namespace Senparc.NeuChar.Agents
                 url += string.Format("{0}signature={1}&timestamp={2}&nonce={3}&echostr={4}",
                         url.Contains("?") ? "&" : "?", signature.AsUrlData(), timestamp.AsUrlData(), nonce.AsUrlData(), echostr.AsUrlData());
 
-                var responseStr = RequestUtility.HttpGet(url, encoding: null, timeOut: timeOut);
+                var responseStr = RequestUtility.HttpGet(serviceProvider, url, encoding: null, timeOut: timeOut);
                 return echostr == responseStr;
             }
             catch
@@ -296,7 +296,7 @@ namespace Senparc.NeuChar.Agents
             }
 
             stream.Seek(0, SeekOrigin.Begin);
-            var responseXml = await RequestUtility.HttpPostAsync(url, null, stream, timeOut: timeOut);
+            var responseXml = await RequestUtility.HttpPostAsync(messageHandler.ServiceProvider, url, null, stream, timeOut: timeOut);
             //WeixinTrace.SendApiLog("RequestXmlUrl：" + url, responseXml);
             return responseXml;
         }
@@ -444,7 +444,7 @@ namespace Senparc.NeuChar.Agents
         /// <param name="token"></param>
         /// <param name="timeOut">代理请求超时时间（毫秒）</param>
         /// <returns></returns>
-        public static async Task<bool> CheckUrlAndTokenAsync(string url, string token, int timeOut = 2000)
+        public static async Task<bool> CheckUrlAndTokenAsync(IServiceProvider serviceProvider, string url, string token, int timeOut = 2000)
         {
             try
             {
@@ -455,7 +455,7 @@ namespace Senparc.NeuChar.Agents
                 url += string.Format("{0}signature={1}&timestamp={2}&nonce={3}&echostr={4}",
                         url.Contains("?") ? "&" : "?", signature.AsUrlData(), timestamp.AsUrlData(), nonce.AsUrlData(), echostr.AsUrlData());
 
-                var responseStr = await RequestUtility.HttpGetAsync(url, encoding: null, timeOut: timeOut);
+                var responseStr = await RequestUtility.HttpGetAsync(serviceProvider, url, encoding: null, timeOut: timeOut);
                 return echostr == responseStr;
             }
             catch

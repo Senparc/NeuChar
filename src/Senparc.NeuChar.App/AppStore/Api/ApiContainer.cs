@@ -28,6 +28,8 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
     创建标识：Senparc - 20150319
 ----------------------------------------------------------------*/
 
+using System;
+
 namespace Senparc.NeuChar.App.AppStore.Api
 {
     /// <summary>
@@ -43,23 +45,27 @@ namespace Senparc.NeuChar.App.AppStore.Api
         /// MemberApi
         /// </summary>
         public MemberApi MemberApi { get; set; }
+
+        private readonly IServiceProvider _serviceProvider;
         /// <summary>
         /// ApiContainer 构造函数
         /// </summary>
         /// <param name="appKey"></param>
         /// <param name="appSecret"></param>
         /// <param name="url"></param>
-        public ApiContainer(string appKey, string appSecret, string url = AppStoreManager.DEFAULT_URL)
+        public ApiContainer(IServiceProvider serviceProvider, string appKey, string appSecret, string url = AppStoreManager.DEFAULT_URL)
         {
+            _serviceProvider = serviceProvider;
             var passportBag = AppStoreManager.GetPassportBag(appKey);
             if (passportBag == null || passportBag.Passport == null)
             {
-                AppStoreManager.ApplyPassport(appKey, appSecret, url);
+                AppStoreManager.ApplyPassport(_serviceProvider, appKey, appSecret, url);
             }
+
 
             Passport = AppStoreManager.GetPassportBag(appKey).Passport;//执行SdkManager.ApplyPassport后，PassportCollection[appKey]必定存在
 
-            MemberApi = new MemberApi(Passport);
+            MemberApi = new MemberApi(Passport, _serviceProvider);
         }
     }
 }
