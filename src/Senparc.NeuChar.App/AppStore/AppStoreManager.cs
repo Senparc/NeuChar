@@ -28,15 +28,16 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
     创建标识：Senparc - 20150319
 ----------------------------------------------------------------*/
 
+using System;
 using System.Collections.Generic;
 using Senparc.NeuChar.App.AppStore.Api;
 using Senparc.NeuChar.App.Exceptions;
 
 namespace Senparc.NeuChar.App.AppStore
 {
-   /// <summary>
-   /// AppStore 管理类
-   /// </summary>
+    /// <summary>
+    /// AppStore 管理类
+    /// </summary>
     public class AppStoreManager
     {
         /// <summary>
@@ -87,7 +88,7 @@ namespace Senparc.NeuChar.App.AppStore
         /// <param name="secret">AppKey对应的Secret</param>
         /// <param name="url">API地址，建议使用默认值</param>
         /// <param name="getPassportImmediately">是否马上获取Passport，默认为False</param>
-        private static void Register(string appKey, string secret, string url = DEFAULT_URL, bool getPassportImmediately = false)
+        private static void Register(IServiceProvider serviceProvider, string appKey, string secret, string url = DEFAULT_URL, bool getPassportImmediately = false)
         {
             //if (PassportCollection.BasicUrl != url)
             //{
@@ -98,7 +99,7 @@ namespace Senparc.NeuChar.App.AppStore
             PassportCollection[appKey] = new PassportBag(appKey, secret, url + BasicApiPath);
             if (getPassportImmediately)
             {
-                ApplyPassport(appKey, secret, url);
+                ApplyPassport(serviceProvider, appKey, secret, url);
             }
         }
 
@@ -106,12 +107,12 @@ namespace Senparc.NeuChar.App.AppStore
         /// 申请新的通行证。
         /// 每次调用完毕前将有1秒左右的Thread.Sleep时间
         /// </summary>
-        public static void ApplyPassport(string appKey, string appSecret, string url = DEFAULT_URL)
+        public static void ApplyPassport(IServiceProvider serviceProvider, string appKey, string appSecret, string url = DEFAULT_URL)
         {
             if (!PassportCollection.ContainsKey(appKey))
             {
                 //如果不存在，则自动注册（注册之后PassportCollection[appKey]一定有存在值）
-                Register(appKey, appSecret, url, true);
+                Register(serviceProvider, appKey, appSecret, url, true);
             }
 
             var passportBag = PassportCollection[appKey];
@@ -120,7 +121,7 @@ namespace Senparc.NeuChar.App.AppStore
             var formData = new Dictionary<string, string>();
             formData["appKey"] = passportBag.AppKey;
             formData["secret"] = passportBag.AppSecret;
-            var result = CO2NET.HttpUtility.Post.PostGetJson<PassportResult>(getPassportUrl, formData: formData);
+            var result = CO2NET.HttpUtility.Post.PostGetJson<PassportResult>(serviceProvider, getPassportUrl, formData: formData);
             if (result.Result != AppResultKind.成功)
             {
                 throw new NeuCharAppException("获取Passort失败！错误信息：" + result.Result, null);
@@ -150,9 +151,9 @@ namespace Senparc.NeuChar.App.AppStore
         /// </summary>
         /// <param name="appKey"></param>
         /// <returns></returns>
-        public static ApiContainer GetApiContainer(string appKey, string appSecret, string url = DEFAULT_URL)
+        public static ApiContainer GetApiContainer(IServiceProvider serviceProvider, string appKey, string appSecret, string url = DEFAULT_URL)
         {
-            return new ApiContainer(appKey, appSecret, url);
+            return new ApiContainer(serviceProvider, appKey, appSecret, url);
         }
     }
 }

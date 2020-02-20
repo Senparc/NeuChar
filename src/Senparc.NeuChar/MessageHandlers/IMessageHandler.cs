@@ -116,7 +116,7 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <summary>
         /// ServiceProvide
         /// </summary>
-        IServiceProvider ServiceProvide { get; set; }
+        IServiceProvider ServiceProvider { get; set; }
 
         #region 同步方法
 

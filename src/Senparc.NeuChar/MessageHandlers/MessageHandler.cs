@@ -384,6 +384,29 @@ namespace Senparc.NeuChar.MessageHandlers
         /// </summary>
         protected Func<IRequestMessageBase, MessageHandler<TMC, TRequest, TResponse>, bool> SpecialDeduplicationAction { get; set; } = null;
 
+
+        private IServiceProvider _serviceProvide = null;
+        /// <summary>
+        /// ServiceProvide
+        /// </summary>
+        public IServiceProvider ServiceProvider
+        {
+            get
+            {
+#if !NET45
+                if (_serviceProvide == null)
+                {
+                    _serviceProvide = Senparc.CO2NET.SenparcDI.GetServiceProvider();
+                }
+#endif
+                return _serviceProvide;
+            }
+            set
+            {
+                _serviceProvide = value;
+            }
+        }
+
         #endregion
 
         #region 私有方法
@@ -420,11 +443,11 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <param name="maxRecordCount"></param>
         /// <param name="postModel">需要传入到Init的参数</param>
         /// <param name="onlyAllowEcryptMessage">当平台同时兼容明文消息和加密消息时，只允许处理加密消息（不允许处理明文消息），默认为 False</param>
-        public MessageHandler(Stream inputStream, IEncryptPostModel postModel, int maxRecordCount = 0, bool onlyAllowEcryptMessage = false)
+        public MessageHandler(Stream inputStream, IEncryptPostModel postModel, int maxRecordCount = 0, bool onlyAllowEcryptMessage = false, IServiceProvider serviceProvider = null)
         {
             var postDataDocument = XmlUtility.Convert(inputStream);
             //PostModel = postModel;//PostModel 在当前类初始化过程中必须赋值
-            CommonInitialize(postDataDocument, maxRecordCount, postModel, onlyAllowEcryptMessage);
+            CommonInitialize(postDataDocument, maxRecordCount, postModel, onlyAllowEcryptMessage, serviceProvider);
         }
 
         /// <summary>
@@ -434,10 +457,10 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <param name="maxRecordCount"></param>
         /// <param name="postModel">需要传入到Init的参数</param>
         /// <param name="onlyAllowEcryptMessage">当平台同时兼容明文消息和加密消息时，只允许处理加密消息（不允许处理明文消息），默认为 False</param>
-        public MessageHandler(XDocument postDataDocument, IEncryptPostModel postModel, int maxRecordCount = 0, bool onlyAllowEcryptMessage = false)
+        public MessageHandler(XDocument postDataDocument, IEncryptPostModel postModel, int maxRecordCount = 0, bool onlyAllowEcryptMessage = false, IServiceProvider serviceProvider = null)
         {
             //PostModel = postModel;//PostModel 在当前类初始化过程中必须赋值
-            CommonInitialize(postDataDocument, maxRecordCount, postModel, onlyAllowEcryptMessage);
+            CommonInitialize(postDataDocument, maxRecordCount, postModel, onlyAllowEcryptMessage, serviceProvider);
         }
 
         /// <summary>
@@ -448,10 +471,11 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <param name="maxRecordCount"></param>
         /// <param name="postModel">需要传入到Init的参数</param>
         /// <param name="onlyAllowEcryptMessage">当平台同时兼容明文消息和加密消息时，只允许处理加密消息（不允许处理明文消息），默认为 False</param>
-        public MessageHandler(RequestMessageBase requestMessageBase, IEncryptPostModel postModel, int maxRecordCount = 0, bool onlyAllowEcryptMessage = false)
+        public MessageHandler(RequestMessageBase requestMessageBase, IEncryptPostModel postModel, int maxRecordCount = 0, bool onlyAllowEcryptMessage = false, IServiceProvider serviceProvider = null)
         {
             OnlyAllowEcryptMessage = onlyAllowEcryptMessage;
             GlobalMessageContext.MaxRecordCount = maxRecordCount;
+            ServiceProvider = serviceProvider;
 
             ////将requestMessageBase生成XML格式。
             //var xmlStr = XmlUtility.XmlUtility.Serializer(requestMessageBase);
@@ -472,10 +496,11 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <param name="maxRecordCount"></param>
         /// <param name="postModel"></param>
         /// <param name="onlyAllowEcryptMessage">当平台同时兼容明文消息和加密消息时，只允许处理加密消息（不允许处理明文消息），默认为 False</param>
-        public void CommonInitialize(XDocument postDataDocument, int maxRecordCount, IEncryptPostModel postModel, bool onlyAllowEcryptMessage)
+        public void CommonInitialize(XDocument postDataDocument, int maxRecordCount, IEncryptPostModel postModel, bool onlyAllowEcryptMessage, IServiceProvider serviceProvider = null)
         {
             OnlyAllowEcryptMessage = onlyAllowEcryptMessage;
             OmitRepeatedMessage = true;//默认开启去重
+            ServiceProvider = serviceProvider;
 
             GlobalMessageContext.MaxRecordCount = maxRecordCount;
 

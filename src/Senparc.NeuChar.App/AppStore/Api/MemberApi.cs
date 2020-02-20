@@ -28,6 +28,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
     创建标识：Senparc - 20150319
 ----------------------------------------------------------------*/
 
+using System;
 using System.Collections.Generic;
 using Senparc.CO2NET.HttpUtility;
 
@@ -38,8 +39,8 @@ namespace Senparc.NeuChar.App.AppStore.Api
     /// </summary>
     public class MemberApi : BaseApi
     {
-        public MemberApi(Passport passport)
-            : base(passport)
+        public MemberApi(Passport passport, IServiceProvider serviceProvider)
+            : base(passport, serviceProvider)
         {
         }
 
@@ -57,7 +58,7 @@ namespace Senparc.NeuChar.App.AppStore.Api
             formData["openid"] = openId;
             formData["weixinId"] = weixinId.ToString();
 
-            var result = CO2NET.HttpUtility.Post.PostGetJson<GetMemberResult>(url, formData: formData);
+            var result = CO2NET.HttpUtility.Post.PostGetJson<GetMemberResult>(base._serviceProvider, url, formData: formData);
             return result;
         }
 
