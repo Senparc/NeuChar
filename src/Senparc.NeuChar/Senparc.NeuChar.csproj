@@ -148,7 +148,7 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Senparc.CO2NET" Version="1.1.100" />
-    <PackageReference Include="Senparc.CO2NET.APM" Version="0.7.100" />
+    <PackageReference Include="Senparc.CO2NET" Version="1.1.101.1" />
+    <PackageReference Include="Senparc.CO2NET.APM" Version="0.7.101" />
   </ItemGroup>
 </Project>
