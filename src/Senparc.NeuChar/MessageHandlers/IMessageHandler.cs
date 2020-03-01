@@ -95,12 +95,12 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <summary>
         /// 是否使用了加密消息格式
         /// </summary>
-        bool UsingEcryptMessage { get; set; }
+        bool UsingEncryptMessage { get; set; }
 
         /// <summary>
         /// 是否使用了兼容模式加密信息
         /// </summary>
-        bool UsingCompatibilityModelEcryptMessage { get; set; }
+        bool UsingCompatibilityModelEncryptMessage { get; set; }
 
         /// <summary>
         /// 当平台同时兼容明文消息和加密消息时，只允许处理加密消息（不允许处理明文消息），默认为 False

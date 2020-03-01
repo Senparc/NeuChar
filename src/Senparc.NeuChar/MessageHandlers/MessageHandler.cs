@@ -314,7 +314,7 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <summary>
         /// 是否使用了加密消息格式
         /// </summary>
-        public bool UsingEcryptMessage { get; set; }
+        public bool UsingEncryptMessage { get; set; }
 
 
         /// <summary>
@@ -325,7 +325,7 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <summary>
         /// 是否使用了兼容模式加密信息
         /// </summary>
-        public bool UsingCompatibilityModelEcryptMessage { get; set; }
+        public bool UsingCompatibilityModelEncryptMessage { get; set; }
 
         /// <summary>
         /// 当平台同时兼容明文消息和加密消息时，只允许处理加密消息（不允许处理明文消息），默认为 False
