@@ -52,7 +52,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
     修改描述：MessageHandler V6.0：改为以异步方法为主；禁用 OnExecuting、OnExecuted 两个同步方法
 
     修改标识：Senparc - 20191006
-    修改描述：MessageHandler.CommonInitialize() 方法添加 onlyAllowEcryptMessage 参数
+    修改描述：MessageHandler.CommonInitialize() 方法添加 onlyAllowEncryptMessage 参数
 
     修改标识：Senparc - 20191009
     修改描述：增加 UnsafeMessageContext 属性
@@ -68,7 +68,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
  * V4.0 添加异步方法
  * V5.0 支持分布式缓存
  * V6.0 转为以异步方法为主
- * V6.1 添加 OnlyAllowEcryptMessage 属性
+ * V6.1 添加 OnlyAllowEncryptMessage 属性
  * 
  */
 
@@ -314,7 +314,7 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <summary>
         /// 是否使用了加密消息格式
         /// </summary>
-        public bool UsingEcryptMessage { get; set; }
+        public bool UsingEncryptMessage { get; set; }
 
 
         /// <summary>
@@ -325,12 +325,12 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <summary>
         /// 是否使用了兼容模式加密信息
         /// </summary>
-        public bool UsingCompatibilityModelEcryptMessage { get; set; }
+        public bool UsingCompatibilityModelEncryptMessage { get; set; }
 
         /// <summary>
         /// 当平台同时兼容明文消息和加密消息时，只允许处理加密消息（不允许处理明文消息），默认为 False
         /// </summary>
-        public bool OnlyAllowEcryptMessage { get; set; }
+        public bool OnlyAllowEncryptMessage { get; set; }
 
 
         private string _textResponseMessage = null;
@@ -442,12 +442,12 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <param name="inputStream"></param>
         /// <param name="maxRecordCount"></param>
         /// <param name="postModel">需要传入到Init的参数</param>
-        /// <param name="onlyAllowEcryptMessage">当平台同时兼容明文消息和加密消息时，只允许处理加密消息（不允许处理明文消息），默认为 False</param>
-        public MessageHandler(Stream inputStream, IEncryptPostModel postModel, int maxRecordCount = 0, bool onlyAllowEcryptMessage = false, IServiceProvider serviceProvider = null)
+        /// <param name="onlyAllowEncryptMessage">当平台同时兼容明文消息和加密消息时，只允许处理加密消息（不允许处理明文消息），默认为 False</param>
+        public MessageHandler(Stream inputStream, IEncryptPostModel postModel, int maxRecordCount = 0, bool onlyAllowEncryptMessage = false, IServiceProvider serviceProvider = null)
         {
             var postDataDocument = XmlUtility.Convert(inputStream);
             //PostModel = postModel;//PostModel 在当前类初始化过程中必须赋值
-            CommonInitialize(postDataDocument, maxRecordCount, postModel, onlyAllowEcryptMessage, serviceProvider);
+            CommonInitialize(postDataDocument, maxRecordCount, postModel, onlyAllowEncryptMessage, serviceProvider);
         }
 
         /// <summary>
@@ -456,11 +456,11 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <param name="postDataDocument"></param>
         /// <param name="maxRecordCount"></param>
         /// <param name="postModel">需要传入到Init的参数</param>
-        /// <param name="onlyAllowEcryptMessage">当平台同时兼容明文消息和加密消息时，只允许处理加密消息（不允许处理明文消息），默认为 False</param>
-        public MessageHandler(XDocument postDataDocument, IEncryptPostModel postModel, int maxRecordCount = 0, bool onlyAllowEcryptMessage = false, IServiceProvider serviceProvider = null)
+        /// <param name="onlyAllowEncryptMessage">当平台同时兼容明文消息和加密消息时，只允许处理加密消息（不允许处理明文消息），默认为 False</param>
+        public MessageHandler(XDocument postDataDocument, IEncryptPostModel postModel, int maxRecordCount = 0, bool onlyAllowEncryptMessage = false, IServiceProvider serviceProvider = null)
         {
             //PostModel = postModel;//PostModel 在当前类初始化过程中必须赋值
-            CommonInitialize(postDataDocument, maxRecordCount, postModel, onlyAllowEcryptMessage, serviceProvider);
+            CommonInitialize(postDataDocument, maxRecordCount, postModel, onlyAllowEncryptMessage, serviceProvider);
         }
 
         /// <summary>
@@ -470,10 +470,10 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <param name="requestMessageBase"></param>
         /// <param name="maxRecordCount"></param>
         /// <param name="postModel">需要传入到Init的参数</param>
-        /// <param name="onlyAllowEcryptMessage">当平台同时兼容明文消息和加密消息时，只允许处理加密消息（不允许处理明文消息），默认为 False</param>
-        public MessageHandler(RequestMessageBase requestMessageBase, IEncryptPostModel postModel, int maxRecordCount = 0, bool onlyAllowEcryptMessage = false, IServiceProvider serviceProvider = null)
+        /// <param name="onlyAllowEncryptMessage">当平台同时兼容明文消息和加密消息时，只允许处理加密消息（不允许处理明文消息），默认为 False</param>
+        public MessageHandler(RequestMessageBase requestMessageBase, IEncryptPostModel postModel, int maxRecordCount = 0, bool onlyAllowEncryptMessage = false, IServiceProvider serviceProvider = null)
         {
-            OnlyAllowEcryptMessage = onlyAllowEcryptMessage;
+            OnlyAllowEncryptMessage = onlyAllowEncryptMessage;
             GlobalMessageContext.MaxRecordCount = maxRecordCount;
             ServiceProvider = serviceProvider;
 
@@ -495,10 +495,10 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <param name="postDataDocument"></param>
         /// <param name="maxRecordCount"></param>
         /// <param name="postModel"></param>
-        /// <param name="onlyAllowEcryptMessage">当平台同时兼容明文消息和加密消息时，只允许处理加密消息（不允许处理明文消息），默认为 False</param>
-        public void CommonInitialize(XDocument postDataDocument, int maxRecordCount, IEncryptPostModel postModel, bool onlyAllowEcryptMessage, IServiceProvider serviceProvider = null)
+        /// <param name="onlyAllowEncryptMessage">当平台同时兼容明文消息和加密消息时，只允许处理加密消息（不允许处理明文消息），默认为 False</param>
+        public void CommonInitialize(XDocument postDataDocument, int maxRecordCount, IEncryptPostModel postModel, bool onlyAllowEncryptMessage, IServiceProvider serviceProvider = null)
         {
-            OnlyAllowEcryptMessage = onlyAllowEcryptMessage;
+            OnlyAllowEncryptMessage = onlyAllowEncryptMessage;
             OmitRepeatedMessage = true;//默认开启去重
             ServiceProvider = serviceProvider;
 

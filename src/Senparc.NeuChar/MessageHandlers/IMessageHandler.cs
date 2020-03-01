@@ -39,13 +39,13 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
     修改描述：改为以异步方法为主，删除 BuildResponseMessage() 同步方法
 
     修改标识：Senparc - 2019104
-    修改描述：v1.0.102 MessageHandler 添加 OnlyAllowEcryptMessage 属性
+    修改描述：v1.0.102 MessageHandler 添加 OnlyAllowEncryptMessage 属性
 
 ----------------------------------------------------------------*/
 
 /*
  * V4.0 添加异步方法
- * V6.1 添加 OnlyAllowEcryptMessage 属性
+ * V6.1 添加 OnlyAllowEncryptMessage 属性
  */
 
 using Senparc.NeuChar.ApiHandlers;
@@ -95,17 +95,17 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <summary>
         /// 是否使用了加密消息格式
         /// </summary>
-        bool UsingEcryptMessage { get; set; }
+        bool UsingEncryptMessage { get; set; }
 
         /// <summary>
         /// 是否使用了兼容模式加密信息
         /// </summary>
-        bool UsingCompatibilityModelEcryptMessage { get; set; }
+        bool UsingCompatibilityModelEncryptMessage { get; set; }
 
         /// <summary>
         /// 当平台同时兼容明文消息和加密消息时，只允许处理加密消息（不允许处理明文消息），默认为 False
         /// </summary>
-        bool OnlyAllowEcryptMessage { get; set; }
+        bool OnlyAllowEncryptMessage { get; set; }
 
 
         /// <summary>

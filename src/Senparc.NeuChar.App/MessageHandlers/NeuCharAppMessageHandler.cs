@@ -99,7 +99,7 @@ namespace Senparc.NeuChar.App.MessageHandlers
             //if (postModel != null && postDataDocument.Root.Element("Encrypt") != null && !string.IsNullOrEmpty(postDataDocument.Root.Element("Encrypt").Value))
             //{
             //    //使用了加密
-            //    UsingEcryptMessage = true;
+            //    UsingEncryptMessage = true;
             //    EcryptRequestDocument = postDataDocument;
 
             //    WXBizMsgCrypt msgCrype = new WXBizMsgCrypt(_postModel.Token, _postModel.EncodingAESKey, _postModel.AppId);
@@ -117,7 +117,7 @@ namespace Senparc.NeuChar.App.MessageHandlers
             //    if (postDataDocument.Root.Element("FromUserName") != null && !string.IsNullOrEmpty(postDataDocument.Root.Element("FromUserName").Value))
             //    {
             //        //TODO：使用了兼容模式，进行验证即可
-            //        UsingCompatibilityModelEcryptMessage = true;
+            //        UsingCompatibilityModelEncryptMessage = true;
             //    }
 
             //    decryptDoc = XDocument.Parse(msgXml);//完成解密
@@ -130,7 +130,7 @@ namespace Senparc.NeuChar.App.MessageHandlers
             }
 
             RequestMessage = new RequestMessageNeuChar();
-            if (UsingEcryptMessage)
+            if (UsingEncryptMessage)
             {
                 RequestMessage.Encrypt = postDataDocument.Root.Element("Encrypt").Value;
             }

@@ -99,7 +99,7 @@ namespace Senparc.NeuChar.MessageHandlers
                                               this.TextResponseMessage);
                     }
                     
-                    if (this.UsingEcryptMessage && this.EcryptRequestDocument != null)
+                    if (this.UsingEncryptMessage && this.EcryptRequestDocument != null)
                     {
                         this.EcryptRequestDocument.Save(Path.Combine(logPath, string.Format("{0}_Request_Ecrypt_{1}_{2}.txt", _getRandomFileName(),
                             this.RequestMessage.FromUserName,
@@ -136,7 +136,7 @@ namespace Senparc.NeuChar.MessageHandlers
                             this.ResponseMessage?.MsgType)));
                     }
 
-                    if (this.UsingEcryptMessage &&
+                    if (this.UsingEncryptMessage &&
                         this.FinalResponseDocument != null && this.FinalResponseDocument.Root != null)
                     {
                         //记录加密后的响应信息
