@@ -52,7 +52,7 @@
     <DocumentationFile>..\..\BuildOutPut\netstandard2.1\Senparc.NeuChar.AspNet.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Senparc.CO2NET.AspNet" Version="0.3.106" />
+    <PackageReference Include="Senparc.CO2NET.AspNet" Version="0.3.107" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Senparc.NeuChar.App\Senparc.NeuChar.App.csproj" />
