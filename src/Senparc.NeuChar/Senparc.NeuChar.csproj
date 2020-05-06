@@ -122,8 +122,11 @@
     <DocumentationFile>..\..\BuildOutPut\netstandard2.1\Senparc.NeuChar.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Entities\WeChat\**" />
     <Compile Remove="Exceptions\Middleware\**" />
+    <EmbeddedResource Remove="Entities\WeChat\**" />
     <EmbeddedResource Remove="Exceptions\Middleware\**" />
+    <None Remove="Entities\WeChat\**" />
     <None Remove="Exceptions\Middleware\**" />
   </ItemGroup>
   <ItemGroup>
@@ -140,10 +143,6 @@
     </Reference>
   </ItemGroup>-->
   <ItemGroup>
-    <Folder Include="Entities\WeChat\OfficialAccount\" />
-    <Folder Include="Entities\WeChat\Work\" />
-    <Folder Include="Entities\WeChat\MiniProgram\" />
-    <Folder Include="Entities\WeChat\Open\" />
     <Folder Include="NeuralSystems\Nodes\Config\" />
     <Folder Include="Properties\" />
   </ItemGroup>
