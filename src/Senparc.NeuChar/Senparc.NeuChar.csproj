@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net45;netstandard2.0;netstandard2.1</TargetFrameworks>
-    <Version>1.2.106</Version>
+    <Version>1.2.108</Version>
     <AssemblyName>Senparc.NeuChar</AssemblyName>
     <RootNamespace>Senparc.NeuChar</RootNamespace>
     <FrameworkPathOverride Condition="'$(TargetFramework)' == 'net35'">$(Net35FrameworkPathOverride)</FrameworkPathOverride>
@@ -122,8 +122,11 @@
     <DocumentationFile>..\..\BuildOutPut\netstandard2.1\Senparc.NeuChar.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Entities\WeChat\**" />
     <Compile Remove="Exceptions\Middleware\**" />
+    <EmbeddedResource Remove="Entities\WeChat\**" />
     <EmbeddedResource Remove="Exceptions\Middleware\**" />
+    <None Remove="Entities\WeChat\**" />
     <None Remove="Exceptions\Middleware\**" />
   </ItemGroup>
   <ItemGroup>
@@ -140,15 +143,11 @@
     </Reference>
   </ItemGroup>-->
   <ItemGroup>
-    <Folder Include="Entities\WeChat\OfficialAccount\" />
-    <Folder Include="Entities\WeChat\Work\" />
-    <Folder Include="Entities\WeChat\MiniProgram\" />
-    <Folder Include="Entities\WeChat\Open\" />
     <Folder Include="NeuralSystems\Nodes\Config\" />
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Senparc.CO2NET" Version="1.3.104" />
-    <PackageReference Include="Senparc.CO2NET.APM" Version="0.9.104" />
+    <PackageReference Include="Senparc.CO2NET" Version="1.3.107" />
+    <PackageReference Include="Senparc.CO2NET.APM" Version="0.9.107" />
   </ItemGroup>
 </Project>
