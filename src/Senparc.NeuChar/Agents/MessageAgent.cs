@@ -284,6 +284,7 @@ namespace Senparc.NeuChar.Agents
         /// 【异步方法】获取Xml结果。
         /// </summary>
         /// <param name="messageHandler"></param>
+        /// <param name="serviceProvider">.NET Core 的 ServiceProvider（.NET Framework 可设为 null）</param>
         /// <param name="url"></param>
         /// <param name="autoFillUrlParameters">是否自动填充Url中缺少的参数（signature、timestamp、nonce），默认为 true</param>
         /// <param name="token"></param>
@@ -291,7 +292,7 @@ namespace Senparc.NeuChar.Agents
         /// <param name="useNeuCharKey">是否使用WeiWeiHiKey，如果使用，则token为WeiWeiHiKey</param>
         /// <param name="timeOut">代理请求超时时间（毫秒）</param>
         /// <returns></returns>
-        public static async Task<string> RequestXmlAsync(this IMessageHandlerBase messageHandler, string url, string token, Stream stream, bool autoFillUrlParameters = true, bool useNeuCharKey = false, int timeOut = AGENT_TIME_OUT)
+        public static async Task<string> RequestXmlAsync(this IMessageHandlerBase messageHandler, IServiceProvider serviceProvider, string url, string token, Stream stream, bool autoFillUrlParameters = true, bool useNeuCharKey = false, int timeOut = AGENT_TIME_OUT)
         {
             if (messageHandler != null)
             {
@@ -307,7 +308,7 @@ namespace Senparc.NeuChar.Agents
             }
 
             stream.Seek(0, SeekOrigin.Begin);
-            var responseXml = await RequestUtility.HttpPostAsync(messageHandler.ServiceProvider, url, null, stream, timeOut: timeOut);
+            var responseXml = await RequestUtility.HttpPostAsync(serviceProvider, url, null, stream, timeOut: timeOut);
             //WeixinTrace.SendApiLog("RequestXmlUrl：" + url, responseXml);
             return responseXml;
         }
@@ -316,13 +317,14 @@ namespace Senparc.NeuChar.Agents
         /// 【异步方法】获取Xml结果
         /// </summary>
         /// <param name="messageHandler"></param>
+        /// <param name="serviceProvider">.NET Core 的 ServiceProvider（.NET Framework 可设为 null）</param>
         /// <param name="url"></param>
         /// <param name="token"></param>
         /// <param name="xml"></param>
         /// <param name="autoFillUrlParameters">是否自动填充Url中缺少的参数（signature、timestamp、nonce），默认为 true</param>
         /// <param name="timeOut">代理请求超时时间（毫秒）</param>
         /// <returns></returns>
-        public static async Task<string> RequestXmlAsync(this IMessageHandlerBase messageHandler, string url, string token, string xml, bool autoFillUrlParameters = true, int timeOut = AGENT_TIME_OUT)
+        public static async Task<string> RequestXmlAsync(this IMessageHandlerBase messageHandler, IServiceProvider serviceProvider, string url, string token, string xml, bool autoFillUrlParameters = true, int timeOut = AGENT_TIME_OUT)
         {
             if (messageHandler != null)
             {
@@ -336,7 +338,7 @@ namespace Senparc.NeuChar.Agents
                     await sw.WriteAsync(xml);
                     await sw.FlushAsync();
                     sw.BaseStream.Position = 0;
-                    return await messageHandler.RequestXmlAsync(url, token, sw.BaseStream, autoFillUrlParameters: autoFillUrlParameters, timeOut: timeOut);
+                    return await messageHandler.RequestXmlAsync(serviceProvider, url, token, sw.BaseStream, autoFillUrlParameters: autoFillUrlParameters, timeOut: timeOut);
                 }
             }
         }
@@ -346,12 +348,13 @@ namespace Senparc.NeuChar.Agents
         /// WeiWeiHiKey的获取方式请看：
         /// </summary>
         /// <param name="messageHandler"></param>
+        /// <param name="serviceProvider">.NET Core 的 ServiceProvider（.NET Framework 可设为 null）</param>
         /// <param name="weiweihiKey"></param>
         /// <param name="xml"></param>
         /// <param name="neucharDomainName"></param>
         /// <param name="timeOut">代理请求超时时间（毫秒）</param>
         /// <returns></returns>
-        public static async Task<string> RequestNeuCharXmlAsync(this IMessageHandlerBase messageHandler, string weiweihiKey, string xml, string neucharDomainName = "www.neuchar.com", int timeOut = AGENT_TIME_OUT)
+        public static async Task<string> RequestNeuCharXmlAsync(this IMessageHandlerBase messageHandler, IServiceProvider serviceProvider, string weiweihiKey, string xml, string neucharDomainName = "www.neuchar.com", int timeOut = AGENT_TIME_OUT)
         {
             if (messageHandler != null)
             {
@@ -366,7 +369,7 @@ namespace Senparc.NeuChar.Agents
                     await sw.WriteAsync(xml);
                     await sw.FlushAsync();
                     sw.BaseStream.Position = 0;
-                    return await messageHandler.RequestXmlAsync(url, weiweihiKey, sw.BaseStream, timeOut: timeOut);
+                    return await messageHandler.RequestXmlAsync(serviceProvider, url, weiweihiKey, sw.BaseStream, timeOut: timeOut);
                 }
             }
         }
@@ -375,15 +378,16 @@ namespace Senparc.NeuChar.Agents
         /// 【异步方法】获取ResponseMessge结果
         /// </summary>
         /// <param name="messageHandler"></param>
+        /// <param name="serviceProvider">.NET Core 的 ServiceProvider（.NET Framework 可设为 null）</param>
         /// <param name="autoFillUrlParameters">是否自动填充Url中缺少的参数（signature、timestamp、nonce），默认为 true</param>
         /// <param name="url"></param>
         /// <param name="token"></param>
         /// <param name="stream"></param>
         /// <param name="timeOut">代理请求超时时间（毫秒）</param>
         /// <returns></returns>
-        public static async Task<IResponseMessageBase> RequestResponseMessageAsync(this IMessageHandlerBase messageHandler, string url, string token, Stream stream, bool autoFillUrlParameters = true, int timeOut = AGENT_TIME_OUT)
+        public static async Task<IResponseMessageBase> RequestResponseMessageAsync(this IMessageHandlerBase messageHandler, IServiceProvider serviceProvider, string url, string token, Stream stream, bool autoFillUrlParameters = true, int timeOut = AGENT_TIME_OUT)
         {
-            return (await messageHandler.RequestXmlAsync(url, token, stream, autoFillUrlParameters: autoFillUrlParameters, timeOut: timeOut))
+            return (await messageHandler.RequestXmlAsync(serviceProvider, url, token, stream, autoFillUrlParameters: autoFillUrlParameters, timeOut: timeOut))
                     .CreateResponseMessage(messageHandler.MessageEntityEnlightener);
         }
 
@@ -391,15 +395,16 @@ namespace Senparc.NeuChar.Agents
         /// 【异步方法】获取ResponseMessge结果
         /// </summary>
         /// <param name="messageHandler"></param>
+        /// <param name="serviceProvider">.NET Core 的 ServiceProvider（.NET Framework 可设为 null）</param>
         /// <param name="autoFillUrlParameters">是否自动填充Url中缺少的参数（signature、timestamp、nonce），默认为 true</param>
         /// <param name="url"></param>
         /// <param name="token"></param>
         /// <param name="xml"></param>
         /// <param name="timeOut">代理请求超时时间（毫秒）</param>
         /// <returns></returns>
-        public static async Task<IResponseMessageBase> RequestResponseMessageAsync(this IMessageHandlerBase messageHandler, string url, string token, string xml, bool autoFillUrlParameters = true, int timeOut = AGENT_TIME_OUT)
+        public static async Task<IResponseMessageBase> RequestResponseMessageAsync(this IMessageHandlerBase messageHandler, IServiceProvider serviceProvider, string url, string token, string xml, bool autoFillUrlParameters = true, int timeOut = AGENT_TIME_OUT)
         {
-            return (await messageHandler.RequestXmlAsync(url, token, xml, autoFillUrlParameters, timeOut))
+            return (await messageHandler.RequestXmlAsync(serviceProvider, url, token, xml, autoFillUrlParameters, timeOut))
                     .CreateResponseMessage(messageHandler.MessageEntityEnlightener);
         }
 
@@ -407,14 +412,15 @@ namespace Senparc.NeuChar.Agents
         /// 【异步方法】获取 NeuChar 开放平台的ResponseMessge结果
         /// </summary>
         /// <param name="messageHandler"></param>
+        /// <param name="serviceProvider">.NET Core 的 ServiceProvider（.NET Framework 可设为 null）</param>
         /// <param name="weiweihiKey"></param>
         /// <param name="xml"></param>
         /// <param name="neuCharDomainName"></param>
         /// <param name="timeOut">代理请求超时时间（毫秒）</param>
         /// <returns></returns>
-        public static async Task<IResponseMessageBase> RequestNeucharResponseMessageAsync(this IMessageHandlerBase messageHandler, string weiweihiKey, string xml, string neuCharDomainName = "www.neuchar.com", int timeOut = AGENT_TIME_OUT)
+        public static async Task<IResponseMessageBase> RequestNeucharResponseMessageAsync(this IMessageHandlerBase messageHandler, IServiceProvider serviceProvider, string weiweihiKey, string xml, string neuCharDomainName = "www.neuchar.com", int timeOut = AGENT_TIME_OUT)
         {
-            return (await messageHandler.RequestNeuCharXmlAsync(weiweihiKey, xml, neuCharDomainName, timeOut))
+            return (await messageHandler.RequestNeuCharXmlAsync(serviceProvider, weiweihiKey, xml, neuCharDomainName, timeOut))
                     .CreateResponseMessage(messageHandler.MessageEntityEnlightener);
         }
 
@@ -422,14 +428,15 @@ namespace Senparc.NeuChar.Agents
         /// 【异步方法】获取 NeuChar 开放平台的ResponseMessge结果
         /// </summary>
         /// <param name="messageHandler"></param>
+        /// <param name="serviceProvider">.NET Core 的 ServiceProvider（.NET Framework 可设为 null）</param>
         /// <param name="weiweihiKey"></param>
         /// <param name="neuCharDomainName"></param>
         /// <param name="document"></param>
         /// <param name="timeOut">代理请求超时时间（毫秒）</param>
         /// <returns></returns>
-        public static async Task<IResponseMessageBase> RequestNeucharResponseMessage(this IMessageHandlerBase messageHandler, string weiweihiKey, XDocument document, string neuCharDomainName = "www.neuchar.com", int timeOut = AGENT_TIME_OUT)
+        public static async Task<IResponseMessageBase> RequestNeucharResponseMessage(this IMessageHandlerBase messageHandler, IServiceProvider serviceProvider, string weiweihiKey, XDocument document, string neuCharDomainName = "www.neuchar.com", int timeOut = AGENT_TIME_OUT)
         {
-            return (await messageHandler.RequestNeuCharXmlAsync(weiweihiKey, document.ToString(), neuCharDomainName, timeOut))
+            return (await messageHandler.RequestNeuCharXmlAsync(serviceProvider, weiweihiKey, document.ToString(), neuCharDomainName, timeOut))
                     .CreateResponseMessage(messageHandler.MessageEntityEnlightener);
         }
 
@@ -437,20 +444,22 @@ namespace Senparc.NeuChar.Agents
         /// 【异步方法】获取 NeuChar 开放平台的ResponseMessge结果
         /// </summary>
         /// <param name="messageHandler"></param>
+        /// <param name="serviceProvider">.NET Core 的 ServiceProvider（.NET Framework 可设为 null）</param>
         /// <param name="weiweihiKey"></param>
         /// <param name="requestMessage"></param>
         /// <param name="neuCharDomainName"></param>
         /// <param name="timeOut">代理请求超时时间（毫秒）</param>
         /// <returns></returns>
-        public static async Task<IResponseMessageBase> RequestNeuCharResponseMessageAsync(this IMessageHandlerBase messageHandler, string weiweihiKey, RequestMessageBase requestMessage, string neuCharDomainName = "www.neuchar.com", int timeOut = AGENT_TIME_OUT)
+        public static async Task<IResponseMessageBase> RequestNeuCharResponseMessageAsync(this IMessageHandlerBase messageHandler, IServiceProvider serviceProvider, string weiweihiKey, RequestMessageBase requestMessage, string neuCharDomainName = "www.neuchar.com", int timeOut = AGENT_TIME_OUT)
         {
-            return (await messageHandler.RequestNeuCharXmlAsync(weiweihiKey, requestMessage.ConvertEntityToXmlString(), neuCharDomainName, timeOut))
+            return (await messageHandler.RequestNeuCharXmlAsync(serviceProvider, weiweihiKey, requestMessage.ConvertEntityToXmlString(), neuCharDomainName, timeOut))
                     .CreateResponseMessage(messageHandler.MessageEntityEnlightener);
         }
 
         /// <summary>
         /// 【异步方法】使用GET请求测试URL和TOKEN是否可用
         /// </summary>
+        /// <param name="serviceProvider">.NET Core 的 ServiceProvider（.NET Framework 可设为 null）</param>
         /// <param name="url"></param>
         /// <param name="token"></param>
         /// <param name="timeOut">代理请求超时时间（毫秒）</param>

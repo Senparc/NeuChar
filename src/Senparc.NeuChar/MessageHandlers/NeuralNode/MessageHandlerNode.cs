@@ -211,13 +211,14 @@ namespace Senparc.NeuChar.NeuralSystems
                     try
                     {
                         serviceProvider = Senparc.CO2NET.SenparcDI.GetServiceProvider();
-                        responseMessage = MessageAgent.RequestResponseMessage(messageHandler, serviceProvider, neuCharUrl, "Senparc", requestMessage.ConvertEntityToXmlString());
                     }
                     catch (Exception ex)
                     {
                         Senparc.CO2NET.Trace.SenparcTrace.SendCustomLog("MessageHandlerNode 中 serviceProvider 未设置成功", ex.Message);
                     }
 #endif
+                    responseMessage = MessageAgent.RequestResponseMessage(messageHandler, serviceProvider, neuCharUrl, "Senparc", requestMessage.ConvertEntityToXmlString());
+
                 }
                 catch (Exception ex)
                 {
