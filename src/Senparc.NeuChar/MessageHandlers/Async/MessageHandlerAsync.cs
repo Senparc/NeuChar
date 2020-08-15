@@ -81,6 +81,11 @@ namespace Senparc.NeuChar.MessageHandlers
             set { _defaultMessageHandlerAsyncEvent = value; }
         }
 
+        /// <summary>
+        /// 是否同步向 MessageContext 写入 ResponseMessage，默认为否，将使用队列写入，提升响应速度
+        /// </summary>
+        public bool RecordResponseMessageSync { get; set; }
+
         public virtual async Task OnExecutingAsync(CancellationToken cancellationToken)
         {
 
@@ -122,23 +127,30 @@ namespace Senparc.NeuChar.MessageHandlers
                 //此处修改
                 if (MessageContextGlobalConfig.UseMessageContext && ResponseMessage != null && !string.IsNullOrEmpty(ResponseMessage.FromUserName))
                 {
-                    //回复消息记录可以使用队列，对时间不敏感
-                    SenparcMessageQueue queue = new SenparcMessageQueue();
-                    var lockKey = this.GetInsertMessageKey();
-                    queue.Add($"{lockKey}{SystemTime.NowTicks}", async () =>
+                    if (RecordResponseMessageSync)
                     {
-                        //这里为了提高分布式缓存的速度，使用 Unsafe 方法，可能出现不同步的情况是：同一个用户高频次访问（且不满足去重条件），
-                        //第二个请求在构造函数中获得锁并且插入了新的 RequestMessage，但是此时第一个请求的 UnSafe 信息中还没有第二个请求的信息。
-                        //由于概率较低，因此为了效率暂时忽略此情况，如果此情况极易发生，此处应改用 GetCurrentMessageContext()！    
-
-                        //加同步锁
-                        var cache = CacheStrategyFactory.GetObjectCacheStrategyInstance();
-                        using (await cache.BeginCacheLockAsync(MessageContextGlobalConfig.MESSAGE_INSERT_LOCK_NAME, lockKey
-                                   /*, 25, TimeSpan.FromMilliseconds(200)*/ /* 最多等待 5 秒钟*/))
+                        await GlobalMessageContext.InsertMessageAsync(ResponseMessage);//耗时约：100ms（如使用队列，则不占用当前线程时间）
+                    }
+                    else
+                    {
+                        //回复消息记录可以使用队列，对时间不敏感
+                        SenparcMessageQueue queue = new SenparcMessageQueue();
+                        var lockKey = this.GetInsertMessageKey();
+                        queue.Add($"{lockKey}{SystemTime.NowTicks}", async () =>
                         {
-                            await GlobalMessageContext.InsertMessageAsync(ResponseMessage);//耗时约：100ms（使用队列不占用当前线程时间）
-                        }
-                    });
+                            //这里为了提高分布式缓存的速度，使用 Unsafe 方法，可能出现不同步的情况是：同一个用户高频次访问（且不满足去重条件），
+                            //第二个请求在构造函数中获得锁并且插入了新的 RequestMessage，但是此时第一个请求的 UnSafe 信息中还没有第二个请求的信息。
+                            //由于概率较低，因此为了效率暂时忽略此情况，如果此情况极易发生，此处应改用 GetCurrentMessageContext()！    
+
+                            //加同步锁
+                            var cache = CacheStrategyFactory.GetObjectCacheStrategyInstance();
+                            using (await cache.BeginCacheLockAsync(MessageContextGlobalConfig.MESSAGE_INSERT_LOCK_NAME, lockKey
+                                       /*, 25, TimeSpan.FromMilliseconds(200)*/ /* 最多等待 5 秒钟*/))
+                            {
+                                await GlobalMessageContext.InsertMessageAsync(ResponseMessage);//耗时约：100ms（使用队列不占用当前线程时间）
+                            }
+                        });
+                    }
                 }
 
                 await apm.SetAsync(NeuCharApmKind.Message_SuccessResponse.ToString(), 1, tempStorage: OpenId).ConfigureAwait(false);//Redis延迟：1ms

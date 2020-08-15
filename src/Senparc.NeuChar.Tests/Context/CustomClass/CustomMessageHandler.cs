@@ -51,7 +51,8 @@ namespace Senparc.NeuChar.Tests.Context
         public override XDocument Init(XDocument requestDocument, IEncryptPostModel postModel)
         {
             XDocument decryptDoc = requestDocument;
-            RequestMessage = RequestMessageFactory.GetRequestEntity(decryptDoc) as RequestMessageBase;
+            var messageContext = new Weixin.MP.MessageContexts.DefaultMpMessageContext();// new CustomMessageContext(); //base.GetCurrentMessageContext().GetAwaiter().GetResult();
+            RequestMessage = RequestMessageFactory.GetRequestEntity(messageContext, decryptDoc) as RequestMessageBase;
 
             base.SpecialDeduplicationAction = (lastMessage, messageHandler) =>
              {
@@ -90,9 +91,10 @@ namespace Senparc.NeuChar.Tests.Context
             return decryptDoc;
         }
 
-        public override void OnExecuting()
+
+        public override async Task OnExecutingAsync(CancellationToken cancellationToken)
         {
-            var currentMessageContext = base.GetCurrentMessageContext().ConfigureAwait(false).GetAwaiter().GetResult();
+            var currentMessageContext = await base.GetCurrentMessageContext();
             if (currentMessageContext.StorageData == null || (currentMessageContext.StorageData is int))
             {
                 currentMessageContext.StorageData = (int)0;
@@ -100,11 +102,25 @@ namespace Senparc.NeuChar.Tests.Context
             }
         }
 
-        public override void OnExecuted()
+        public override async Task OnExecutedAsync(CancellationToken cancellationToken)
         {
             var currentMessageContext = base.GetCurrentMessageContext().ConfigureAwait(false).GetAwaiter().GetResult();
             currentMessageContext.StorageData = ((int)currentMessageContext.StorageData) + 1;
             GlobalMessageContext.UpdateMessageContext(currentMessageContext);//储存到缓存
+        }
+
+      
+
+        [Obsolete]
+        public override void OnExecuting()
+        {
+           
+        }
+
+        [Obsolete]
+        public override void OnExecuted()
+        {
+            
         }
 
         public override Task BuildResponseMessageAsync(CancellationToken cancellationToken)

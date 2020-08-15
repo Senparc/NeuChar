@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Xml.Linq;
 
 namespace Senparc.NeuChar.Tests.Context
@@ -82,9 +83,16 @@ namespace Senparc.NeuChar.Tests.Context
             Console.WriteLine($"第 1 次请求耗时：{SystemTime.NowDiff(dt1).TotalMilliseconds} ms");
 
             currentMessageContext = messageHandler.GetCurrentMessageContext().GetAwaiter().GetResult();
+
             Assert.AreEqual(1, currentMessageContext.RequestMessages.Count);
-            Assert.AreEqual(1, currentMessageContext.ResponseMessages.Count);
-            Console.WriteLine( currentMessageContext.ResponseMessages.Last().GetType());
+            Assert.AreEqual(0, currentMessageContext.ResponseMessages.Count);//默认使用异步ResponseMessage写入，有延迟（有时队列速度太快，也会执行到此处时已经写入，结果为1）
+
+            //回复消息记录可以使用队列，对时间不敏感，因此需要等待队列完成记录
+            Thread.Sleep(500);
+            currentMessageContext = messageHandler.GetCurrentMessageContext().GetAwaiter().GetResult();
+            Assert.AreEqual(1, currentMessageContext.ResponseMessages.Count);//默认使用异步ResponseMessage写入，有延迟
+
+            Console.WriteLine(currentMessageContext.ResponseMessages.Last().GetType());
             Console.WriteLine(currentMessageContext.ResponseMessages.Last().ToJson());
 
             //测试 StorageData
@@ -96,10 +104,14 @@ namespace Senparc.NeuChar.Tests.Context
 
 
             //第二次请求
+
             var dt2 = SystemTime.Now;
             doc = XDocument.Parse(textRequestXml.FormatWith("TNT3", CO2NET.Helpers.DateTimeHelper.GetUnixDateTime(SystemTime.Now.UtcDateTime), SystemTime.Now.Ticks));
-            messageHandler = new CustomMessageHandler(doc, postModel);
-           
+            messageHandler = new CustomMessageHandler(doc, postModel)
+            {
+                RecordResponseMessageSync = true //设置同步写入 ResponseMessage
+            };
+
             currentMessageContext = messageHandler.GetCurrentMessageContext().GetAwaiter().GetResult();
             Assert.AreEqual(2, currentMessageContext.RequestMessages.Count);
             Assert.AreEqual(1, currentMessageContext.ResponseMessages.Count);
@@ -109,7 +121,7 @@ namespace Senparc.NeuChar.Tests.Context
 
             currentMessageContext = messageHandler.GetCurrentMessageContext().GetAwaiter().GetResult();
             Assert.AreEqual(2, currentMessageContext.RequestMessages.Count);
-            Assert.AreEqual(2, currentMessageContext.ResponseMessages.Count);
+            Assert.AreEqual(2, currentMessageContext.ResponseMessages.Count);//同步写入 ResponseMessage，没有延迟
 
             lastResponseMessage = currentMessageContext.ResponseMessages.Last() as ResponseMessageText;
             Assert.IsNotNull(lastResponseMessage);
@@ -118,7 +130,10 @@ namespace Senparc.NeuChar.Tests.Context
 
             //测试去重
             var dt3 = SystemTime.Now;
-            messageHandler = new CustomMessageHandler(doc, postModel);//使用和上次同样的请求
+            messageHandler = new CustomMessageHandler(doc, postModel)
+            {
+                RecordResponseMessageSync = true //设置同步写入 ResponseMessage
+            };//使用和上次同样的请求
 
             currentMessageContext = messageHandler.GetCurrentMessageContext().GetAwaiter().GetResult();
             Assert.AreEqual(2, currentMessageContext.RequestMessages.Count);
@@ -126,6 +141,7 @@ namespace Senparc.NeuChar.Tests.Context
 
             messageHandler.Execute();
             Console.WriteLine($"第 3 次请求耗时：{SystemTime.NowDiff(dt3).TotalMilliseconds} ms");
+
             //没有变化
             currentMessageContext = messageHandler.GetCurrentMessageContext().GetAwaiter().GetResult();
             Assert.AreEqual(2, currentMessageContext.RequestMessages.Count);
@@ -143,11 +159,14 @@ namespace Senparc.NeuChar.Tests.Context
                 var dt4 = SystemTime.Now;
                 doc = XDocument.Parse(textRequestXml.FormatWith($"循环测试-{i}", CO2NET.Helpers.DateTimeHelper.GetUnixDateTime(SystemTime.Now.UtcDateTime) + i, SystemTime.Now.Ticks));
                 var maxRecordCount = 10;
-                messageHandler = new CustomMessageHandler(doc, postModel, maxRecordCount);//使用和上次同样的请求
+                messageHandler = new CustomMessageHandler(doc, postModel, maxRecordCount)
+                {
+                    RecordResponseMessageSync = true //设置同步写入 ResponseMessage
+                };//使用和上次同样的请求
                 //messageHandler.GlobalMessageContext.MaxRecordCount = 10;//在这里设置的话，Request已经插入了，无法及时触发删除多余消息的过程
                 messageHandler.Execute();
 
-            currentMessageContext = messageHandler.GetCurrentMessageContext().GetAwaiter().GetResult();
+                currentMessageContext = messageHandler.GetCurrentMessageContext().GetAwaiter().GetResult();
                 Assert.AreEqual(i < 7 ? i + 3 : 10, currentMessageContext.RequestMessages.Count);
                 Assert.AreEqual(i < 7 ? i + 3 : 10, currentMessageContext.ResponseMessages.Count);
 
@@ -160,6 +179,9 @@ namespace Senparc.NeuChar.Tests.Context
             messageHandler.GlobalMessageContext.Restore();
             currentMessageContext = messageHandler.GetCurrentMessageContext().GetAwaiter().GetResult();
             Assert.AreEqual(0, currentMessageContext.RequestMessages.Count);
+
+            //回复消息记录可以使用队列，对时间不敏感，因此需要等待队列完成记录
+            Thread.Sleep(300);
             Assert.AreEqual(0, currentMessageContext.ResponseMessages.Count);
 
             Console.WriteLine();

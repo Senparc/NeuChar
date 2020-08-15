@@ -206,7 +206,19 @@ namespace Senparc.NeuChar.NeuralSystems
                 var neuCharUrl = $"{NeuralSystem.Instance.NeuCharDomainName}/App/Weixin?appId={currentAppDataItem.Id}&neuralAppId={appDataNode.NeuralAppId}";
                 try
                 {
-                    responseMessage = MessageAgent.RequestResponseMessage(messageHandler, neuCharUrl, "Senparc", requestMessage.ConvertEntityToXmlString());
+                    IServiceProvider serviceProvider = null;
+#if !NET45
+                    try
+                    {
+                        serviceProvider = Senparc.CO2NET.SenparcDI.GetServiceProvider();
+                    }
+                    catch (Exception ex)
+                    {
+                        Senparc.CO2NET.Trace.SenparcTrace.SendCustomLog("MessageHandlerNode 中 serviceProvider 未设置成功", ex.Message);
+                    }
+#endif
+                    responseMessage = MessageAgent.RequestResponseMessage(messageHandler, serviceProvider, neuCharUrl, "Senparc", requestMessage.ConvertEntityToXmlString());
+
                 }
                 catch (Exception ex)
                 {
