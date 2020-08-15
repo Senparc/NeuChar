@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net45;netstandard2.0;netstandard2.1</TargetFrameworks>
-    <Version>1.2.108</Version>
+    <Version>1.2.200.1</Version>
     <AssemblyName>Senparc.NeuChar</AssemblyName>
     <RootNamespace>Senparc.NeuChar</RootNamespace>
     <FrameworkPathOverride Condition="'$(TargetFramework)' == 'net35'">$(Net35FrameworkPathOverride)</FrameworkPathOverride>
@@ -92,6 +92,7 @@
       4、MessageAgent.RequestXml() 方法增加 autoFillUrlParameters 参数
       v1.0.103 支持新版本 CO2NET
       v1.0.104 优化 MessageHandler 同步方法兼容策略
+	  v1.2.200 更新 Agents.RequestXml() 方法
 </PackageReleaseNotes>
     <RepositoryUrl>https://github.com/Senparc/NeuChar</RepositoryUrl>
     <Configurations>Debug;Release;Test</Configurations>

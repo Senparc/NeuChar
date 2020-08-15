@@ -91,6 +91,7 @@ namespace Senparc.NeuChar.Agents
             {
                 messageHandler.UsedMessageAgent = true;
             }
+
             string timestamp = SystemTime.Now.Ticks.ToString();
             string nonce = "GodBlessYou";
             string signature = CheckSignatureWeChat.GetSignature(timestamp, nonce, token);
@@ -101,7 +102,11 @@ namespace Senparc.NeuChar.Agents
             }
 
             stream.Seek(0, SeekOrigin.Begin);
-            var responseXml = RequestUtility.HttpPost(messageHandler.ServiceProvider, url, null, stream, timeOut: timeOut);
+            IServiceProvider serviceProvider = null;
+#if !NET45
+            serviceProvider = messageHandler?.ServiceProvider ?? Senparc.CO2NET.SenparcDI.GetServiceProvider();
+#endif
+            var responseXml = RequestUtility.HttpPost(serviceProvider, url, null, stream, timeOut: timeOut);
             //WeixinTrace.SendApiLog("RequestXmlUrl：" + url, responseXml);
             return responseXml;
         }
@@ -130,6 +135,7 @@ namespace Senparc.NeuChar.Agents
                     sw.Write(xml);
                     sw.Flush();
                     sw.BaseStream.Position = 0;
+
                     return messageHandler.RequestXml(url, token, sw.BaseStream, autoFillUrlParameters: autoFillUrlParameters, timeOut: timeOut);
                 }
             }
@@ -240,6 +246,7 @@ namespace Senparc.NeuChar.Agents
         /// <summary>
         /// 使用GET请求测试URL和TOKEN是否可用
         /// </summary>
+        /// <param name="serviceProvider"></param>
         /// <param name="url"></param>
         /// <param name="token"></param>
         /// <param name="timeOut">代理请求超时时间（毫秒）</param>
