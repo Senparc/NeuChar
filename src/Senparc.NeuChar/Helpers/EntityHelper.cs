@@ -196,6 +196,17 @@ namespace Senparc.NeuChar.Helpers
                                     }
                                     prop.SetValue(entity, resultList, null);
                                 }
+                                else if (genericArgumentTypeName == "ArticleUrlResult_ResultList")//RequestMessageEvent_MassSendJobFinish
+                                {
+                                    List<ArticleUrlResult_ResultList> resultList = new List<ArticleUrlResult_ResultList>();
+                                    foreach (var item in root.Elements("ResultList").Elements("item"))
+                                    {
+                                        ArticleUrlResult_ResultList resultItem = new ArticleUrlResult_ResultList();
+                                        FillEntityWithXml(resultItem.item, new XDocument(item));
+                                        resultList.Add(resultItem);
+                                    }
+                                    prop.SetValue(entity, resultList, null);
+                                }
                                 //企业微信
                                 else if (genericArguments[0].Name == "MpNewsArticle")
                                 {
@@ -251,6 +262,14 @@ namespace Senparc.NeuChar.Helpers
                         case "CopyrightCheckResult_ResultList_Item":
                             FillClassValue<CopyrightCheckResult_ResultList_Item>(entity, root, "item", prop);
                             break;
+                        case "ArticleUrlResult":
+                            FillClassValue<ArticleUrlResult>(entity, root, propName, prop);
+                            break;
+                        case "ArticleUrlResult_ResultList_Item":
+                            FillClassValue<ArticleUrlResult_ResultList_Item>(entity, root, "item", prop);
+                            break;
+                        
+                        
                         #region 企业号
                         /* 暂时放在Work.dll中
                                                 case "AgentType":
