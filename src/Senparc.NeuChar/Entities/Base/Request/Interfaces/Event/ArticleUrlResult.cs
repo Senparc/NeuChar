@@ -1,11 +1,22 @@
-﻿using System.Collections.Generic;
+﻿/*----------------------------------------------------------------
+    Copyright (C) 2020 Senparc
+    
+    文件名：ArticleUrlResult.cs
+    文件功能描述：群发文章的 URL 返回结果
+    
+    
+    创建标识：ccccccmd - 20201013
+    
+----------------------------------------------------------------*/
+
+using System.Collections.Generic;
 
 namespace Senparc.NeuChar.Entities
 {
 
 
     /// <summary>
-    ///     群发文章的url
+    /// 群发文章的 URL
     /// </summary>
     public class ArticleUrlResult
     {
@@ -15,7 +26,7 @@ namespace Senparc.NeuChar.Entities
 
         public ArticleUrlResult()
         {
-            ResultList=new List<ArticleUrlResult_ResultList>();
+            ResultList = new List<ArticleUrlResult_ResultList>();
         }
     }
 
@@ -25,7 +36,7 @@ namespace Senparc.NeuChar.Entities
 
         public ArticleUrlResult_ResultList()
         {
-            item=new ArticleUrlResult_ResultList_Item();
+            item = new ArticleUrlResult_ResultList_Item();
         }
     }
 

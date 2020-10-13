@@ -39,6 +39,9 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
     修改标识：Senparc - 20190529
     修改描述：FillEntityWithXml()方法添加 "ThirdFasteRegisterInfo" 类型: 开放平台-小程序-快速注册
 
+    修改标识：ccccccmd - 20201013
+    修改描述：v1.2.201 MASSSENDJOBFINISH 事件增加 ArticleUrlResult 节点
+
 ----------------------------------------------------------------*/
 
 using System;
