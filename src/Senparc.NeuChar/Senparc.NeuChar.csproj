@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFrameworks>net45;netstandard2.0;netstandard2.1</TargetFrameworks>
-		<Version>1.2.200.6</Version>
+		<Version>1.2.201</Version>
 		<AssemblyName>Senparc.NeuChar</AssemblyName>
 		<RootNamespace>Senparc.NeuChar</RootNamespace>
 		<FrameworkPathOverride Condition="'$(TargetFramework)' == 'net35'">$(Net35FrameworkPathOverride)</FrameworkPathOverride>
@@ -94,6 +94,7 @@
 			v1.0.104 优化 MessageHandler 同步方法兼容策略
 			v1.2.200 更新 Agents.RequestXml() 方法
 			v1.2.200.6 MessageHandler 添加 RecordResponseMessageSync 属性，用于设置是否同步向 MessageContext 写入 ResponseMessage，默认为否，将使用队列写入，提升响应速度
+			v1.2.201 MASSSENDJOBFINISH 事件增加 ArticleUrlResult 节点
 		</PackageReleaseNotes>
 		<RepositoryUrl>https://github.com/Senparc/NeuChar</RepositoryUrl>
 		<Configurations>Debug;Release;Test</Configurations>

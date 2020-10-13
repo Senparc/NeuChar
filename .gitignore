@@ -11,3 +11,4 @@ bin/
 *.user
 /src/Senparc.NeuChar.Tests/App_Data/WeChat_OfficialAccount/*
 /src/ProjectFileManager
+/src/.idea

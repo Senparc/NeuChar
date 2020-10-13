@@ -39,6 +39,9 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
     修改标识：Senparc - 20190529
     修改描述：FillEntityWithXml()方法添加 "ThirdFasteRegisterInfo" 类型: 开放平台-小程序-快速注册
 
+    修改标识：ccccccmd - 20201013
+    修改描述：v1.2.201 MASSSENDJOBFINISH 事件增加 ArticleUrlResult 节点
+
 ----------------------------------------------------------------*/
 
 using System;
@@ -196,6 +199,17 @@ namespace Senparc.NeuChar.Helpers
                                     }
                                     prop.SetValue(entity, resultList, null);
                                 }
+                                else if (genericArgumentTypeName == "ArticleUrlResult_ResultList")//RequestMessageEvent_MassSendJobFinish
+                                {
+                                    List<ArticleUrlResult_ResultList> resultList = new List<ArticleUrlResult_ResultList>();
+                                    foreach (var item in root.Elements("ResultList").Elements("item"))
+                                    {
+                                        ArticleUrlResult_ResultList resultItem = new ArticleUrlResult_ResultList();
+                                        FillEntityWithXml(resultItem.item, new XDocument(item));
+                                        resultList.Add(resultItem);
+                                    }
+                                    prop.SetValue(entity, resultList, null);
+                                }
                                 //企业微信
                                 else if (genericArguments[0].Name == "MpNewsArticle")
                                 {
@@ -251,6 +265,14 @@ namespace Senparc.NeuChar.Helpers
                         case "CopyrightCheckResult_ResultList_Item":
                             FillClassValue<CopyrightCheckResult_ResultList_Item>(entity, root, "item", prop);
                             break;
+                        case "ArticleUrlResult":
+                            FillClassValue<ArticleUrlResult>(entity, root, propName, prop);
+                            break;
+                        case "ArticleUrlResult_ResultList_Item":
+                            FillClassValue<ArticleUrlResult_ResultList_Item>(entity, root, "item", prop);
+                            break;
+                        
+                        
                         #region 企业号
                         /* 暂时放在Work.dll中
                                                 case "AgentType":
