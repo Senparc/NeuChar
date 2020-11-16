@@ -496,6 +496,7 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <param name="maxRecordCount"></param>
         /// <param name="postModel"></param>
         /// <param name="onlyAllowEncryptMessage">当平台同时兼容明文消息和加密消息时，只允许处理加密消息（不允许处理明文消息），默认为 False</param>
+        /// <param name="serviceProvider"></param>
         public void CommonInitialize(XDocument postDataDocument, int maxRecordCount, IEncryptPostModel postModel, bool onlyAllowEncryptMessage, IServiceProvider serviceProvider = null)
         {
             OnlyAllowEncryptMessage = onlyAllowEncryptMessage;
