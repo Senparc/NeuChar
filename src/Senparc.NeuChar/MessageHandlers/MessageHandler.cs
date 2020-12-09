@@ -466,8 +466,8 @@ namespace Senparc.NeuChar.MessageHandlers
         }
 
         /// <summary>
-        /// <para>使用 requestMessageBase 的构造函数</para>
-        /// <para>此构造函数仅提供给具体的类库进行测试使用，例如 Senparc.NeuChar.Work</para>
+        /// <para>使用 requestMessageBase 的构造函数（请勿在生产环境中使用！）</para>
+        /// <para>此构造函数仅提供给具体的类库进行测试使用例如 Senparc.NeuChar.Work。请勿在生产环境中使用！</para>
         /// </summary>
         /// <param name="requestMessageBase"></param>
         /// <param name="maxRecordCount"></param>
@@ -517,8 +517,7 @@ namespace Senparc.NeuChar.MessageHandlers
 
             //TODO:提供异步的上下文及处理方法——构造函数中暂时无法直接使用异步方法
 
-            //消息去重
-            CheckMessageRepeat();
+            //CheckMessageRepeat(); //消息去重自 v1.3.0 起，已经放入 ExecuteAsync 中处理
         }
 
         /// <summary>

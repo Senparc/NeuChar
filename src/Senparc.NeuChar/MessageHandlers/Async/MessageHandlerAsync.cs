@@ -88,7 +88,7 @@ namespace Senparc.NeuChar.MessageHandlers
 
         public virtual async Task OnExecutingAsync(CancellationToken cancellationToken)
         {
-
+           
         }
 
         public virtual async Task ExecuteAsync(CancellationToken cancellationToken)
@@ -98,6 +98,13 @@ namespace Senparc.NeuChar.MessageHandlers
                 return;
             }
 
+            //消息去重
+            CheckMessageRepeat();
+
+            if (CancelExcute)
+            {
+                return;
+            }
 
             //进行 APM 记录
             ExecuteStatTime = SystemTime.Now;
