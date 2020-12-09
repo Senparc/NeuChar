@@ -60,6 +60,9 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
     修改标识：Senparc - 20191203
     修改描述：v1.0.104 优化 MessageHandler 同步方法兼容策略
 
+    修改标识：Senparc - 20201209
+    修改描述：v1.3.100 消息去重放入到 ExecuteAsync() 方法中处理，解决无法在创建完 MessageHandler 之后禁用消息去重功能的 bug
+
 ----------------------------------------------------------------*/
 
 
@@ -443,6 +446,7 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <param name="maxRecordCount"></param>
         /// <param name="postModel">需要传入到Init的参数</param>
         /// <param name="onlyAllowEncryptMessage">当平台同时兼容明文消息和加密消息时，只允许处理加密消息（不允许处理明文消息），默认为 False</param>
+        /// <param name="serviceProvider"></param>
         public MessageHandler(Stream inputStream, IEncryptPostModel postModel, int maxRecordCount = 0, bool onlyAllowEncryptMessage = false, IServiceProvider serviceProvider = null)
         {
             var postDataDocument = XmlUtility.Convert(inputStream);
@@ -457,6 +461,7 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <param name="maxRecordCount"></param>
         /// <param name="postModel">需要传入到Init的参数</param>
         /// <param name="onlyAllowEncryptMessage">当平台同时兼容明文消息和加密消息时，只允许处理加密消息（不允许处理明文消息），默认为 False</param>
+        /// <param name="serviceProvider"></param>
         public MessageHandler(XDocument postDataDocument, IEncryptPostModel postModel, int maxRecordCount = 0, bool onlyAllowEncryptMessage = false, IServiceProvider serviceProvider = null)
         {
             //PostModel = postModel;//PostModel 在当前类初始化过程中必须赋值
@@ -464,8 +469,8 @@ namespace Senparc.NeuChar.MessageHandlers
         }
 
         /// <summary>
-        /// <para>使用 requestMessageBase 的构造函数</para>
-        /// <para>此构造函数仅提供给具体的类库进行测试使用，例如 Senparc.NeuChar.Work</para>
+        /// <para>使用 requestMessageBase 的构造函数（请勿在生产环境中使用！）</para>
+        /// <para>此构造函数仅提供给具体的类库进行测试使用例如 Senparc.NeuChar.Work。请勿在生产环境中使用！</para>
         /// </summary>
         /// <param name="requestMessageBase"></param>
         /// <param name="maxRecordCount"></param>
@@ -496,6 +501,7 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <param name="maxRecordCount"></param>
         /// <param name="postModel"></param>
         /// <param name="onlyAllowEncryptMessage">当平台同时兼容明文消息和加密消息时，只允许处理加密消息（不允许处理明文消息），默认为 False</param>
+        /// <param name="serviceProvider"></param>
         public void CommonInitialize(XDocument postDataDocument, int maxRecordCount, IEncryptPostModel postModel, bool onlyAllowEncryptMessage, IServiceProvider serviceProvider = null)
         {
             OnlyAllowEncryptMessage = onlyAllowEncryptMessage;
@@ -514,7 +520,26 @@ namespace Senparc.NeuChar.MessageHandlers
 
             //TODO:提供异步的上下文及处理方法——构造函数中暂时无法直接使用异步方法
 
-            //消息去重
+            //CheckMessageRepeat(); //消息去重自 v1.3.0 起，已经放入 ExecuteAsync 中处理
+        }
+
+        /// <summary>
+        /// 初始化，获取RequestDocument。（必须要完成 RequestMessage 数据赋值）.
+        /// Init中需要对上下文添加当前消息（如果使用上下文）；以及判断消息的加密情况，对解密信息进行解密
+        /// </summary>
+        /// <param name="requestDocument"></param>
+        /// <param name="postModel"></param>
+        public abstract XDocument Init(XDocument requestDocument, IEncryptPostModel postModel);
+
+        #endregion
+
+        #region 消息处理
+
+        /// <summary>
+        /// 处理消息去重
+        /// </summary>
+        public void CheckMessageRepeat()
+        {
             if (MessageContextGlobalConfig.UseMessageContext)
             {
                 var omit = OmitRepeatedMessageFunc == null || OmitRepeatedMessageFunc(RequestMessage);
@@ -565,20 +590,8 @@ namespace Senparc.NeuChar.MessageHandlers
                     }
                 }
             }
-
         }
 
-        /// <summary>
-        /// 初始化，获取RequestDocument。（必须要完成 RequestMessage 数据赋值）.
-        /// Init中需要对上下文添加当前消息（如果使用上下文）；以及判断消息的加密情况，对解密信息进行解密
-        /// </summary>
-        /// <param name="requestDocument"></param>
-        /// <param name="postModel"></param>
-        public abstract XDocument Init(XDocument requestDocument, IEncryptPostModel postModel);
-
-        #endregion
-
-        #region 消息处理
         /// <summary>
         /// 根据当前的 RequestMessage 创建指定类型（RT）的 ResponseMessage
         /// </summary>
@@ -610,6 +623,12 @@ namespace Senparc.NeuChar.MessageHandlers
         [Obsolete("请使用异步方法 ExecuteAsync()")]
         public void Execute()
         {
+            if (!MessageIsRepeated && MessageContextGlobalConfig.UseMessageContext && OmitRepeatedMessage)
+            {
+                //中途被修改属性
+            }
+
+
             //同步方法强制调整
             DefaultMessageHandlerAsyncEvent = DefaultMessageHandlerAsyncEvent.SelfSynicMethod;
 
