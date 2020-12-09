@@ -60,6 +60,9 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
     修改标识：Senparc - 20191203
     修改描述：v1.0.104 优化 MessageHandler 同步方法兼容策略
 
+    修改标识：Senparc - 20201209
+    修改描述：v1.3.100 消息去重放入到 ExecuteAsync() 方法中处理，解决无法在创建完 MessageHandler 之后禁用消息去重功能的 bug
+
 ----------------------------------------------------------------*/
 
 
