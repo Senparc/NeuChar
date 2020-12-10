@@ -42,6 +42,9 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
     修改标识：ccccccmd - 20201013
     修改描述：v1.2.201 MASSSENDJOBFINISH 事件增加 ArticleUrlResult 节点
 
+    修改标识：Billzjh - 20201210
+    修改描述：v1.3.200 添加企业微信推广码注册对应转换方法
+
 ----------------------------------------------------------------*/
 
 using System;

@@ -1,8 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿/*----------------------------------------------------------------
+    Copyright (C) 2020 Senparc
+    
+    文件名：ContactSyncToken.cs
+    文件功能描述：企业微信服务商推广码注册成功返回的通讯录迁移的凭证信息。仅当注册推广包开启通讯录迁移接口时返回该参数
+    
+    
+    创建标识：Billzjh - 20201210
+    
+----------------------------------------------------------------*/
 
 namespace Senparc.NeuChar.Entities
 {

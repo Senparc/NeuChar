@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFrameworks>net45;netstandard2.0;netstandard2.1</TargetFrameworks>
-		<Version>1.3.100</Version>
+		<Version>1.3.200</Version>
 		<AssemblyName>Senparc.NeuChar</AssemblyName>
 		<RootNamespace>Senparc.NeuChar</RootNamespace>
 		<FrameworkPathOverride Condition="'$(TargetFramework)' == 'net35'">$(Net35FrameworkPathOverride)</FrameworkPathOverride>
