@@ -252,6 +252,15 @@ namespace Senparc.NeuChar.Helpers
                             FillClassValue<AroundBeacon>(entity, root, propName, prop);
                             break;
 
+                        #region 企业微信推广码注册
+                        case "ContactSyncToken":
+                            FillClassValue<ContactSyncToken>(entity, root, propName, prop);
+                            break;
+                        case "AuthUserInfoModel":
+                            FillClassValue<AuthUserInfoModel>(entity, root, propName, prop);
+                            break;
+                        #endregion
+
                         #region 开放平台-小程序
                         case "ThirdFasteRegisterInfo": //开放平台-小程序-快速注册
                             FillClassValue<ThirdFasteRegisterInfo>(entity, root, propName, prop);
