@@ -42,6 +42,9 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
     修改标识：ccccccmd - 20201013
     修改描述：v1.2.201 MASSSENDJOBFINISH 事件增加 ArticleUrlResult 节点
 
+    修改标识：Billzjh - 20201210
+    修改描述：v1.3.200 添加企业微信推广码注册对应转换方法
+
 ----------------------------------------------------------------*/
 
 using System;
@@ -251,6 +254,15 @@ namespace Senparc.NeuChar.Helpers
                         case "AroundBeacon"://摇一摇事件通知
                             FillClassValue<AroundBeacon>(entity, root, propName, prop);
                             break;
+
+                        #region 企业微信推广码注册
+                        case "ContactSyncToken":
+                            FillClassValue<ContactSyncToken>(entity, root, propName, prop);
+                            break;
+                        case "AuthUserInfoModel":
+                            FillClassValue<AuthUserInfoModel>(entity, root, propName, prop);
+                            break;
+                        #endregion
 
                         #region 开放平台-小程序
                         case "ThirdFasteRegisterInfo": //开放平台-小程序-快速注册
