@@ -213,6 +213,45 @@ namespace Senparc.NeuChar.Helpers
                                     }
                                     prop.SetValue(entity, resultList, null);
                                 }
+                                else if (genericArgumentTypeName == "SubscribeMsgChangeEvent")//RequestMessageEvent_MassSendJobFinish
+                                {
+                                    List<SubscribeMsgChangeEvent> list = new List<SubscribeMsgChangeEvent>();
+                                    foreach (var item in root.Element(propName).Elements("List"))
+                                    {
+                                        SubscribeMsgChangeEvent resultItem = new SubscribeMsgChangeEvent();
+                                        FillEntityWithXml(resultItem, new XDocument(item));
+                                        list.Add(resultItem);
+                                    }
+                                    prop.SetValue(entity, list, null);
+                                }
+                                
+                                else if (genericArgumentTypeName == "SubscribeMsgPopupEvent")//RequestMessageEvent_MassSendJobFinish
+                                {
+                                    List<SubscribeMsgPopupEvent> list = new List<SubscribeMsgPopupEvent>();
+                                    foreach (var item in root.Element(propName).Elements("List"))
+                                    {
+                                        
+                                        SubscribeMsgPopupEvent resultItem = new SubscribeMsgPopupEvent();
+                                        FillEntityWithXml(resultItem, new XDocument(item));
+                                        list.Add(resultItem);
+                                    }
+                                    prop.SetValue(entity, list, null);
+                                }
+                                
+                                else if (genericArgumentTypeName == "SubscribeMsgSentEvent")//RequestMessageEvent_MassSendJobFinish
+                                {
+                                    List<SubscribeMsgSentEvent> list = new List<SubscribeMsgSentEvent>();
+                                    foreach (var item in root.Element(propName).Elements("List"))
+                                    {
+                                        SubscribeMsgSentEvent resultItem = new SubscribeMsgSentEvent();
+                                        FillEntityWithXml(resultItem, new XDocument(item));
+                                        list.Add(resultItem);
+                                    }
+                                    prop.SetValue(entity, list, null);
+                                }
+                                
+                                
+                                
                                 //企业微信
                                 else if (genericArguments[0].Name == "MpNewsArticle")
                                 {
