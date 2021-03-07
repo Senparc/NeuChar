@@ -191,7 +191,7 @@ namespace Senparc.NeuChar.Helpers
                                     }
                                     prop.SetValue(entity, aroundBeacons, null);
                                 }
-                                else if (genericArgumentTypeName == "CopyrightCheckResult_ResultList")//RequestMessageEvent_MassSendJobFinish
+                                else if (genericArgumentTypeName == "CopyrightCheckResult_ResultList")
                                 {
                                     List<CopyrightCheckResult_ResultList> resultList = new List<CopyrightCheckResult_ResultList>();
                                     foreach (var item in root.Elements("ResultList").Elements("item"))
@@ -202,7 +202,7 @@ namespace Senparc.NeuChar.Helpers
                                     }
                                     prop.SetValue(entity, resultList, null);
                                 }
-                                else if (genericArgumentTypeName == "ArticleUrlResult_ResultList")//RequestMessageEvent_MassSendJobFinish
+                                else if (genericArgumentTypeName == "ArticleUrlResult_ResultList")
                                 {
                                     List<ArticleUrlResult_ResultList> resultList = new List<ArticleUrlResult_ResultList>();
                                     foreach (var item in root.Elements("ResultList").Elements("item"))
@@ -213,7 +213,7 @@ namespace Senparc.NeuChar.Helpers
                                     }
                                     prop.SetValue(entity, resultList, null);
                                 }
-                                else if (genericArgumentTypeName == "SubscribeMsgChangeEvent")//RequestMessageEvent_MassSendJobFinish
+                                else if (genericArgumentTypeName == nameof(SubscribeMsgChangeEvent))
                                 {
                                     List<SubscribeMsgChangeEvent> list = new List<SubscribeMsgChangeEvent>();
                                     foreach (var item in root.Element(propName).Elements("List"))
@@ -225,7 +225,7 @@ namespace Senparc.NeuChar.Helpers
                                     prop.SetValue(entity, list, null);
                                 }
                                 
-                                else if (genericArgumentTypeName == "SubscribeMsgPopupEvent")//RequestMessageEvent_MassSendJobFinish
+                                else if (genericArgumentTypeName == nameof(SubscribeMsgPopupEvent))
                                 {
                                     List<SubscribeMsgPopupEvent> list = new List<SubscribeMsgPopupEvent>();
                                     foreach (var item in root.Element(propName).Elements("List"))
@@ -238,7 +238,7 @@ namespace Senparc.NeuChar.Helpers
                                     prop.SetValue(entity, list, null);
                                 }
                                 
-                                else if (genericArgumentTypeName == "SubscribeMsgSentEvent")//RequestMessageEvent_MassSendJobFinish
+                                else if (genericArgumentTypeName == nameof(SubscribeMsgSentEvent))
                                 {
                                     List<SubscribeMsgSentEvent> list = new List<SubscribeMsgSentEvent>();
                                     foreach (var item in root.Element(propName).Elements("List"))
