@@ -191,7 +191,7 @@ namespace Senparc.NeuChar.Helpers
                                     }
                                     prop.SetValue(entity, aroundBeacons, null);
                                 }
-                                else if (genericArgumentTypeName == "CopyrightCheckResult_ResultList")//RequestMessageEvent_MassSendJobFinish
+                                else if (genericArgumentTypeName == "CopyrightCheckResult_ResultList")
                                 {
                                     List<CopyrightCheckResult_ResultList> resultList = new List<CopyrightCheckResult_ResultList>();
                                     foreach (var item in root.Elements("ResultList").Elements("item"))
@@ -202,7 +202,7 @@ namespace Senparc.NeuChar.Helpers
                                     }
                                     prop.SetValue(entity, resultList, null);
                                 }
-                                else if (genericArgumentTypeName == "ArticleUrlResult_ResultList")//RequestMessageEvent_MassSendJobFinish
+                                else if (genericArgumentTypeName == "ArticleUrlResult_ResultList")
                                 {
                                     List<ArticleUrlResult_ResultList> resultList = new List<ArticleUrlResult_ResultList>();
                                     foreach (var item in root.Elements("ResultList").Elements("item"))
@@ -213,6 +213,45 @@ namespace Senparc.NeuChar.Helpers
                                     }
                                     prop.SetValue(entity, resultList, null);
                                 }
+                                else if (genericArgumentTypeName == nameof(SubscribeMsgChangeEvent))
+                                {
+                                    List<SubscribeMsgChangeEvent> list = new List<SubscribeMsgChangeEvent>();
+                                    foreach (var item in root.Element(propName).Elements("List"))
+                                    {
+                                        SubscribeMsgChangeEvent resultItem = new SubscribeMsgChangeEvent();
+                                        FillEntityWithXml(resultItem, new XDocument(item));
+                                        list.Add(resultItem);
+                                    }
+                                    prop.SetValue(entity, list, null);
+                                }
+                                
+                                else if (genericArgumentTypeName == nameof(SubscribeMsgPopupEvent))
+                                {
+                                    List<SubscribeMsgPopupEvent> list = new List<SubscribeMsgPopupEvent>();
+                                    foreach (var item in root.Element(propName).Elements("List"))
+                                    {
+                                        
+                                        SubscribeMsgPopupEvent resultItem = new SubscribeMsgPopupEvent();
+                                        FillEntityWithXml(resultItem, new XDocument(item));
+                                        list.Add(resultItem);
+                                    }
+                                    prop.SetValue(entity, list, null);
+                                }
+                                
+                                else if (genericArgumentTypeName == nameof(SubscribeMsgSentEvent))
+                                {
+                                    List<SubscribeMsgSentEvent> list = new List<SubscribeMsgSentEvent>();
+                                    foreach (var item in root.Element(propName).Elements("List"))
+                                    {
+                                        SubscribeMsgSentEvent resultItem = new SubscribeMsgSentEvent();
+                                        FillEntityWithXml(resultItem, new XDocument(item));
+                                        list.Add(resultItem);
+                                    }
+                                    prop.SetValue(entity, list, null);
+                                }
+                                
+                                
+                                
                                 //企业微信
                                 else if (genericArguments[0].Name == "MpNewsArticle")
                                 {
