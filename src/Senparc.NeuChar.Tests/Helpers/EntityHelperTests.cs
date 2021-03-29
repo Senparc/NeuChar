@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Senparc.NeuChar.Helpers;
 using System;
+using System.Collections.Generic;
 using System.Xml.Linq;
 using Senparc.NeuChar.Entities;
 
@@ -189,6 +190,7 @@ namespace Senparc.NeuChar.Tests.Helpers
 
             EntityHelper.FillEntityWithXml(entity, doc);
 
+         
 
             Assert.IsTrue(entity.CopyrightCheckResult.Count == 2);
 
@@ -201,5 +203,143 @@ namespace Senparc.NeuChar.Tests.Helpers
         }
 
 
+        public class RequestMessageEvent_SubscribeMsgPopupEvent : RequestMessageBase
+        {
+            public List<SubscribeMsgPopupEvent> SubscribeMsgPopupEvent { get; set; }
+        }
+
+
+        [TestMethod]
+        public void FillRequestMessageEvent_SubscribeMsgPopupEventhWithXmlTest()
+        {
+            var xml = @"<xml>
+    <ToUserName><![CDATA[gh_123456789abc]]></ToUserName>
+    <FromUserName><![CDATA[otFpruAK8D-E6EfStSYonYSBZ8_4]]></FromUserName>
+    <CreateTime>1610969440</CreateTime>
+    <MsgType><![CDATA[event]]></MsgType>
+    <Event><![CDATA[subscribe_msg_popup_event]]></Event>
+    <SubscribeMsgPopupEvent>
+        <List>
+            <TemplateId><![CDATA[VRR0UEO9VJOLs0MHlU0OilqX6MVFDwH3_3gz3Oc0NIc]]></TemplateId>
+            <SubscribeStatusString><![CDATA[accept]]></SubscribeStatusString>
+            <PopupScene>2</PopupScene>
+        </List>
+        <List>
+            <TemplateId><![CDATA[9nLIlbOQZC5Y89AZteFEux3WCXRRRG5Wfzkpssu4bLI]]></TemplateId>
+            <SubscribeStatusString><![CDATA[reject]]></SubscribeStatusString>
+            <PopupScene>2</PopupScene>
+        </List>
+    </SubscribeMsgPopupEvent>
+</xml>";
+
+            var entity = new RequestMessageEvent_SubscribeMsgPopupEvent();
+
+            XDocument doc = XDocument.Parse(xml);
+            
+            
+            EntityHelper.FillEntityWithXml(entity, doc);
+
+
+            Assert.IsTrue(entity.SubscribeMsgPopupEvent.Count == 2);
+
+            Assert.IsTrue(entity.SubscribeMsgPopupEvent[1].TemplateId ==
+                          "9nLIlbOQZC5Y89AZteFEux3WCXRRRG5Wfzkpssu4bLI");
+
+            Assert.IsTrue(entity.SubscribeMsgPopupEvent[0].PopupScene == 2);
+        }
+
+        
+        public class RequestMessageEvent_SubscribeMsgChangeEvent : RequestMessageBase
+        {
+            public List<SubscribeMsgChangeEvent> SubscribeMsgChangeEvent { get; set; }
+        }
+
+
+        [TestMethod]
+        public void FillRequestMessageEvent_SubscribeMsgChangeEventWithXmlTest()
+        {
+            var xml = @"<xml>
+    <ToUserName><![CDATA[gh_123456789abc]]></ToUserName>
+    <FromUserName><![CDATA[otFpruAK8D-E6EfStSYonYSBZ8_4]]></FromUserName>
+    <CreateTime>1610969440</CreateTime>
+    <MsgType><![CDATA[event]]></MsgType>
+    <Event><![CDATA[subscribe_msg_change_event]]></Event>
+    <SubscribeMsgChangeEvent>
+        <List>
+            <TemplateId><![CDATA[VRR0UEO9VJOLs0MHlU0OilqX6MVFDwH3_3gz3Oc0NIc]]></TemplateId>
+            <SubscribeStatusString><![CDATA[reject]]></SubscribeStatusString>
+        </List>
+         <List>
+            <TemplateId><![CDATA[xxxxxxxxxxxx]]></TemplateId>
+            <SubscribeStatusString><![CDATA[reject]]></SubscribeStatusString>
+        </List>
+    </SubscribeMsgChangeEvent>
+</xml>";
+
+            var entity = new RequestMessageEvent_SubscribeMsgChangeEvent();
+
+            XDocument doc = XDocument.Parse(xml);
+            
+            
+            EntityHelper.FillEntityWithXml(entity, doc);
+
+
+            Assert.IsTrue(entity.SubscribeMsgChangeEvent.Count == 2);
+
+            Assert.IsTrue(entity.SubscribeMsgChangeEvent[0].TemplateId ==
+                          "VRR0UEO9VJOLs0MHlU0OilqX6MVFDwH3_3gz3Oc0NIc");
+
+            Assert.IsTrue(entity.SubscribeMsgChangeEvent[1].SubscribeStatusString == "reject");
+        }
+        
+        
+        
+        public class RequestMessageEvent_SubscribeMsgSentEvent : RequestMessageBase
+        {
+            public List<SubscribeMsgSentEvent> SubscribeMsgSentEvent { get; set; }
+        }
+
+
+        [TestMethod]
+        public void FillRequestMessageEvent_SubscribeMsgSentEventWithXmlTest()
+        {
+            var xml = @"<xml>
+    <ToUserName><![CDATA[gh_123456789abc]]></ToUserName>
+    <FromUserName><![CDATA[otFpruAK8D-E6EfStSYonYSBZ8_4]]></FromUserName>
+    <CreateTime>1610969468</CreateTime>
+    <MsgType><![CDATA[event]]></MsgType>
+    <Event><![CDATA[subscribe_msg_sent_event]]></Event>
+    <SubscribeMsgSentEvent>
+        <List>
+            <TemplateId><![CDATA[VRR0UEO9VJOLs0MHlU0OilqX6MVFDwH3_3gz3Oc0NIc]]></TemplateId>
+            <MsgID>1700827132819554304</MsgID>
+            <ErrorCode>0</ErrorCode>
+            <ErrorStatus><![CDATA[success]]></ErrorStatus>
+        </List>
+         <List>
+            <TemplateId><![CDATA[xxxxxxxxxxxxxdddddd2131f3d1fd]]></TemplateId>
+            <MsgID>17008271328xxx19554304</MsgID>
+            <ErrorCode>0</ErrorCode>
+            <ErrorStatus><![CDATA[success]]></ErrorStatus>
+        </List>
+    </SubscribeMsgSentEvent>
+</xml>";
+
+            var entity = new RequestMessageEvent_SubscribeMsgSentEvent();
+
+            XDocument doc = XDocument.Parse(xml);
+            
+            
+            EntityHelper.FillEntityWithXml(entity, doc);
+
+
+            Assert.IsTrue(entity.SubscribeMsgSentEvent.Count == 2);
+
+            Assert.IsTrue(entity.SubscribeMsgSentEvent[1].TemplateId ==
+                          "xxxxxxxxxxxxxdddddd2131f3d1fd");
+
+            Assert.IsTrue(entity.SubscribeMsgSentEvent[0].MsgID == "1700827132819554304");
+        }
+        
     }
 }
