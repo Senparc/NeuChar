@@ -63,6 +63,10 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
     修改标识：Senparc - 20201209
     修改描述：v1.3.100 消息去重放入到 ExecuteAsync() 方法中处理，解决无法在创建完 MessageHandler 之后禁用消息去重功能的 bug
 
+    修改标识：Senparc - 20210325
+    修改描述：v1.3.201 1、MessageHandler MarkRepeatedMessage() 方法添加 cancelExecute 参数，默认为 true
+                       2、消息去重增加对特殊 CreateTime 情况的判断 https://github.com/Senparc/NeuChar/issues/121
+
 ----------------------------------------------------------------*/
 
 
@@ -417,9 +421,10 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <summary>
         /// 标记为已重复消息
         /// </summary>
-        protected void MarkRepeatedMessage()
+        /// <param name="cancelExecute">是否终止执行，默认为 true</param>
+        protected void MarkRepeatedMessage(bool cancelExecute = true)
         {
-            CancelExcute = true;//重复消息，取消执行
+            CancelExcute = cancelExecute;//重复消息，默认取消执行
             MessageIsRepeated = true;
         }
 
@@ -566,6 +571,7 @@ namespace Senparc.NeuChar.MessageHandlers
                             (lastMessage.MsgId != 0 && lastMessage.MsgId == RequestMessage.MsgId) ||
                             //使用CreateTime去重（OpenId对象已经是同一个）
                             (lastMessage.MsgId == RequestMessage.MsgId &&
+                                 lastMessage.CreateTime != DateTime.MinValue && //https://github.com/Senparc/NeuChar/issues/121
                                  lastMessage.CreateTime == RequestMessage.CreateTime &&
                                  lastMessage.MsgType == RequestMessage.MsgType)
                             )

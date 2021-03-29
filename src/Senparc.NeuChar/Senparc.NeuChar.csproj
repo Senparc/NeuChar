@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFrameworks>net45;netstandard2.0;netstandard2.1</TargetFrameworks>
-		<Version>1.3.200</Version>
+		<Version>1.3.201</Version>
 		<AssemblyName>Senparc.NeuChar</AssemblyName>
 		<RootNamespace>Senparc.NeuChar</RootNamespace>
 		<FrameworkPathOverride Condition="'$(TargetFramework)' == 'net35'">$(Net35FrameworkPathOverride)</FrameworkPathOverride>
@@ -96,6 +96,8 @@
 			v1.2.200.6 MessageHandler 添加 RecordResponseMessageSync 属性，用于设置是否同步向 MessageContext 写入 ResponseMessage，默认为否，将使用队列写入，提升响应速度
 			v1.2.201 MASSSENDJOBFINISH 事件增加 ArticleUrlResult 节点
 			v1.3.100 消息去重放入到 ExecuteAsync() 方法中处理
+			v1.3.201 1、MessageHandler MarkRepeatedMessage() 方法添加 cancelExecute 参数，默认为 true
+					 2、消息去重增加对特殊 CreateTime 情况的判断 https://github.com/Senparc/NeuChar/issues/121
 		</PackageReleaseNotes>
 		<RepositoryUrl>https://github.com/Senparc/NeuChar</RepositoryUrl>
 		<Configurations>Debug;Release;Test</Configurations>
