@@ -12,11 +12,11 @@
     <PackageReference Include="Moq" Version="4.*" />
     <PackageReference Include="MSTest.TestAdapter" Version="1.*" />
     <PackageReference Include="MSTest.TestFramework" Version="1.*" />
-    <PackageReference Include="Senparc.CO2NET.AspNet" Version="0.3.200" />
-    <PackageReference Include="Senparc.CO2NET.Cache.Redis" Version="3.9.200" />
-    <PackageReference Include="Senparc.Weixin.Cache.Redis" Version="2.8.600" />
-    <PackageReference Include="Senparc.Weixin.MP" Version="16.10.601" />
-    <PackageReference Include="Senparc.Weixin.WxOpen" Version="3.8.601" />
+    <PackageReference Include="Senparc.CO2NET.AspNet" Version="0.3.300" />
+    <PackageReference Include="Senparc.CO2NET.Cache.Redis" Version="3.9.300" />
+    <PackageReference Include="Senparc.Weixin.Cache.Redis" Version="2.9.300" />
+    <PackageReference Include="Senparc.Weixin.MP" Version="16.11.300" />
+    <PackageReference Include="Senparc.Weixin.WxOpen" Version="3.10.300" />
   </ItemGroup>
 
   <ItemGroup>
