@@ -144,8 +144,8 @@ namespace Senparc.NeuChar.Middlewares
         where TMC : class, IMessageContext<IRequestMessageBase, IResponseMessageBase>, new()
         where TPM : IEncryptPostModel
     {
-        public MessageHandlerMiddleware(RequestDelegate next, Func<Stream, TPM, int, MessageHandler<TMC, IRequestMessageBase, IResponseMessageBase>> messageHandler, Action<MessageHandlerMiddlewareOptions<TS>> options)
-            : base(next, messageHandler, options)
+        public MessageHandlerMiddleware(RequestDelegate next, IServiceProvider serviceProvider, Func<Stream, TPM, int, MessageHandler<TMC, IRequestMessageBase, IResponseMessageBase>> messageHandler, Action<MessageHandlerMiddlewareOptions<TS>> options)
+            : base(next, serviceProvider, messageHandler, options)
         {
         }
     }
@@ -164,11 +164,11 @@ namespace Senparc.NeuChar.Middlewares
         where TPM : IEncryptPostModel
     {
         protected readonly RequestDelegate _next;
+        protected readonly IServiceProvider _serviceProvider;
         protected readonly Func<Stream, TPM, int, MessageHandler<TMC, TRequest, TResponse>> _messageHandlerFunc;
         protected readonly Func<HttpContext, TS> _accountSettingFunc;
         protected readonly MessageHandlerMiddlewareOptions<TS> _options;
         protected CancellationTokenSource _executeCancellationTokenSource;
-
 
         /// <summary>
         /// 执行 MessageHandler.ExecuteAsync() 时提供 CancellationTokenSource.CancellationToken
@@ -189,7 +189,7 @@ namespace Senparc.NeuChar.Middlewares
         /// EnableRequestRewindMiddleware
         /// </summary>
         /// <param name="next"></param>
-        public MessageHandlerMiddleware(RequestDelegate next,
+        public MessageHandlerMiddleware(RequestDelegate next, IServiceProvider serviceProvider,
             Func<Stream, TPM, int, MessageHandler<TMC, TRequest, TResponse>> messageHandler,
             Action<MessageHandlerMiddlewareOptions<TS>> options)
         {
@@ -413,7 +413,9 @@ MessageHandler 类型：{(messageHandler == null ? "尚未生成" : messageHandl
         /// <param name="options">设置选项</param>
         /// <returns></returns>
         public static IApplicationBuilder UseMessageHandler<TMHM, TMC, TPM, TS>(this IApplicationBuilder builder,
-            PathString pathMatch, Func<Stream, TPM, int, MessageHandler<TMC, IRequestMessageBase, IResponseMessageBase>> messageHandler, Action<MessageHandlerMiddlewareOptions<TS>> options)
+            PathString pathMatch,
+            Func<Stream, TPM, int, MessageHandler<TMC, IRequestMessageBase, IResponseMessageBase>, IServiceProvider> messageHandler, 
+            Action<MessageHandlerMiddlewareOptions<TS>> options)
                 where TMHM : IMessageHandlerMiddleware<TMC, IRequestMessageBase, IResponseMessageBase, TPM, TS>
                 where TMC : class, IMessageContext<IRequestMessageBase, IResponseMessageBase>, new()
                 where TPM : IEncryptPostModel
@@ -431,7 +433,9 @@ MessageHandler 类型：{(messageHandler == null ? "尚未生成" : messageHandl
         /// <param name="options">设置选项</param>
         /// <returns></returns>
         public static IApplicationBuilder UseMessageHandler<TMHM, TRequest, TResponse, TMC, TPM, TS>(this IApplicationBuilder builder,
-            PathString pathMatch, Func<Stream, TPM, int, MessageHandler<TMC, TRequest, TResponse>> messageHandler, Action<MessageHandlerMiddlewareOptions<TS>> options)
+            PathString pathMatch,
+            Func<Stream, TPM, int, MessageHandler<TMC, TRequest, TResponse>, IServiceProvider> messageHandler, 
+            Action<MessageHandlerMiddlewareOptions<TS>> options)
                 where TMHM : IMessageHandlerMiddleware<TMC, TRequest, TResponse, TPM, TS>
                 where TRequest : class, IRequestMessageBase
                 where TResponse : class, IResponseMessageBase
@@ -441,7 +445,7 @@ MessageHandler 类型：{(messageHandler == null ? "尚未生成" : messageHandl
         {
             return builder.Map(pathMatch, app =>
             {
-                app.UseMiddleware<TMHM>(messageHandler, options);
+                app.UseMiddleware<TMHM>(app.ApplicationServices, messageHandler, options);
             });
         }
     }
