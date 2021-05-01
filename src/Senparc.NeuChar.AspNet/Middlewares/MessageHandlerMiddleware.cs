@@ -29,7 +29,10 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
    
     修改标识：Senparc - 20191005
     修改描述：提供 ExecuteCancellationTokenSource 属性
-   
+
+    修改标识：Senparc - 20210501
+    修改描述 使用 GetRequestMemoryStreamAsync() 方法读取请求信息
+
 ----------------------------------------------------------------*/
 
 #if NETSTANDARD2_0 || NETSTANDARD2_1
@@ -144,7 +147,7 @@ namespace Senparc.NeuChar.Middlewares
         where TMC : class, IMessageContext<IRequestMessageBase, IResponseMessageBase>, new()
         where TPM : IEncryptPostModel
     {
-        public MessageHandlerMiddleware(RequestDelegate next, IServiceProvider serviceProvider, Func<Stream, TPM, int, MessageHandler<TMC, IRequestMessageBase, IResponseMessageBase>> messageHandler, Action<MessageHandlerMiddlewareOptions<TS>> options)
+        public MessageHandlerMiddleware(RequestDelegate next, IServiceProvider serviceProvider, Func<Stream, TPM, int, IServiceProvider, MessageHandler<TMC, IRequestMessageBase, IResponseMessageBase>> messageHandler, Action<MessageHandlerMiddlewareOptions<TS>> options)
             : base(next, serviceProvider, messageHandler, options)
         {
         }
@@ -165,7 +168,7 @@ namespace Senparc.NeuChar.Middlewares
     {
         protected readonly RequestDelegate _next;
         protected readonly IServiceProvider _serviceProvider;
-        protected readonly Func<Stream, TPM, int, MessageHandler<TMC, TRequest, TResponse>> _messageHandlerFunc;
+        protected readonly Func<Stream, TPM, int, IServiceProvider, MessageHandler<TMC, TRequest, TResponse>> _messageHandlerFunc;
         protected readonly Func<HttpContext, TS> _accountSettingFunc;
         protected readonly MessageHandlerMiddlewareOptions<TS> _options;
         protected CancellationTokenSource _executeCancellationTokenSource;
@@ -190,10 +193,11 @@ namespace Senparc.NeuChar.Middlewares
         /// </summary>
         /// <param name="next"></param>
         public MessageHandlerMiddleware(RequestDelegate next, IServiceProvider serviceProvider,
-            Func<Stream, TPM, int, MessageHandler<TMC, TRequest, TResponse>> messageHandler,
+            Func<Stream, TPM, int, IServiceProvider, MessageHandler<TMC, TRequest, TResponse>> messageHandler,
             Action<MessageHandlerMiddlewareOptions<TS>> options)
         {
             _next = next;
+            _serviceProvider = serviceProvider;
             _messageHandlerFunc = messageHandler;
 
             if (options == null)
@@ -269,8 +273,8 @@ namespace Senparc.NeuChar.Middlewares
                         return;
                     }
 
-
-                    messageHandler = _messageHandlerFunc(context.Request.GetRequestMemoryStream(), postModel, _options.MaxRecordCount);
+                    var requestBodyStream = await context.Request.GetRequestMemoryStreamAsync();
+                    messageHandler = _messageHandlerFunc(requestBodyStream, postModel, _options.MaxRecordCount, _serviceProvider);
 
                     messageHandler.DefaultMessageHandlerAsyncEvent = _options.DefaultMessageHandlerAsyncEvent;
 
@@ -414,7 +418,7 @@ MessageHandler 类型：{(messageHandler == null ? "尚未生成" : messageHandl
         /// <returns></returns>
         public static IApplicationBuilder UseMessageHandler<TMHM, TMC, TPM, TS>(this IApplicationBuilder builder,
             PathString pathMatch,
-            Func<Stream, TPM, int, MessageHandler<TMC, IRequestMessageBase, IResponseMessageBase>, IServiceProvider> messageHandler, 
+            Func<Stream, TPM, int, IServiceProvider, MessageHandler<TMC, IRequestMessageBase, IResponseMessageBase>> messageHandler,
             Action<MessageHandlerMiddlewareOptions<TS>> options)
                 where TMHM : IMessageHandlerMiddleware<TMC, IRequestMessageBase, IResponseMessageBase, TPM, TS>
                 where TMC : class, IMessageContext<IRequestMessageBase, IResponseMessageBase>, new()
@@ -434,7 +438,7 @@ MessageHandler 类型：{(messageHandler == null ? "尚未生成" : messageHandl
         /// <returns></returns>
         public static IApplicationBuilder UseMessageHandler<TMHM, TRequest, TResponse, TMC, TPM, TS>(this IApplicationBuilder builder,
             PathString pathMatch,
-            Func<Stream, TPM, int, MessageHandler<TMC, TRequest, TResponse>, IServiceProvider> messageHandler, 
+            Func<Stream, TPM, int, IServiceProvider, MessageHandler<TMC, TRequest, TResponse>> messageHandler,
             Action<MessageHandlerMiddlewareOptions<TS>> options)
                 where TMHM : IMessageHandlerMiddleware<TMC, TRequest, TResponse, TPM, TS>
                 where TRequest : class, IRequestMessageBase
