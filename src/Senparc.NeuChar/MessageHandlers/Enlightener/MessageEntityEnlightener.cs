@@ -1,9 +1,5 @@
 ﻿using Senparc.NeuChar.Enlightener;
 using Senparc.NeuChar.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Senparc.NeuChar.MessageHandlers
 {
@@ -31,7 +27,7 @@ namespace Senparc.NeuChar.MessageHandlers
         public abstract IRequestMessageShortVideo NewRequestMessageShortVideo();
         public abstract IRequestMessageEvent NewRequestMessageEvent();
         public abstract IRequestMessageFile NewRequestMessageFile();
-
+        public abstract IRequestMessageMiniProgramPage NewRequestMessageMiniProgramPage();
 
 
         #endregion
