@@ -107,5 +107,10 @@ namespace Senparc.NeuChar.App.MessageHandlers
         {
             throw new MessageHandlerException("NeuChar-App SDK 不支持 IResponseMessageVoice 响应类型");
         }
+
+        public override IRequestMessageMiniProgramPage NewRequestMessageMiniProgramPage()
+        {
+            throw new MessageHandlerException("NeuChar-App SDK 不支持 IRequestMessageMiniProgramPage 响应类型");
+        }
     }
 }
