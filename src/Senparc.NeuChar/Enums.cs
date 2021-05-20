@@ -30,9 +30,10 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
     修改标识：Senparc - 20190105
     修改描述：v0.6.0 添加 PushNeuCharAppConfig 和 PullNeuCharAppConfig 消息类型
 
+    修改标识：Senparc - 20210520
+    修改描述：v1.4.100.8 添加 RequestMsgType 枚举添加 MiniProgramPage 类型
+
 ----------------------------------------------------------------*/
-
-
 
 using System;
 using System.Collections.Generic;
@@ -136,6 +137,7 @@ namespace Senparc.NeuChar
         Event = 7, //事件推送
         File = 8,//文件类型
 
+        MiniProgramPage=100,//小程序页面
 
         NeuChar = 999,//NeuChar请求
     }
