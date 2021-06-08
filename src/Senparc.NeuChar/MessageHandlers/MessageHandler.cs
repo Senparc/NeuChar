@@ -286,7 +286,7 @@ namespace Senparc.NeuChar.MessageHandlers
         /// 如果在执行OnExecuting()执行过程中设为True，则后续Execute()及OnExecuted()代码不会被执行。
         /// 建议在设为True的时候，给ResponseMessage赋值，以返回友好信息。
         /// </summary>
-        public bool CancelExcute { get; set; }
+        public bool CancelExecute { get; set; }
 
         /// <summary>
         /// 在构造函数中转换得到原始XML数据
@@ -428,7 +428,7 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <param name="cancelExecute">是否终止执行，默认为 true</param>
         protected void MarkRepeatedMessage(bool cancelExecute = true)
         {
-            CancelExcute = cancelExecute;//重复消息，默认取消执行
+            CancelExecute = cancelExecute;//重复消息，默认取消执行
             MessageIsRepeated = true;
         }
 
@@ -522,9 +522,9 @@ namespace Senparc.NeuChar.MessageHandlers
             PostModel = postModel;//PostModel 在当前类初始化过程中必须赋值
             RequestDocument = Init(postDataDocument, postModel);
 
-            if (CancelExcute)
+            if (CancelExecute)
             {
-                return;//Init 内可能会设置 CancelExcute 的值
+                return;//Init 内可能会设置 CancelExecute 的值
             }
 
             //TODO:提供异步的上下文及处理方法——构造函数中暂时无法直接使用异步方法
@@ -618,7 +618,7 @@ namespace Senparc.NeuChar.MessageHandlers
         }
 
         /// <summary>
-        /// 在 Execute() 之前运行，可以使用 CancelExcute=true 中断后续 Execute() 和 OnExecuted() 方法的执行
+        /// 在 Execute() 之前运行，可以使用 CancelExecute=true 中断后续 Execute() 和 OnExecuted() 方法的执行
         /// </summary>
         [Obsolete("请使用异步方法 OnExecutingAsync()", true)]
         public virtual void OnExecuting()
@@ -627,7 +627,7 @@ namespace Senparc.NeuChar.MessageHandlers
         }
 
         /// <summary>
-        /// <para>执行微信请求（如果没有被 CancelExcute=true 中断）</para>
+        /// <para>执行微信请求（如果没有被 CancelExecute=true 中断）</para>
         /// <para>注意：此方法仍然会优先执行异步重写方法（如：OnTextRequest()），只在未重写对应事件的异步方法时（如： OnTextRequestAsync()），尝试查找同步重写方法</para>
         /// </summary>
         [Obsolete("请使用异步方法 ExecuteAsync()")]
@@ -647,7 +647,7 @@ namespace Senparc.NeuChar.MessageHandlers
         }
 
         /// <summary>
-        /// 在 Execute() 之后运行（如果没有被 CancelExcute=true 中断）
+        /// 在 Execute() 之后运行（如果没有被 CancelExecute=true 中断）
         /// </summary>
         [Obsolete("请使用异步方法 OnExecutedAsync()", true)]
         public virtual void OnExecuted()

@@ -93,7 +93,7 @@ namespace Senparc.NeuChar.MessageHandlers
 
         public virtual async Task ExecuteAsync(CancellationToken cancellationToken)
         {
-            if (CancelExcute)
+            if (CancelExecute)
             {
                 return;
             }
@@ -101,7 +101,7 @@ namespace Senparc.NeuChar.MessageHandlers
             //消息去重
             CheckMessageRepeat();
 
-            if (CancelExcute)
+            if (CancelExecute)
             {
                 return;
             }
@@ -115,7 +115,7 @@ namespace Senparc.NeuChar.MessageHandlers
            
             await OnExecutingAsync(cancellationToken).ConfigureAwait(false);//Redis延迟：130ms（Demo示例中有需要使用缓存的逻辑代码）
 
-            if (CancelExcute)
+            if (CancelExecute)
             {
                 return;
             }
@@ -174,7 +174,6 @@ namespace Senparc.NeuChar.MessageHandlers
                 await apm.SetAsync(NeuCharApmKind.Message_ResponseMillisecond.ToString(),
                     (SystemTime.Now - this.ExecuteStatTime).TotalMilliseconds, tempStorage: OpenId).ConfigureAwait(false);//Redis延迟：<1ms
             }
-
         }
 
         public abstract Task BuildResponseMessageAsync(CancellationToken cancellationToken);
