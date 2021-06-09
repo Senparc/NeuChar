@@ -65,7 +65,7 @@ namespace Senparc.NeuChar.App.MessageHandlers
         /// </summary>
         private void MarkRepeatedMessage()
         {
-            CancelExcute = true;//重复消息，取消执行
+            CancelExecute = true;//重复消息，取消执行
             MessageIsRepeated = true;
         }
 
@@ -110,7 +110,7 @@ namespace Senparc.NeuChar.App.MessageHandlers
             //    if (result != 0)
             //    {
             //        //验证没有通过，取消执行
-            //        CancelExcute = true;
+            //        CancelExecute = true;
             //        return null;
             //    }
 

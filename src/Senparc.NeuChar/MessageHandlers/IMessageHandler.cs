@@ -74,7 +74,7 @@ namespace Senparc.NeuChar.MessageHandlers
         /// 如果在执行OnExecuting()执行过程中设为True，则后续Execute()及OnExecuted()代码不会被执行。
         /// 建议在设为True的时候，给ResponseMessage赋值，以返回友好信息。
         /// </summary>
-        bool CancelExcute { get; set; }
+        bool CancelExecute { get; set; }
 
 
         /// <summary>
