@@ -128,6 +128,7 @@ namespace Senparc.NeuChar.ApiBind
         /// <returns></returns>
         public IEnumerable<IGrouping<PlatformType, KeyValuePair<string, ApiBindInfo>>> GetGroupedCollection()
         {
+            //TODO: 这里通常是低频访问，如果高频可以另外做一个缓存
             var apiGroups = ApiBindInfoCollection.Instance.GroupBy(z => z.Value.ApiBindAttribute.PlatformType);
             return apiGroups;
         }
