@@ -156,6 +156,7 @@ namespace Senparc.NeuChar.NeuralSystems
         /// </summary>
         /// <param name="requestMessage"></param>
         /// <param name="responseConfig"></param>
+        /// <param name="enlighten"></param>
         /// <returns></returns>
         private IResponseMessageBase RenderResponseMessageText(IRequestMessageBase requestMessage, Response responseConfig, MessageEntityEnlightener enlighten)
         {
@@ -223,6 +224,7 @@ namespace Senparc.NeuChar.NeuralSystems
         /// </summary>
         /// <param name="requestMessage"></param>
         /// <param name="responseConfig"></param>
+        /// <param name="enlighten"></param>
         /// <returns></returns>
         private IResponseMessageBase RenderResponseMessageNoResponse(IRequestMessageBase requestMessage, Response responseConfig, MessageEntityEnlightener enlighten)
         {
@@ -235,6 +237,7 @@ namespace Senparc.NeuChar.NeuralSystems
         /// </summary>
         /// <param name="requestMessage"></param>
         /// <param name="responseConfig"></param>
+        /// <param name="enlighten"></param>
         /// <returns></returns>
         private IResponseMessageBase RenderResponseMessageSuccessResponse(IRequestMessageBase requestMessage, Response responseConfig, MessageEntityEnlightener enlighten)
         {
