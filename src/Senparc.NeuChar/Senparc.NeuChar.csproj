@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net45;netstandard2.0;netstandard2.1</TargetFrameworks>
-    <Version>1.4.400</Version>
+    <Version>1.5-beta1</Version>
     <AssemblyName>Senparc.NeuChar</AssemblyName>
     <RootNamespace>Senparc.NeuChar</RootNamespace>
     <FrameworkPathOverride Condition="'$(TargetFramework)' == 'net35'">$(Net35FrameworkPathOverride)</FrameworkPathOverride>
@@ -156,7 +156,7 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Senparc.CO2NET" Version="1.4.400" />
-    <PackageReference Include="Senparc.CO2NET.APM" Version="0.10.400" />
+    <PackageReference Include="Senparc.CO2NET" Version="1.5.0-beta1" />
+    <PackageReference Include="Senparc.CO2NET.APM" Version="0.11.0-beta1" />
   </ItemGroup>
 </Project>
