@@ -159,4 +159,14 @@
     <PackageReference Include="Senparc.CO2NET" Version="1.5.0-beta1" />
     <PackageReference Include="Senparc.CO2NET.APM" Version="0.11.0-beta1" />
   </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions">
+      <Version>5.0.0</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.1'">
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions">
+      <Version>5.0.0</Version>
+    </PackageReference>
+  </ItemGroup>
 </Project>

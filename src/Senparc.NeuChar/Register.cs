@@ -32,18 +32,22 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
               1、添加 PushNeuCharAppConfig 和 PullNeuCharAppConfig 消息类型
               2、RegisterApiBind() 方法添加 forceBindAgain() 参数
 
+    修改标识：Senparc - 20210705
+    修改描述：v1.5 重构到 CO2NET 的 WebApiEngine
 ----------------------------------------------------------------*/
 
 using Senparc.CO2NET.Cache;
 using Senparc.CO2NET.Trace;
-using Senparc.NeuChar.ApiBind;
+using Senparc.CO2NET.ApiBind;
 using Senparc.NeuChar.NeuralSystems;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-
+#if !NET45
+using Microsoft.Extensions.DependencyInjection;
+#endif
 namespace Senparc.NeuChar
 {
     /// <summary>
@@ -52,14 +56,9 @@ namespace Senparc.NeuChar
     public static class Register
     {
         /// <summary>
-        /// 是否API绑定已经执行完
-        /// </summary>
-        public static bool RegisterApiBindFinished { get; private set; } = false;
-
-        /// <summary>
         /// 节点类型注册集合
         /// </summary>
-        public static Dictionary<string, Type> NeuralNodeRegisterCollection = new Dictionary<string, Type>();
+        public static Dictionary<string, Type> NeuralNodeRegisterCollection { get; set; } = new Dictionary<string, Type>();
         //TODO: public static Dictionary<string, Type> NeuralNodeRegisterCollection { get; set; } = new Dictionary<string, Type>();
 
 
@@ -72,6 +71,26 @@ namespace Senparc.NeuChar
             RegisterNeuralNode("AppDataNode", typeof(AppDataNode));
         }
 
+#if NET45
+        /// <summary>
+        /// 注册 NeuChar
+        /// </summary>
+        /// <returns></returns>
+        public static void UseNeuChar()
+        {
+        }
+#else
+        /// <summary>
+        /// 注册 NeuChar
+        /// </summary>
+        /// <param name="services"></param>
+        /// <returns></returns>
+        public static IServiceCollection UseNeuChar(this IServiceCollection services)
+        {
+            return services;
+        }
+#endif
+
         /// <summary>
         /// 注册节点
         /// </summary>
@@ -80,80 +99,6 @@ namespace Senparc.NeuChar
         public static void RegisterNeuralNode(string name, Type type)
         {
             NeuralNodeRegisterCollection[name] = type;
-        }
-
-        /// <summary>
-        /// RegisterApiBind 执行锁
-        /// </summary>
-        private static object RegisterApiBindLck = new object();
-
-        /// <summary>
-        /// 自动扫描并注册 ApiBind
-        /// </summary>
-        /// <param name="forceBindAgain">是否强制重刷新</param>
-        public static void RegisterApiBind(bool forceBindAgain)
-        {
-            var dt1 = SystemTime.Now;
-
-            //var cacheStragegy = CacheStrategyFactory.GetObjectCacheStrategyInstance();
-            //using (cacheStragegy.BeginCacheLock("Senparc.NeuChar.Register", "RegisterApiBind"))
-            lock (RegisterApiBindLck)//由于使用的是本地内存进行记录，所以这里不需要使用同步锁，这样就不需要依“缓存注册”等先决条件
-            {
-                if (RegisterApiBindFinished == true && forceBindAgain == false)
-                {
-                    Console.WriteLine($"RegisterApiBind has been finished, and doesn't require [forceBindAgain]. Quit build.");
-
-                    return;
-                }
-
-                //查找所有扩展缓存
-                var scanTypesCount = 0;
-
-                var assembiles = AppDomain.CurrentDomain.GetAssemblies();
-
-                var errorCount = 0;
-
-                foreach (var assembly in assembiles)
-                {
-                    try
-                    {
-                        scanTypesCount++;
-                        var classTypes = assembly.GetTypes()
-                                    .Where(z => z.Name.EndsWith("api", StringComparison.OrdinalIgnoreCase) ||
-                                                z.Name.EndsWith("apis", StringComparison.OrdinalIgnoreCase))
-                                    .ToArray();
-
-                        foreach (var type in classTypes)
-                        {
-                            if (/*type.IsAbstract || 静态类会被识别为 IsAbstract*/
-                                !type.IsPublic || !type.IsClass || type.IsEnum)
-                            {
-                                continue;
-                            }
-
-                            var methods = type.GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod);
-                            foreach (var method in methods)
-                            {
-                                var attrs = method.GetCustomAttributes(typeof(ApiBindAttribute), false);
-                                foreach (var attr in attrs)
-                                {
-                                    ApiBindInfoCollection.Instance.Add(method, attr as ApiBindAttribute);
-                                }
-                            }
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        errorCount++;
-                        SenparcTrace.SendCustomLog("RegisterApiBind() 自动扫描程序集报告（非程序异常）：" + assembly.FullName, ex.ToString());
-                    }
-                }
-
-                RegisterApiBindFinished = true;
-
-                var dt2 = SystemTime.Now;
-                Console.WriteLine($"RegisterApiBind Time: {(dt2 - dt1).TotalMilliseconds}ms, Api Count:{ApiBindInfoCollection.Instance.Count()}, Error Count: {errorCount}");
-            }
         }
     }
 }

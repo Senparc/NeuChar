@@ -12,8 +12,8 @@ namespace Senparc.NeuChar.Tests
 {
     public class BaseTest
     {
-        protected static IRegisterService registerService;
-
+        protected  IRegisterService registerService;
+        protected  IServiceCollection serviceCollection;
         public BaseTest()
         {
             RegisterServiceCollection();
@@ -24,9 +24,9 @@ namespace Senparc.NeuChar.Tests
         /// <summary>
         /// 注册 IServiceCollection 和 MemoryCache
         /// </summary>
-        public static void RegisterServiceCollection()
+        public  void RegisterServiceCollection()
         {
-            var serviceCollection = new ServiceCollection();
+            serviceCollection = new ServiceCollection();
             var configBuilder = new ConfigurationBuilder();
             var config = configBuilder.Build();
             serviceCollection.AddSenparcGlobalServices(config);
@@ -36,7 +36,7 @@ namespace Senparc.NeuChar.Tests
         /// <summary>
         /// 注册 RegisterService.Start()
         /// </summary>
-        public static void RegisterServiceStart(bool autoScanExtensionCacheStrategies = false)
+        public  void RegisterServiceStart(bool autoScanExtensionCacheStrategies = false)
         {
             //注册
             var mockEnv = new Mock<Microsoft.Extensions.Hosting.IHostEnvironment/*IHostingEnvironment*/>();

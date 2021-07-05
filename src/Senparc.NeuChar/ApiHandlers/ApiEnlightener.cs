@@ -32,7 +32,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 ----------------------------------------------------------------*/
 
 using Senparc.CO2NET.Helpers;
-using Senparc.NeuChar.ApiBind;
+using Senparc.CO2NET.ApiBind;
 using Senparc.NeuChar.Enlightener;
 using Senparc.NeuChar.Entities;
 using Senparc.NeuChar.Exceptions;
@@ -41,6 +41,7 @@ using Senparc.NeuChar.NeuralSystems;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Senparc.CO2NET;
 
 namespace Senparc.NeuChar.ApiHandlers
 {
@@ -103,7 +104,7 @@ namespace Senparc.NeuChar.ApiHandlers
             }
 
             //查找映射
-            ApiBindInfo apiBindInfo = ApiBindInfoCollection.Instance.Get(PlatformType, apiBindJson.name);
+            ApiBindInfo apiBindInfo = ApiBindInfoCollection.Instance.Get(PlatformType.ToString(), apiBindJson.name);
             if (apiBindInfo == null)
             {
                 throw new NeuCharException($"自定义API未找到，名称：{apiBindJson.name}");
