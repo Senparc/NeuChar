@@ -76,7 +76,7 @@ namespace Senparc.NeuChar
         /// 注册 NeuChar
         /// </summary>
         /// <returns></returns>
-        public static void UseNeuChar()
+        public static void AddNeuChar()
         {
         }
 #else
@@ -85,7 +85,7 @@ namespace Senparc.NeuChar
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
-        public static IServiceCollection UseNeuChar(this IServiceCollection services)
+        public static IServiceCollection AddNeuChar(this IServiceCollection services)
         {
             return services;
         }
