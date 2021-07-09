@@ -29,6 +29,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 
     修改标识：Senparc - 20210705
     修改描述：v1.5 重构到 CO2NET 的 WebApiEngine
+
 ----------------------------------------------------------------*/
 
 using System;
@@ -39,7 +40,7 @@ namespace Senparc.NeuChar
     /// 自动绑定属性
     /// </summary>
     [AttributeUsage(AttributeTargets.Method, Inherited = true, AllowMultiple = true)]
-    public class ApiBindAttribute : Senparc.CO2NET.ApiBindAttribute
+    public class NcApiBindAttribute : Senparc.CO2NET.ApiBindAttribute
     {
         ///// <summary>
         ///// 平台类型
@@ -59,7 +60,7 @@ namespace Senparc.NeuChar
         /// <summary>
         /// ApiBindAttributes 构造函数
         /// </summary>
-        public ApiBindAttribute() { }
+        public NcApiBindAttribute() { }
 
         /// <summary>
         /// ApiBindAttributes 构造函数
@@ -67,7 +68,7 @@ namespace Senparc.NeuChar
         /// <param name="platformType">平台类型</param>
         /// <param name="name">平台内唯一名称（如使用 PlatformType.General，请使用宇宙唯一名称）</param>
         /// <param name="needAccessToken">是否需要使用 AccessToken</param>
-        public ApiBindAttribute(PlatformType platformType, string name, bool needAccessToken)
+        public NcApiBindAttribute(PlatformType platformType, string name, bool needAccessToken)
             : base(platformType.ToString(), name)
         {
             //PlatformType = platformType;

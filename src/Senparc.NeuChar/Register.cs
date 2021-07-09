@@ -71,7 +71,6 @@ namespace Senparc.NeuChar
             RegisterNeuralNode("AppDataNode", typeof(AppDataNode));
         }
 
-#if NET45
         /// <summary>
         /// 注册 NeuChar
         /// </summary>
@@ -79,7 +78,8 @@ namespace Senparc.NeuChar
         public static void AddNeuChar()
         {
         }
-#else
+
+#if !NET45
         /// <summary>
         /// 注册 NeuChar
         /// </summary>
