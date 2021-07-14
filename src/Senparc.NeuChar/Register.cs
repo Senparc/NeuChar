@@ -71,21 +71,21 @@ namespace Senparc.NeuChar
             RegisterNeuralNode("AppDataNode", typeof(AppDataNode));
         }
 
-#if NET45
         /// <summary>
         /// 注册 NeuChar
         /// </summary>
         /// <returns></returns>
-        public static void UseNeuChar()
+        public static void AddNeuChar()
         {
         }
-#else
+
+#if !NET45
         /// <summary>
         /// 注册 NeuChar
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
-        public static IServiceCollection UseNeuChar(this IServiceCollection services)
+        public static IServiceCollection AddNeuChar(this IServiceCollection services)
         {
             return services;
         }

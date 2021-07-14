@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net45;netstandard2.0;netstandard2.1</TargetFrameworks>
-    <Version>0.5-beta1</Version>
+    <Version>0.5-preview1</Version>
     <AssemblyName>Senparc.NeuChar.AspNet</AssemblyName>
     <RootNamespace>Senparc.NeuChar.AspNet</RootNamespace>
     <FrameworkPathOverride Condition="'$(TargetFramework)' == 'net35'">$(Net35FrameworkPathOverride)</FrameworkPathOverride>
@@ -53,7 +53,7 @@
     <DocumentationFile>..\..\BuildOutPut\netstandard2.1\Senparc.NeuChar.AspNet.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Senparc.CO2NET.AspNet" Version="0.6.0-beta1" />
+    <PackageReference Include="Senparc.CO2NET.AspNet" Version="0.6.0-preview1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Senparc.NeuChar.App\Senparc.NeuChar.App.csproj" />

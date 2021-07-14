@@ -9,7 +9,7 @@ namespace Senparc.NeuChar.Tests
 
     public static class TestApi
     {
-        [ApiBind(PlatformType.WeChat_OfficialAccount, "CustomApi.SendText", true)]
+        [NcApiBind(PlatformType.WeChat_OfficialAccount, "CustomApi.SendText", true)]
         public static void MethodForTest(string accessTokenOrApi,string p1,string p2)
         {
             Console.WriteLine($"accessTokenOrApi:{accessTokenOrApi} , p1:{p1} , p2 {p2}");
@@ -22,7 +22,7 @@ namespace Senparc.NeuChar.Tests
         [TestMethod]
         public void RegisterApiBindTest()
         {
-            base.serviceCollection.UseNeuChar();
+            base.serviceCollection.AddNeuChar();
 
             Assert.IsTrue(Register.NeuralNodeRegisterCollection.Count > 0);
         }
