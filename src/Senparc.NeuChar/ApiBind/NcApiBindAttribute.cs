@@ -39,7 +39,7 @@ namespace Senparc.NeuChar
     /// <summary>
     /// 自动绑定属性
     /// </summary>
-    [AttributeUsage(AttributeTargets.Method, Inherited = true, AllowMultiple = true)]
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = true, AllowMultiple = true)]
     public class NcApiBindAttribute : Senparc.CO2NET.ApiBindAttribute
     {
         /// <summary>
