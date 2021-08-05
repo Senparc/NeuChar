@@ -87,6 +87,7 @@ namespace Senparc.NeuChar.Context
                     //TODO: 由于某些系统的全局设置，为 null 的参数可能会被忽略，因此需要对每一个参数进行存在性判断。
 
                     //messageContext.UserName = item["UserName"].Value<string>();
+                    messageContext.AppId = item.TryGetValue<string>("AppId");//
                     messageContext.UserName = item.TryGetValue<string>("UserName");//新方法，避免出现 null 异常
                     messageContext.LastActiveTime = GetDateTimeOffset(item["LastActiveTime"]);
                     messageContext.ThisActiveTime = GetDateTimeOffset(item["ThisActiveTime"]);
