@@ -166,7 +166,8 @@ namespace Senparc.NeuChar
         //transfer_customer_service
         [Description("素材多图文")]
         MpNews = 7,//素材多图文
-
+        [Description("任务卡片")]
+        TaskCard = 8,
 
 
         //以下为延伸类型，微信官方并未提供具体的回复类型
