@@ -178,10 +178,11 @@ namespace Senparc.NeuChar.Context
         /// </summary>
         /// <param name="appId">主体id（企业id，公众平台主体appid 用于分隔缓存数据）</param>
         /// <param name="userName"></param>
+        /// <param name="business">分隔缓存的业务编码</param>
         /// <returns></returns>
-        private string GetCacheKey(string appId,string userName)
+        private string GetCacheKey(string appId,string userName, string business)
         {
-            return $"{MessageContextGlobalConfig.CACHE_KEY_PREFIX}{appId}:{userName}";
+            return $"{MessageContextGlobalConfig.CACHE_KEY_PREFIX}{appId}{business}:{userName}";
         }
 
         /// <summary>
@@ -206,7 +207,7 @@ namespace Senparc.NeuChar.Context
             var cache = CacheStrategyFactory.GetObjectCacheStrategyInstance();
 
             //删除所有键
-            var finalKeyPrefix = cache.GetFinalKey(GetCacheKey("",""));
+            var finalKeyPrefix = cache.GetFinalKey(GetCacheKey("","",""));
             var allObjects = cache.GetAll();
             var messageContextObjects = allObjects.Where(z => z.Key.StartsWith(finalKeyPrefix, StringComparison.Ordinal)).ToList();
             foreach (var item in messageContextObjects)
@@ -225,12 +226,13 @@ namespace Senparc.NeuChar.Context
         /// </summary>
         /// <param name="appId">主体id（企业id，公众平台主体appid 用于分隔缓存数据）</param>
         /// <param name="userName">用户名（OpenId）</param>
+        /// <param name="business">分隔缓存的业务编码</param>
         /// <param name="createIfNotExists">true：如果用户不存在，则创建一个实例，并返回这个最新的实例
         /// false：如用户不存在，则返回null</param>
         /// <returns></returns>
-        private TMC GetMessageContext(string appId,string userName, bool createIfNotExists)
+        private TMC GetMessageContext(string appId,string userName,string business, bool createIfNotExists)
         {
-            var messageContext = GetMessageContext(appId,userName);
+            var messageContext = GetMessageContext(appId,userName, business);
 
             if (messageContext == null)
             {
@@ -245,7 +247,7 @@ namespace Senparc.NeuChar.Context
                     };
 
                     var cache = CacheStrategyFactory.GetObjectCacheStrategyInstance();
-                    var cacheKey = this.GetCacheKey(appId,userName);
+                    var cacheKey = this.GetCacheKey(appId,userName, business);
                     var expireTime = GetExpireTimeSpan();
                     cache.Set(cacheKey, newMessageContext, expireTime);//插入单用户上下文的原始缓存对象
                     //messageContext = GetMessageContext(userName);//注意！！这里如果使用Redis等分布式缓存立即从缓存读取，可能会因为还没有存入，发生为null的情况
@@ -265,14 +267,15 @@ namespace Senparc.NeuChar.Context
         /// </summary>
         /// <param name="appId">主体id（企业id，公众平台主体appid 用于分隔缓存数据）</param>
         /// <param name="userName">用户名（OpenId）</param>
+        /// <param name="business">分隔缓存的业务编码</param>
         /// <returns></returns>
-        public TMC GetMessageContext(string appId,string userName)
+        public TMC GetMessageContext(string appId,string userName,string business)
         {
             //以下为新版本代码
             var cache = CacheStrategyFactory.GetObjectCacheStrategyInstance();
-            using (cache.BeginCacheLock(MessageContextGlobalConfig.MESSAGE_CONTENT_ITEM_LOCK_NAME, $"GetMessageContext-{appId}-{userName}"))
+            using (cache.BeginCacheLock(MessageContextGlobalConfig.MESSAGE_CONTENT_ITEM_LOCK_NAME, $"GetMessageContext-{appId}{business}-{userName}"))
             {
-                var cacheKey = this.GetCacheKey(appId,userName);
+                var cacheKey = this.GetCacheKey(appId,userName, business);
 
                 //注意：这里如果直接反序列化成 TMC，将无法保存类型，需要使用JsonConverter
 
@@ -319,7 +322,7 @@ namespace Senparc.NeuChar.Context
             {
                 throw new NullReferenceException($"{nameof(requestMessage)} 不能为空");
             }
-            return GetMessageContext(requestMessage.ToUserName,requestMessage.FromUserName, true);
+            return GetMessageContext(requestMessage.ToUserName,requestMessage.FromUserName,requestMessage.GetRepeatedBusiness, true);
         }
 
         /// <summary>
@@ -328,7 +331,7 @@ namespace Senparc.NeuChar.Context
         /// <returns></returns>
         public TMC GetMessageContext(TResponse responseMessage)
         {
-            return GetMessageContext(responseMessage.FromUserName,responseMessage.ToUserName, true);
+            return GetMessageContext(responseMessage.FromUserName,responseMessage.ToUserName,responseMessage.GetRepeatedBusiness, true);
         }
 
         /// <summary>
@@ -345,10 +348,11 @@ namespace Senparc.NeuChar.Context
 
             var userName = requestMessage.FromUserName;
             var appId = requestMessage.ToUserName;
+            var business = requestMessage.GetRepeatedBusiness;
             var cache = CacheStrategyFactory.GetObjectCacheStrategyInstance();
-            using (cache.BeginCacheLock(MessageContextGlobalConfig.MESSAGE_CONTENT_ITEM_LOCK_NAME, $"InsertMessage-{appId}-{userName}"))
+            using (cache.BeginCacheLock(MessageContextGlobalConfig.MESSAGE_CONTENT_ITEM_LOCK_NAME, $"InsertMessage-{appId}{business}-{userName}"))
             {
-                messageContext = messageContext ?? GetMessageContext(appId,userName, true);
+                messageContext = messageContext ?? GetMessageContext(appId,userName,business,true);
                 //if (messageContext.RequestMessages.Count > 0)
                 //{
                 //    //如果不是新建的对象，把当前对象移到队列尾部（新对象已经在底部）
@@ -374,7 +378,7 @@ namespace Senparc.NeuChar.Context
 
                 messageContext.RequestMessages.Add(requestMessage);//录入消息（最大纪录限制会自动处理）
 
-                var cacheKey = GetCacheKey(appId,userName);
+                var cacheKey = GetCacheKey(appId,userName, business);
                 var expireTime = GetExpireTimeSpan();
                 cache.Set(cacheKey, messageContext, expireTime);
 
@@ -396,10 +400,11 @@ namespace Senparc.NeuChar.Context
 
             var userName = responseMessage.ToUserName;
             var appId = responseMessage.FromUserName;
+            var business = responseMessage.GetRepeatedBusiness;
             var cache = CacheStrategyFactory.GetObjectCacheStrategyInstance();
-            using (cache.BeginCacheLock(MessageContextGlobalConfig.MESSAGE_CONTENT_ITEM_LOCK_NAME, $"InsertMessage-{appId}-{userName}"))
+            using (cache.BeginCacheLock(MessageContextGlobalConfig.MESSAGE_CONTENT_ITEM_LOCK_NAME, $"InsertMessage-{appId}{business}-{userName}"))
             {
-                messageContext = messageContext ?? GetMessageContext(appId, userName, true);
+                messageContext = messageContext ?? GetMessageContext(appId, userName, business, true);
 
                 //判断约束有没有修改
                 if (messageContext.MaxRecordCount != this.MaxRecordCount)
@@ -408,7 +413,7 @@ namespace Senparc.NeuChar.Context
                 }
                 messageContext.ResponseMessages.Add(responseMessage);//录入消息（最大纪录限制会自动处理）
 
-                var cacheKey = GetCacheKey(appId, userName);
+                var cacheKey = GetCacheKey(appId, userName, business);
                 var expireTime = GetExpireTimeSpan();
 
                 cache.Set(cacheKey, messageContext, expireTime);
@@ -420,12 +425,12 @@ namespace Senparc.NeuChar.Context
         /// </summary>
         /// <param name="userName">用户名（OpenId）</param>
         /// <returns></returns>
-        public TRequest GetLastRequestMessage(string appId,string userName)
+        public TRequest GetLastRequestMessage(string appId,string userName,string business)
         {
             var cache = CacheStrategyFactory.GetObjectCacheStrategyInstance();
-            using (cache.BeginCacheLock(MessageContextGlobalConfig.MESSAGE_CONTENT_ITEM_LOCK_NAME, $"GetMessageContext-{appId}-{userName}"))
+            using (cache.BeginCacheLock(MessageContextGlobalConfig.MESSAGE_CONTENT_ITEM_LOCK_NAME, $"GetMessageContext-{appId}{business}-{userName}"))
             {
-                var messageContext = GetMessageContext(appId,userName, true);
+                var messageContext = GetMessageContext(appId,userName, business, true);
                 return messageContext.RequestMessages.LastOrDefault();
             }
         }
@@ -435,12 +440,12 @@ namespace Senparc.NeuChar.Context
         /// </summary>
         /// <param name="userName">用户名（OpenId）</param>
         /// <returns></returns>
-        public TResponse GetLastResponseMessage(string appId,string userName)
+        public TResponse GetLastResponseMessage(string appId,string userName,string business)
         {
             var cache = CacheStrategyFactory.GetObjectCacheStrategyInstance();
-            using (cache.BeginCacheLock(MessageContextGlobalConfig.MESSAGE_CONTENT_ITEM_LOCK_NAME, $"GetMessageContext-{appId}-{userName}"))
+            using (cache.BeginCacheLock(MessageContextGlobalConfig.MESSAGE_CONTENT_ITEM_LOCK_NAME, $"GetMessageContext-{appId}{business}-{userName}"))
             {
-                var messageContext = GetMessageContext(appId,userName, true);
+                var messageContext = GetMessageContext(appId,userName, business, true);
                 return messageContext.ResponseMessages.LastOrDefault();
             }
         }
@@ -453,10 +458,11 @@ namespace Senparc.NeuChar.Context
         {
             var userName = messageContext.UserName;
             var appId = messageContext.AppId;
+            var business = "";
             var cache = CacheStrategyFactory.GetObjectCacheStrategyInstance();
-            using (cache.BeginCacheLock(MessageContextGlobalConfig.MESSAGE_CONTENT_ITEM_LOCK_NAME, $"UpdateMessageContext-{appId}-{userName}"))
+            using (cache.BeginCacheLock(MessageContextGlobalConfig.MESSAGE_CONTENT_ITEM_LOCK_NAME, $"UpdateMessageContext-{appId}{business}-{userName}"))
             {
-                var cacheKey = GetCacheKey(appId,userName);
+                var cacheKey = GetCacheKey(appId,userName, business);
                 var expireTime = GetExpireTimeSpan();
                 cache.Set(cacheKey, messageContext, expireTime);
             }
@@ -474,7 +480,7 @@ namespace Senparc.NeuChar.Context
             var cache = CacheStrategyFactory.GetObjectCacheStrategyInstance();
 
             //删除所有键
-            var finalKeyPrefix = cache.GetFinalKey(GetCacheKey("",""));
+            var finalKeyPrefix = cache.GetFinalKey(GetCacheKey("","",""));
             var allObjects = await cache.GetAllAsync().ConfigureAwait(false);
             var messageContextObjects = allObjects.Where(z => z.Key.StartsWith(finalKeyPrefix, StringComparison.Ordinal)).ToList();
             foreach (var item in messageContextObjects)
@@ -493,12 +499,13 @@ namespace Senparc.NeuChar.Context
         /// </summary>
         /// <param name="appId">主体id（企业id，公众平台主体appid 用于分隔缓存数据）</param>
         /// <param name="userName">用户名（OpenId）</param>
+        /// <param name="business">分隔缓存的业务编码</param>
         /// <param name="createIfNotExists">true：如果用户不存在，则创建一个实例，并返回这个最新的实例
         /// false：如用户不存在，则返回null</param>
         /// <returns></returns>
-        private async Task<TMC> GetMessageContextAsync(string appId,string userName, bool createIfNotExists)
+        private async Task<TMC> GetMessageContextAsync(string appId,string userName,string business, bool createIfNotExists)
         {
-            var messageContext = await GetMessageContextAsync(appId, userName).ConfigureAwait(false);
+            var messageContext = await GetMessageContextAsync(appId, userName, business).ConfigureAwait(false);
 
             if (messageContext == null)
             {
@@ -513,7 +520,7 @@ namespace Senparc.NeuChar.Context
                     };
 
                     var cache = CacheStrategyFactory.GetObjectCacheStrategyInstance();
-                    var cacheKey = this.GetCacheKey(appId, userName);
+                    var cacheKey = this.GetCacheKey(appId, userName,business);
                     var expireTime = GetExpireTimeSpan();
                     await cache.SetAsync(cacheKey, newMessageContext, expireTime).ConfigureAwait(false);//插入单用户上下文的原始缓存对象
                     //messageContext = GetMessageContext(userName);//注意！！这里如果使用Redis等分布式缓存立即从缓存读取，可能会因为还没有存入，发生为null的情况
@@ -533,15 +540,16 @@ namespace Senparc.NeuChar.Context
         /// </summary>
         /// <param name="appId">主体id（企业id，公众平台主体appid 用于分隔缓存数据）</param>
         /// <param name="userName">用户名（OpenId）</param>
+        /// <param name="business">分隔缓存的业务编码</param>
         /// <returns></returns>
-        public async Task<TMC> GetMessageContextAsync(string appId, string userName)
+        public async Task<TMC> GetMessageContextAsync(string appId, string userName,string business)
         {
             //以下为新版本代码
             var cache = CacheStrategyFactory.GetObjectCacheStrategyInstance();
 
-            using (await cache.BeginCacheLockAsync(MessageContextGlobalConfig.MESSAGE_CONTENT_ITEM_LOCK_NAME, $"GetMessageContext-{appId}-{userName}").ConfigureAwait(false))
+            using (await cache.BeginCacheLockAsync(MessageContextGlobalConfig.MESSAGE_CONTENT_ITEM_LOCK_NAME, $"GetMessageContext-{appId}{business}-{userName}").ConfigureAwait(false))
             {
-                var cacheKey = this.GetCacheKey(appId,userName);
+                var cacheKey = this.GetCacheKey(appId,userName, business);
 
                 //注意：这里如果直接反序列化成 TMC，将无法保存类型，需要使用JsonConverter
 
@@ -588,7 +596,7 @@ namespace Senparc.NeuChar.Context
             {
                 throw new NullReferenceException($"{nameof(requestMessage)} 不能为空");
             }
-            return await GetMessageContextAsync(requestMessage.ToUserName,requestMessage.FromUserName, true).ConfigureAwait(false);
+            return await GetMessageContextAsync(requestMessage.ToUserName,requestMessage.FromUserName, requestMessage.GetRepeatedBusiness,true).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -597,7 +605,7 @@ namespace Senparc.NeuChar.Context
         /// <returns></returns>
         public async Task<TMC> GetMessageContextAsync(TResponse responseMessage)
         {
-            return await GetMessageContextAsync(responseMessage.FromUserName,responseMessage.ToUserName, true).ConfigureAwait(false);
+            return await GetMessageContextAsync(responseMessage.FromUserName,responseMessage.ToUserName,responseMessage.GetRepeatedBusiness, true).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -614,10 +622,11 @@ namespace Senparc.NeuChar.Context
 
             var appId = requestMessage.ToUserName;
             var userName = requestMessage.FromUserName;
+            var business = requestMessage.GetRepeatedBusiness;
             var cache = CacheStrategyFactory.GetObjectCacheStrategyInstance();
-            using (await cache.BeginCacheLockAsync(MessageContextGlobalConfig.MESSAGE_CONTENT_ITEM_LOCK_NAME, $"InsertMessage-{appId}-{userName}").ConfigureAwait(false))
+            using (await cache.BeginCacheLockAsync(MessageContextGlobalConfig.MESSAGE_CONTENT_ITEM_LOCK_NAME, $"InsertMessage-{appId}{business}-{userName}").ConfigureAwait(false))
             {
-                messageContext = messageContext ?? await GetMessageContextAsync(appId, userName, true).ConfigureAwait(false);
+                messageContext = messageContext ?? await GetMessageContextAsync(appId, userName, business, true).ConfigureAwait(false);
                 //if (messageContext.RequestMessages.Count > 0)
                 //{
                 //    //如果不是新建的对象，把当前对象移到队列尾部（新对象已经在底部）
@@ -643,7 +652,7 @@ namespace Senparc.NeuChar.Context
 
                 messageContext.RequestMessages.Add(requestMessage);//录入消息（最大纪录限制会自动处理）
 
-                var cacheKey = GetCacheKey(appId,userName);
+                var cacheKey = GetCacheKey(appId,userName,business);
                 var expireTime = GetExpireTimeSpan();
                 await cache.SetAsync(cacheKey, messageContext, expireTime).ConfigureAwait(false);
 
@@ -665,10 +674,11 @@ namespace Senparc.NeuChar.Context
 
             var appId = responseMessage.FromUserName;
             var userName = responseMessage.ToUserName;
+            var business = responseMessage.GetRepeatedBusiness;
             var cache = CacheStrategyFactory.GetObjectCacheStrategyInstance();
-            using (await cache.BeginCacheLockAsync(MessageContextGlobalConfig.MESSAGE_CONTENT_ITEM_LOCK_NAME, $"InsertMessage-{appId}-{userName}").ConfigureAwait(false))
+            using (await cache.BeginCacheLockAsync(MessageContextGlobalConfig.MESSAGE_CONTENT_ITEM_LOCK_NAME, $"InsertMessage-{appId}{business}-{userName}").ConfigureAwait(false))
             {
-                messageContext = messageContext ?? await GetMessageContextAsync(appId, userName, true).ConfigureAwait(false);
+                messageContext = messageContext ?? await GetMessageContextAsync(appId, userName, business, true).ConfigureAwait(false);
 
                 //判断约束有没有修改
                 if (messageContext.MaxRecordCount != this.MaxRecordCount)
@@ -677,7 +687,7 @@ namespace Senparc.NeuChar.Context
                 }
                 messageContext.ResponseMessages.Add(responseMessage);//录入消息（最大纪录限制会自动处理）
 
-                var cacheKey = GetCacheKey(appId, userName);
+                var cacheKey = GetCacheKey(appId, userName, business);
                 var expireTime = GetExpireTimeSpan();
 
                 await cache.SetAsync(cacheKey, messageContext, expireTime).ConfigureAwait(false);
@@ -687,14 +697,16 @@ namespace Senparc.NeuChar.Context
         /// <summary>
         /// 获取最新一条请求数据，如果不存在，则返回null
         /// </summary>
+        /// <param name="appId">appId</param>
         /// <param name="userName">用户名（OpenId）</param>
+        /// <param name="business">分隔缓存的业务编码</param>
         /// <returns></returns>
-        public async Task<TRequest> GetLastRequestMessageAsync(string appId,string userName)
+        public async Task<TRequest> GetLastRequestMessageAsync(string appId,string userName,string business)
         {
             var cache = CacheStrategyFactory.GetObjectCacheStrategyInstance();
-            using (await cache.BeginCacheLockAsync(MessageContextGlobalConfig.MESSAGE_CONTENT_ITEM_LOCK_NAME, $"GetMessageContext-{appId}-{userName}").ConfigureAwait(false))
+            using (await cache.BeginCacheLockAsync(MessageContextGlobalConfig.MESSAGE_CONTENT_ITEM_LOCK_NAME, $"GetMessageContext-{appId}{business}-{userName}").ConfigureAwait(false))
             {
-                var messageContext = await GetMessageContextAsync(appId,userName, true).ConfigureAwait(false);
+                var messageContext = await GetMessageContextAsync(appId,userName, business, true).ConfigureAwait(false);
                 return messageContext.RequestMessages.LastOrDefault();
             }
         }
@@ -704,12 +716,12 @@ namespace Senparc.NeuChar.Context
         /// </summary>
         /// <param name="userName">用户名（OpenId）</param>
         /// <returns></returns>
-        public async Task<TResponse> GetLastResponseMessageAsync(string appId, string userName)
+        public async Task<TResponse> GetLastResponseMessageAsync(string appId, string userName,string business)
         {
             var cache = CacheStrategyFactory.GetObjectCacheStrategyInstance();
-            using (await cache.BeginCacheLockAsync(MessageContextGlobalConfig.MESSAGE_CONTENT_ITEM_LOCK_NAME, $"GetMessageContext-{appId}-{userName}").ConfigureAwait(false))
+            using (await cache.BeginCacheLockAsync(MessageContextGlobalConfig.MESSAGE_CONTENT_ITEM_LOCK_NAME, $"GetMessageContext-{appId}{business}-{userName}").ConfigureAwait(false))
             {
-                var messageContext = await GetMessageContextAsync(appId,userName, true);
+                var messageContext = await GetMessageContextAsync(appId,userName, business, true);
                 return messageContext.ResponseMessages.LastOrDefault();
             }
         }
@@ -722,10 +734,11 @@ namespace Senparc.NeuChar.Context
         {
             var appId = messageContext.AppId;
             var userName = messageContext.UserName;
+            var business = "";
             var cache = CacheStrategyFactory.GetObjectCacheStrategyInstance();
-            using (await cache.BeginCacheLockAsync(MessageContextGlobalConfig.MESSAGE_CONTENT_ITEM_LOCK_NAME, $"UpdateMessageContext-{appId}-{userName}").ConfigureAwait(false))
+            using (await cache.BeginCacheLockAsync(MessageContextGlobalConfig.MESSAGE_CONTENT_ITEM_LOCK_NAME, $"UpdateMessageContext-{appId}{business}-{userName}").ConfigureAwait(false))
             {
-                var cacheKey = GetCacheKey(appId,userName);
+                var cacheKey = GetCacheKey(appId,userName, business);
                 var expireTime = GetExpireTimeSpan();
                 await cache.SetAsync(cacheKey, messageContext, expireTime).ConfigureAwait(false);
             }

@@ -440,7 +440,7 @@ namespace Senparc.NeuChar.MessageHandlers
         {
             var toUserName = (RequestMessage?.ToUserName) ?? SystemTime.NowTicks.ToString();//尽量获取真实数据，如果获取不到，可能是特殊消息，随机生成
             var openId = OpenId ?? SystemTime.NowTicks.ToString();//尽量获取真实数据，如果获取不到，可能是特殊消息，随机生成
-            var lockKey = $"{typeof(TMC)}-{MessageEntityEnlightener.PlatformType}-{toUserName}-{openId}";
+            var lockKey = $"{typeof(TMC)}-{MessageEntityEnlightener.PlatformType}{RequestMessage.GetRepeatedBusiness}-{toUserName}-{openId}";
             return lockKey;
         }
 
