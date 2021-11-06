@@ -27,6 +27,8 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
     
     创建标识：Senparc - 20190915
     
+    修改标识：Senparc - 20211107
+    修改描述：v1.6 优化事件去重缓存key和企业微信事件去重bug
 
 ----------------------------------------------------------------*/
 
@@ -87,6 +89,7 @@ namespace Senparc.NeuChar.Context
                     //TODO: 由于某些系统的全局设置，为 null 的参数可能会被忽略，因此需要对每一个参数进行存在性判断。
 
                     //messageContext.UserName = item["UserName"].Value<string>();
+                    messageContext.AppId = item.TryGetValue<string>("AppId");//
                     messageContext.UserName = item.TryGetValue<string>("UserName");//新方法，避免出现 null 异常
                     messageContext.LastActiveTime = GetDateTimeOffset(item["LastActiveTime"]);
                     messageContext.ThisActiveTime = GetDateTimeOffset(item["ThisActiveTime"]);

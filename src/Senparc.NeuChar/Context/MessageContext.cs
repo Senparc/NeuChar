@@ -41,7 +41,9 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
               1、提供支持分布式缓存的消息上下文（MessageContext）
               2、将 IMessageContext<TRequest, TResponse> 接口中 TRequest、TResponse 约束为 class
               3、IMessageContext 接口添加 GetRequestEntityMappingResult() 和 GetResponseEntityMappingResult() 方法
-
+    
+    修改标识：Senparc - 20211107
+    修改描述：v1.6 优化事件去重缓存key和企业微信事件去重bug
 ----------------------------------------------------------------*/
 
 /* 注意：修改此文件的借口和属性是，需要同步修改 MessageContextJsonConverter 中的赋值，否则可能导致上下文读取时属性值缺失 */
@@ -63,6 +65,10 @@ namespace Senparc.NeuChar.Context
         where TRequest : class, IRequestMessageBase
         where TResponse : class, IResponseMessageBase
     {
+        /// <summary>
+        /// 主体id 开发者微信号（企业id，公众平台主体appid 用于分隔缓存数据）
+        /// </summary>
+        string AppId { get; set; }
         /// <summary>
         /// 用户名（OpenID）
         /// </summary>
@@ -146,6 +152,11 @@ namespace Senparc.NeuChar.Context
     {
         private int _maxRecordCount;
 
+
+        /// <summary>
+        /// 主体id（企业id，公众平台主体appid 用于分隔缓存数据）
+        /// </summary>
+        public string AppId { get; set; }
         /// <summary>
         /// 用户识别ID（微信中为 OpenId）
         /// </summary>

@@ -39,7 +39,7 @@ using Senparc.CO2NET.Trace;
 using System.IO;
 using Senparc.NeuChar.App.Entities;
 using Senparc.CO2NET.AspNet.HttpUtility;
-#if NET45
+#if NET451
 using System.Web.Mvc;
 #else
 using Microsoft.AspNetCore.Mvc;
@@ -99,7 +99,7 @@ namespace Senparc.NeuChar.App.Controllers
             NeuCharAppMessageHandler messageHandler = null;
             try
             {
-#if NET45
+#if NET451
                 messageHandler = new NeuCharAppMessageHandler(Request.InputStream, postModel);
 #else
                 messageHandler = new NeuCharAppMessageHandler(Request.GetRequestMemoryStream(), postModel);

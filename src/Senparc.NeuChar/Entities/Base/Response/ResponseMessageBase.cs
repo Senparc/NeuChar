@@ -54,7 +54,16 @@ namespace Senparc.NeuChar.Entities
         //string Content { get; set; }
         //bool FuncFlag { get; set; }
 
+        /// <summary>
+        /// 除重业务代码，默认不填即可 通常设置企业微信事件 通常为事件类型
+        /// 使用场景：企业微信除重redis key 通常以企业分隔 从而锁key和事件缓存key 会把整个企业微信事件存入redis。所以新增业务编码减少储存 提升读写速度和区分锁 避免整个企业获取同一个锁key
+        /// </summary>
+        string RepeatedBusiness { get; set; }
 
+        /// <summary>
+        /// 默认空 如果没有则依然返回空 不影响原有，如果有值则返回横杠加业务，如-business
+        /// </summary>
+        string GetRepeatedBusiness { get; }
     }
 
     /// <summary>
@@ -70,6 +79,20 @@ namespace Senparc.NeuChar.Entities
         //{
         //    get { return ResponseMessageType.Text; }
         //}
+
+        /// <summary>
+        /// 除重业务代码，默认不填即可 通常设置企业微信事件
+        /// 使用场景：企业微信除重redis key 通常以企业分隔 从而锁key和事件缓存key 会把整个企业微信事件存入redis。所以新增业务编码减少储存 提升读写速度和区分锁 避免整个企业获取同一个锁key
+        /// </summary>
+        public virtual string RepeatedBusiness { get; set; }
+
+        public string GetRepeatedBusiness
+        {
+            get
+            {
+                return string.IsNullOrEmpty(RepeatedBusiness) ? "" : $"-{RepeatedBusiness}";
+            }
+        }
 
         /// <summary>
         /// 获取响应类型实例，并初始化
