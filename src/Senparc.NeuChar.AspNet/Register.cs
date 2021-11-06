@@ -15,7 +15,7 @@
 //{
 //    public static class Register
 //    {
-////#if NET45
+////#if NET451
 ////        /// <summary>
 ////        /// 注册 NeuChar
 ////        /// </summary>
