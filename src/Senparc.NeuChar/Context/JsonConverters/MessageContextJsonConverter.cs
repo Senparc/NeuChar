@@ -27,6 +27,8 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
     
     创建标识：Senparc - 20190915
     
+    修改标识：Senparc - 20211107
+    修改描述：v1.6 优化事件去重缓存key和企业微信事件去重bug
 
 ----------------------------------------------------------------*/
 

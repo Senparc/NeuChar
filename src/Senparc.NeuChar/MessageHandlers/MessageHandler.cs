@@ -70,6 +70,8 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
     修改标识：Senparc - 20210413
     修改描述：v1.3.300 修复消息去重过程中 CreateTime 判断的问题
 
+    修改标识：Senparc - 20211107
+    修改描述：v1.6 优化事件去重缓存key和企业微信事件去重bug
 
 ----------------------------------------------------------------*/
 
@@ -564,7 +566,9 @@ namespace Senparc.NeuChar.MessageHandlers
 
                     //企业微信request Encrypt字段用于保存消息签名，用于处理企业微信无msgId事件去重
                     if (MessageEntityEnlightener.PlatformType == PlatformType.WeChat_Work)
+                    {
                         RequestMessage.Encrypt = PostModel.Msg_Signature;
+                    }
 
                     if (omit &&
                         OmitRepeatedMessage &&
@@ -572,12 +576,12 @@ namespace Senparc.NeuChar.MessageHandlers
                          //&& !(RequestMessage is RequestMessageEvent_Merchant_Order)批量订单的MsgId可能会相同
                          )
                     {
-                        if(MessageEntityEnlightener.PlatformType == PlatformType.WeChat_Work)
+                        if (MessageEntityEnlightener.PlatformType == PlatformType.WeChat_Work)
                         {
                             //有msgId按msgId去重
                             if (RequestMessage.MsgId != 0)
                             {
-                                if(messageContext.RequestMessages.Any(i => i.MsgId == RequestMessage.MsgId))
+                                if (messageContext.RequestMessages.Any(i => i.MsgId == RequestMessage.MsgId))
                                     MarkRepeatedMessage();//标记为已重复
                             }
                             //没有msgId则按签名去重
@@ -604,7 +608,7 @@ namespace Senparc.NeuChar.MessageHandlers
                                 MarkRepeatedMessage();//标记为已重复
                             }
                         }
-                        
+
 
                         //判断特殊事件
                         if (!MessageIsRepeated && SpecialDeduplicationAction != null && SpecialDeduplicationAction(RequestMessage, this))
