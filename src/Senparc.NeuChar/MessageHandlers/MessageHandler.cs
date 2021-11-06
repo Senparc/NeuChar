@@ -404,7 +404,7 @@ namespace Senparc.NeuChar.MessageHandlers
         {
             get
             {
-#if !NET45
+#if !NET451
                 if (_serviceProvide == null)
                 {
                     _serviceProvide = Senparc.CO2NET.SenparcDI.GetServiceProvider();

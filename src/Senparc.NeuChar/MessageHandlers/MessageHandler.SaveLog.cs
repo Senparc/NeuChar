@@ -38,7 +38,7 @@ using Senparc.NeuChar.Entities;
 using Senparc.NeuChar.Exceptions;
 using System;
 using System.IO;
-#if NET35 || NET40 || NET45
+#if NET451
 using System.Web;
 #endif
 namespace Senparc.NeuChar.MessageHandlers
@@ -61,7 +61,7 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <returns></returns>
         public string GetLogPath()
         {
-            //#if NET35 || NET40 || NET45
+            //#if NET451
             //            var appDomainAppPath = HttpRuntime.AppDomainAppPath;
             //#else
             //            var appDomainAppPath = Senparc.CO2NET.Config.RootDictionaryPath; //dll所在目录：;
