@@ -102,7 +102,9 @@
 		3、增加服务号订阅通知事件Entity
 		v1.4.100.9 添加 RequestMessageMiniProgramPage 一系列类型和接口
 		v1.5 使用重构后的 API 引擎
-		v1.6 优化事件去重缓存key和企业微信事件去重bug
+		v1.6
+		1、优化事件去重缓存key和企业微信事件去重bug
+		2、新增任务卡片被动回复消息
 	</PackageReleaseNotes>
     <RepositoryUrl>https://github.com/Senparc/NeuChar</RepositoryUrl>
     <Configurations>Debug;Release;Test</Configurations>
