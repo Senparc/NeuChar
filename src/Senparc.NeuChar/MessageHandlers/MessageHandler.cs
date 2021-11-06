@@ -440,7 +440,7 @@ namespace Senparc.NeuChar.MessageHandlers
         {
             var toUserName = (RequestMessage?.ToUserName) ?? SystemTime.NowTicks.ToString();//尽量获取真实数据，如果获取不到，可能是特殊消息，随机生成
             var openId = OpenId ?? SystemTime.NowTicks.ToString();//尽量获取真实数据，如果获取不到，可能是特殊消息，随机生成
-            var lockKey = $"{typeof(TMC)}-{MessageEntityEnlightener.PlatformType}-{toUserName}-{openId}";
+            var lockKey = $"{typeof(TMC)}-{MessageEntityEnlightener.PlatformType}{RequestMessage.GetRepeatedBusiness}-{toUserName}-{openId}";
             return lockKey;
         }
 
@@ -561,27 +561,50 @@ namespace Senparc.NeuChar.MessageHandlers
                     #region 消息去重
 
                     var messageContext = GetCurrentMessageContext().ConfigureAwait(false).GetAwaiter().GetResult();
+
+                    //企业微信request Encrypt字段用于保存消息签名，用于处理企业微信无msgId事件去重
+                    if (MessageEntityEnlightener.PlatformType == PlatformType.WeChat_Work)
+                        RequestMessage.Encrypt = PostModel.Msg_Signature;
+
                     if (omit &&
                         OmitRepeatedMessage &&
                         messageContext.RequestMessages.Count > 0
                          //&& !(RequestMessage is RequestMessageEvent_Merchant_Order)批量订单的MsgId可能会相同
                          )
                     {
-                        //lastMessage必定有值（除非极端小的过期时间条件下，几乎不可能发生）
-                        var lastMessage = messageContext.RequestMessages.Last();
-
-                        if (
-                            //使用MsgId去重
-                            (lastMessage.MsgId != 0 && lastMessage.MsgId == RequestMessage.MsgId) ||
-                            //使用CreateTime去重（OpenId对象已经是同一个）
-                            (lastMessage.MsgId == RequestMessage.MsgId &&
-                             lastMessage.MsgType == RequestMessage.MsgType &&
-                             lastMessage.CreateTime != DateTimeOffset.MinValue && //https://github.com/Senparc/NeuChar/issues/121
-                             lastMessage.CreateTime == RequestMessage.CreateTime)
-                            )
+                        if(MessageEntityEnlightener.PlatformType == PlatformType.WeChat_Work)
                         {
-                            MarkRepeatedMessage();//标记为已重复
+                            //有msgId按msgId去重
+                            if (RequestMessage.MsgId != 0)
+                            {
+                                if(messageContext.RequestMessages.Any(i => i.MsgId == RequestMessage.MsgId))
+                                    MarkRepeatedMessage();//标记为已重复
+                            }
+                            //没有msgId则按签名去重
+                            else
+                            {
+                                if (messageContext.RequestMessages.Any(i => i.Encrypt == PostModel.Msg_Signature))
+                                    MarkRepeatedMessage();//标记为已重复
+                            }
                         }
+                        else
+                        {
+                            //lastMessage必定有值（除非极端小的过期时间条件下，几乎不可能发生）
+                            var lastMessage = messageContext.RequestMessages.Last();
+                            if (
+                                //使用MsgId去重
+                                (lastMessage.MsgId != 0 && lastMessage.MsgId == RequestMessage.MsgId) ||
+                                //使用CreateTime去重（OpenId对象已经是同一个）
+                                (lastMessage.MsgId == RequestMessage.MsgId &&
+                                 lastMessage.MsgType == RequestMessage.MsgType &&
+                                 lastMessage.CreateTime != DateTimeOffset.MinValue && //https://github.com/Senparc/NeuChar/issues/121
+                                 lastMessage.CreateTime == RequestMessage.CreateTime)
+                                )
+                            {
+                                MarkRepeatedMessage();//标记为已重复
+                            }
+                        }
+                        
 
                         //判断特殊事件
                         if (!MessageIsRepeated && SpecialDeduplicationAction != null && SpecialDeduplicationAction(RequestMessage, this))

@@ -64,6 +64,10 @@ namespace Senparc.NeuChar.Context
         where TResponse : class, IResponseMessageBase
     {
         /// <summary>
+        /// 主体id 开发者微信号（企业id，公众平台主体appid 用于分隔缓存数据）
+        /// </summary>
+        string AppId { get; set; }
+        /// <summary>
         /// 用户名（OpenID）
         /// </summary>
         string UserName { get; set; }
@@ -146,6 +150,11 @@ namespace Senparc.NeuChar.Context
     {
         private int _maxRecordCount;
 
+
+        /// <summary>
+        /// 主体id（企业id，公众平台主体appid 用于分隔缓存数据）
+        /// </summary>
+        public string AppId { get; set; }
         /// <summary>
         /// 用户识别ID（微信中为 OpenId）
         /// </summary>
