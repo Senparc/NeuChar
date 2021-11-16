@@ -1,22 +1,22 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="3.1.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.*" />
     <PackageReference Include="Moq" Version="4.*" />
     <PackageReference Include="MSTest.TestAdapter" Version="1.*" />
     <PackageReference Include="MSTest.TestFramework" Version="1.*" />
-    <PackageReference Include="Senparc.CO2NET.AspNet" Version="0.6.0-preview3" />
-    <PackageReference Include="Senparc.CO2NET.Cache.Redis" Version="3.11.0-preview3" />
-    <PackageReference Include="Senparc.Weixin.Cache.Redis" Version="2.11.1-preview1" />
-    <PackageReference Include="Senparc.Weixin.MP" Version="16.13.1-preview1" />
-    <PackageReference Include="Senparc.Weixin.WxOpen" Version="3.12.2-preview1" />
+    <PackageReference Include="Senparc.CO2NET.AspNet" Version="1.0.0" />
+    <PackageReference Include="Senparc.CO2NET.Cache.Redis" Version="4.0.0" />
+    <PackageReference Include="Senparc.Weixin.Cache.Redis" Version="2.13.0" />
+    <PackageReference Include="Senparc.Weixin.MP" Version="16.16.0" />
+    <PackageReference Include="Senparc.Weixin.WxOpen" Version="3.14.0" />
   </ItemGroup>
 
   <ItemGroup>
