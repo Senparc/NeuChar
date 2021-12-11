@@ -30,6 +30,9 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
     修改标识：Senparc - 20190912
     修改描述：v0.7.6 优化 MessageHandler.SaveResponseMessageLog() 方法
 
+    修改标识：Senparc - 20211211
+    修改描述：v2.0.1 SaveRequestMessageLog()、SaveResponseMessageLog() 升级异步写日志方法
+
 ----------------------------------------------------------------*/
 
 using Senparc.CO2NET.MessageQueue;
@@ -38,6 +41,8 @@ using Senparc.NeuChar.Entities;
 using Senparc.NeuChar.Exceptions;
 using System;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 #if NET451
 using System.Web;
 #endif
@@ -88,33 +93,50 @@ namespace Senparc.NeuChar.MessageHandlers
                 logPath = logPath ?? GetLogPath();
                 SenparcMessageQueue queue = new SenparcMessageQueue();
                 var key = Guid.NewGuid().ToString();
-                queue.Add(key, () =>
-                {
-                    if (this.RequestDocument != null)
-                    {
-                        this.RequestDocument.Save(Path.Combine(logPath, string.Format("{0}_Request_{1}_{2}.txt", _getRandomFileName(),
-                                              this.RequestMessage?.FromUserName,
-                                              this.RequestMessage?.MsgType)));
-                    }
-                    else
-                    {
-                        System.IO.File.WriteAllText(Path.Combine(logPath, string.Format("{0}_UntreatedRequest.txt", _getRandomFileName())),
-                                              this.TextResponseMessage);
-                    }
+                queue.Add(key, async () =>
+                 {
+                     if (this.RequestDocument != null)
+                     {
+                         var filePath = Path.Combine(logPath, string.Format("{0}_Request_{1}_{2}.txt", _getRandomFileName(),
+                                               this.RequestMessage?.FromUserName,
+                                               this.RequestMessage?.MsgType));
+#if NETSTANDARD2_1_OR_GREATER
+                         using (var fs = new FileStream(filePath, FileMode.CreateNew))
+                         {
+                             await this.RequestDocument.SaveAsync(fs, System.Xml.Linq.SaveOptions.None, new CancellationToken());
+                         }
+#else
+                        this.RequestDocument.Save(filePath);
+#endif
+                     }
+                     else
+                     {
+                         System.IO.File.WriteAllText(Path.Combine(logPath, string.Format("{0}_UntreatedRequest.txt", _getRandomFileName())),
+                                               this.TextResponseMessage);
+                     }
 
-                    if (this.UsingEncryptMessage && this.EcryptRequestDocument != null)
-                    {
-                        this.EcryptRequestDocument.Save(Path.Combine(logPath, string.Format("{0}_Request_Ecrypt_{1}_{2}.txt", _getRandomFileName(),
-                            this.RequestMessage.FromUserName,
-                            this.RequestMessage.MsgType)));
-                    }
-                });
+                     if (this.UsingEncryptMessage && this.EcryptRequestDocument != null)
+                     {
+                         var filePath = Path.Combine(logPath, string.Format("{0}_Request_Ecrypt_{1}_{2}.txt", _getRandomFileName(),
+                             this.RequestMessage.FromUserName,
+                             this.RequestMessage.MsgType));
+#if NETSTANDARD2_1_OR_GREATER
+                         using (var fs = new FileStream(filePath, FileMode.CreateNew))
+                         {
+                             await this.RequestDocument.SaveAsync(fs, System.Xml.Linq.SaveOptions.None, new CancellationToken());
+                         }
+#else
+                        this.EcryptRequestDocument.Save(filePath);
+#endif
+                     }
+                 });
             }
             catch (Exception ex)
             {
                 _ = new MessageHandlerException(ex.Message, ex);
             }
         }
+
 
         /// <summary>
         /// 保存响应信息
@@ -129,32 +151,54 @@ namespace Senparc.NeuChar.MessageHandlers
 
                 SenparcMessageQueue queue = new SenparcMessageQueue();
                 var key = Guid.NewGuid().ToString();
-                queue.Add(key, () =>
-                {
+                queue.Add(key, async () =>
+                 {
 
-                    if (this.ResponseDocument != null && this.ResponseDocument.Root != null)
-                    {
-                        this.ResponseDocument.Save(Path.Combine(logPath, string.Format("{0}_Response_{1}_{2}.txt", _getRandomFileName(),
-                            this.ResponseMessage?.ToUserName,
-                            this.ResponseMessage?.MsgType)));
-                    }
+                     if (this.ResponseDocument != null && this.ResponseDocument.Root != null)
+                     {
+                         var filePath = Path.Combine(logPath, string.Format("{0}_Response_{1}_{2}.txt", _getRandomFileName(), this.ResponseMessage?.ToUserName,
+                             this.ResponseMessage?.MsgType));
 
-                    if (this.UsingEncryptMessage &&
-                        this.FinalResponseDocument != null && this.FinalResponseDocument.Root != null)
-                    {
-                        //记录加密后的响应信息
-                        this.FinalResponseDocument.Save(Path.Combine(logPath, string.Format("{0}_Response_Final_{1}_{2}.txt", _getRandomFileName(),
-                            this.ResponseMessage?.ToUserName,
-                            this.ResponseMessage?.MsgType)));
-                    }
 
-                    if (this.ResponseDocument == null && this.TextResponseMessage != null)
-                    {
-                        System.IO.File.WriteAllText(Path.Combine(logPath, string.Format("{0}_TextResponse_{1}_{2}.txt", _getRandomFileName(),
-                            this.RequestMessage?.ToUserName,
-                            this.RequestMessage?.MsgType)), this.TextResponseMessage);
-                    }
-                });
+#if NETSTANDARD2_1_OR_GREATER
+                         using (var fs = new FileStream(filePath, FileMode.CreateNew))
+                         {
+                             await this.RequestDocument.SaveAsync(fs, System.Xml.Linq.SaveOptions.None, new CancellationToken());
+                         }
+#else
+                        this.RequestDocument.Save(filePath);
+#endif
+                     }
+
+                     if (this.UsingEncryptMessage &&
+                         this.FinalResponseDocument != null && this.FinalResponseDocument.Root != null)
+                     {
+                         //记录加密后的响应信息
+                         var filePath = Path.Combine(logPath, string.Format("{0}_Response_Final_{1}_{2}.txt", _getRandomFileName(), this.ResponseMessage?.ToUserName,
+                                     this.ResponseMessage?.MsgType));
+#if NETSTANDARD2_1_OR_GREATER
+                         using (var fs = new FileStream(filePath, FileMode.CreateNew))
+                         {
+                             await this.RequestDocument.SaveAsync(fs, System.Xml.Linq.SaveOptions.None, new CancellationToken());
+                         }
+#else
+                        this.FinalResponseDocument.Save(filePath);
+#endif
+                     }
+
+                     if (this.ResponseDocument == null && this.TextResponseMessage != null)
+                     {
+                         var filePath = Path.Combine(logPath, string.Format("{0}_TextResponse_{1}_{2}.txt", _getRandomFileName(),
+                             this.RequestMessage?.ToUserName,
+                             this.RequestMessage?.MsgType));
+
+#if NETSTANDARD2_1_OR_GREATER
+                         await System.IO.File.WriteAllTextAsync(filePath, this.TextResponseMessage);
+#else
+                         System.IO.File.WriteAllText(filePath,this.TextResponseMessage);
+#endif
+                     }
+                 });
             }
             catch (Exception ex)
             {

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFrameworks>net451;netstandard2.0;netstandard2.1</TargetFrameworks>
-		<Version>2.0</Version>
+		<Version>2.0.1</Version>
 		<AssemblyName>Senparc.NeuChar</AssemblyName>
 		<RootNamespace>Senparc.NeuChar</RootNamespace>
 		<!--<FrameworkPathOverride Condition="'$(TargetFramework)' == 'net35'">$(Net35FrameworkPathOverride)</FrameworkPathOverride>-->
@@ -107,6 +107,7 @@
 			v1.6
 			1、优化事件去重缓存key和企业微信事件去重bug
 			2、新增任务卡片被动回复消息
+			v2.0.1 SaveRequestMessageLog()、SaveResponseMessageLog() 升级异步写日志方法
 		</PackageReleaseNotes>
 		<RepositoryUrl>https://github.com/Senparc/NeuChar</RepositoryUrl>
 		<Configurations>Debug;Release;Test</Configurations>
