@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28803.156
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Senparc.NeuChar", "Senparc.NeuChar\Senparc.NeuChar.csproj", "{0E884956-6FD3-4346-A45E-09059E814F38}"
 EndProject
@@ -37,7 +37,6 @@ Global
 		{4F2EE047-FE72-4A6D-B741-5B374728072E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4F2EE047-FE72-4A6D-B741-5B374728072E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4F2EE047-FE72-4A6D-B741-5B374728072E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4F2EE047-FE72-4A6D-B741-5B374728072E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4F2EE047-FE72-4A6D-B741-5B374728072E}.Test|Any CPU.ActiveCfg = Debug|Any CPU
 		{4F2EE047-FE72-4A6D-B741-5B374728072E}.Test|Any CPU.Build.0 = Debug|Any CPU
 		{FEA00F7D-EB32-45A8-A846-888ACADCEC14}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
