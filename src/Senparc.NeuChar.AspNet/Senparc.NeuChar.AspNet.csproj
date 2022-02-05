@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFrameworks>net451;netstandard2.0;netstandard2.1</TargetFrameworks>
-		<Version>1.0.2</Version>
+		<Version>1.0.3</Version>
 		<AssemblyName>Senparc.NeuChar.AspNet</AssemblyName>
 		<RootNamespace>Senparc.NeuChar.AspNet</RootNamespace>
 		<FrameworkPathOverride Condition="'$(TargetFramework)' == 'net35'">$(Net35FrameworkPathOverride)</FrameworkPathOverride>
@@ -15,12 +15,12 @@
 		<PackageTags>NeuChar,Standard,json,yaml,xml,AspNet,AspNetCore</PackageTags>
 		<Authors>Jeffrey Su</Authors>
 		<Owners>Senparc</Owners>
-		<PackageLicenseUrl>https://github.com/Senparc/NeuChar/blob/master/LICENSE</PackageLicenseUrl>
+		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
 		<ProjectUrl>https://github.com/Senparc/NeuChar</ProjectUrl>
 		<Title>Senparc.NeuChar.AspNet.dll</Title>
 		<Summary>NeuChar 跨平台信息交互标准 for C#</Summary>
 		<PackageProjectUrl>https://github.com/Senparc/NeuChar</PackageProjectUrl>
-		<PackageIconUrl>http://sdk.weixin.senparc.com/Images/Logo.jpg</PackageIconUrl>
+		<PackageIcon>icon.jpg</PackageIcon>
 		<PackageReleaseNotes>
 			v0.1.100 创建 Senparc.NeuChar.AspNet，分离 ASP.NET Core 相关依赖
 			v0.4.100.8 更新 MessageHandler 中间件，提供 IServiceProvider 参数，并采用异步方法读取请求内容
@@ -54,7 +54,10 @@
 		<DocumentationFile>..\..\BuildOutPut\netstandard2.1\Senparc.NeuChar.AspNet.xml</DocumentationFile>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="Senparc.CO2NET.AspNet" Version="1.0.1" />
+		<None Include="..\Senparc.NeuChar\icon.jpg" Pack="true" Visible="false" PackagePath="" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Senparc.CO2NET.AspNet" Version="1.0.2" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\Senparc.NeuChar.App\Senparc.NeuChar.App.csproj" />
