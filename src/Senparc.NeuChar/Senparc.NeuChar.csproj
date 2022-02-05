@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFrameworks>net451;netstandard2.0;netstandard2.1</TargetFrameworks>
-		<Version>2.0.1</Version>
+		<Version>2.0.3</Version>
 		<AssemblyName>Senparc.NeuChar</AssemblyName>
 		<RootNamespace>Senparc.NeuChar</RootNamespace>
 		<!--<FrameworkPathOverride Condition="'$(TargetFramework)' == 'net35'">$(Net35FrameworkPathOverride)</FrameworkPathOverride>-->
@@ -12,16 +12,16 @@
 			NeuChar SDK 跨平台信息交互标准
 
 		</Description>
-		<Copyright>Senparc Copyright © 2004~2021</Copyright>
+		<Copyright>Senparc Copyright © 2004~2022</Copyright>
 		<PackageTags>NeuChar,Standard,json,yaml,xml</PackageTags>
 		<Authors>Jeffrey Su</Authors>
 		<Owners>Senparc</Owners>
-		<PackageLicenseUrl>https://github.com/Senparc/NeuChar/blob/master/LICENSE</PackageLicenseUrl>
+		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
 		<ProjectUrl>https://github.com/Senparc/NeuChar</ProjectUrl>
 		<Title>Senparc.NeuChar.dll</Title>
 		<Summary>NeuChar 跨平台信息交互标准 for C#</Summary>
 		<PackageProjectUrl>https://github.com/Senparc/NeuChar</PackageProjectUrl>
-		<PackageIconUrl>http://sdk.weixin.senparc.com/Images/Logo.jpg</PackageIconUrl>
+		<PackageIcon>icon.jpg</PackageIcon>
 		<PackageReleaseNotes>
 			v0.0.1 完成和微信公众号平台消息接口对接
 			v0.0.2 完成从 Senparc.Weixin 移植 MessageHandler 标准
@@ -138,6 +138,9 @@
 		<DocumentationFile>..\..\BuildOutPut\netstandard2.1\Senparc.NeuChar.xml</DocumentationFile>
 	</PropertyGroup>
 	<ItemGroup>
+		<None Include=".\icon.jpg" Pack="true" Visible="false" PackagePath="" />
+	</ItemGroup>
+	<ItemGroup>
 		<Compile Remove="Entities\WeChat\**" />
 		<Compile Remove="Exceptions\Middleware\**" />
 		<EmbeddedResource Remove="Entities\WeChat\**" />
@@ -163,8 +166,8 @@
 		<Folder Include="Properties\" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="Senparc.CO2NET" Version="2.0.0" />
-		<PackageReference Include="Senparc.CO2NET.APM" Version="1.0.0" />
+		<PackageReference Include="Senparc.CO2NET" Version="2.0.1" />
+		<PackageReference Include="Senparc.CO2NET.APM" Version="1.1.1" />
 	</ItemGroup>
 	<ItemGroup Condition="'$(TargetFramework)' != 'net451'">
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions">
