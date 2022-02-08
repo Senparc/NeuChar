@@ -190,7 +190,7 @@ namespace Senparc.NeuChar.Tests.Helpers
 
             EntityHelper.FillEntityWithXml(entity, doc);
 
-         
+
 
             Assert.IsTrue(entity.CopyrightCheckResult.Count == 2);
 
@@ -235,8 +235,8 @@ namespace Senparc.NeuChar.Tests.Helpers
             var entity = new RequestMessageEvent_SubscribeMsgPopupEvent();
 
             XDocument doc = XDocument.Parse(xml);
-            
-            
+
+
             EntityHelper.FillEntityWithXml(entity, doc);
 
 
@@ -248,7 +248,7 @@ namespace Senparc.NeuChar.Tests.Helpers
             Assert.IsTrue(entity.SubscribeMsgPopupEvent[0].PopupScene == 2);
         }
 
-        
+
         public class RequestMessageEvent_SubscribeMsgChangeEvent : RequestMessageBase
         {
             public List<SubscribeMsgChangeEvent> SubscribeMsgChangeEvent { get; set; }
@@ -279,8 +279,8 @@ namespace Senparc.NeuChar.Tests.Helpers
             var entity = new RequestMessageEvent_SubscribeMsgChangeEvent();
 
             XDocument doc = XDocument.Parse(xml);
-            
-            
+
+
             EntityHelper.FillEntityWithXml(entity, doc);
 
 
@@ -291,9 +291,9 @@ namespace Senparc.NeuChar.Tests.Helpers
 
             Assert.IsTrue(entity.SubscribeMsgChangeEvent[1].SubscribeStatusString == "reject");
         }
-        
-        
-        
+
+
+
         public class RequestMessageEvent_SubscribeMsgSentEvent : RequestMessageBase
         {
             public List<SubscribeMsgSentEvent> SubscribeMsgSentEvent { get; set; }
@@ -328,8 +328,8 @@ namespace Senparc.NeuChar.Tests.Helpers
             var entity = new RequestMessageEvent_SubscribeMsgSentEvent();
 
             XDocument doc = XDocument.Parse(xml);
-            
-            
+
+
             EntityHelper.FillEntityWithXml(entity, doc);
 
 
@@ -340,6 +340,59 @@ namespace Senparc.NeuChar.Tests.Helpers
 
             Assert.IsTrue(entity.SubscribeMsgSentEvent[0].MsgID == "1700827132819554304");
         }
-        
+
+        #region FillUnknowNodeTest
+
+        [TestMethod]
+        public void FillUnknowNodeTest()
+        {
+            var xml = @"
+<xml>
+  <ToUserName><![CDATA[wx7618c0a6d9358622]]></ToUserName>
+  <FromUserName><![CDATA[sys]]></FromUserName>
+  <CreateTime>1644320363</CreateTime>
+  <MsgType><![CDATA[event]]></MsgType>
+  <Event><![CDATA[sys_approval_change]]></Event>
+  <AgentID>3010040</AgentID>
+  <ApprovalInfo>
+    <SpNo>202202080001</SpNo>
+    <Applyer>
+      <UserId><![CDATA[001]]></UserId>
+      <Party><![CDATA[1]]></Party>
+    </Applyer>
+  </ApprovalInfo>
+</xml>
+";
+            var entity = new RequestMessageEvent_Unkown();
+
+            XDocument doc = XDocument.Parse(xml);
+
+            EntityHelper.FillEntityWithXml(entity, doc);
+
+            Assert.IsNotNull(entity.ApprovalInfo);
+            Assert.AreEqual(202202080001, entity.ApprovalInfo.SpNo);
+            Assert.IsNotNull(entity.ApprovalInfo.Applyer);
+            Assert.AreEqual("001", entity.ApprovalInfo.Applyer.UserId);
+        }
+
+        public class RequestMessageEvent_Unkown : RequestMessageBase
+        {
+            public ApprovalInfo ApprovalInfo { get; set; }
+        }
+
+        public class ApprovalInfo
+        {
+            public long SpNo { get; set; }
+            public Applyer Applyer { get; set; }
+        }
+        public class Applyer
+        {
+            public string UserId { get; set; }
+            public string Party { get; set; }
+        }
+
+        #endregion
+
+
     }
 }

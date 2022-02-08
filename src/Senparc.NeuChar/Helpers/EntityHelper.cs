@@ -89,7 +89,7 @@ namespace Senparc.NeuChar.Helpers
             {
                 throw new ArgumentNullException(nameof(entity));
             }
-            
+
             //entity = entity ?? new T();
 
             var props = entity.GetType().GetProperties();
@@ -224,20 +224,20 @@ namespace Senparc.NeuChar.Helpers
                                     }
                                     prop.SetValue(entity, list, null);
                                 }
-                                
+
                                 else if (genericArgumentTypeName == nameof(SubscribeMsgPopupEvent))
                                 {
                                     List<SubscribeMsgPopupEvent> list = new List<SubscribeMsgPopupEvent>();
                                     foreach (var item in root.Element(propName).Elements("List"))
                                     {
-                                        
+
                                         SubscribeMsgPopupEvent resultItem = new SubscribeMsgPopupEvent();
                                         FillEntityWithXml(resultItem, new XDocument(item));
                                         list.Add(resultItem);
                                     }
                                     prop.SetValue(entity, list, null);
                                 }
-                                
+
                                 else if (genericArgumentTypeName == nameof(SubscribeMsgSentEvent))
                                 {
                                     List<SubscribeMsgSentEvent> list = new List<SubscribeMsgSentEvent>();
@@ -249,9 +249,9 @@ namespace Senparc.NeuChar.Helpers
                                     }
                                     prop.SetValue(entity, list, null);
                                 }
-                                
-                                
-                                
+
+
+
                                 //企业微信
                                 else if (genericArguments[0].Name == "MpNewsArticle")
                                 {
@@ -322,8 +322,8 @@ namespace Senparc.NeuChar.Helpers
                         case "ArticleUrlResult_ResultList_Item":
                             FillClassValue<ArticleUrlResult_ResultList_Item>(entity, root, "item", prop);
                             break;
-                        
-                        
+
+
                         #region 企业号
                         /* 暂时放在Work.dll中
                                                 case "AgentType":
@@ -376,7 +376,22 @@ namespace Senparc.NeuChar.Helpers
 
                             if (!enumSuccess)
                             {
-                                prop.SetValue(entity, root.Element(propName).Value, null);
+                                try
+                                {
+                                    prop.SetValue(entity, root.Element(propName).Value, null);
+                                }
+                                catch
+                                {
+                                    try
+                                    {
+                                        prop.SetValue(entity, XmlUtility.Deserialize(prop.PropertyType, root.Element(propName).ToString()), null);
+                                    }
+                                    catch (Exception)
+                                    {
+                                        throw;
+                                    }
+
+                                }
                             }
                             break;
                     }
