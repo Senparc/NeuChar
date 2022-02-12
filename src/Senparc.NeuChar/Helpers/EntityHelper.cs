@@ -378,15 +378,17 @@ namespace Senparc.NeuChar.Helpers
                             {
                                 try
                                 {
+                                    //尝试以字符串形式赋值
                                     prop.SetValue(entity, root.Element(propName).Value, null);
                                 }
                                 catch
                                 {
                                     try
                                     {
-                                        prop.SetValue(entity, XmlUtility.Deserialize(prop.PropertyType, root.Element(propName).ToString()), null);
+                                        //尝试以节点名称对应类型赋值（包括节点在内的完整内容）
+                                        prop.SetValue(entity, XmlUtility.Deserialize(prop.PropertyType, root.Element(propName).ToString(), propName), null);
                                     }
-                                    catch (Exception)
+                                    catch
                                     {
                                         throw;
                                     }
