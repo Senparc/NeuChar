@@ -547,7 +547,7 @@ namespace Senparc.NeuChar.MessageHandlers
         #region 消息处理
 
         /// <summary>
-        /// 处理消息去重
+        /// 处理消息去重，如果非重复数据，则根据设置记入消息上下文
         /// </summary>
         public void CheckMessageRepeat()
         {
