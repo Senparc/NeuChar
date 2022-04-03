@@ -45,7 +45,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-#if !NET451
+#if !NET462
 using Microsoft.Extensions.DependencyInjection;
 #endif
 namespace Senparc.NeuChar
@@ -79,7 +79,7 @@ namespace Senparc.NeuChar
         {
         }
 
-#if !NET451
+#if !NET462
         /// <summary>
         /// 注册 NeuChar
         /// </summary>

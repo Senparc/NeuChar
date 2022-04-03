@@ -143,7 +143,7 @@ namespace Senparc.NeuChar.App.MessageHandlers
         public override Task BuildResponseMessageAsync(CancellationToken cancellationToken)
         {
             //不作处理
-#if NET451
+#if NET462
             return Task.Delay(0);
 #else
            return Task.CompletedTask;

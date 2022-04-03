@@ -207,7 +207,7 @@ namespace Senparc.NeuChar.NeuralSystems
                 try
                 {
                     IServiceProvider serviceProvider = null;
-#if !NET451
+#if !NET462
                     try
                     {
                         serviceProvider = Senparc.CO2NET.SenparcDI.GetServiceProvider();
