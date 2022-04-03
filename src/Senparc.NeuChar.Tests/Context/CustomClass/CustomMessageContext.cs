@@ -2,8 +2,6 @@
 using Senparc.NeuChar.Entities;
 using Senparc.Weixin.MP.Entities;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Xml.Linq;
 
 namespace Senparc.NeuChar.Tests.Context

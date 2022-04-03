@@ -43,7 +43,7 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-#if NET451
+#if NET462
 using System.Web;
 #endif
 namespace Senparc.NeuChar.MessageHandlers
@@ -66,7 +66,7 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <returns></returns>
         public string GetLogPath()
         {
-            //#if NET451
+            //#if NET462
             //            var appDomainAppPath = HttpRuntime.AppDomainAppPath;
             //#else
             //            var appDomainAppPath = Senparc.CO2NET.Config.RootDictionaryPath; //dll所在目录：;

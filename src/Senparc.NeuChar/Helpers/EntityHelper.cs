@@ -563,7 +563,7 @@ namespace Senparc.NeuChar.Helpers
                             root.Add(new XElement(propName, prop.GetValue(entity, null).ToString().ToLower()));
                             break;
                         default:
-#if NET451
+#if NET462
                             if (prop.PropertyType.IsClass && prop.PropertyType.IsPublic)
 #else
                             if (prop.PropertyType.GetTypeInfo().IsClass && prop.PropertyType.GetTypeInfo().IsPublic)
