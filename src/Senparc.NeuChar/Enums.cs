@@ -37,7 +37,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
     修改描述：v1.6 新增任务卡片被动回复消息
 
     修改标识：Senparc - 20220503
-    修改描述：v2.1.1 添加 article_id 菜单类型
+    修改描述：v2.1.1.1 添加 article_id 和 article_view_limited 菜单类型
 
 ----------------------------------------------------------------*/
 
@@ -300,9 +300,13 @@ namespace Senparc.NeuChar
         /// </summary>
         view_limited = 111,
         /// <summary>
-        /// article_id类型
+        /// article_id 类型。用户点击 article_id 类型按钮后，微信客户端将会以卡片形式，下发开发者在按钮中填写的图文消息。
         /// </summary>
         article_id = 112,
+        /// <summary>
+        /// article_view_limited 类型。类似 view_limited，但不使用 media_id 而使用 article_id。
+        /// </summary>
+        article_view_limited = 113,
     }
 
     public enum NeuCharApmKind
