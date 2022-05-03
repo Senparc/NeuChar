@@ -36,6 +36,9 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
     修改标识：Senparc - 20211107
     修改描述：v1.6 新增任务卡片被动回复消息
 
+    修改标识：Senparc - 20220503
+    修改描述：v2.1.1 添加 article_id 菜单类型
+
 ----------------------------------------------------------------*/
 
 using System;
@@ -295,7 +298,11 @@ namespace Senparc.NeuChar
         /// <summary>
         /// 跳转图文消息URL
         /// </summary>
-        view_limited = 111
+        view_limited = 111,
+        /// <summary>
+        /// article_id类型
+        /// </summary>
+        article_id = 112,
     }
 
     public enum NeuCharApmKind
