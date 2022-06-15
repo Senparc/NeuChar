@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net462;netstandard2.0;netstandard2.1</TargetFrameworks>
-    <Version>2.1.1.1</Version>
+    <Version>2.2.0</Version>
     <AssemblyName>Senparc.NeuChar</AssemblyName>
     <RootNamespace>Senparc.NeuChar</RootNamespace>
     <!--<FrameworkPathOverride Condition="'$(TargetFramework)' == 'net35'">$(Net35FrameworkPathOverride)</FrameworkPathOverride>-->
@@ -89,27 +89,28 @@
 			2、修复 MessageContext.GetRequestEntityMappingResult() 方法可能出现的空值情况
 			v1.0.102
 			1、优化 EntityHelper.FillEntityWithXml&lt;T&gt;() 方法
-			2、支持新版本 CO2NET
-			3、提供 MessageHandler 中间件
-			4、MessageAgent.RequestXml() 方法增加 autoFillUrlParameters 参数
-			v1.0.103 支持新版本 CO2NET
-			v1.0.104 优化 MessageHandler 同步方法兼容策略
-			v1.2.200 更新 Agents.RequestXml() 方法
-			v1.2.200.6 MessageHandler 添加 RecordResponseMessageSync 属性，用于设置是否同步向 MessageContext 写入 ResponseMessage，默认为否，将使用队列写入，提升响应速度
-			v1.2.201 MASSSENDJOBFINISH 事件增加 ArticleUrlResult 节点
-			v1.3.100 消息去重放入到 ExecuteAsync() 方法中处理
-			v1.3.201
-			1、MessageHandler MarkRepeatedMessage() 方法添加 cancelExecute 参数，默认为 true
-			2、消息去重增加对特殊 CreateTime 情况的判断 https://github.com/Senparc/NeuChar/issues/121
-			3、增加服务号订阅通知事件Entity
-			v1.4.100.9 添加 RequestMessageMiniProgramPage 一系列类型和接口
-			v1.5 使用重构后的 API 引擎
-			v1.6
-			1、优化事件去重缓存key和企业微信事件去重bug
-			2、新增任务卡片被动回复消息
-			v2.0.1 SaveRequestMessageLog()、SaveResponseMessageLog() 升级异步写日志方法
-			v2.1.1 添加 article_id 菜单类型
-</PackageReleaseNotes>
+		2、支持新版本 CO2NET
+		3、提供 MessageHandler 中间件
+		4、MessageAgent.RequestXml() 方法增加 autoFillUrlParameters 参数
+		v1.0.103 支持新版本 CO2NET
+		v1.0.104 优化 MessageHandler 同步方法兼容策略
+		v1.2.200 更新 Agents.RequestXml() 方法
+		v1.2.200.6 MessageHandler 添加 RecordResponseMessageSync 属性，用于设置是否同步向 MessageContext 写入 ResponseMessage，默认为否，将使用队列写入，提升响应速度
+		v1.2.201 MASSSENDJOBFINISH 事件增加 ArticleUrlResult 节点
+		v1.3.100 消息去重放入到 ExecuteAsync() 方法中处理
+		v1.3.201
+		1、MessageHandler MarkRepeatedMessage() 方法添加 cancelExecute 参数，默认为 true
+		2、消息去重增加对特殊 CreateTime 情况的判断 https://github.com/Senparc/NeuChar/issues/121
+		3、增加服务号订阅通知事件Entity
+		v1.4.100.9 添加 RequestMessageMiniProgramPage 一系列类型和接口
+		v1.5 使用重构后的 API 引擎
+		v1.6
+		1、优化事件去重缓存key和企业微信事件去重bug
+		2、新增任务卡片被动回复消息
+		v2.0.1 SaveRequestMessageLog()、SaveResponseMessageLog() 升级异步写日志方法
+		v2.1.1 添加 article_id 菜单类型
+		v2.2.0 RequestMessageTextKeywordHandler 添加异步方法
+	</PackageReleaseNotes>
     <RepositoryUrl>https://github.com/Senparc/NeuChar</RepositoryUrl>
     <Configurations>Debug;Release;Test</Configurations>
   </PropertyGroup>

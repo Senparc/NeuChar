@@ -118,6 +118,8 @@ namespace Senparc.NeuChar.Entities.Request
             return handler;
         }
 
+        #region 同步方法
+
         /// <summary>
         /// 获取最终响应消息
         /// </summary>
@@ -174,7 +176,7 @@ namespace Senparc.NeuChar.Entities.Request
         /// 匹配选择菜单关键词（对应微信的 SendMenu 接口）
         /// </summary>
         /// <param name="handler"></param>
-        /// <param name="keywords">多个关键词（匹配格式："s:[关键词]"）</param>
+        /// <param name="keyword">关键词</param>
         /// <param name="func"></param>
         /// <returns></returns>
         public static RequestMessageTextKeywordHandler SelectMenuKeyword(this RequestMessageTextKeywordHandler handler, string keyword, Func<IResponseMessageBase> func)
@@ -188,7 +190,7 @@ namespace Senparc.NeuChar.Entities.Request
             if (!handler.MatchSuccessed && !handler.SelectMenuId.IsNullOrWhiteSpace() &&
                ((handler.CaseSensitive && handler.SelectMenuId == finalKeyword ||
                (!handler.CaseSensitive && handler.SelectMenuId.ToUpper() == finalKeyword.ToUpper()))))
-                {
+            {
                 handler.MatchSuccessed = true;
                 handler.ResponseMessage = func();
             }
@@ -246,6 +248,108 @@ namespace Senparc.NeuChar.Entities.Request
             return handler;
         }
 
+        #endregion
+
+        #region 异步方法
+
+        /// <summary>
+        /// 【异步方法】匹配关键词
+        /// </summary>
+        /// <param name="handler"></param>
+        /// <param name="keyword">关键词</param>
+        /// <param name="func"></param>
+        /// <returns></returns>
+        public static async Task<RequestMessageTextKeywordHandler> Keyword(this RequestMessageTextKeywordHandler handler, string keyword, Func<Task<IResponseMessageBase>> func)
+        {
+            if (!handler.MatchSuccessed &&
+                ((handler.CaseSensitive && handler.Keyword == keyword) ||
+                (!handler.CaseSensitive && handler.Keyword.ToUpper() == keyword.ToUpper())))
+            {
+                handler.MatchSuccessed = true;
+                handler.ResponseMessage = await func();
+            }
+            return handler;
+        }
+
+        /// <summary>
+        /// 【异步方法】匹配关键词（只要有一个满足即可触发）
+        /// </summary>
+        /// <param name="handler"></param>
+        /// <param name="keywords">多个关键词</param>
+        /// <param name="func"></param>
+        /// <returns></returns>
+        public static async Task<RequestMessageTextKeywordHandler> Keywords(this RequestMessageTextKeywordHandler handler, string[] keywords, Func<Task<IResponseMessageBase>> func)
+        {
+            foreach (var keyword in keywords)
+            {
+                await handler.Keyword(keyword, func);
+            }
+            return handler;
+        }
+
+
+        /// <summary>
+        /// 【异步方法】匹配选择菜单关键词（对应微信的 SendMenu 接口）
+        /// </summary>
+        /// <param name="handler"></param>
+        /// <param name="keyword">关键词</param>
+        /// <param name="func"></param>
+        /// <returns></returns>
+        public static async Task<RequestMessageTextKeywordHandler> SelectMenuKeyword(this RequestMessageTextKeywordHandler handler, string keyword, Func<Task<IResponseMessageBase>> func)
+        {
+            if (!(handler.RequestMessage is IRequestMessageSelectMenu))
+            {
+                throw new Exceptions.MessageHandlerException($"当前请求类型 {handler.RequestMessage.GetType()} 未实现 {nameof(IRequestMessageSelectMenu)} 接口，因此无法使用此方法（{nameof(SelectMenuKeyword)}）。");
+            }
+
+            var finalKeyword = RequestMessageTextKeywordHandler.SELECT_MENU_KEWORD_FORMAT.FormatWith(keyword);
+            if (!handler.MatchSuccessed && !handler.SelectMenuId.IsNullOrWhiteSpace() &&
+               ((handler.CaseSensitive && handler.SelectMenuId == finalKeyword ||
+               (!handler.CaseSensitive && handler.SelectMenuId.ToUpper() == finalKeyword.ToUpper()))))
+            {
+                handler.MatchSuccessed = true;
+                handler.ResponseMessage = await func();
+            }
+            return handler;
+        }
+
+
+        /// <summary>
+        /// 【异步方法】匹配选择菜单关键词（对应微信的 SendMenu 接口）
+        /// </summary>
+        /// <param name="handler"></param>
+        /// <param name="keywords">多个关键词（匹配格式："s:[关键词]"）</param>
+        /// <param name="func"></param>
+        /// <returns></returns>
+        public static async Task<RequestMessageTextKeywordHandler> SelectMenuKeywords(this RequestMessageTextKeywordHandler handler, string[] keywords, Func<Task<IResponseMessageBase>> func)
+        {
+            foreach (var keyword in keywords)
+            {
+                await handler.SelectMenuKeyword(keyword, func);
+            }
+            return handler;
+        }
+
+        /// <summary>
+        /// 【异步方法】匹配正则表达式
+        /// </summary>
+        /// <param name="handler"></param>
+        /// <param name="pattern">正则表达式</param>
+        /// <param name="func"></param>
+        /// <returns></returns>
+        public static async Task<RequestMessageTextKeywordHandler> Regex(this RequestMessageTextKeywordHandler handler, string pattern, Func<Task<IResponseMessageBase>> func)
+        {
+            if (!handler.MatchSuccessed
+               && System.Text.RegularExpressions.Regex.IsMatch(handler.Keyword, pattern,
+                    handler.CaseSensitive ? RegexOptions.None : RegexOptions.IgnoreCase))
+            {
+                handler.MatchSuccessed = true;
+                handler.ResponseMessage = await func();
+            }
+            return handler;
+        }
+
+
         /// <summary>
         /// 【异步方法】默认消息
         /// </summary>
@@ -260,5 +364,7 @@ namespace Senparc.NeuChar.Entities.Request
             }
             return handler;
         }
+
+        #endregion
     }
 }
