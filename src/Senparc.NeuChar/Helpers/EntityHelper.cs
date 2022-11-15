@@ -102,10 +102,10 @@ namespace Senparc.NeuChar.Helpers
                 }
                 
                 //按断是否包含 IRequestTypeConvertor 接口
-                if (entity is IRequestTypeConvertor)
-                {
+                //if (entity is IRequestTypeConvertor)
+                //{
 
-                }
+                //}
 
                 var propName = prop.Name;
                 if (root.Element(propName) != null)
