@@ -93,11 +93,18 @@ namespace Senparc.NeuChar.Helpers
             //entity = entity ?? new T();
 
             var props = entity.GetType().GetProperties();
+
             foreach (var prop in props)
             {
                 if (!prop.CanWrite)
                 {
                     continue;//如果不可读则跳过
+                }
+                
+                //按断是否包含 IRequestTypeConvertor 接口
+                if (entity is IRequestTypeConvertor)
+                {
+
                 }
 
                 var propName = prop.Name;
@@ -249,8 +256,6 @@ namespace Senparc.NeuChar.Helpers
                                     }
                                     prop.SetValue(entity, list, null);
                                 }
-
-
 
                                 //企业微信
                                 else if (genericArguments[0].Name == "MpNewsArticle")
