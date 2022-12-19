@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net462;netstandard2.0;netstandard2.1</TargetFrameworks>
-    <Version>1.1.3.1</Version>
+    <Version>1.1.3.3</Version>
     <AssemblyName>Senparc.NeuChar.AspNet</AssemblyName>
     <RootNamespace>Senparc.NeuChar.AspNet</RootNamespace>
     <FrameworkPathOverride Condition="'$(TargetFramework)' == 'net35'">$(Net35FrameworkPathOverride)</FrameworkPathOverride>
@@ -57,7 +57,7 @@
     <None Include="..\Senparc.NeuChar\icon.jpg" Pack="true" Visible="false" PackagePath="" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Senparc.CO2NET.AspNet" Version="1.1.3.2" />
+    <PackageReference Include="Senparc.CO2NET.AspNet" Version="1.1.3.3" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Senparc.NeuChar.App\Senparc.NeuChar.App.csproj" />
