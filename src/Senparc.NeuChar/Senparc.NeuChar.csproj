@@ -167,8 +167,8 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Senparc.CO2NET" Version="2.1.4" />
-    <PackageReference Include="Senparc.CO2NET.APM" Version="1.2.3" />
+    <PackageReference Include="Senparc.CO2NET" Version="2.1.4.1" />
+    <PackageReference Include="Senparc.CO2NET.APM" Version="1.2.3.1" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' != 'net462'">
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions">
