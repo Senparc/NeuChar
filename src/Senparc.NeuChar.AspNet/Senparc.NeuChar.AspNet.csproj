@@ -11,7 +11,7 @@
     <Description>
 			NeuChar SDK 跨平台信息交互标准
 		</Description>
-    <Copyright>Senparc Copyright © 2004~2022</Copyright>
+    <Copyright>Senparc Copyright © 2004~2023</Copyright>
     <PackageTags>NeuChar,Standard,json,yaml,xml,AspNet,AspNetCore</PackageTags>
     <Authors>Jeffrey Su</Authors>
     <Owners>Senparc</Owners>
