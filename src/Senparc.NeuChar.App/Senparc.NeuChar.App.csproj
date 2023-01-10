@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net462;netstandard2.0;netstandard2.1</TargetFrameworks>
-    <Version>1.1.4.2</Version>
+    <Version>1.1.4.3</Version>
     <AssemblyName>Senparc.NeuChar.App</AssemblyName>
     <RootNamespace>Senparc.NeuChar.App</RootNamespace>
     <GeneratePackageOnBuild Condition=" '$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
@@ -11,7 +11,7 @@
 			NeuChar APP 以及 NeuChar Ending 的对接 SDK
 
 		</Description>
-    <Copyright>Senparc Copyright © 2004~2022</Copyright>
+    <Copyright>Senparc Copyright © 2004~2023</Copyright>
     <PackageTags>NeuChar,Standard,json,yaml,xml,ending,app</PackageTags>
     <Authors>Jeffrey Su</Authors>
     <Owners>Senparc</Owners>
