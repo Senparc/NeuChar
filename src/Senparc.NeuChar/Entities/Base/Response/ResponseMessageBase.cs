@@ -102,7 +102,7 @@ namespace Senparc.NeuChar.Entities
         /// <param name="msgType">响应类型</param>
         /// <returns></returns>
         //[Obsolete("建议使用CreateFromRequestMessage<T>(IRequestMessageBase requestMessage)取代此方法")]
-        private static IResponseMessageBase CreateFromRequestMessage(IRequestMessageBase requestMessage, ResponseMsgType msgType, MessageEntityEnlightener enlighten)
+        public static IResponseMessageBase CreateFromRequestMessage(IRequestMessageBase requestMessage, ResponseMsgType msgType, MessageEntityEnlightener enlighten)
         {
             IResponseMessageBase responseMessage = null;
             try
@@ -144,6 +144,7 @@ namespace Senparc.NeuChar.Entities
 
             return responseMessage;
         }
+
 
         /// <summary>
         /// 获取响应类型实例，并初始化

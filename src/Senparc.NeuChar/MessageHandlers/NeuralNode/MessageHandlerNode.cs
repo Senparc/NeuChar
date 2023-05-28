@@ -92,7 +92,6 @@ namespace Senparc.NeuChar.NeuralSystems
             return ExecuteAsync(requestMessage, messageHandler, accessTokenOrApi).ConfigureAwait(false).GetAwaiter().GetResult();
         }
 
-#if !NET35 && !NET40
         /// <summary>
         /// 执行NeuChar判断过程，获取响应消息
         /// </summary>
@@ -354,7 +353,6 @@ namespace Senparc.NeuChar.NeuralSystems
 
             return responseMessage;
         }
-#endif
     }
 
 }
