@@ -26,6 +26,11 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
     
     
     创建标识：Senparc - 20150319
+
+    修改标识：Senparc - 20230610
+    修改描述：v1.1.5 添加“默认 NeuChar AppStore 的接口地址”设置属性
+
+
 ----------------------------------------------------------------*/
 
 namespace Senparc.NeuChar.App.AppStore
@@ -39,5 +44,10 @@ namespace Senparc.NeuChar.App.AppStore
         /// 是否启用调试状态
         /// </summary>
         public static bool IsDebug = false;
+
+        /// <summary>
+        /// 默认 NeuChar AppStore 的接口地址
+        /// </summary>
+        public static string DefaultDomainName = "https://www.neuchar.com";
     }
 }
