@@ -30,6 +30,9 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
     修改标识：Senparc - 20210705
     修改描述：v1.5 重构到 CO2NET 的 WebApiEngine
 
+    修改标识：Senparc - 20210705
+    修改描述：v2.1.7.2 重写 Ignore
+
 ----------------------------------------------------------------*/
 
 using System;
@@ -42,21 +45,22 @@ namespace Senparc.NeuChar
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = true, AllowMultiple = true)]
     public class NcApiBindAttribute : Senparc.CO2NET.ApiBindAttribute
     {
+        private bool _ignore;
 
         public override bool Ignore
         {
             get
             {
-                if (base.Ignore)
+                if (_ignore)
                 {
-                    return base.Ignore;
+                    return _ignore;
                 }
-                Console.WriteLine("Register.IgnoreNeuCharApiBind:"+ Register.IgnoreNeuCharApiBind);
+                //Console.WriteLine("Register.IgnoreNeuCharApiBind:"+ Register.IgnoreNeuCharApiBind);
                 return Register.IgnoreNeuCharApiBind;
             }
             set
             {
-                base.Ignore = value;
+                _ignore = value;
             }
         }
 
