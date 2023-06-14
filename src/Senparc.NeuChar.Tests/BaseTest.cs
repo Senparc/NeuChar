@@ -7,13 +7,25 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Moq;
+using Senparc.Weixin.WxOpen.AdvancedAPIs.WxApp.WxAppJson;
+using Senparc.CO2NET.WebApi.WebApiEngines;
 
 namespace Senparc.NeuChar.Tests
 {
     public class BaseTest
     {
-        protected  IRegisterService registerService;
-        protected  IServiceCollection serviceCollection;
+        protected IRegisterService registerService;
+        protected IServiceCollection serviceCollection;
+
+        public BaseTest(bool ignoreNeuCharApiBind)
+        {
+            Register.IgnoreNeuCharApiBind = ignoreNeuCharApiBind;
+
+            RegisterServiceCollection(initDynamicApi: true);
+
+            RegisterServiceStart();
+        }
+
         public BaseTest()
         {
             RegisterServiceCollection();
@@ -24,19 +36,25 @@ namespace Senparc.NeuChar.Tests
         /// <summary>
         /// 注册 IServiceCollection 和 MemoryCache
         /// </summary>
-        public  void RegisterServiceCollection()
+        public void RegisterServiceCollection(bool initDynamicApi = false)
         {
             serviceCollection = new ServiceCollection();
             var configBuilder = new ConfigurationBuilder();
             var config = configBuilder.Build();
             serviceCollection.AddSenparcGlobalServices(config);
             serviceCollection.AddMemoryCache();//使用内存缓存
+
+            if (initDynamicApi)
+            {
+                var mvcBuilder = serviceCollection.AddMvcCore();
+                serviceCollection.AddAndInitDynamicApi(mvcBuilder);
+            }
         }
 
         /// <summary>
         /// 注册 RegisterService.Start()
         /// </summary>
-        public  void RegisterServiceStart(bool autoScanExtensionCacheStrategies = false)
+        public void RegisterServiceStart(bool autoScanExtensionCacheStrategies = false)
         {
             //注册
             var mockEnv = new Mock<Microsoft.Extensions.Hosting.IHostEnvironment/*IHostingEnvironment*/>();

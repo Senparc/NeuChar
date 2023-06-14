@@ -42,6 +42,24 @@ namespace Senparc.NeuChar
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = true, AllowMultiple = true)]
     public class NcApiBindAttribute : Senparc.CO2NET.ApiBindAttribute
     {
+
+        public override bool Ignore
+        {
+            get
+            {
+                if (base.Ignore)
+                {
+                    return base.Ignore;
+                }
+                Console.WriteLine("Register.IgnoreNeuCharApiBind:"+ Register.IgnoreNeuCharApiBind);
+                return Register.IgnoreNeuCharApiBind;
+            }
+            set
+            {
+                base.Ignore = value;
+            }
+        }
+
         /// <summary>
         /// 是否需要使用 AccessToken
         /// </summary>
@@ -62,6 +80,7 @@ namespace Senparc.NeuChar
             : base(platformType.ToString(), name)
         {
             NeedAccessToken = needAccessToken;
+            base.Ignore = Register.IgnoreNeuCharApiBind;
         }
 
 
@@ -69,12 +88,11 @@ namespace Senparc.NeuChar
         /// ApiBindAttributes 构造函数
         /// </summary>
         /// <param name="platformType">平台类型</param>
-        /// <param name="name">平台内唯一名称（如使用 PlatformType.General，请使用宇宙唯一名称）</param>
         /// <param name="needAccessToken">是否需要使用 AccessToken</param>
         public NcApiBindAttribute(PlatformType platformType, bool needAccessToken)
-            : base(platformType.ToString(), null)
+            : this(platformType, null, needAccessToken)
         {
-            NeedAccessToken = needAccessToken;
+
         }
     }
 }
