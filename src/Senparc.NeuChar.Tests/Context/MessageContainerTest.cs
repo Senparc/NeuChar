@@ -94,7 +94,7 @@ namespace Senparc.NeuChar.Tests.Context
                 });
             }
             Assert.AreEqual(10, list.Count);
-            Assert.AreEqual(9, list[0]);
+            Assert.AreEqual(9, int.Parse(((RequestMessageText)list[0]).Content));
         }
 
         [TestMethod]
@@ -121,10 +121,10 @@ namespace Senparc.NeuChar.Tests.Context
                 //i=3:3,4,5,2,3,4,1,2,3,0,1,2 -> 5,2,3,4,1,2,3,0,1,2
             }
             Assert.AreEqual(10, list.Count);
-            Assert.AreEqual(5, list[0]);
-            Assert.AreEqual(2, list[1]);
-            Assert.AreEqual(3, list[2]);
-            Assert.AreEqual(4, list[3]);
+            Assert.AreEqual(5, int.Parse(((RequestMessageText)list[0]).Content));
+            Assert.AreEqual(2, int.Parse(((RequestMessageText)list[1]).Content));
+            Assert.AreEqual(3, int.Parse(((RequestMessageText)list[2]).Content));
+            Assert.AreEqual(4, int.Parse(((RequestMessageText)list[3]).Content));
         }
     }
 }

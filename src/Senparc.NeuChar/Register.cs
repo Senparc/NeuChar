@@ -61,6 +61,10 @@ namespace Senparc.NeuChar
         public static Dictionary<string, Type> NeuralNodeRegisterCollection { get; set; } = new Dictionary<string, Type>();
         //TODO: public static Dictionary<string, Type> NeuralNodeRegisterCollection { get; set; } = new Dictionary<string, Type>();
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public static bool IgnoreNeuCharApiBind { get; set; } = true;
 
         static Register()
         {
@@ -84,9 +88,14 @@ namespace Senparc.NeuChar
         /// 注册 NeuChar
         /// </summary>
         /// <param name="services"></param>
+        /// <param name="ignoreNeuCharApiBind">是否统一忽略生成所有 NeuChar WebApi</param>
         /// <returns></returns>
-        public static IServiceCollection AddNeuChar(this IServiceCollection services)
+        public static IServiceCollection AddNeuChar(this IServiceCollection services, bool ignoreNeuCharApiBind = true)
         {
+            IgnoreNeuCharApiBind = ignoreNeuCharApiBind;
+
+            AddNeuChar();
+
             return services;
         }
 #endif
