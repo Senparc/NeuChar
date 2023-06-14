@@ -34,17 +34,15 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 
     修改标识：Senparc - 20210705
     修改描述：v1.5 重构到 CO2NET 的 WebApiEngine
+
+    修改标识：Senparc - 20230614
+    修改描述：v2.1.7.1 添加 IgnoreNeuCharApiBind 属性
+
 ----------------------------------------------------------------*/
 
-using Senparc.CO2NET.Cache;
-using Senparc.CO2NET.Trace;
-using Senparc.CO2NET.ApiBind;
 using Senparc.NeuChar.NeuralSystems;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
 #if !NET462
 using Microsoft.Extensions.DependencyInjection;
 #endif
@@ -62,7 +60,7 @@ namespace Senparc.NeuChar
         //TODO: public static Dictionary<string, Type> NeuralNodeRegisterCollection { get; set; } = new Dictionary<string, Type>();
 
         /// <summary>
-        /// 
+        /// 是否忽略所有 NeuChar 的 ApiBind 特性
         /// </summary>
         public static bool IgnoreNeuCharApiBind { get; set; } = true;
 
@@ -79,8 +77,9 @@ namespace Senparc.NeuChar
         /// 注册 NeuChar
         /// </summary>
         /// <returns></returns>
-        public static void AddNeuChar()
+        public static void AddNeuChar(bool ignoreNeuCharApiBind = true)
         {
+            IgnoreNeuCharApiBind = ignoreNeuCharApiBind;
         }
 
 #if !NET462
@@ -92,9 +91,7 @@ namespace Senparc.NeuChar
         /// <returns></returns>
         public static IServiceCollection AddNeuChar(this IServiceCollection services, bool ignoreNeuCharApiBind = true)
         {
-            IgnoreNeuCharApiBind = ignoreNeuCharApiBind;
-
-            AddNeuChar();
+            AddNeuChar(ignoreNeuCharApiBind);
 
             return services;
         }
