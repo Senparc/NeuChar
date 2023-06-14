@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Senparc.NeuChar.Tests
+namespace Senparc.NeuChar.Tests.ApiBind
 {
     [NcApiBind(Ignore = true)]
     public static class ApiBindTestClass_Ignore
@@ -37,11 +37,13 @@ namespace Senparc.NeuChar.Tests
         }
     }
 
-
+    /// <summary>
+    /// 全部忽略
+    /// </summary>
     [TestClass]
-    public class IgnoreNcApiBindTests : BaseTest
+    public class IgnoreNcApiBind_IgnoreTests : BaseTest
     {
-        public IgnoreNcApiBindTests() : base(ignoreNeuCharApiBind: true)
+        public IgnoreNcApiBind_IgnoreTests() : base(ignoreNeuCharApiBind: true)
         {
 
         }
@@ -55,6 +57,29 @@ namespace Senparc.NeuChar.Tests
             Assert.IsFalse(apiData.Keys.Any(z => z.Contains(nameof(ApiBindTestClass_Ignore))));
             Assert.IsFalse(apiData.Keys.Any(z => z.Contains(nameof(ApiBindTestClass_Default))));
             Assert.IsFalse(apiData.Keys.Any(z => z.Contains(nameof(ApiBindTestClass_Allow))));
+        }
+    }
+
+    /// <summary>
+    /// 默认状态
+    /// </summary>
+    [TestClass]
+    public class IgnoreNcApiBind_AllowTests : BaseTest
+    {
+        public IgnoreNcApiBind_AllowTests() : base(ignoreNeuCharApiBind: false)
+        {
+
+        }
+
+        [TestMethod]
+        public void IgnoreApiBindTest()
+        {
+            var apiData = ApiBindInfoCollection.Instance;
+            apiData.Keys.ToList().ForEach(key => { Console.WriteLine(key); });
+
+            Assert.IsFalse(apiData.Keys.Any(z => z.Contains(nameof(ApiBindTestClass_Ignore))));
+            Assert.IsTrue(apiData.Keys.Any(z => z.Contains(nameof(ApiBindTestClass_Default))));
+            Assert.IsTrue(apiData.Keys.Any(z => z.Contains(nameof(ApiBindTestClass_Allow))));
         }
     }
 }
