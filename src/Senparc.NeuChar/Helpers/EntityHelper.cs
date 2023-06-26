@@ -269,6 +269,32 @@ namespace Senparc.NeuChar.Helpers
                                     }
                                     prop.SetValue(entity, mpNewsArticles, null);
                                 }
+
+                                //发布结果
+                                else if (genericArgumentTypeName == "Article_Detail_Item")
+                                {
+                                    List<Article_Detail_Item> resultList = new List<Article_Detail_Item>();
+                                    foreach (var item in root.Elements("item"))
+                                    {
+                                        Article_Detail_Item resultItem = new Article_Detail_Item();
+                                        FillEntityWithXml(resultItem, new XDocument(item));
+                                        resultList.Add(resultItem);
+                                    }
+                                    prop.SetValue(entity, resultList, null);
+                                }
+
+                                else if (propName == "fail_idx")
+                                {
+                                    List<int> resultList = new List<int>();
+                                    foreach (var item in root.Elements("fail_idx"))
+                                    {
+                                        int resultItem = 0;
+                                        resultItem = Convert.ToInt32(item.Value);
+                                        resultList.Add(resultItem);
+                                    }
+
+                                    prop.SetValue(entity, resultList, null);
+                                }
                                 break;
                             }
                         case "Music"://ResponseMessageMusic适用
@@ -362,6 +388,15 @@ namespace Senparc.NeuChar.Helpers
                                                     */
                         #endregion
 
+                        #endregion
+
+                        #region 发布结果
+                        case "Publish_Event_Info":
+                            FillClassValue<Publish_Event_Info>(entity, root, "PublishEventInfo", prop);
+                            break;
+                        case "Article_Detail":
+                            FillClassValue<Article_Detail>(entity, root, "article_detail", prop);
+                            break;
                         #endregion
 
                         default:
