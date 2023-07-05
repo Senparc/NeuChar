@@ -40,11 +40,13 @@ using Senparc.CO2NET.Utilities;
 using Senparc.NeuChar.Context;
 using Senparc.NeuChar.Entities;
 using Senparc.NeuChar.Entities.App;
+using Senparc.NeuChar.Helpers;
 using Senparc.NeuChar.NeuralSystems;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -55,12 +57,20 @@ namespace Senparc.NeuChar.MessageHandlers
         where TRequest : class, IRequestMessageBase
         where TResponse : class, IResponseMessageBase
     {
+        /// <summary>
+        /// 多租户唯一标识，用于区分同一个 MessageHandler 服务的不同的公众号
+        /// <para>当此参数不为 null 或空时，将为 NeuCharRoot.config 创建专属的文件夹以储存，如 ~/App_Data/NeuChar/MyMultiTenantId/NeuCharRoot.config。</para>
+        /// <para>MultiTenantId 的值请勿包含不允许放入文件夹名的字符！</para>
+        /// </summary>
+        public string MultiTenantId { get; set; }
+
         static MessageHandler()
         {
             //注册节点类型
             Senparc.NeuChar.Register.RegisterNeuralNode("MessageHandlerNode", typeof(MessageHandlerNode));
             Senparc.NeuChar.Register.RegisterNeuralNode("AppDataNode", typeof(AppDataNode));
         }
+
 
         #region NeuChar 方法
 
@@ -70,6 +80,7 @@ namespace Senparc.NeuChar.MessageHandlers
             return await OnNeuCharRequestAsync(requestMessage).ConfigureAwait(false);
         }
 
+
         /// <summary>
         /// NeuChar 请求
         /// </summary>
@@ -77,13 +88,11 @@ namespace Senparc.NeuChar.MessageHandlers
         {
             try
             {
-                var path = ServerUtility.ContentRootMapPath("~/App_Data/NeuChar");
+                var path = NeuCharConfigHelper.GetNeuCharRootConfigFilePath(MultiTenantId);
+
                 //SenparcTrace.SendCustomLog("OnNeuCharRequest path", path);
 
-                if (!Directory.Exists(path))
-                {
-                    Directory.CreateDirectory(path);
-                }
+                FileHelper.TryCreateDirectory(path);
 
                 var file = Path.Combine(path, "NeuCharRoot.config");
                 bool success = true;
@@ -181,10 +190,8 @@ namespace Senparc.NeuChar.MessageHandlers
                     case NeuCharActionType.PushNeuCharAppConfig://推送 NeuChar App 配置
                         {
                             var configFileDir = Path.Combine(path, "AppConfig");
-                            if (!Directory.Exists(configFileDir))
-                            {
-                                Directory.CreateDirectory(configFileDir);//这里也可以不创建，除非是为了推送
-                            }
+
+                            Senparc.CO2NET.Helpers.FileHelper.TryCreateDirectory(configFileDir);// 这里也可以不创建，除非是为了推送
 
                             //还原一次，为了统一格式，并未后续处理提供能力（例如调整缩进格式）
                             var requestData = requestMessage.RequestData.GetObject<PushConfigRequestData>();

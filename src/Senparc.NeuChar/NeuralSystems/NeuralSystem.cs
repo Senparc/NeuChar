@@ -2,8 +2,10 @@
 using Senparc.CO2NET.Helpers;
 using Senparc.CO2NET.Trace;
 using Senparc.CO2NET.Utilities;
+using Senparc.NeuChar.Helpers;
 using Senparc.NeuChar.NeuralSystems;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -53,9 +55,9 @@ namespace Senparc.NeuChar
         public string NeuCharDomainName { get; set; } = "https://www.neuchar.com";
 
         /// <summary>
-        /// 根节点
+        /// 根节点（Key：MultiTenantId）
         /// </summary>
-        public INeuralNode Root { get; set; }
+        public ConcurrentDictionary<string, INeuralNode> RootCollection { get; set; } = new ConcurrentDictionary<string, INeuralNode>();
 
         /// <summary>
         /// NeuChar 核心神经系统，包含所有神经节点信息
@@ -68,32 +70,35 @@ namespace Senparc.NeuChar
 
             //TODO:解密
 
-            ReloadNode();
+            ReloadNode(null);
         }
 
         /// <summary>
         /// 初始化 Root 参数
         /// </summary>
-        private void InitRoot()
+        private void InitRoot(string multiTenantId)
         {
+            multiTenantId = TryGetDefaultMultiTenantId(multiTenantId);
 
-            INeuralNode root = new RootNeuralNode();
-            Root = root;
+            //ConcurrentDictionary<string, INeuralNode> rootCollection = new ConcurrentDictionary<string, INeuralNode>();
+            ////INeuralNode root = new RootNeuralNode();
+            //RootCollection = rootCollection;
+
+            RootCollection[multiTenantId] = new RootNeuralNode();//强制清空
+
+            //TODO: 从文件中获取所有对象
         }
 
         /// <summary>
         /// 加载节点信息
         /// </summary>
-        public void ReloadNode()
+        public void ReloadNode(string multiTenantId)
         {
-            InitRoot();//独立放在外面强制执行
+            multiTenantId = TryGetDefaultMultiTenantId(multiTenantId);
 
-            var path = ServerUtility.ContentRootMapPath("~/App_Data/NeuChar");
+            InitRoot(multiTenantId);//独立放在外面强制执行
 
-            if (!Directory.Exists(path))
-            {
-                Directory.CreateDirectory(path);
-            }
+            var path = NeuCharConfigHelper.GetNeuCharRootConfigFilePath(multiTenantId);
 
             var file = Path.Combine(path, "NeuCharRoot.config");
             //SenparcTrace.SendCustomLog("NeuChar file path", file);
@@ -133,7 +138,7 @@ namespace Senparc.NeuChar
 
                                     //SenparcTrace.SendCustomLog("NeuChar finalNeuralNode", finalNeuralNode.ToJson());
 
-                                    Root.SetChildNode(finalNeuralNode);
+                                    RootCollection[multiTenantId].SetChildNode(finalNeuralNode);
 
                                     //SerializerHelper.GetObject()
                                 }
@@ -157,6 +162,17 @@ namespace Senparc.NeuChar
             }
         }
 
+        private string TryGetDefaultMultiTenantId(string multiTenantId)
+        {
+            if (multiTenantId.IsNullOrEmpty())
+            {
+                RootCollection[multiTenantId] = new RootNeuralNode();
+                return "_Default";
+            }
+
+            return multiTenantId;
+        }
+
         /// <summary>
         /// 获取指定Name的节点
         /// <para>TODO：建立索引搜索</para>
@@ -164,11 +180,13 @@ namespace Senparc.NeuChar
         /// <param name="name"></param>
         /// <param name="parentNode">父节点</param>
         /// <returns></returns>
-        public INeuralNode GetNode(string name, INeuralNode parentNode = null)
+        public INeuralNode GetNode(string name, string multiTenantId, INeuralNode parentNode = null)
         {
+            multiTenantId = TryGetDefaultMultiTenantId(multiTenantId);
+
             if (parentNode == null)
             {
-                parentNode = Root;
+                parentNode = RootCollection[multiTenantId];
             }
 
             INeuralNode foundNode = null;
@@ -183,13 +201,12 @@ namespace Senparc.NeuChar
                 foreach (var node in parentNode.ChildrenNodes)
                 {
 
-                    foundNode = GetNode(name, node);//监测当前节点
+                    foundNode = GetNode(name, multiTenantId, node);//监测当前节点
                     if (foundNode != null)
                     {
                         break;
                     }
                 }
-
             }
 
             return foundNode;
