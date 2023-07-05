@@ -13,3 +13,4 @@ bin/
 /src/ProjectFileManager
 /src/.idea
 /ProjectFileManager
+*.DS_Store

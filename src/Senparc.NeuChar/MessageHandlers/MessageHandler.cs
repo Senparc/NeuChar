@@ -235,7 +235,7 @@ namespace Senparc.NeuChar.MessageHandlers
                     var neuralSystem = NeuralSystem.Instance;
 
                     //获取当前设置节点
-                    _currentMessageHandlerNode = (neuralSystem.GetNode("MessageHandlerNode") as MessageHandlerNode) ?? new MessageHandlerNode();
+                    _currentMessageHandlerNode = (neuralSystem.GetNode("MessageHandlerNode",MultiTenantId) as MessageHandlerNode) ?? new MessageHandlerNode();
                 }
                 return _currentMessageHandlerNode;
             }
@@ -256,7 +256,7 @@ namespace Senparc.NeuChar.MessageHandlers
 
                     var neuralSystem = NeuralSystem.Instance;
                     //获取当前设置节点
-                    _currentAppDataNode = (neuralSystem.GetNode("AppDataNode") as AppDataNode) ?? new AppDataNode();
+                    _currentAppDataNode = (neuralSystem.GetNode("AppDataNode", MultiTenantId) as AppDataNode) ?? new AppDataNode();
                 }
                 return _currentAppDataNode;
             }
