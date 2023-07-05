@@ -35,6 +35,31 @@ namespace Senparc.NeuChar.Tests.MessageHandlers.NeuralNode.MP
             Console.WriteLine(messageHandler.TextResponseMessage);
         }
 
+
+        [TestMethod]
+        public void RenderResponseMessageTextTest()
+        {
+            var xmlText = @"<?xml version=""1.0"" encoding=""utf-8""?>
+<xml>
+  <ToUserName><![CDATA[gh_0fe614101343]]></ToUserName>
+<FromUserName><![CDATA[oxRg0uIHgyqH-Lf1vNp2eIdTswu8]]></FromUserName>
+<CreateTime>1688550197</CreateTime>
+<MsgType><![CDATA[text]]></MsgType>
+<Content><![CDATA[S]]></Content>
+<MsgId>24174226108955567</MsgId>
+</xml>";
+
+            var postModel = new PostModel() { AppId = "AppId" };
+
+            var messageHandler = new TestMpMessageHandler(XDocument.Parse(xmlText), postModel);
+            messageHandler.Execute();
+
+            Assert.IsNotNull(messageHandler.TextResponseMessage);
+            Console.WriteLine(messageHandler.TextResponseMessage);
+
+            Assert.IsTrue(messageHandler.TextResponseMessage.Contains("欢迎使用NeuChar！"));
+        }
+
         [TestMethod]
         public void SaveLogTest()
         {

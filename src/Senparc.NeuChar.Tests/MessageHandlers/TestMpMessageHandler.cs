@@ -2,6 +2,7 @@
 using Senparc.NeuChar.Entities;
 using Senparc.Weixin.MP.Entities;
 using Senparc.Weixin.MP.Entities.Request;
+using Senparc.Weixin.MP.MessageContexts;
 using Senparc.Weixin.MP.MessageHandlers;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,7 @@ namespace Senparc.NeuChar.Tests.MessageHandlers
     /// <summary>
     /// 测试公众号 MessageHandler
     /// </summary>
-    public class TestMpMessageHandler : MessageHandler<TestMpMessageContext>
+    public class TestMpMessageHandler : MessageHandler<DefaultMpMessageContext> /*MessageHandler<TestMpMessageContext>*/
     {
         public TestMpMessageHandler(XDocument requestDoc, PostModel postModel = null, int maxRecordCount = 0)
                 : base(requestDoc, postModel, maxRecordCount)
