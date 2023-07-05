@@ -165,7 +165,7 @@ namespace Senparc.NeuChar.MessageHandlers
 
                             //刷新数据
                             var neuralSystem = NeuralSystem.Instance;
-                            neuralSystem.ReloadNode();
+                            neuralSystem.ReloadNode(MultiTenantId);
                         }
                         break;
                     case NeuCharActionType.CheckNeuChar:
