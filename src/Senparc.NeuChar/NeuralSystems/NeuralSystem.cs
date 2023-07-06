@@ -98,7 +98,7 @@ namespace Senparc.NeuChar
             if (multiTenantId == null)
             {
                 //全部重新载入
-                var rootPath = NeuCharConfigHelper.GetNeuCharRootConfigRootPath();
+                var rootPath = NeuCharConfigHelper.GetNeuCharRootConfigBasePath();
                 var tenants = Directory.GetDirectories(rootPath).Select(Path.GetFileName);
                 foreach (var tenant in tenants)
                 {

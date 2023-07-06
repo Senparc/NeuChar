@@ -21,7 +21,7 @@ namespace Senparc.NeuChar.Helpers
         /// 尝试获取 NeuCharRoot.config 根路径
         /// </summary>
         /// <returns></returns>
-        internal static string GetNeuCharRootConfigRootPath()
+        internal static string GetNeuCharRootConfigBasePath()
         {
             return ServerUtility.ContentRootMapPath("~/App_Data/NeuChar");
 
@@ -31,18 +31,20 @@ namespace Senparc.NeuChar.Helpers
         /// 尝试获取当前 NeuCharRoot.config 文件的绝对路径
         /// </summary>
         /// <returns></returns>
-        internal static string GetNeuCharRootConfigFilePath(string multiTenantId)
+        internal static string GetNeuCharRootConfigFilePath(string multiTenantId, bool autoCreateDirectory = true)
         {
-            var path = GetNeuCharRootConfigRootPath();
-
-
+            var path = GetNeuCharRootConfigBasePath();
 
             FileHelper.TryCreateDirectory(path);
 
-            if (!multiTenantId.IsNullOrEmpty())
+            multiTenantId = TryGetDefaultMultiTenantId(multiTenantId);
+            path = Path.Combine(path, multiTenantId);
+
+            if (autoCreateDirectory)
             {
-                path = Path.Combine(path, multiTenantId);
+                FileHelper.TryCreateDirectory(path);
             }
+
             return path;
         }
 
