@@ -57,7 +57,7 @@ namespace Senparc.NeuChar.Tests.MessageHandlers.NeuralNode.MP
             Assert.IsNotNull(messageHandler.TextResponseMessage);
             Console.WriteLine(messageHandler.TextResponseMessage);
 
-            Assert.IsTrue(messageHandler.TextResponseMessage.Contains("欢迎使用NeuChar！"));
+            Assert.IsTrue(messageHandler.TextResponseMessage.Contains("欢迎使用NeuChar！[来自 _Default 的 Multi-TenantId]"));
         }
 
         [TestMethod]

@@ -15,21 +15,54 @@ namespace Senparc.NeuChar.Helpers
     /// </summary>
     public static class NeuCharConfigHelper
     {
+
+
+        /// <summary>
+        /// 尝试获取 NeuCharRoot.config 根路径
+        /// </summary>
+        /// <returns></returns>
+        internal static string GetNeuCharRootConfigBasePath()
+        {
+            return ServerUtility.ContentRootMapPath("~/App_Data/NeuChar");
+
+        }
+
         /// <summary>
         /// 尝试获取当前 NeuCharRoot.config 文件的绝对路径
         /// </summary>
         /// <returns></returns>
-        internal static string GetNeuCharRootConfigFilePath(string multiTenantId)
+        internal static string GetNeuCharRootConfigFilePath(string multiTenantId, bool autoCreateDirectory = true)
         {
-            var path = ServerUtility.ContentRootMapPath("~/App_Data/NeuChar");
+            var path = GetNeuCharRootConfigBasePath();
 
             FileHelper.TryCreateDirectory(path);
 
-            if (!multiTenantId.IsNullOrEmpty())
+            multiTenantId = TryGetDefaultMultiTenantId(multiTenantId);
+            path = Path.Combine(path, multiTenantId);
+
+            if (autoCreateDirectory)
             {
-                path = Path.Combine(path, multiTenantId);
+                FileHelper.TryCreateDirectory(path);
             }
+
             return path;
+        }
+
+        /// <summary>
+        /// 尝试获取合法的 multiTenantId，如果为空，则返回默认值
+        /// </summary>
+        /// <param name="multiTenantId"></param>
+        /// <returns></returns>
+        internal static string TryGetDefaultMultiTenantId(string multiTenantId)
+        {
+            if (multiTenantId.IsNullOrEmpty())
+            {
+                //没有提供 MultiTenantId，在使用默认目录
+                multiTenantId = NeuralSystem.DEFAULT_MULIT_TENANT_ID;
+                return multiTenantId;
+            }
+
+            return multiTenantId;
         }
     }
 }
