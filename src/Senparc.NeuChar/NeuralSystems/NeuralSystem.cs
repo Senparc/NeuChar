@@ -48,6 +48,7 @@ namespace Senparc.NeuChar
         /// </summary>
         internal const string DEFAULT_CONFIG_FILE_CONENT = "{}";
         internal const string CHECK_CNNECTION_RESULT = "OK";
+        internal const string DEFAULT_MULIT_TENANT_ID = "_Default";
 
         /// <summary>
         /// NeuChar 域名
@@ -78,7 +79,7 @@ namespace Senparc.NeuChar
         /// </summary>
         private void InitRoot(string multiTenantId)
         {
-            multiTenantId = TryGetDefaultMultiTenantId(multiTenantId);
+            multiTenantId = NeuCharConfigHelper.TryGetDefaultMultiTenantId(multiTenantId);
 
             //ConcurrentDictionary<string, INeuralNode> rootCollection = new ConcurrentDictionary<string, INeuralNode>();
             ////INeuralNode root = new RootNeuralNode();
@@ -105,7 +106,7 @@ namespace Senparc.NeuChar
                 }
             }
 
-            multiTenantId = TryGetDefaultMultiTenantId(multiTenantId);
+            multiTenantId = NeuCharConfigHelper.TryGetDefaultMultiTenantId(multiTenantId);
 
             InitRoot(multiTenantId);//独立放在外面强制执行
 
@@ -173,26 +174,26 @@ namespace Senparc.NeuChar
             }
         }
 
-        /// <summary>
-        /// 尝试获取合法的 multiTenantId，如果为空，则返回默认值
-        /// </summary>
-        /// <param name="multiTenantId"></param>
-        /// <returns></returns>
-        private string TryGetDefaultMultiTenantId(string multiTenantId)
-        {
-            if (multiTenantId.IsNullOrEmpty())
-            {
-                //没有提供 MultiTenantId，在使用默认目录
-                multiTenantId = "_Default";
-                if (!RootCollection.ContainsKey(multiTenantId))
-                {
-                    RootCollection[multiTenantId] = new RootNeuralNode();//初始化
-                }
-                return multiTenantId;
-            }
+        ///// <summary>
+        ///// 尝试获取合法的 multiTenantId，如果为空，则返回默认值
+        ///// </summary>
+        ///// <param name="multiTenantId"></param>
+        ///// <returns></returns>
+        //private string TryGetDefaultMultiTenantId(string multiTenantId)
+        //{
+        //    if (multiTenantId.IsNullOrEmpty())
+        //    {
+        //        //没有提供 MultiTenantId，在使用默认目录
+        //        multiTenantId = DEFAULT_MULIT_TENANT_ID;
+        //        if (!RootCollection.ContainsKey(multiTenantId))
+        //        {
+        //            RootCollection[multiTenantId] = new RootNeuralNode();//初始化
+        //        }
+        //        return multiTenantId;
+        //    }
 
-            return multiTenantId;
-        }
+        //    return multiTenantId;
+        //}
 
         /// <summary>
         /// 获取指定Name的节点
@@ -203,7 +204,11 @@ namespace Senparc.NeuChar
         /// <returns></returns>
         public INeuralNode GetNode(string name, string multiTenantId, INeuralNode parentNode = null)
         {
-            multiTenantId = TryGetDefaultMultiTenantId(multiTenantId);
+            multiTenantId = NeuCharConfigHelper.TryGetDefaultMultiTenantId(multiTenantId);
+            if (!RootCollection.ContainsKey(multiTenantId))
+            {
+                RootCollection[multiTenantId] = new RootNeuralNode();//初始化
+            }
 
             if (parentNode == null)
             {
