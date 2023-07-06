@@ -94,6 +94,17 @@ namespace Senparc.NeuChar
         /// </summary>
         public void ReloadNode(string multiTenantId)
         {
+            if (multiTenantId == null)
+            {
+                //全部重新载入
+                var rootPath = NeuCharConfigHelper.GetNeuCharRootConfigRootPath();
+                var tenants = Directory.GetDirectories(rootPath).Select(Path.GetFileName);
+                foreach (var tenant in tenants)
+                {
+                    ReloadNode(tenant);
+                }
+            }
+
             multiTenantId = TryGetDefaultMultiTenantId(multiTenantId);
 
             InitRoot(multiTenantId);//独立放在外面强制执行
@@ -162,12 +173,22 @@ namespace Senparc.NeuChar
             }
         }
 
+        /// <summary>
+        /// 尝试获取合法的 multiTenantId，如果为空，则返回默认值
+        /// </summary>
+        /// <param name="multiTenantId"></param>
+        /// <returns></returns>
         private string TryGetDefaultMultiTenantId(string multiTenantId)
         {
             if (multiTenantId.IsNullOrEmpty())
             {
-                RootCollection[multiTenantId] = new RootNeuralNode();
-                return "_Default";
+                //没有提供 MultiTenantId，在使用默认目录
+                multiTenantId = "_Default";
+                if (!RootCollection.ContainsKey(multiTenantId))
+                {
+                    RootCollection[multiTenantId] = new RootNeuralNode();//初始化
+                }
+                return multiTenantId;
             }
 
             return multiTenantId;
