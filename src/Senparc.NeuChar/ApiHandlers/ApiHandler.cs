@@ -69,8 +69,10 @@ namespace Senparc.NeuChar.ApiHandlers
         /// <param name="requestMessage"></param>
         /// <param name="accessTokenOrAppId"></param>
         /// <param name="openId"></param>
+        /// <param name="enlightener"></param>
+        /// <param name="maxTextBytesLimit">单条消息最大限制字节数</param>
         /// <returns></returns>
-        public async Task<ApiResult> ExecuteApi(Response response, MaterialData materialData, IRequestMessageBase requestMessage, string accessTokenOrAppId, string openId, IMessageHandlerEnlightener enlightener)
+        public async Task<ApiResult> ExecuteApi(Response response, MaterialData materialData, IRequestMessageBase requestMessage, string accessTokenOrAppId, string openId, IMessageHandlerEnlightener enlightener,int maxTextBytesLimit=2048)
         {
             if (response == null)
             {
@@ -86,7 +88,7 @@ namespace Senparc.NeuChar.ApiHandlers
                         break;
                     case ResponseMsgType.Text:
                         var cotnent = NeuralNodeHelper.FillTextMessage(response.GetMaterialContent(materialData));
-                        apiResult = await ApiEnlighten.SendText(accessTokenOrAppId, openId, cotnent);
+                        apiResult = await ApiEnlighten.SendText(accessTokenOrAppId, openId, cotnent, maxTextBytesLimit);
                         break;
                     case ResponseMsgType.News:
                         {

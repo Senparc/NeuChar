@@ -132,8 +132,9 @@ namespace Senparc.NeuChar.NeuralSystems
         /// <param name="enlightener"></param>
         /// <param name="accessTokenOrApi"></param>
         /// <param name="openId"></param>
+        /// <param name="maxTextBytesLimit">单条消息最大限制字节数</param>
         /// <returns></returns>
-        private async Task<List<ApiResult>> ExecuteApi(List<Response> responses, IRequestMessageBase requestMessage, IMessageHandlerEnlightener enlightener, string accessTokenOrApi, string openId)
+        private async Task<List<ApiResult>> ExecuteApi(List<Response> responses, IRequestMessageBase requestMessage, IMessageHandlerEnlightener enlightener, string accessTokenOrApi, string openId, int maxTextBytesLimit = 2048)
         {
             List<ApiResult> results = new List<ApiResult>();
 
@@ -145,7 +146,7 @@ namespace Senparc.NeuChar.NeuralSystems
             ApiHandler apiHandler = new ApiHandler(enlightener.ApiEnlightener);
             foreach (var response in responses)
             {
-                ApiResult apiResult = await apiHandler.ExecuteApi(response, MaterialData, requestMessage, accessTokenOrApi, openId, enlightener);
+                ApiResult apiResult = await apiHandler.ExecuteApi(response, MaterialData, requestMessage, accessTokenOrApi, openId, enlightener, maxTextBytesLimit);
                 results.Add(apiResult);
             }
             return results;
