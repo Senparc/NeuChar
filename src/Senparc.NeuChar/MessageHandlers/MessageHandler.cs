@@ -208,7 +208,10 @@ namespace Senparc.NeuChar.MessageHandlers
         /// </summary>
         public bool MessageIsRepeated { get; set; }
 
-
+        /// <summary>
+        /// 限制文本回复长度
+        /// </summary>
+        public TextResponseLimitOptions TextResponseLimitOptions { get; set; }
 
         /// <summary>
         /// 请求和响应消息有差别化的定义
@@ -235,7 +238,7 @@ namespace Senparc.NeuChar.MessageHandlers
                     var neuralSystem = NeuralSystem.Instance;
 
                     //获取当前设置节点
-                    _currentMessageHandlerNode = (neuralSystem.GetNode("MessageHandlerNode",MultiTenantId) as MessageHandlerNode) ?? new MessageHandlerNode();
+                    _currentMessageHandlerNode = (neuralSystem.GetNode("MessageHandlerNode", MultiTenantId) as MessageHandlerNode) ?? new MessageHandlerNode();
                 }
                 return _currentMessageHandlerNode;
             }
@@ -268,18 +271,6 @@ namespace Senparc.NeuChar.MessageHandlers
         /// 发送者用户名（OpenId）
         /// </summary>
         public string OpenId => RequestMessage != null ? RequestMessage.FromUserName : null;
-
-        /// <summary>
-        /// 发送者用户名（OpenId）
-        /// </summary>
-        [Obsolete("请使用 OpenId")]
-        public string WeixinOpenId { get { return OpenId; } }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        [Obsolete("UserName属性从v0.6起已过期，建议使用 OpenId")]
-        public string UserName { get { return OpenId; } }
 
         /// <summary>
         /// 取消执行Execute()方法。一般在OnExecuting()中用于临时阻止执行Execute()。
@@ -355,6 +346,19 @@ namespace Senparc.NeuChar.MessageHandlers
         {
             get
             {
+                //判断是否文本超长
+                if (TextResponseLimitOptions != null && ResponseMessage is IResponseMessageText responseMessageText)
+                {
+                    //需要限制文本长度，使用客服接口发送
+                    var checkSuccess = TextResponseLimitOptions.CheckOrSendCustomMessage(responseMessageText, this, OpenId).GetAwaiter().GetResult();
+
+                    if (!checkSuccess)
+                    {
+                        ResponseMessage = MessageEntityEnlightener.SuccessResponseMessage() as TResponse;
+                    }
+                }
+
+                //判断是否为成功消息
                 if (ResponseMessage != null && ResponseMessage is SuccessResponseMessageBase)
                 {
                     _textResponseMessage = (ResponseMessage as SuccessResponseMessageBase).ReturnText;//返回"success"

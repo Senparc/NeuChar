@@ -61,8 +61,9 @@ namespace Senparc.NeuChar.ApiHandlers
         /// <param name="accessTokenOrAppId"></param>
         /// <param name="openId"></param>
         /// <param name="content"></param>
+        /// <param name="limitedBytes">最大允许发送限制，如果超出限制，则分多条发送</param>
         /// <returns></returns>
-        public abstract Task<ApiResult> SendText(string accessTokenOrAppId, string openId, string content);
+        public abstract Task<ApiResult> SendText(string accessTokenOrAppId, string openId, string content, int limitedBytes = 2048);
         /// <summary>
         /// 发送多图文信息
         /// </summary>

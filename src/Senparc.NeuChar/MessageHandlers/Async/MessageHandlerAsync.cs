@@ -86,6 +86,8 @@ namespace Senparc.NeuChar.MessageHandlers
         /// </summary>
         public bool RecordResponseMessageSync { get; set; }
 
+        public string WeixinOpenId { get; set; }
+
         public virtual async Task OnExecutingAsync(CancellationToken cancellationToken)
         {
            
