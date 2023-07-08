@@ -13,6 +13,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{94388FAC-B21
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{D04F2E19-0B85-45A4-B39E-2E799CC4398B}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Senparc.NeuChar.Tests", "Y:\Senparc 项目\NeuChar\Senparc\NeuChar\src\Senparc.NeuChar.Tests\Senparc.NeuChar.Tests.csproj", "{9F6DED9B-7C9E-4DE4-966E-329066A809D6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,6 +40,11 @@ Global
 		{FEA00F7D-EB32-45A8-A846-888ACADCEC14}.Release|Any CPU.Build.0 = Release|Any CPU
 		{FEA00F7D-EB32-45A8-A846-888ACADCEC14}.Test|Any CPU.ActiveCfg = Debug|Any CPU
 		{FEA00F7D-EB32-45A8-A846-888ACADCEC14}.Test|Any CPU.Build.0 = Debug|Any CPU
+		{9F6DED9B-7C9E-4DE4-966E-329066A809D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F6DED9B-7C9E-4DE4-966E-329066A809D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F6DED9B-7C9E-4DE4-966E-329066A809D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F6DED9B-7C9E-4DE4-966E-329066A809D6}.Test|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F6DED9B-7C9E-4DE4-966E-329066A809D6}.Test|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -46,6 +53,7 @@ Global
 		{0E884956-6FD3-4346-A45E-09059E814F38} = {94388FAC-B21C-4401-A7D2-BA9C34FF7E67}
 		{7D1538D5-4842-44AD-8B16-96A2347113E4} = {94388FAC-B21C-4401-A7D2-BA9C34FF7E67}
 		{FEA00F7D-EB32-45A8-A846-888ACADCEC14} = {94388FAC-B21C-4401-A7D2-BA9C34FF7E67}
+		{9F6DED9B-7C9E-4DE4-966E-329066A809D6} = {D04F2E19-0B85-45A4-B39E-2E799CC4398B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1D659ECF-681E-44F2-9B3D-7FD76CD95AFC}
