@@ -66,7 +66,7 @@ namespace Senparc.NeuChar.MessageHandlers
         /// 发送者用户名（OpenId）
         /// </summary>
         string WeixinOpenId { get; }
-
+        
         /// <summary>
         /// 取消执行Execute()方法。一般在OnExecuting()中用于临时阻止执行Execute()。
         /// 默认为False。

@@ -347,7 +347,6 @@ namespace Senparc.NeuChar.MessageHandlers
             get
             {
                 //判断是否文本超长
-
                 if (TextResponseLimitOptions != null && ResponseMessage is IResponseMessageText responseMessageText)
                 {
                     //需要限制文本长度，使用客服接口发送
@@ -355,11 +354,11 @@ namespace Senparc.NeuChar.MessageHandlers
 
                     if (!checkSuccess)
                     {
-                        return "success";//返回指定默认值（不回复）
+                        ResponseMessage = MessageEntityEnlightener.SuccessResponseMessage() as TResponse;
                     }
                 }
 
-
+                //判断是否为成功消息
                 if (ResponseMessage != null && ResponseMessage is SuccessResponseMessageBase)
                 {
                     _textResponseMessage = (ResponseMessage as SuccessResponseMessageBase).ReturnText;//返回"success"

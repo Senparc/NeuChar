@@ -48,7 +48,7 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <param name="messageHandler">MessageHandler</param>
         /// <param name="openId"></param>
         /// <returns></returns>
-        public async Task<bool> CheckOrSendCustomMessage( IResponseMessageText responseMessageText, IMessageHandlerEnlightener messageHandler, string openId)
+        public async Task<bool> CheckOrSendCustomMessage(IResponseMessageText responseMessageText, IMessageHandlerEnlightener messageHandler, string openId)
         {
             var origStr = responseMessageText.Content;
             byte[] bytes = System.Text.Encoding.Unicode.GetBytes(origStr);
