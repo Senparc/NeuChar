@@ -33,6 +33,8 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
     修改标识：Senparc - 20210501
     修改描述 使用 GetRequestMemoryStreamAsync() 方法读取请求信息
 
+    修改标识：Senparc - 20230401
+    修改描述：v1.3.1 MessageHandlerMiddlewareOptions 添加 TextResponseLimitOptions 属性
 ----------------------------------------------------------------*/
 
 #if NETSTANDARD2_0 || NETSTANDARD2_1
@@ -289,6 +291,12 @@ namespace Senparc.NeuChar.Middlewares
                     if (_options.EnableRequestLog)
                     {
                         messageHandler.SaveRequestMessageLog();//记录 Request 日志（可选）
+                    }
+
+                    //判断最大文字支持数量
+                    if (_options.TextResponseLimitOptions != null)
+                    {
+                        messageHandler.TextResponseLimitOptions = _options.TextResponseLimitOptions;
                     }
 
                     await messageHandler.ExecuteAsync(ExecuteCancellationTokenSource.Token); //执行微信处理过程（关键）

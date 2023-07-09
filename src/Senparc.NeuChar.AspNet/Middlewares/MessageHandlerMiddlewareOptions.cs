@@ -30,6 +30,9 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
     修改标识：Senparc - 20191005
     修改描述：添加 AggregateExceptionCatch 委托
 
+    修改标识：Senparc - 20230401
+    修改描述：v1.3.1 添加 TextResponseLimitOptions 属性
+
 ----------------------------------------------------------------*/
 
 #if NETSTANDARD2_0 || NETSTANDARD2_1
@@ -49,7 +52,7 @@ namespace Senparc.NeuChar.Middlewares
     /// </summary>
     /// <typeparam name="T">AccountSetting 类型，如公众号的 SenparcWeixinSetting</typeparam>
     public class MessageHandlerMiddlewareOptions<T>
-       //where T : class
+    //where T : class
     {
         /// <summary>
         /// 启用 RequestMessage 的日志记录
@@ -77,6 +80,11 @@ namespace Senparc.NeuChar.Middlewares
         public bool OmitRepeatedMessage { get; set; } = true;
 
         /// <summary>
+        /// 最大回复文字数量配置
+        /// </summary>
+        public TextResponseLimitOptions TextResponseLimitOptions { get; set; }
+
+        /// <summary>
         /// 如公众号的 SenparcWeixinSetting 信息，必须包含 Token、AppId，以及 EncodingAESKey（如果有）
         /// </summary>
         public Func<HttpContext, T> AccountSettingFunc { get; set; }
@@ -84,7 +92,7 @@ namespace Senparc.NeuChar.Middlewares
         /// <summary>
         /// 当有执行异常时可以捕获异常进行处理。返回 true 则继续执行，返回 false，则完成委托执行后抛出异常
         /// </summary>
-        public Func<AggregateException,bool> AggregateExceptionCatch { get; set; }
+        public Func<AggregateException, bool> AggregateExceptionCatch { get; set; }
     }
 }
 
