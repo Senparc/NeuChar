@@ -13,7 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{94388FAC-B21
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{D04F2E19-0B85-45A4-B39E-2E799CC4398B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Senparc.NeuChar.Tests", "Y:\Senparc 项目\NeuChar\Senparc\NeuChar\src\Senparc.NeuChar.Tests\Senparc.NeuChar.Tests.csproj", "{9F6DED9B-7C9E-4DE4-966E-329066A809D6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Senparc.NeuChar.Tests", "Senparc.NeuChar.Tests\Senparc.NeuChar.Tests.csproj", "{9F6DED9B-7C9E-4DE4-966E-329066A809D6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
