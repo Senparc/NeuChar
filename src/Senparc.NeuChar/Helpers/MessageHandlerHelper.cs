@@ -44,6 +44,47 @@ namespace Senparc.NeuChar.Helpers
     /// </summary>
     public static class MessageHandlerHelper
     {
+        ////来源：https://www.qqxiuzi.cn/zh/hanzi-unicode-bianma.php
+        //private static List<int[]> chineseUnicodeArrange = new List<int[]>() {
+        //    //汉字
+        //    new[]{0x4E00, 0x9FA5   } ,
+        //    new[]{0x9FA6, 0x9FFF   } ,
+        //    new[]{0x3400, 0x4DBF   } ,
+        //    new[]{0x20000, 0x2A6DF } ,
+        //    new[]{0x2A700, 0x2B739 } ,
+        //    new[]{0x2B740, 0x2B81D } ,
+        //    new[]{0x2B820, 0x2CEA1 } ,
+        //    new[]{0x2CEB0, 0x2EBE0 } ,
+        //    new[]{0x30000, 0x3134A } ,
+        //    new[]{0x31350, 0x323AF } ,
+        //    new[]{0x2F00, 0x2FD5   } ,
+        //    new[]{0x2E80, 0x2EF3   } ,
+        //    new[]{0xF900, 0xFAD9   } ,
+        //    new[]{0x2F800, 0x2FA1D } ,
+        //    new[]{0x31C0, 0x31E3   } ,
+        //    new[]{0x2FF0, 0x2FFB   } ,
+        //    new[]{0x3105, 0x312F   } ,
+        //    new[]{0x31A0, 0x31BF   } ,
+        //    new[]{0x3007, 0x3007   }
+        //};
+
+        //private static bool SearchUnicode(char eachChar)
+        //{
+        //    for (int i = 0; i < chineseUnicodeArrange.Count; i++)
+        //    {
+        //        if (eachChar >= chineseUnicodeArrange[i][0] && eachChar <= chineseUnicodeArrange[i][1])
+        //        {
+        //            return true;
+        //        }
+        //    }
+        //    return false;
+        //}
+
+        private static bool SearchUnicode(char eachChar)
+        {
+            return (int)eachChar >= 127;
+        }
+
         /// <summary>
         /// 计算字节数
         /// </summary>
@@ -55,8 +96,7 @@ namespace Senparc.NeuChar.Helpers
             char[] charArray = str.ToCharArray();
             for (int i = 0; i < charArray.Length; i++)
             {
-                char eachChar = charArray[i];
-                if (eachChar >= 0x4e00 && eachChar <= 0x9fa5) //判断中文字符
+                if (SearchUnicode(charArray[i])) //判断中文字符
                 {
                     charNum += 3;//经过测试，微信计算 1 个中文等于 3 个字符，而不是 2 个
                 }
@@ -76,6 +116,11 @@ namespace Senparc.NeuChar.Helpers
         /// <returns></returns>
         public static string SubstringByByte(string origStr, int bytesLength)
         {
+            var bytes = Encoding.Unicode.GetBytes(origStr);
+
+
+
+
             StringBuilder sb = new StringBuilder();
             char[] charArray = origStr.ToCharArray();
             var checkLength = 0;
@@ -83,7 +128,7 @@ namespace Senparc.NeuChar.Helpers
 
             for (; i < charArray.Length; i++)
             {
-                if (charArray[i] >= 0x4e00 && charArray[i] <= 0x9fa5) //判断中文字符
+                if (SearchUnicode(charArray[i])) //判断中文字符
                 {
                     checkLength += 3;//经过测试，微信计算 1 个中文等于 3 个字符，而不是 2 个
                 }

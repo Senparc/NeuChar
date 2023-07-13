@@ -72,7 +72,7 @@ namespace Senparc.NeuChar.MessageHandlers
             //            var appDomainAppPath = Senparc.CO2NET.Config.RootDictionaryPath; //dll所在目录：;
             //#endif
 
-            var logPath = CO2NET.Utilities.ServerUtility.ContentRootMapPath($"~/App_Data/{this.MessageEntityEnlightener?.PlatformType.ToString()}/{ SystemTime.Now.ToString("yyyy-MM-dd")}/");
+            var logPath = CO2NET.Utilities.ServerUtility.ContentRootMapPath($"~/App_Data/{this.MessageEntityEnlightener?.PlatformType.ToString()}/{SystemTime.Now.ToString("yyyy-MM-dd")}/");
             if (!Directory.Exists(logPath))
             {
                 Directory.CreateDirectory(logPath);
@@ -163,10 +163,10 @@ namespace Senparc.NeuChar.MessageHandlers
 #if NETSTANDARD2_1_OR_GREATER
                          using (var fs = new FileStream(filePath, FileMode.CreateNew))
                          {
-                             await this.RequestDocument.SaveAsync(fs, System.Xml.Linq.SaveOptions.None, new CancellationToken());
+                             await this.ResponseDocument.SaveAsync(fs, System.Xml.Linq.SaveOptions.None, new CancellationToken());
                          }
 #else
-                        this.RequestDocument.Save(filePath);
+                        this.ResponseDocument.Save(filePath);
 #endif
                      }
 
@@ -179,7 +179,7 @@ namespace Senparc.NeuChar.MessageHandlers
 #if NETSTANDARD2_1_OR_GREATER
                          using (var fs = new FileStream(filePath, FileMode.CreateNew))
                          {
-                             await this.RequestDocument.SaveAsync(fs, System.Xml.Linq.SaveOptions.None, new CancellationToken());
+                             await this.ResponseDocument.SaveAsync(fs, System.Xml.Linq.SaveOptions.None, new CancellationToken());
                          }
 #else
                         this.FinalResponseDocument.Save(filePath);
@@ -189,8 +189,8 @@ namespace Senparc.NeuChar.MessageHandlers
                      if (this.ResponseDocument == null && this.TextResponseMessage != null)
                      {
                          var filePath = Path.Combine(logPath, string.Format("{0}_TextResponse_{1}_{2}.txt", _getRandomFileName(),
-                             this.RequestMessage?.ToUserName,
-                             this.RequestMessage?.MsgType));
+                             this.ResponseMessage?.ToUserName,
+                             this.ResponseMessage?.MsgType));
 
 #if NETSTANDARD2_1_OR_GREATER
                          await System.IO.File.WriteAllTextAsync(filePath, this.TextResponseMessage);
