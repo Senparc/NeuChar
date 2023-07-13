@@ -82,7 +82,7 @@ namespace Senparc.NeuChar.Helpers
 
         private static bool SearchUnicode(char eachChar)
         {
-            return (int)eachChar >= 127;
+            return (int)eachChar > 127;
         }
 
         /// <summary>
@@ -116,11 +116,6 @@ namespace Senparc.NeuChar.Helpers
         /// <returns></returns>
         public static string SubstringByByte(string origStr, int bytesLength)
         {
-            var bytes = Encoding.Unicode.GetBytes(origStr);
-
-
-
-
             StringBuilder sb = new StringBuilder();
             char[] charArray = origStr.ToCharArray();
             var checkLength = 0;
