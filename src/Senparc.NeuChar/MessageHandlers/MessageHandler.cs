@@ -344,6 +344,7 @@ namespace Senparc.NeuChar.MessageHandlers
         /// </summary>
         public string TextResponseMessage
         {
+            //TODO: 改成异步方法
             get
             {
                 //判断是否文本超长
