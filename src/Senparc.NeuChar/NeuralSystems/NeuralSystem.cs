@@ -1,15 +1,46 @@
-﻿using Senparc.CO2NET.Extensions;
+﻿#region Apache License Version 2.0
+/*----------------------------------------------------------------
+
+Copyright 2023 Suzhou Senparc Network Technology Co.,Ltd.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
+except in compliance with the License. You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under the
+License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+either express or implied. See the License for the specific language governing permissions
+and limitations under the License.
+
+Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
+
+----------------------------------------------------------------*/
+#endregion Apache License Version 2.0
+
+/*----------------------------------------------------------------
+    Copyright (C) 2023 Senparc
+    
+    文件名：NeuralSystem.cs
+    文件功能描述：神经系统，整个系统数据的根节点
+    
+    
+    创建标识：Senparc - 20
+    
+    修改标识：Senparc - 20230716
+    修改描述：v2.3.1.1 创建默认 NeuChar 配置根目录创建
+
+----------------------------------------------------------------*/
+
+
+using Senparc.CO2NET.Extensions;
 using Senparc.CO2NET.Helpers;
-using Senparc.CO2NET.Trace;
-using Senparc.CO2NET.Utilities;
 using Senparc.NeuChar.Helpers;
 using Senparc.NeuChar.NeuralSystems;
-using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 
 namespace Senparc.NeuChar
@@ -99,6 +130,8 @@ namespace Senparc.NeuChar
             {
                 //全部重新载入
                 var rootPath = NeuCharConfigHelper.GetNeuCharRootConfigBasePath();
+                FileHelper.TryCreateDirectory(rootPath);
+
                 var tenants = Directory.GetDirectories(rootPath).Select(Path.GetFileName);
                 foreach (var tenant in tenants)
                 {
