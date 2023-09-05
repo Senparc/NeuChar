@@ -32,6 +32,9 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 
     修改标识：Senparc - 20190902
     修改描述：添加 MsgType 接口
+
+    修改标识：Senparc - 20230905
+    修改描述：v2.3.2 完善 ResponseMessage 类型自动获取机制，兼容企业微信无返回消息类型处理
 ----------------------------------------------------------------*/
 
 
@@ -170,7 +173,19 @@ namespace Senparc.NeuChar.Entities
                         throw new MessageHandlerException("MessageEntityEnlighten 不能为 null");
                     }
 
-                    var responseName = tType.Name.Replace("IResponseMessage", "").Replace("ResponseMessage", ""); //请求名称
+                    const string TYPE_PREFIX = "ResponseMessage";
+                    var typeStartIndex = tType.Name.IndexOf(TYPE_PREFIX);
+                    if (typeStartIndex != -1)
+                    {
+                        typeStartIndex += TYPE_PREFIX.Length;
+                    }
+                    else
+                    {
+                        typeStartIndex = 0;
+                    }
+
+                    //响应消息类型名称
+                    var responseName = typeStartIndex == 0 ? tType.Name : tType.Name.Substring(typeStartIndex, tType.Name.Length - TYPE_PREFIX.Length);
 
                     ResponseMsgType msgType = (ResponseMsgType)Enum.Parse(typeof(ResponseMsgType), responseName);
 
