@@ -35,30 +35,46 @@ namespace Senparc.NeuChar.Entities
     /// </summary>
     public class ThirdFasteRegisterInfo
     {
+        #region 企业
         /// <summary>
-        /// 企业名称
+        /// 企业小程序 - 企业名称
         /// </summary>
         public string name { get; set; }
 
         /// <summary>
-        /// 企业代码
+        /// 企业小程序 - 企业代码
         /// </summary>
         public string code { get; set; }
         /// <summary>
-        /// 企业代码类型 
+        /// 企业小程序 - 企业代码类型 
         /// </summary>
         public int code_type { get; set; }
         /// <summary>
-        /// 法人微信号
+        /// 企业小程序 - 法人微信号
         /// </summary>
         public string legal_persona_wechat { get; set; }
         /// <summary>
-        /// 法人姓名
+        /// 企业小程序 - 法人姓名
         /// </summary>
         public string legal_persona_name { get; set; }
+        #endregion
+
+        #region 公共
         /// <summary>
-        /// 第三方联系电话
+        /// 公共 - 第三方联系电话
         /// </summary>
         public string component_phone { get; set; }
+        #endregion
+
+        #region 个人 
+        /// <summary>
+        /// 个人小程序 - 用户微信号
+        /// </summary>
+        public string wxuser { get; set; }
+        /// <summary>
+        /// 个人小程序 - 用户姓名
+        /// </summary>
+        public string idname { get; set; }
+        #endregion
     }
 }
