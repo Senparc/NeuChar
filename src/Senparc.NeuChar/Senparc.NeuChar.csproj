@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net462;netstandard2.0;netstandard2.1</TargetFrameworks>
-    <Version>2.3.3</Version>
+    <Version>2.4.0-rc.2</Version>
     <AssemblyName>Senparc.NeuChar</AssemblyName>
     <RootNamespace>Senparc.NeuChar</RootNamespace>
     <!--<FrameworkPathOverride Condition="'$(TargetFramework)' == 'net35'">$(Net35FrameworkPathOverride)</FrameworkPathOverride>-->
@@ -115,6 +115,7 @@
 		v2.2.0 支持多租户 NeuCharRoot
 		v2.3.0 添加文本长度限制自动处理方案
 		v2.3.2 完善 ResponseMessage 类型自动获取机制，兼容企业微信无返回消息类型处理
+		v2.4.0 升级基础库，适配 .NET 8.0
 	</PackageReleaseNotes>
     <RepositoryUrl>https://github.com/Senparc/NeuChar</RepositoryUrl>
     <Configurations>Debug;Release;Test</Configurations>
@@ -171,8 +172,9 @@
     <Folder Include="NeuralSystems\Nodes\Config\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Senparc.CO2NET" Version="2.2.0" />
-    <PackageReference Include="Senparc.CO2NET.APM" Version="1.2.5.7" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0-rc.2.23479.6" />
+    <PackageReference Include="Senparc.CO2NET" Version="2.3.0-rc.2" />
+    <PackageReference Include="Senparc.CO2NET.APM" Version="1.4.0-rc.2" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' != 'net462'">
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions">
