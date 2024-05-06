@@ -220,9 +220,8 @@ namespace Senparc.NeuChar.Context
             MaxRecordCount = MessageContextGlobalConfig.MaxRecordCount;
         }
 
-
         /// <summary>
-        /// 获取MessageContext
+        /// 获取 MessageContext
         /// </summary>
         /// <param name="appId">主体id（企业id，公众平台主体appid 用于分隔缓存数据）</param>
         /// <param name="userName">用户名（OpenId）</param>
