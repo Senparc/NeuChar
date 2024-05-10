@@ -12,7 +12,7 @@
 			NeuChar SDK 跨平台信息交互标准
 
 		</Description>
-    <Copyright>Senparc Copyright © 2004~2023</Copyright>
+    <Copyright>Senparc Copyright © 2004~2024</Copyright>
     <PackageTags>NeuChar,Standard,json,yaml,xml</PackageTags>
     <Authors>Jeffrey Su</Authors>
     <Owners>Senparc</Owners>
@@ -175,11 +175,6 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" />
     <PackageReference Include="Senparc.CO2NET" Version="2.4.0.1" />
     <PackageReference Include="Senparc.CO2NET.APM" Version="1.4.2" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' != 'net462'">
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions">
-      <Version>6.0.0</Version>
-    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Update="Microsoft.SourceLink.GitHub" Version="1.1.1" />
