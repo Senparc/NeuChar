@@ -11,9 +11,9 @@ Senparc.NeuChar 跨平台信息交互标准。使用 NeuChar 标准可以跨平�
 
 | 名称    |        DLL          |  Nuget                                                                                | 支持 .NET 版本 
 |---------|---------------------|---------------------------------------------------------------------------------------|--------------------------------------
-| NeuChar | Senparc.NeuChar.dll   | [![Senparc.NeuChar][1.1]][1.2]    [![Senparc.NeuChar][nuget-img-base]][nuget-url-base]  |   ![.NET 4.5][net45Y]    ![.NET Core][coreY]  ![.NET 6][net6Y]
-| NeuChar.App | Senparc.NeuChar.App.dll   | [![Senparc.NeuChar.App][2.1]][2.2]    [![Senparc.NeuChar.App][nuget-img-base-app]][nuget-url-base-app]  |   ![.NET 4.5][net45Y]  ![.NET Core][coreY]  ![.NET 6][net6Y]
-| NeuChar.AspNet | Senparc.NeuChar.AspNet.dll   | [![Senparc.NeuChar.AspNet.App][2.1]][2.2]    [![Senparc.NeuChar.App][nuget-img-base-app]][nuget-url-base-app]  |  ![.NET 4.5][net45Y]    ![.NET Core][coreY]  ![.NET 6][net6Y]
+| NeuChar | Senparc.NeuChar.dll   | [![Senparc.NeuChar][1.1]][1.2]    [![Senparc.NeuChar][nuget-img-base]][nuget-url-base]  |   ![.NET 4.6.2][net462Y]    ![.NET Core][coreY]  ![.NET 8][net8Y]
+| NeuChar.App | Senparc.NeuChar.App.dll   | [![Senparc.NeuChar.App][2.1]][2.2]    [![Senparc.NeuChar.App][nuget-img-base-app]][nuget-url-base-app]  |   ![.NET 4.6.2][net462Y]  ![.NET Core][coreY]  ![.NET 8][net8Y]
+| NeuChar.AspNet | Senparc.NeuChar.AspNet.dll   | [![Senparc.NeuChar.AspNet.App][2.1]][2.2]    [![Senparc.NeuChar.App][nuget-img-base-app]][nuget-url-base-app]  |  ![.NET 4.6.2][net462Y]    ![.NET Core][coreY]  ![.NET 8][net8Y]
 
 
 [1.1]: https://img.shields.io/nuget/v/Senparc.NeuChar.svg?style=flat
@@ -21,21 +21,14 @@ Senparc.NeuChar 跨平台信息交互标准。使用 NeuChar 标准可以跨平�
 [2.1]: https://img.shields.io/nuget/v/Senparc.NeuChar.App.svg?style=flat
 [2.2]: https://www.nuget.org/packages/Senparc.NeuChar.App
 
-[net35Y]: https://img.shields.io/badge/3.5-Y-brightgreen.svg
-[net35N]: https://img.shields.io/badge/3.5-N-lightgrey.svg
-[net40Y]: https://img.shields.io/badge/4.0-Y-brightgreen.svg
-[net40N]: https://img.shields.io/badge/4.0-N-lightgrey.svg
-[net40N-]: https://img.shields.io/badge/4.0----lightgrey.svg
-[net45Y]: https://img.shields.io/badge/4.5.1-Y-brightgreen.svg
-[net45N]: https://img.shields.io/badge/4.5.1-N-lightgrey.svg
-[net45N-]: https://img.shields.io/badge/4.5.1----lightgrey.svg
-[net461Y]: https://img.shields.io/badge/4.6.1-Y-brightgreen.svg
-[net461N]: https://img.shields.io/badge/4.6.1-N-lightgrey.svg
+
+[net462Y]: https://img.shields.io/badge/4.6.2-Y-brightgreen.svg
+[net462N]: https://img.shields.io/badge/4.6.2-N-lightgrey.svg
 [coreY]: https://img.shields.io/badge/.NET%20Core-Y-brightgreen.svg
 [coreN]: https://img.shields.io/badge/.NET%20Core-N-lightgrey.svg
 [coreN-]: https://img.shields.io/badge/.NET%20Core----lightgrey.svg
-[net6Y]: https://img.shields.io/badge/.NET%206.0-Y-brightgreen.svg
-[net6N]: https://img.shields.io/badge/.NET%206.0-N-lightgrey.svg
+[net8Y]: https://img.shields.io/badge/.NET%208.0-Y-brightgreen.svg
+[net8N]: https://img.shields.io/badge/.NET%208.0-N-lightgrey.svg
 
 [nuget-img-base]: https://img.shields.io/nuget/dt/Senparc.NeuChar.svg
 [nuget-url-base]: https://www.nuget.org/packages/Senparc.NeuChar
