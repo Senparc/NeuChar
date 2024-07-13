@@ -146,7 +146,7 @@ namespace Senparc.NeuChar.MessageHandlers
 
 
         /// <summary>
-        /// 延迟载入的上下文对象，存放在内存中。注意：使用本地内存缓存时，会每次都花心，等效于 GetCurrentMessageContext()；使用分布式缓存时，不能保证此对象是实时的，如需获取实时对象，请使用 GetCurrentMessageContext() 方法
+        /// 延迟载入的上下文对象，存放在内存中。注意：使用本地内存缓存时，会每次都刷新,等效于 GetCurrentMessageContext()；使用分布式缓存时，不能保证此对象是实时的，如需获取实时对象，请使用 GetCurrentMessageContext() 方法
         /// </summary>
         public async Task<TMC> GetUnsafeMessageContext()
         {
