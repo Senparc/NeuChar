@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net462;netstandard2.0;netstandard2.1</TargetFrameworks>
-    <Version>2.4.2</Version>
+    <Version>2.4.3</Version>
     <AssemblyName>Senparc.NeuChar</AssemblyName>
     <RootNamespace>Senparc.NeuChar</RootNamespace>
     <!--<FrameworkPathOverride Condition="'$(TargetFramework)' == 'net35'">$(Net35FrameworkPathOverride)</FrameworkPathOverride>-->
@@ -174,7 +174,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" />
-    <PackageReference Include="Senparc.CO2NET" Version="2.4.2" />
+    <PackageReference Include="Senparc.CO2NET" Version="2.4.3" />
     <PackageReference Include="Senparc.CO2NET.APM" Version="1.4.3" />
   </ItemGroup>
   <ItemGroup>
