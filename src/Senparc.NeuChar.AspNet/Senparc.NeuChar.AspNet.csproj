@@ -1,7 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+	  <!--TODO：netstandard2.0/2.1 升级到 .NET6.0+8.0，同时全面清理：<PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" /> -->
     <TargetFrameworks>net462;netstandard2.0;netstandard2.1</TargetFrameworks>
-    <Version>1.4.3</Version>
+    <Version>1.5.0</Version>
     <AssemblyName>Senparc.NeuChar.AspNet</AssemblyName>
     <RootNamespace>Senparc.NeuChar.AspNet</RootNamespace>
     <FrameworkPathOverride Condition="'$(TargetFramework)' == 'net35'">$(Net35FrameworkPathOverride)</FrameworkPathOverride>
@@ -22,11 +23,12 @@
     <PackageProjectUrl>https://github.com/Senparc/NeuChar</PackageProjectUrl>
     <PackageIcon>icon.jpg</PackageIcon>
     <PackageReleaseNotes>
-			v0.1.100 创建 Senparc.NeuChar.AspNet，分离 ASP.NET Core 相关依赖
-			v0.4.100.8 更新 MessageHandler 中间件，提供 IServiceProvider 参数，并采用异步方法读取请求内容
-			v1.1.6 升级基础库
-			v1.4.0 升级基础库，适配 .NET 8.0
-</PackageReleaseNotes>
+		v0.1.100 创建 Senparc.NeuChar.AspNet，分离 ASP.NET Core 相关依赖
+		v0.4.100.8 更新 MessageHandler 中间件，提供 IServiceProvider 参数，并采用异步方法读取请求内容
+		v1.1.6 升级基础库
+		v1.4.0 升级基础库，适配 .NET 8.0
+		v1.5.0 升级 CO2NET.AspNet，清理旧版本引用
+	</PackageReleaseNotes>
     <RepositoryUrl>https://github.com/Senparc/NeuChar</RepositoryUrl>
     <Configurations>Debug;Release;Test</Configurations>
   </PropertyGroup>
@@ -59,7 +61,7 @@
     <None Include="..\Senparc.NeuChar\icon.jpg" Pack="true" Visible="false" PackagePath="" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Senparc.CO2NET.AspNet" Version="1.3.3" />
+    <PackageReference Include="Senparc.CO2NET.AspNet" Version="1.4.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Senparc.NeuChar.App\Senparc.NeuChar.App.csproj" />
