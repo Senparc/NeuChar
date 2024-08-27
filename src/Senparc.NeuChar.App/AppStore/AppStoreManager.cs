@@ -48,6 +48,8 @@ namespace Senparc.NeuChar.App.AppStore
         //private static string _appKey;
         //private static string _secret;
         private static PassportCollection _passportCollection;
+
+        //TODO： 需要放到缓存，以适应分布式环境
         public static PassportCollection PassportCollection
         {
             get
