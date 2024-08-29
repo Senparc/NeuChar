@@ -31,6 +31,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Security.Principal;
 using System.Text;
@@ -218,6 +219,57 @@ namespace Senparc.NeuChar.Helpers
             }
 
             return null;//不做处理
+        }
+
+        /// <summary>
+        /// 尝试使用Unicode编码分批处理超长的文本内容，返回处理结果集合
+        /// </summary>
+        /// <param name="content">文本内容</param>
+        /// <param name="limitedBytes">每段文本的限制长度</param>
+        /// <param name="handleTextFuncAsync">处理方法</param>
+        /// <returns>处理结果集合</returns>
+        public static async Task<IEnumerable<T>> TryHandleLimitedText<T>(string content, int limitedBytes, Func<string, Task<T>> handleTextFuncAsync)
+            where T : class
+        {
+            List<T> results = new();
+
+            if (limitedBytes > 0)
+            {
+                foreach (var chunk in ChunkStringByUnicode(content, limitedBytes))
+                {
+                    results.Add(await handleTextFuncAsync(chunk));
+                }
+            }
+
+            return results;
+        }
+
+        /// <summary>
+        /// 使用Unicode编码对文本进行拆分
+        /// </summary>
+        /// <param name="text">文本内容</param>
+        /// <param name="chunkSize">分片大小</param>
+        /// <returns></returns>
+        public static IEnumerable<string> ChunkStringByUnicode(string text, int chunkSize)
+        {
+            var stringBuilder = new StringBuilder();
+            var byteSize = 0;
+            TextElementEnumerator enumerator = StringInfo.GetTextElementEnumerator(text);
+
+            while (enumerator.MoveNext())
+            {
+                string unicodeCharacter = enumerator.GetTextElement();
+                var b = Encoding.UTF8.GetBytes(unicodeCharacter);
+                if (byteSize + b.Length >= chunkSize)
+                {
+                    yield return stringBuilder.ToString();
+                    stringBuilder.Clear();
+                    byteSize = 0;
+                }
+                byteSize += b.Length;
+                stringBuilder.Append(unicodeCharacter);
+            }
+            yield return stringBuilder.ToString();
         }
     }
 }

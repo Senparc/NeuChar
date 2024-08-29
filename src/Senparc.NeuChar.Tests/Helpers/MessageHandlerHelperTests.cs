@@ -36,5 +36,35 @@ namespace Senparc.NeuChar.Helpers.Tests
 
 
         }
+
+        [TestMethod]
+        public void ChunkStringByUnicode()
+        {
+            var limit = 10;
+            var text = "Senparc.NeuChar🤝 跨平台信息交互🔄标准🌍。使用 NeuChar 标准💬可以跨平台🌐兼容不同平台的交互🔀信息设置，一次设置🚀，多平台共享📱🖥。";
+
+            var results = MessageHandlerHelper.ChunkStringByUnicode(text, limit);
+
+            foreach (var result in results)
+            {
+                var bytes = Encoding.UTF8.GetBytes(result);
+                Assert.IsTrue(bytes.Length <= limit);
+            }
+        }
+
+        [TestMethod]
+        public async Task HandleLimitedTextAsync()
+        {
+            var limit = 10;
+            var text = "Senparc.NeuChar🤝 跨平台信息交互🔄标准🌍。使用 NeuChar 标准💬可以跨平台🌐兼容不同平台的交互🔀信息设置，一次设置🚀，多平台共享📱🖥。";
+
+            var results = await MessageHandlerHelper.TryHandleLimitedText(text, limit, chunk =>
+            {
+                return Task.FromResult(chunk);
+            });
+
+            Assert.AreEqual(text, string.Join(string.Empty, results));
+        }
+
     }
 }
