@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net462;netstandard2.0;netstandard2.1</TargetFrameworks>
-    <Version>1.4.3</Version>
+    <Version>1.5.0</Version>
     <AssemblyName>Senparc.NeuChar.App</AssemblyName>
     <RootNamespace>Senparc.NeuChar.App</RootNamespace>
     <GeneratePackageOnBuild Condition=" '$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
@@ -48,6 +48,7 @@
 		v1.1.6 添加“默认 NeuChar AppStore 的接口地址”设置属性
 		v1.1.7 升级基础库
 		v1.4.0 升级基础库，适配 .NET 8.0
+		v1.5.0 Upate CO2NET, add ApiClient and support for Aspire
 	</PackageReleaseNotes>
     <RepositoryUrl>https://github.com/JeffreySu/WeiXinMPSDK</RepositoryUrl>
     <Configurations>Debug;Release;Test</Configurations>

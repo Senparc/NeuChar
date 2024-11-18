@@ -38,7 +38,7 @@ namespace Senparc.NeuChar.App.AppStore
     public class PassportCollection : Dictionary<string, PassportBag>
     {
         /// <summary>
-        /// 统一URL前缀，如http://api.weiweihi.com:8080/App/Api
+        /// 统一URL前缀，如 https://www.neuchar.com/App/Api
         /// </summary>
         public string BasicUrl { get; set; }
         public string MarketingToolUrl { get; set; }
