@@ -2,7 +2,7 @@
   <PropertyGroup>
 	  <!--TODO：netstandard2.0/2.1 升级到 .NET6.0+8.0，同时全面清理：<PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" /> -->
     <TargetFrameworks>net462;netstandard2.0;netstandard2.1</TargetFrameworks>
-    <Version>1.6.0</Version>
+    <Version>1.6.1</Version>
     <AssemblyName>Senparc.NeuChar.AspNet</AssemblyName>
     <RootNamespace>Senparc.NeuChar.AspNet</RootNamespace>
     <FrameworkPathOverride Condition="'$(TargetFramework)' == 'net35'">$(Net35FrameworkPathOverride)</FrameworkPathOverride>
@@ -62,7 +62,7 @@
     <None Include="..\Senparc.NeuChar\icon.jpg" Pack="true" Visible="false" PackagePath="" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Senparc.CO2NET.AspNet" Version="2.0.0-beta1" />
+    <PackageReference Include="Senparc.CO2NET.AspNet" Version="2.0.1-beta1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Senparc.NeuChar.App\Senparc.NeuChar.App.csproj" />
