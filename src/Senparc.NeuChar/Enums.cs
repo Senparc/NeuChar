@@ -39,6 +39,9 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
     修改标识：Senparc - 20220503
     修改描述：v2.1.1.1 添加 article_id 和 article_view_limited 菜单类型
 
+    修改标识：Q1an05 - 20250803
+    修改描述：v2.5.3 添加 RequestMsgType 和 ResponseMsgType 枚举中对混合类型、流式输出的类型支持 
+
 ----------------------------------------------------------------*/
 
 using System;
@@ -142,10 +145,11 @@ namespace Senparc.NeuChar
         ShortVideo = 6,//小视频
         Event = 7, //事件推送
         File = 8,//文件类型
-        Mixed = 9,//图文混排消息
-        Stream = 10 //流式推送消息
-
+        
         MiniProgramPage=100,//小程序页面
+
+        Mixed = 150,//图文混排消息
+        Stream = 160, //流式推送消息
 
         NeuChar = 999,//NeuChar请求
     }
@@ -179,9 +183,10 @@ namespace Senparc.NeuChar
         [Description("任务卡片")]
         TaskCard = 8,
         [Description("流式消息")]
-        Stream = 9,
+        
+        Stream = 50,
         [Description("流式消息+模板卡片回复")]
-        StreamWithTemplateCard = 10,
+        StreamWithTemplateCard = 60,
 
 
         //以下为延伸类型，微信官方并未提供具体的回复类型
