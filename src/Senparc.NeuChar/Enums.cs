@@ -182,6 +182,7 @@ namespace Senparc.NeuChar
         MpNews = 7,//素材多图文
         [Description("任务卡片")]
         TaskCard = 8,
+        
         [Description("流式消息")]
         Stream = 50,
         [Description("流式消息+模板卡片回复")]
