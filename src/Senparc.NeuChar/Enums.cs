@@ -142,6 +142,8 @@ namespace Senparc.NeuChar
         ShortVideo = 6,//小视频
         Event = 7, //事件推送
         File = 8,//文件类型
+        Mixed = 9,//图文混排消息
+        Stream = 10 //流式推送消息
 
         MiniProgramPage=100,//小程序页面
 
@@ -176,6 +178,10 @@ namespace Senparc.NeuChar
         MpNews = 7,//素材多图文
         [Description("任务卡片")]
         TaskCard = 8,
+        [Description("流式消息")]
+        Stream = 9,
+        [Description("流式消息+模板卡片回复")]
+        StreamWithTemplateCard = 10,
 
 
         //以下为延伸类型，微信官方并未提供具体的回复类型
@@ -330,3 +336,4 @@ namespace Senparc.NeuChar
 
     }
 }
+
