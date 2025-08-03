@@ -211,7 +211,7 @@ namespace Senparc.NeuChar
         /// </summary>
         WeChat_MiniProgram = 2,
         /// <summary>
-        /// 微信企业号
+        /// 企业微信
         /// </summary>
         WeChat_Work = 4,
         /// <summary>
