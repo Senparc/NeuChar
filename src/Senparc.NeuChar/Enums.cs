@@ -193,7 +193,7 @@ namespace Senparc.NeuChar
         [Description("流式消息+模板卡片回复")]
         StreamWithTemplateCard = 70,
         [Description("模版卡片更新消息")]
-        UpdateTemplateCard,
+        UpdateTemplateCard = 80,
 
 
         //以下为延伸类型，微信官方并未提供具体的回复类型
@@ -348,5 +348,6 @@ namespace Senparc.NeuChar
 
     }
 }
+
 
 
