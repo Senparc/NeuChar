@@ -42,7 +42,11 @@ namespace Senparc.NeuChar.Entities
     {
         //删除MsgType因为企业号和公众号的MsgType为两个独立的枚举类型
         //RequestMessageType MsgType { get; }
-        long MsgId { get; set; }
+
+        /// <summary>
+        /// 消息 MsgId，对比的时候建议使用 MsgId?.ToString() 进行对比
+        /// </summary>
+        object MsgId { get; set; }
 
         RequestMsgType MsgType { get; set; }
         string Encrypt { get; set; }
@@ -73,8 +77,10 @@ namespace Senparc.NeuChar.Entities
         //{
         //    get { return RequestMessageType.Text; }
         //}
-
-        public long MsgId { get; set; }
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
+        public object MsgId { get; set; }
         public virtual RequestMsgType MsgType { get; set; }
         public string Encrypt { get; set; }
 

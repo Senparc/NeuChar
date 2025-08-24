@@ -42,6 +42,9 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
     修改标识：Q1an05 - 20250803
     修改描述：v2.5.3 添加 RequestMsgType 和 ResponseMsgType 枚举中对混合类型、流式输出的类型支持 
 
+    修改标识：Q1an05 - 20250805
+    修改描述：ResponseMsgType 枚举中对模板卡片的类型支持 
+
 ----------------------------------------------------------------*/
 
 using System;
@@ -185,8 +188,12 @@ namespace Senparc.NeuChar
         
         [Description("流式消息")]
         Stream = 50,
+        [Description("模板卡片回复")]
+        TemplateCard = 60,
         [Description("流式消息+模板卡片回复")]
-        StreamWithTemplateCard = 60,
+        StreamWithTemplateCard = 70,
+        [Description("模版卡片更新消息")]
+        UpdateTemplateCard = 80,
 
 
         //以下为延伸类型，微信官方并未提供具体的回复类型
@@ -341,4 +348,6 @@ namespace Senparc.NeuChar
 
     }
 }
+
+
 

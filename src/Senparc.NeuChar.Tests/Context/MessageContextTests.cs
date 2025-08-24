@@ -1,6 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Senparc.CO2NET.Cache;
-using Senparc.CO2NET.Cache.Redis;
 using Senparc.CO2NET.Extensions;
 using Senparc.NeuChar.Context;
 using Senparc.NeuChar.Entities;
@@ -51,9 +50,9 @@ namespace Senparc.NeuChar.Tests.Context
         public MessageContextTests()
         {
             //注册
-            var redisConfigurationStr = "localhost:6379,defaultDatabase=3";
-            Senparc.CO2NET.Cache.Redis.Register.SetConfigurationOption(redisConfigurationStr);
-            Senparc.CO2NET.Cache.Redis.Register.UseKeyValueRedisNow();//键值对缓存策略（推荐）
+            var redisConfigurationStr = "10.37.129.2:6379,defaultDatabase=3";
+            Senparc.CO2NET.Cache.CsRedis.Register.SetConfigurationOption(redisConfigurationStr);
+            Senparc.CO2NET.Cache.CsRedis.Register.UseKeyValueRedisNow();//键值对缓存策略（推荐）
         }
 
         #region DistributedCacheTest
@@ -196,7 +195,7 @@ namespace Senparc.NeuChar.Tests.Context
         [TestMethod]
         public void RedisCacheTest()
         {
-            DistributedCacheTest(() => CO2NET.Cache.Redis.RedisObjectCacheStrategy.Instance);
+            DistributedCacheTest(() => Senparc.CO2NET.Cache.CsRedis.RedisObjectCacheStrategy.Instance);
         }
         #endregion
 
