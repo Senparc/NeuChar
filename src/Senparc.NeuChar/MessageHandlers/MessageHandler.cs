@@ -86,6 +86,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
  */
 
 using Senparc.CO2NET.Cache;
+using Senparc.CO2NET.Extensions;
 using Senparc.CO2NET.Utilities;
 using Senparc.NeuChar.ApiHandlers;
 using Senparc.NeuChar.Context;
@@ -581,12 +582,13 @@ namespace Senparc.NeuChar.MessageHandlers
                          //&& !(RequestMessage is RequestMessageEvent_Merchant_Order)批量订单的MsgId可能会相同
                          )
                     {
+                        var requestMsgId = RequestMessage.MsgId?.ToString();
                         if (MessageEntityEnlightener.PlatformType == PlatformType.WeChat_Work)
                         {
                             //有msgId按msgId去重
-                            if (RequestMessage.MsgId != 0)
+                            if (requestMsgId.IsNullOrEmpty() is false && requestMsgId != "0")
                             {
-                                if (messageContext.RequestMessages.Any(i => i.MsgId == RequestMessage.MsgId))
+                                if (messageContext.RequestMessages.Any(i => i.MsgId?.ToString() == RequestMessage.MsgId?.ToString()))
                                     MarkRepeatedMessage();//标记为已重复
                             }
                             //没有msgId则按签名去重
@@ -600,11 +602,12 @@ namespace Senparc.NeuChar.MessageHandlers
                         {
                             //lastMessage必定有值（除非极端小的过期时间条件下，几乎不可能发生）
                             var lastMessage = messageContext.RequestMessages.Last();
+                            var lastMessageMsgId = lastMessage.MsgId?.ToString();
                             if (
                                 //使用MsgId去重
-                                (lastMessage.MsgId != 0 && lastMessage.MsgId == RequestMessage.MsgId) ||
+                                (lastMessageMsgId.IsNullOrEmpty() is false && lastMessageMsgId != "0" && lastMessageMsgId == requestMsgId) ||
                                 //使用CreateTime去重（OpenId对象已经是同一个）
-                                (lastMessage.MsgId == RequestMessage.MsgId &&
+                                (lastMessageMsgId == requestMsgId &&
                                  lastMessage.MsgType == RequestMessage.MsgType &&
                                  lastMessage.CreateTime != DateTimeOffset.MinValue && //https://github.com/Senparc/NeuChar/issues/121
                                  lastMessage.CreateTime == RequestMessage.CreateTime)
