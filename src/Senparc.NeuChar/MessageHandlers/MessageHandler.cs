@@ -305,7 +305,7 @@ namespace Senparc.NeuChar.MessageHandlers
         /// 根据ResponseMessageBase获得转换后的ResponseDocument
         /// 注意：这里每次请求都会根据当前的ResponseMessageBase生成一次，如需重用此数据，建议使用缓存或局部变量
         /// </summary>
-        public abstract string ResponseJsonStr { get; }
+        public virtual string ResponseJsonStr { get; }
 
         /// <summary>
         /// 最后返回的ResponseDocument。
@@ -317,7 +317,7 @@ namespace Senparc.NeuChar.MessageHandlers
         /// 最后返回的ResponseDocument。
         /// 如果是Senparc.NeuChar.QY，则应当和ResponseDocument一致；如果是Senparc.NeuChar.QY，则应当在ResponseDocument基础上进行加密
         /// </summary>
-        public abstract string FinalResponseJsonStr { get; }
+        public virtual string FinalResponseJsonStr { get; }
 
         //protected Stream InputStream { get; set; }
         /// <summary>
@@ -604,7 +604,10 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <param name="postModel"></param>
         public abstract XDocument Init(XDocument requestDocument, IEncryptPostModel postModel);
 
-        public abstract string Init(string postDataJsonStr, IEncryptPostModel postModel);
+        public virtual string Init(string postDataJsonStr, IEncryptPostModel postModel)
+        {
+            throw new NotImplementedException("请实现Init(string postDataJsonStr, IEncryptPostModel postModel)方法s");
+        }
 
         #endregion
 
