@@ -491,7 +491,8 @@ namespace Senparc.NeuChar.MessageHandlers
         {
             if (useJson)
             {
-                var postDataJsonStr = inputStream.ToString();
+                using var reader = new StreamReader(inputStream);
+                var postDataJsonStr = reader.ReadToEnd();
                 CommonInitialize(postDataJsonStr, maxRecordCount, postModel, onlyAllowEncryptMessage, serviceProvider);
             }
 
