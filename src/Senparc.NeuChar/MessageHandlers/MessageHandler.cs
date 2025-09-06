@@ -607,7 +607,7 @@ namespace Senparc.NeuChar.MessageHandlers
 
         public virtual string Init(string postDataJsonStr, IEncryptPostModel postModel)
         {
-            throw new NotImplementedException("请实现Init(string postDataJsonStr, IEncryptPostModel postModel)方法s");
+            throw new NotImplementedException("请实现Init(string postDataJsonStr, IEncryptPostModel postModel)方法");
         }
 
         #endregion
