@@ -73,6 +73,9 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
     修改标识：Senparc - 20211107
     修改描述：v1.6 优化事件去重缓存key和企业微信事件去重bug
 
+    修改标识：WangQian - 20250901
+    修改描述：添加使用JSON字符串的构造函数，添加RequestJsonStr、ResponseJsonStr和FinalResponseJsonStr属性
+
 ----------------------------------------------------------------*/
 
 
@@ -288,16 +291,33 @@ namespace Senparc.NeuChar.MessageHandlers
         public XDocument RequestDocument { get; set; }
 
         /// <summary>
+        /// 在构造函数中转换得到的原始JSON字符串
+        /// </summary>
+        public string RequestJsonStr { get; set; }
+
+        /// <summary>
         /// 根据ResponseMessageBase获得转换后的ResponseDocument
         /// 注意：这里每次请求都会根据当前的ResponseMessageBase生成一次，如需重用此数据，建议使用缓存或局部变量
         /// </summary>
         public abstract XDocument ResponseDocument { get; }
 
         /// <summary>
+        /// 根据ResponseMessageBase获得转换后的ResponseDocument
+        /// 注意：这里每次请求都会根据当前的ResponseMessageBase生成一次，如需重用此数据，建议使用缓存或局部变量
+        /// </summary>
+        public virtual string ResponseJsonStr { get; }
+
+        /// <summary>
         /// 最后返回的ResponseDocument。
         /// 如果是Senparc.NeuChar.QY，则应当和ResponseDocument一致；如果是Senparc.NeuChar.QY，则应当在ResponseDocument基础上进行加密
         /// </summary>
         public abstract XDocument FinalResponseDocument { get; }
+
+        /// <summary>
+        /// 最后返回的ResponseDocument。
+        /// 如果是Senparc.NeuChar.QY，则应当和ResponseDocument一致；如果是Senparc.NeuChar.QY，则应当在ResponseDocument基础上进行加密
+        /// </summary>
+        public virtual string FinalResponseJsonStr { get; }
 
         //protected Stream InputStream { get; set; }
         /// <summary>
@@ -377,7 +397,9 @@ namespace Senparc.NeuChar.MessageHandlers
                     return /*ResponseDocument == null ? null : */
                             FinalResponseDocument != null
                             ? FinalResponseDocument.ToString()
-                            : "";
+                            : (!string.IsNullOrEmpty(FinalResponseJsonStr)
+                                ? FinalResponseJsonStr
+                                : "");
                     //ResponseDocument.ToString();
                 }
                 else
@@ -464,11 +486,21 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <param name="postModel">需要传入到Init的参数</param>
         /// <param name="onlyAllowEncryptMessage">当平台同时兼容明文消息和加密消息时，只允许处理加密消息（不允许处理明文消息），默认为 False</param>
         /// <param name="serviceProvider"></param>
-        public MessageHandler(Stream inputStream, IEncryptPostModel postModel, int maxRecordCount = 0, bool onlyAllowEncryptMessage = false, IServiceProvider serviceProvider = null)
+        /// <param name="useJson">是否使用JSON字符串，默认为false</param>
+        public MessageHandler(Stream inputStream, IEncryptPostModel postModel, int maxRecordCount = 0, bool onlyAllowEncryptMessage = false, IServiceProvider serviceProvider = null, bool useJson = false)
         {
-            var postDataDocument = XmlUtility.Convert(inputStream);
-            //PostModel = postModel;//PostModel 在当前类初始化过程中必须赋值
-            CommonInitialize(postDataDocument, maxRecordCount, postModel, onlyAllowEncryptMessage, serviceProvider);
+            if (useJson)
+            {
+                var postDataJsonStr = inputStream.ToString();
+                CommonInitialize(postDataJsonStr, maxRecordCount, postModel, onlyAllowEncryptMessage, serviceProvider);
+            }
+
+            else
+            {
+                var postDataDocument = XmlUtility.Convert(inputStream);
+                //PostModel = postModel;//PostModel 在当前类初始化过程中必须赋值
+                CommonInitialize(postDataDocument, maxRecordCount, postModel, onlyAllowEncryptMessage, serviceProvider);
+            }
         }
 
         /// <summary>
@@ -483,6 +515,19 @@ namespace Senparc.NeuChar.MessageHandlers
         {
             //PostModel = postModel;//PostModel 在当前类初始化过程中必须赋值
             CommonInitialize(postDataDocument, maxRecordCount, postModel, onlyAllowEncryptMessage, serviceProvider);
+        }
+
+        /// <summary>
+        /// 使用postDataJsonStr的构造函数
+        /// </summary>
+        /// <param name="postDataJsonStr"></param>
+        /// <param name="postModel"></param>
+        /// <param name="maxRecordCount"></param>
+        /// <param name="onlyAllowEncryptMessage"></param>
+        /// <param name="serviceProvider"></param>
+        public MessageHandler(string postDataJsonStr, IEncryptPostModel postModel, int maxRecordCount = 0, bool onlyAllowEncryptMessage = false, IServiceProvider serviceProvider = null)
+        {
+            CommonInitialize(postDataJsonStr, maxRecordCount, postModel, onlyAllowEncryptMessage, serviceProvider);
         }
 
         /// <summary>
@@ -540,6 +585,17 @@ namespace Senparc.NeuChar.MessageHandlers
             //CheckMessageRepeat(); //消息去重自 v1.3.0 起，已经放入 ExecuteAsync 中处理
         }
 
+        public void CommonInitialize(string postDataJsonStr, int maxRecordCount, IEncryptPostModel postModel, bool onlyAllowEncryptMessage, IServiceProvider serviceProvider = null)
+        {
+            OnlyAllowEncryptMessage = onlyAllowEncryptMessage;
+            OmitRepeatedMessage = true;//默认开启去重
+            ServiceProvider = serviceProvider;
+            
+            GlobalMessageContext.MaxRecordCount = maxRecordCount;
+            PostModel = postModel;//PostModel 在当前类初始化过程中必须赋值
+            RequestJsonStr = Init(postDataJsonStr, postModel);
+        }
+
         /// <summary>
         /// 初始化，获取RequestDocument。（必须要完成 RequestMessage 数据赋值）.
         /// Init中需要对上下文添加当前消息（如果使用上下文）；以及判断消息的加密情况，对解密信息进行解密
@@ -547,6 +603,11 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <param name="requestDocument"></param>
         /// <param name="postModel"></param>
         public abstract XDocument Init(XDocument requestDocument, IEncryptPostModel postModel);
+
+        public virtual string Init(string postDataJsonStr, IEncryptPostModel postModel)
+        {
+            throw new NotImplementedException("请实现Init(string postDataJsonStr, IEncryptPostModel postModel)方法s");
+        }
 
         #endregion
 
