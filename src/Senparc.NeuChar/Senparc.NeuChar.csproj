@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net462;netstandard2.0;netstandard2.1</TargetFrameworks>
-    <Version>2.6.0-beta.1</Version>
+    <Version>2.6.1-beta.1</Version>
     <AssemblyName>Senparc.NeuChar</AssemblyName>
     <RootNamespace>Senparc.NeuChar</RootNamespace>
     <!--<FrameworkPathOverride Condition="'$(TargetFramework)' == 'net35'">$(Net35FrameworkPathOverride)</FrameworkPathOverride>-->
@@ -120,6 +120,7 @@
 		v2.5.0 Upate CO2NET, add ApiClient and support for Aspire
 		v2.5.3 添加 RequestMsgType 和 ResponseMsgType 枚举中对混合类型、流式输出的类型支持
 		[2025-08-24] v2.6.0-beta.1 RequestMessageBase.MsgId 类型由 long 改为 object
+		[2025-09-06] v2.6.1-beta.1 RequestMessageBase.MsgId 类型由 long 改为 object添加使用JSON字符串的构造函数，添加RequestJsonStr、ResponseJsonStr和FinalResponseJsonStr属性
 	</PackageReleaseNotes>
     <RepositoryUrl>https://github.com/Senparc/NeuChar</RepositoryUrl>
     <Configurations>Debug;Release;Test</Configurations>
