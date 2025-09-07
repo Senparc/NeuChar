@@ -33,6 +33,9 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
     修改标识：Senparc - 20211211
     修改描述：v2.0.1 SaveRequestMessageLog()、SaveResponseMessageLog() 升级异步写日志方法
 
+    修改标识：WangQian - 20250901
+    修改描述：添加使用JSON字符串的保存日志方法
+
 ----------------------------------------------------------------*/
 
 using Senparc.CO2NET.MessageQueue;
@@ -95,6 +98,7 @@ namespace Senparc.NeuChar.MessageHandlers
                 var key = Guid.NewGuid().ToString();
                 queue.Add(key, async () =>
                  {
+                     // 保存 XML 请求消息
                      if (this.RequestDocument != null)
                      {
                          var filePath = Path.Combine(logPath, string.Format("{0}_Request_{1}_{2}.txt", _getRandomFileName(),
@@ -107,6 +111,18 @@ namespace Senparc.NeuChar.MessageHandlers
                          }
 #else
                         this.RequestDocument.Save(filePath);
+#endif
+                     }
+                     // 保存 JSON 请求消息
+                     else if (!string.IsNullOrEmpty(this.RequestJsonStr))
+                     {
+                         var filePath = Path.Combine(logPath, string.Format("{0}_Request_Json_{1}_{2}.txt", _getRandomFileName(),
+                                               this.RequestMessage?.FromUserName,
+                                               this.RequestMessage?.MsgType));
+#if NETSTANDARD2_1_OR_GREATER
+                         await System.IO.File.WriteAllTextAsync(filePath, this.RequestJsonStr);
+#else
+                         System.IO.File.WriteAllText(filePath, this.RequestJsonStr);
 #endif
                      }
                      else
@@ -153,7 +169,7 @@ namespace Senparc.NeuChar.MessageHandlers
                 var key = Guid.NewGuid().ToString();
                 queue.Add(key, async () =>
                  {
-
+                     // 保存 XML 响应消息
                      if (this.ResponseDocument != null && this.ResponseDocument.Root != null)
                      {
                          var filePath = Path.Combine(logPath, string.Format("{0}_Response_{1}_{2}.txt", _getRandomFileName(), this.ResponseMessage?.ToUserName,
@@ -169,7 +185,20 @@ namespace Senparc.NeuChar.MessageHandlers
                         this.ResponseDocument.Save(filePath);
 #endif
                      }
+                     // 保存 JSON 响应消息
+                     else if (!string.IsNullOrEmpty(this.ResponseJsonStr))
+                     {
+                         var filePath = Path.Combine(logPath, string.Format("{0}_Response_Json_{1}_{2}.txt", _getRandomFileName(), this.ResponseMessage?.ToUserName,
+                             this.ResponseMessage?.MsgType));
 
+#if NETSTANDARD2_1_OR_GREATER
+                         await System.IO.File.WriteAllTextAsync(filePath, this.ResponseJsonStr);
+#else
+                         System.IO.File.WriteAllText(filePath, this.ResponseJsonStr);
+#endif
+                     }
+
+                     // 保存加密后的 XML 响应信息
                      if (this.UsingEncryptMessage &&
                          this.FinalResponseDocument != null && this.FinalResponseDocument.Root != null)
                      {
@@ -185,8 +214,20 @@ namespace Senparc.NeuChar.MessageHandlers
                         this.FinalResponseDocument.Save(filePath);
 #endif
                      }
+                     // 保存加密后的 JSON 响应信息
+                     else if (this.UsingEncryptMessage && !string.IsNullOrEmpty(this.FinalResponseJsonStr))
+                     {
+                         //记录加密后的 JSON 响应信息
+                         var filePath = Path.Combine(logPath, string.Format("{0}_Response_Final_Json_{1}_{2}.txt", _getRandomFileName(), this.ResponseMessage?.ToUserName,
+                                     this.ResponseMessage?.MsgType));
+#if NETSTANDARD2_1_OR_GREATER
+                         await System.IO.File.WriteAllTextAsync(filePath, this.FinalResponseJsonStr);
+#else
+                         System.IO.File.WriteAllText(filePath, this.FinalResponseJsonStr);
+#endif
+                     }
 
-                     if (this.ResponseDocument == null && this.TextResponseMessage != null)
+                     if (this.ResponseDocument == null && string.IsNullOrEmpty(this.ResponseJsonStr) && this.TextResponseMessage != null)
                      {
                          var filePath = Path.Combine(logPath, string.Format("{0}_TextResponse_{1}_{2}.txt", _getRandomFileName(),
                              this.ResponseMessage?.ToUserName,
