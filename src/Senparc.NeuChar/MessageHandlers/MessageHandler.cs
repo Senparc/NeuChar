@@ -491,7 +491,11 @@ namespace Senparc.NeuChar.MessageHandlers
         {
             if (useJson)
             {
-                using var reader = new StreamReader(inputStream, leaveOpen: true);
+                using var reader = new StreamReader(inputStream,
+                    encoding: System.Text.Encoding.UTF8,
+                    detectEncodingFromByteOrderMarks: true,
+                     bufferSize: 1024,
+                     leaveOpen: true);
                 var postDataJsonStr = reader.ReadToEnd();
                 CommonInitialize(postDataJsonStr, maxRecordCount, postModel, onlyAllowEncryptMessage, serviceProvider);
             }
@@ -591,7 +595,7 @@ namespace Senparc.NeuChar.MessageHandlers
             OnlyAllowEncryptMessage = onlyAllowEncryptMessage;
             OmitRepeatedMessage = true;//默认开启去重
             ServiceProvider = serviceProvider;
-            
+
             GlobalMessageContext.MaxRecordCount = maxRecordCount;
             PostModel = postModel;//PostModel 在当前类初始化过程中必须赋值
             RequestJsonStr = Init(postDataJsonStr, postModel);
