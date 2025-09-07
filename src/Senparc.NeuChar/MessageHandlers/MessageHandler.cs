@@ -589,6 +589,14 @@ namespace Senparc.NeuChar.MessageHandlers
             //CheckMessageRepeat(); //消息去重自 v1.3.0 起，已经放入 ExecuteAsync 中处理
         }
 
+        /// <summary>
+        /// 构造函数公用的初始化方法（用于处理 JSON 格式的请求数据）。
+        /// </summary>
+        /// <param name="postDataJsonStr">请求的 JSON 字符串数据。</param>
+        /// <param name="maxRecordCount">消息上下文中允许记录的最大消息数。</param>
+        /// <param name="postModel">加密消息模型，用于处理加密相关信息。</param>
+        /// <param name="onlyAllowEncryptMessage">当平台同时兼容明文消息和加密消息时，只允许处理加密消息（不允许处理明文消息），默认为 False。</param>
+        /// <param name="serviceProvider">可选的依赖注入服务提供者。</param>
         public void CommonInitialize(string postDataJsonStr, int maxRecordCount, IEncryptPostModel postModel, bool onlyAllowEncryptMessage, IServiceProvider serviceProvider = null)
         {
             OnlyAllowEncryptMessage = onlyAllowEncryptMessage;
