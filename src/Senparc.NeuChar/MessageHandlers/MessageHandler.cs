@@ -608,6 +608,18 @@ namespace Senparc.NeuChar.MessageHandlers
         /// <param name="postModel"></param>
         public abstract XDocument Init(XDocument requestDocument, IEncryptPostModel postModel);
 
+        /// <summary>
+        /// Initializes and processes the incoming JSON request data. (Must assign RequestMessage data.)
+        /// This method should add the current message to the context (if using context), and handle message encryption/decryption as needed.
+        /// </summary>
+        /// <param name="postDataJsonStr">The raw JSON string of the request data.</param>
+        /// <param name="postModel">The model containing encryption information for the request.</param>
+        /// <returns>
+        /// The processed JSON string, typically representing the request message after any necessary decryption or transformation.
+        /// </returns>
+        /// <remarks>
+        /// Implementers should ensure that the RequestMessage is properly assigned and that any required context or encryption handling is performed.
+        /// </remarks>
         public virtual string Init(string postDataJsonStr, IEncryptPostModel postModel)
         {
             throw new NotImplementedException("请实现Init(string postDataJsonStr, IEncryptPostModel postModel)方法");
