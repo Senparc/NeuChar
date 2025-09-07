@@ -499,7 +499,6 @@ namespace Senparc.NeuChar.MessageHandlers
                 var postDataJsonStr = reader.ReadToEnd();
                 CommonInitialize(postDataJsonStr, maxRecordCount, postModel, onlyAllowEncryptMessage, serviceProvider);
             }
-
             else
             {
                 var postDataDocument = XmlUtility.Convert(inputStream);
