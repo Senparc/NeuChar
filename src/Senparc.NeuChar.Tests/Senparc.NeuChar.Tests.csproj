@@ -12,13 +12,13 @@
     <PackageReference Include="Moq" Version="4.*" />
     <PackageReference Include="MSTest.TestAdapter" Version="3.0.4" />
     <PackageReference Include="MSTest.TestFramework" Version="3.0.4" />
-    <PackageReference Include="Senparc.CO2NET.AspNet" Version="2.1.0.1" />
-    <PackageReference Include="Senparc.CO2NET.Cache.CsRedis" Version="2.3.0" />
-    <PackageReference Include="Senparc.CO2NET.WebApi" Version="2.1.2.1" />
-    <PackageReference Include="Senparc.Weixin.Cache.CsRedis" Version="1.2.1.1" />
-    <PackageReference Include="Senparc.Weixin.MP" Version="16.23.9.1" />
-    <PackageReference Include="Senparc.Weixin.Work" Version="3.28.1.1" />
-    <PackageReference Include="Senparc.Weixin.WxOpen" Version="3.23.8.1" />
+    <PackageReference Include="Senparc.CO2NET.AspNet" Version="2.1.1" />
+    <PackageReference Include="Senparc.CO2NET.Cache.CsRedis" Version="2.3.1" />
+    <PackageReference Include="Senparc.CO2NET.WebApi" Version="2.1.4" />
+    <PackageReference Include="Senparc.Weixin.Cache.CsRedis" Version="1.2.2" />
+    <PackageReference Include="Senparc.Weixin.MP" Version="16.23.10" />
+    <PackageReference Include="Senparc.Weixin.Work" Version="3.29.0" />
+    <PackageReference Include="Senparc.Weixin.WxOpen" Version="3.23.9" />
   </ItemGroup>
 
   <ItemGroup>

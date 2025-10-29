@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net462;netstandard2.0;netstandard2.1</TargetFrameworks>
-    <Version>1.5.5-beta.2</Version>
+    <Version>1.5.6</Version>
     <AssemblyName>Senparc.NeuChar.App</AssemblyName>
     <RootNamespace>Senparc.NeuChar.App</RootNamespace>
     <GeneratePackageOnBuild Condition=" '$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
@@ -49,6 +49,7 @@
 		v1.1.7 升级基础库
 		v1.4.0 升级基础库，适配 .NET 8.0
 		v1.5.0 Upate CO2NET, add ApiClient and support for Aspire
+		[2025-10-29] v1.5.6 Upate CO2NET, ready to support for .NET 10.0
 	</PackageReleaseNotes>
     <RepositoryUrl>https://github.com/JeffreySu/WeiXinMPSDK</RepositoryUrl>
     <Configurations>Debug;Release;Test</Configurations>
@@ -86,12 +87,6 @@
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net462'">
     <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.3.0" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <!--<PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />-->
-  </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.1'">
-    <!--<FrameworkReference Include="Microsoft.AspNetCore.App" />-->
   </ItemGroup>
   <ItemGroup>
     <PackageReference Update="Microsoft.SourceLink.GitHub" Version="8.0.0" />
