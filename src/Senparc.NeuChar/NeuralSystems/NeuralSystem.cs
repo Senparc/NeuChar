@@ -179,7 +179,7 @@ namespace Senparc.NeuChar
 
                                     var configNodeJsonStr = connfigs[i].ToJson();//转成字符串，方便再次反序列化到具体类型中
 
-                                    var finalNeuralNode = Newtonsoft.Json.JsonConvert.DeserializeObject(configNodeJsonStr, configNodeType) as INeuralNode;
+                                    var finalNeuralNode = SerializerHelper.GetObject(configNodeJsonStr, configNodeType) as INeuralNode;
 
                                     //SenparcTrace.SendCustomLog("NeuChar finalNeuralNode", finalNeuralNode.ToJson());
 

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFrameworks>net462;netstandard2.0;netstandard2.1</TargetFrameworks>
-		<Version>2.6.2</Version>
+		<Version>3.0.0</Version>
 		<AssemblyName>Senparc.NeuChar</AssemblyName>
 		<RootNamespace>Senparc.NeuChar</RootNamespace>
 		<!--<FrameworkPathOverride Condition="'$(TargetFramework)' == 'net35'">$(Net35FrameworkPathOverride)</FrameworkPathOverride>-->
@@ -122,6 +122,7 @@
 			[2025-08-24] v2.6.0-beta.1 RequestMessageBase.MsgId 类型由 long 改为 object
 			[2025-09-06] v2.6.1-beta.2 RequestMessageBase.MsgId 类型由 long 改为 object，添加使用JSON字符串的构造函数，添加RequestJsonStr、ResponseJsonStr和FinalResponseJsonStr属性
 			[2025-10-29] v2.6.2 Upate CO2NET, ready to support for .NET 10.0
+			[2026-07-23] v3.0.0 升级至 CO2NET 4.1.0，迁移至 System.Text.Json，并更新消息上下文缓存反序列化
 		</PackageReleaseNotes>
 		<RepositoryUrl>https://github.com/Senparc/NeuChar</RepositoryUrl>
 		<Configurations>Debug;Release;Test</Configurations>
@@ -178,9 +179,9 @@
 		<Folder Include="NeuralSystems\Nodes\Config\" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" />
-		<PackageReference Include="Senparc.CO2NET" Version="3.1.5" />
-		<PackageReference Include="Senparc.CO2NET.APM" Version="2.1.2" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
+		<PackageReference Include="Senparc.CO2NET" Version="4.1.0" />
+		<PackageReference Include="Senparc.CO2NET.APM" Version="2.1.4" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Update="Microsoft.SourceLink.GitHub" Version="8.0.0" />

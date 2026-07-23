@@ -46,11 +46,12 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 
 
 #pragma warning disable 1591
-using Newtonsoft.Json;
 using Senparc.CO2NET.Cache;
 using Senparc.NeuChar.Entities;
 using System;
 using System.Linq;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 
 namespace Senparc.NeuChar.Context
@@ -173,6 +174,46 @@ namespace Senparc.NeuChar.Context
             _lastGlobalMaxRecordCount = MaxRecordCount;
         }
 
+        private static TMC ConvertCacheResult(object cacheResult)
+        {
+            if (cacheResult == null)
+            {
+                return null;
+            }
+
+            if (cacheResult is TMC result)
+            {
+                return result;
+            }
+
+            string json;
+            if (cacheResult is string text)
+            {
+                json = text;
+            }
+            else if (cacheResult is JsonElement jsonElement)
+            {
+                json = jsonElement.GetRawText();
+            }
+            else if (cacheResult is JsonNode jsonNode)
+            {
+                json = jsonNode.ToJsonString();
+            }
+            else if (string.Equals(cacheResult.GetType().FullName, "Newtonsoft.Json.Linq.JObject", StringComparison.Ordinal))
+            {
+                // 允许 CO2NET 3.x 缓存中尚未迁移的 JObject 在滚动升级期间继续读取，
+                // 但不再对 Newtonsoft.Json 建立编译或 NuGet 依赖。
+                json = cacheResult.ToString();
+            }
+            else
+            {
+                var options = MessageContextJsonConverter<TMC, TRequest, TResponse>.CreateSerializerOptions();
+                json = JsonSerializer.Serialize(cacheResult, cacheResult.GetType(), options);
+            }
+
+            return MessageContextJsonConverter<TMC, TRequest, TResponse>.Deserialize(json);
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -287,22 +328,7 @@ namespace Senparc.NeuChar.Context
                         return null;
                     }
 
-                    if (cacheResult is TMC result)
-                    {
-                        return result;//比如使用内存缓存，此处会是原始对象
-                    }
-
-                    //TODO: 这里强制绑定 Newtonsoft 弹性并不好，后期必须进行分离！！！
-                    if (cacheResult is Newtonsoft.Json.Linq.JObject jsonObj)
-                    {
-                        var jsonResult = JsonConvert.DeserializeObject<TMC>(jsonObj.ToString(), new MessageContextJsonConverter<TMC, TRequest, TResponse>());
-                        //Console.WriteLine("从缓存读取result：\r\n" + jsonResult.ToJson(true));
-                        return jsonResult;
-                    }
-                    else
-                    {
-                        throw new Exception("未知缓存对象，或未经注册的缓存框架");
-                    }
+                    return ConvertCacheResult(cacheResult);
                 }
                 else
                 {
@@ -561,22 +587,7 @@ namespace Senparc.NeuChar.Context
                         return null;
                     }
 
-                    if (cacheResult is TMC result)
-                    {
-                        return result;//比如使用内存缓存，此处会是原始对象
-                    }
-
-                    //TODO: 这里强制绑定 Newtonsoft 弹性并不好，后期必须进行分离！！！
-                    if (cacheResult is Newtonsoft.Json.Linq.JObject jsonObj)
-                    {
-                        var jsonResult = JsonConvert.DeserializeObject<TMC>(jsonObj.ToString(), new MessageContextJsonConverter<TMC, TRequest, TResponse>());
-                        //Console.WriteLine("从缓存读取result：\r\n" + jsonResult.ToJson(true));
-                        return jsonResult;
-                    }
-                    else
-                    {
-                        throw new Exception("未知缓存对象，或未经注册的缓存框架");
-                    }
+                    return ConvertCacheResult(cacheResult);
                 }
                 else
                 {

@@ -50,7 +50,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 
 using System;
 using System.Xml.Linq;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 using Senparc.NeuChar.Entities;
 using Senparc.NeuChar.NeuralSystems;
 

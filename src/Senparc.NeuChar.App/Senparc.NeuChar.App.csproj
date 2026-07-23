@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net462;netstandard2.0;netstandard2.1</TargetFrameworks>
-    <Version>1.5.6</Version>
+    <Version>1.6.0</Version>
     <AssemblyName>Senparc.NeuChar.App</AssemblyName>
     <RootNamespace>Senparc.NeuChar.App</RootNamespace>
     <GeneratePackageOnBuild Condition=" '$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
@@ -50,6 +50,7 @@
 		v1.4.0 升级基础库，适配 .NET 8.0
 		v1.5.0 Upate CO2NET, add ApiClient and support for Aspire
 		[2025-10-29] v1.5.6 Upate CO2NET, ready to support for .NET 10.0
+		[2026-07-23] v1.6.0 升级至 Senparc.NeuChar 3.0.0 及 CO2NET 4.1.0
 	</PackageReleaseNotes>
     <RepositoryUrl>https://github.com/JeffreySu/WeiXinMPSDK</RepositoryUrl>
     <Configurations>Debug;Release;Test</Configurations>
