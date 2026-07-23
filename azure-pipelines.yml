@@ -1,0 +1,260 @@
+trigger:
+  branches:
+    include:
+      - master
+
+pr: none
+
+pool:
+  name: SenparcOpenSource
+  demands:
+    - Agent.OS -equals Windows_NT
+
+variables:
+  - group: Nuget_Key
+  - name: solution
+    value: src/Senparc.NeuChar_WithTests.sln
+  - name: testProject
+    value: src/Senparc.NeuChar.Tests/Senparc.NeuChar.Tests.csproj
+  - name: buildConfiguration
+    value: Release
+  - name: NUGET_PACKAGES
+    value: $(Agent.ToolsDirectory)/nuget/packages
+  - name: NuGetPushSource
+    value: https://api.nuget.org/v3/index.json
+  - name: NuGetPushTimeoutSeconds
+    value: 3600
+
+steps:
+  - checkout: self
+    clean: true
+
+  - task: UseDotNet@2
+    displayName: Use .NET SDK 10.x
+    inputs:
+      packageType: sdk
+      version: 10.0.x
+      performMultiLevelLookup: false
+
+  - task: Cache@2
+    displayName: Cache NuGet packages
+    inputs:
+      key: 'nuget | "$(Agent.OS)" | **/*.csproj'
+      restoreKeys: |
+        nuget | "$(Agent.OS)"
+        nuget
+      path: $(NUGET_PACKAGES)
+
+  - task: DotNetCoreCLI@2
+    displayName: Restore
+    inputs:
+      command: restore
+      projects: $(solution)
+
+  - task: DotNetCoreCLI@2
+    displayName: Build all package projects
+    inputs:
+      command: build
+      projects: $(solution)
+      arguments: '--configuration $(buildConfiguration) --no-restore -p:GeneratePackageOnBuild=false'
+
+  # NuGet 上当前的 WeiXin 二进制包仍按 CO2NET 3.x 签名编译，不能与 CO2NET 4.x 混跑。
+  # 在这些依赖包重新发布前，只把本仓库的 CO2NET 4 迁移回归作为发布门禁；完整测试仍可单独运行并查看兼容边界。
+  - task: DotNetCoreCLI@2
+    displayName: Test CO2NET 4 migration
+    inputs:
+      command: test
+      projects: $(testProject)
+      arguments: '--configuration $(buildConfiguration) --no-restore -p:GeneratePackageOnBuild=false --filter "TestCategory=CO2NET4Migration" --logger trx --results-directory "$(Agent.TempDirectory)/test-results"'
+      publishTestResults: true
+
+  - powershell: |
+      $ErrorActionPreference = 'Stop'
+      $packageDirectory = Join-Path '$(Build.ArtifactStagingDirectory)' 'nuget'
+      New-Item -ItemType Directory -Path $packageDirectory -Force | Out-Null
+
+      $projects = @(
+        'src/Senparc.NeuChar/Senparc.NeuChar.csproj',
+        'src/Senparc.NeuChar.App/Senparc.NeuChar.App.csproj',
+        'src/Senparc.NeuChar.AspNet/Senparc.NeuChar.AspNet.csproj'
+      )
+
+      foreach ($project in $projects) {
+        Write-Host "##[command]dotnet pack $project --configuration $(buildConfiguration) --no-build --no-restore --output $packageDirectory"
+        & dotnet pack $project --configuration '$(buildConfiguration)' --no-build --no-restore --output $packageDirectory
+        if ($LASTEXITCODE -ne 0) {
+          throw "dotnet pack failed for $project (exit code $LASTEXITCODE)."
+        }
+      }
+    displayName: Pack all NeuChar NuGet packages
+
+  - powershell: |
+      $ErrorActionPreference = 'Continue'
+      $packageDirectory = Join-Path '$(Build.ArtifactStagingDirectory)' 'nuget'
+      $logDirectory = Join-Path '$(Build.ArtifactStagingDirectory)' 'nuget-push-logs'
+      $source = '$(NuGetPushSource)'
+      $timeout = '$(NuGetPushTimeoutSeconds)'
+      $apiKey = $env:NUGET_API_KEY
+
+      New-Item -ItemType Directory -Path $logDirectory -Force | Out-Null
+
+      if ([string]::IsNullOrWhiteSpace($apiKey)) {
+        $message = 'Missing secret variable NUGET_API_KEY. Configure it in the Nuget_Key variable group.'
+        Write-Host "##[error]$message"
+        Set-Content -LiteralPath (Join-Path $logDirectory 'configuration-error.log') -Value $message -Encoding UTF8
+        exit 2
+      }
+
+      Add-Type -AssemblyName System.IO.Compression.FileSystem
+
+      function Get-NupkgMetadata {
+        param([string]$PackagePath)
+
+        try {
+          $zip = [System.IO.Compression.ZipFile]::OpenRead($PackagePath)
+          try {
+            $entry = $zip.Entries | Where-Object { $_.FullName -match '(?i)\.nuspec$' } | Select-Object -First 1
+            if (-not $entry) {
+              return @{ Id = ''; Version = '' }
+            }
+
+            $reader = New-Object System.IO.StreamReader($entry.Open())
+            try {
+              [xml]$nuspec = $reader.ReadToEnd()
+            }
+            finally {
+              $reader.Dispose()
+            }
+
+            $namespaceUri = $nuspec.DocumentElement.NamespaceURI
+            if ([string]::IsNullOrWhiteSpace($namespaceUri)) {
+              return @{ Id = [string]$nuspec.package.metadata.id; Version = [string]$nuspec.package.metadata.version }
+            }
+
+            $namespaceManager = New-Object System.Xml.XmlNamespaceManager($nuspec.NameTable)
+            $namespaceManager.AddNamespace('n', $namespaceUri)
+            $idNode = $nuspec.SelectSingleNode('//n:metadata/n:id', $namespaceManager)
+            $versionNode = $nuspec.SelectSingleNode('//n:metadata/n:version', $namespaceManager)
+            $id = ''
+            $version = ''
+            if ($idNode) { $id = $idNode.InnerText }
+            if ($versionNode) { $version = $versionNode.InnerText }
+            return @{ Id = $id; Version = $version }
+          }
+          finally {
+            $zip.Dispose()
+          }
+        }
+        catch {
+          Write-Host "##[warning]Unable to read nuspec metadata from ${PackagePath}: $($_.Exception.Message)"
+          return @{ Id = ''; Version = '' }
+        }
+      }
+
+      $packages = @(Get-ChildItem -LiteralPath $packageDirectory -Filter '*.nupkg' -File -ErrorAction SilentlyContinue |
+        Where-Object { $_.Name -notlike '*.symbols.nupkg' } |
+        Sort-Object Name)
+
+      Write-Host "Discovered $($packages.Count) package(s) in $packageDirectory."
+      if ($packages.Count -eq 0) {
+        Write-Host '##[error]No .nupkg files were produced; nothing can be published.'
+        exit 3
+      }
+
+      $rows = New-Object System.Collections.Generic.List[object]
+      $hasUnexpectedFailure = $false
+
+      foreach ($package in $packages) {
+        $metadata = Get-NupkgMetadata -PackagePath $package.FullName
+        $packageId = if ([string]::IsNullOrWhiteSpace($metadata.Id)) { $package.BaseName } else { $metadata.Id }
+        $packageVersion = $metadata.Version
+        $safeLogName = (($packageId + '-' + $packageVersion) -replace '[^A-Za-z0-9._-]', '_') + '.log'
+        $logPath = Join-Path $logDirectory $safeLogName
+
+        Write-Host ''
+        Write-Host "========== BEGIN COMPLETE LOG: $packageId $packageVersion =========="
+        $safeCommand = ("dotnet nuget push `"{0}`" --source `"{1}`" --api-key *** --skip-duplicate --timeout {2}" -f $package.FullName, $source, $timeout)
+        Write-Host "##[command]$safeCommand"
+
+        $outputLines = @(& dotnet nuget push $package.FullName --source $source --api-key $apiKey --skip-duplicate --timeout $timeout 2>&1)
+        $exitCode = $LASTEXITCODE
+        $outputLines | ForEach-Object { Write-Host $_ }
+        @(
+          "Package: $packageId"
+          "Version: $packageVersion"
+          "Command: $safeCommand"
+          '--- stdout/stderr ---'
+          $outputLines
+          "Exit code: $exitCode"
+        ) | Set-Content -LiteralPath $logPath -Encoding UTF8
+
+        Write-Host "Exit code: $exitCode"
+        Write-Host "=========== END COMPLETE LOG: $packageId $packageVersion ==========="
+
+        $combined = ($outputLines -join "`n")
+        $lower = $combined.ToLowerInvariant()
+        $result = 'Failed'
+        $detail = ''
+
+        if ($exitCode -eq 0) {
+          if ($lower -match 'skip|already exists|duplicate|409|conflict') {
+            $result = 'Skipped (exists)'
+          }
+          else {
+            $result = 'Published'
+          }
+        }
+        elseif ($lower -match '409|conflict|already exists|duplicate|cannot publish.*exists') {
+          $result = 'Skipped (exists)'
+        }
+        else {
+          $hasUnexpectedFailure = $true
+          $detail = if ([string]::IsNullOrWhiteSpace($combined)) { "dotnet exit code $exitCode" } else { $combined.Trim() }
+          if ($detail.Length -gt 500) {
+            $detail = $detail.Substring(0, 500) + '...'
+          }
+        }
+
+        $rows.Add([pscustomobject]@{
+          PackageId = $packageId
+          Version = $packageVersion
+          Path = $package.FullName
+          Result = $result
+          ExitCode = $exitCode
+          LogFile = $safeLogName
+          Detail = $detail
+        })
+      }
+
+      $summaryCsv = Join-Path $logDirectory 'summary.csv'
+      $summaryJson = Join-Path $logDirectory 'summary.json'
+      $rows | Export-Csv -LiteralPath $summaryCsv -NoTypeInformation -Encoding UTF8
+      $rows | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath $summaryJson -Encoding UTF8
+
+      Write-Host ''
+      Write-Host 'Legend: Published | Skipped (exists) | Failed'
+      Write-Host '========== NuGet push summary =========='
+      $rows | Format-Table PackageId, Version, Result, ExitCode, LogFile -AutoSize | Out-String | Write-Host
+      Write-Host ("Total: {0}; Published: {1}; Skipped: {2}; Failed: {3}" -f `
+        $rows.Count,
+        @($rows | Where-Object Result -eq 'Published').Count,
+        @($rows | Where-Object Result -eq 'Skipped (exists)').Count,
+        @($rows | Where-Object Result -eq 'Failed').Count)
+      Write-Host "Complete per-package logs: $logDirectory"
+
+      if ($hasUnexpectedFailure) {
+        Write-Host '##[error]One or more package pushes failed. See the complete log blocks above and the published log artifact.'
+        exit 1
+      }
+    displayName: Push all NeuChar packages (skip duplicates, complete logs)
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+    env:
+      NUGET_API_KEY: $(NUGET_API_KEY)
+
+  - task: PublishBuildArtifacts@1
+    displayName: Publish packages and complete push logs
+    condition: always()
+    inputs:
+      PathtoPublish: $(Build.ArtifactStagingDirectory)
+      ArtifactName: neuchar-nuget-release
+      publishLocation: Container

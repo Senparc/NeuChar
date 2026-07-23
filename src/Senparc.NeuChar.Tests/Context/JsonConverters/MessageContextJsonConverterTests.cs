@@ -1,5 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Newtonsoft.Json;
 using Senparc.NeuChar.Context;
 using Senparc.NeuChar.Entities;
 using System;
@@ -12,6 +11,7 @@ namespace Senparc.NeuChar.Tests.Context.JsonConverters
     public class MessageContextJsonConverterTests
     {
         [TestMethod]
+        [TestCategory("CO2NET4Migration")]
         public void ConvertTest()
         {
             var jsonStr = @"{
@@ -212,9 +212,12 @@ namespace Senparc.NeuChar.Tests.Context.JsonConverters
 }";
 
             var dt1 = SystemTime.Now;
-            var jsonResult = JsonConvert.DeserializeObject<CustomMessageContext>(jsonStr, new MessageContextJsonConverter<CustomMessageContext, RequestMessageBase, ResponseMessageBase>());
+            var jsonResult = MessageContextJsonConverter<CustomMessageContext, RequestMessageBase, ResponseMessageBase>.Deserialize(jsonStr);
             Console.WriteLine(SystemTime.NowDiff(dt1).TotalMilliseconds + "ms");
             Assert.IsNotNull(jsonResult);
+            Assert.AreEqual(10, jsonResult.RequestMessages.Count);
+            Assert.AreEqual(10, jsonResult.ResponseMessages.Count);
+            Assert.AreEqual(0, jsonResult.StorageData);
             Console.WriteLine(jsonResult);
         }
     }

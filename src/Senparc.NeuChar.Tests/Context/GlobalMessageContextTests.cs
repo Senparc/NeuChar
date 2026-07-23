@@ -1,5 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Newtonsoft.Json;
 using Senparc.CO2NET.Extensions;
 using Senparc.NeuChar.Context;
 using Senparc.NeuChar.Entities;
@@ -63,12 +62,15 @@ namespace Senparc.NeuChar.Tests.Context
 }";
         #endregion
         [TestMethod]
+        [TestCategory("CO2NET4Migration")]
         public void ConvertTest()
         {
-            var jsonResult = JsonConvert.DeserializeObject<CustomMessageContext>(jsonStr, new MessageContextJsonConverter<CustomMessageContext, RequestMessageBase, ResponseMessageBase>());
+            var jsonResult = MessageContextJsonConverter<CustomMessageContext, RequestMessageBase, ResponseMessageBase>.Deserialize(jsonStr);
             Assert.IsNotNull(jsonResult);
             Console.WriteLine(jsonResult.ToJson());
             Assert.AreEqual("FromUserName(OpenId)", jsonResult.UserName);
+            Assert.AreEqual(2, jsonResult.RequestMessages.Count);
+            Assert.AreEqual(2, jsonResult.ResponseMessages.Count);
         }
 
     }
